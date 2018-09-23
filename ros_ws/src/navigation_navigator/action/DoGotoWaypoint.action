@@ -8,6 +8,7 @@ uint8 AUTOMATIC = 2
 uint8 direction
 string waypoint_name
 bool disable_collisions
+bool disable_pathfinder
 ---
 bool success
 ---

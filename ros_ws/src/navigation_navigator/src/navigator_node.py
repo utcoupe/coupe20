@@ -106,7 +106,9 @@ class NavigatorNode(object):
 
         if handledGoal.get_goal().disable_collisions:
             rospy.loginfo("Collisions disabled")
-        self._executeGoto(posStart, posEnd, hasAngle, handledGoal)
+        
+        disablePathfinder = handledGoal.get_goal().disable_pathfinder
+        self._executeGoto(posStart, posEnd, hasAngle, handledGoal, disablePathfinder)
 
     def _handleDoGotoWaypointRequest(self, handledGoal):
         rospy.logdebug("request waypoint")
@@ -115,10 +117,11 @@ class NavigatorNode(object):
         hasAngle = False
         if handledGoal.get_goal().mode == handledGoal.get_goal().GOTOA:
             hasAngle = True
-        self._executeGoto(startPos, endPos, hasAngle, handledGoal)
+        disablePathfinder = handledGoal.get_goal().disable_pathfinder
+        self._executeGoto(startPos, endPos, hasAngle, handledGoal, disablePathfinder)
 
 
-    def _executeGoto (self, startPos, endPos, hasAngle, handledGoal):
+    def _executeGoto (self, startPos, endPos, hasAngle, handledGoal, disablePathfinder):
         self._currentStatus = NavigatorStatuses.NAV_NAVIGATING
         self._collisionsClient.setEnabled(not handledGoal.get_goal().disable_collisions)
         handledGoal.set_accepted()
@@ -127,11 +130,14 @@ class NavigatorNode(object):
             rospy.loginfo("Received a request to (" + str(endPos.x) + ", " + str(endPos.y) + ", " + str(endPos.theta) + ")")
         else:
             rospy.loginfo("Received a request to (" + str(endPos.x) + ", " + str(endPos.y) + ")")
+        
+        if disablePathfinder:
+            rospy.loginfo("Pathfinder will NOT be used.")
 
         self._currentGoal = handledGoal
         self._idCurrentTry = 1
         rospy.loginfo("Try 1")
-        self._currentPlan.newPlan(startPos, endPos, hasAngle, handledGoal.get_goal().direction)
+        self._currentPlan.newPlan(startPos, endPos, hasAngle, handledGoal.get_goal().direction, disablePathfinder)
 
     def _callbackEmergencyStop (self):
         """

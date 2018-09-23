@@ -39,12 +39,14 @@ class Plan(object):
         self._status = PlanStatuses.IDLE
         self._endPos = ""
         self._hasAngle = False
+        self._disablePathfinder = False
         self._direction = Directions.AUTOMATIC
     
-    def newPlan(self, startPos, endPos, hasAngle, direction):
+    def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder):
         self._endPos = endPos
         self._hasAngle = hasAngle
         self._direction = direction
+        self._disablePathfinder = disablePathfinder
         self.replan(startPos)
     
     def replan(self, startPos):
@@ -56,17 +58,21 @@ class Plan(object):
         debugStr += " to " + pointToStr(self._endPos)
         rospy.logdebug(debugStr)
         try:
-            # sends a request to the pathfinder
-            path = self._pathfinderClient.FindPath(startPos, self._endPos)
-            self._printPath (path)
-            # then sends the path point per point to the arduino_asserv
-            path.pop(0) # Removes the first point (we are already on startPos)
-            path.pop() # Removes the last point
+            if not self._disablePathfinder:
+                # sends a request to the pathfinder
+                path = self._pathfinderClient.FindPath(startPos, self._endPos)
+                self._printPath (path)
+                # then sends the path point per point to the arduino_asserv
+                path.pop(0) # Removes the first point (we are already on startPos)
+                path.pop() # Removes the last point
+            
             lastPoint = startPos
+
             for point in path:
                 idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), False, self._asservGotoCallback)
                 self._currentPath[idOrder] = point
                 lastPoint = point
+            
             idOrder = self._asservClient.doGoto(self._endPos, self._getDirection(self._direction, self._endPos, lastPoint), self._hasAngle, self._asservGotoCallback)
             self._currentPath[idOrder] = self._endPos
             self._status = PlanStatuses.NAVIGATING

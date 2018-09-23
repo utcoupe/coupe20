@@ -1,5 +1,6 @@
- Code source des robots d'UTCoupe 2018
+ Code source des robots d'UTCoupe 2019
 =======
+[![Build Status](https://travis-ci.org/utcoupe/coupe19.png)](https://travis-ci.org/utcoupe/coupe19)
 
 # Configuration
 
@@ -24,14 +25,6 @@ Tout le système de cette année repose sur ROS (http://www.ros.org/), il faut d
 cd coupe18/ros_ws
 catkin_make
 ```
-
-# Lancement
-
-//TODO
-
-ou must then source the workspace with `source devel/setup.bash` or `source devel/setup.zsh` each
-time you open a new terminal. Adding this line to your `~/.bashrc` or `~/.zshrc` (with the full
-path to the setup file) will simply automate this step.
 
 # Règles et Guidelines
 

@@ -25,11 +25,11 @@ catkin_install_python(
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(
-    DIRECTORY src/Data
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-    PATTERN "*.pyc" EXCLUDE
-)
+# install(
+#     DIRECTORY src/Data
+#     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#     PATTERN "*.pyc" EXCLUDE
+# )
 
 install(
     DIRECTORY def/

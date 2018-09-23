@@ -1,6 +1,8 @@
  Code source des robots d'UTCoupe 2019
 =======
-[![Build Status](https://travis-ci.org/utcoupe/coupe19.png)](https://travis-ci.org/utcoupe/coupe19)
+|master|devel|
+|------|-----|
+| [![Build Status](https://travis-ci.org/utcoupe/coupe19.svg?branch=master)](https://travis-ci.org/utcoupe/coupe19) | [![Build Status](https://travis-ci.org/utcoupe/coupe19.svg?branch=devel)](https://travis-ci.org/utcoupe/coupe19) |
 
 # Configuration
 

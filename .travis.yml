@@ -1,0 +1,11 @@
+sudo: required
+
+services:
+  - docker
+
+install:
+  - docker pull utcoupe/coupe19:utcoupe-ros-kinetic-amd64
+  - git submodule update --init --recursive
+
+script:
+  - source scripts/run_travis_build.sh

@@ -1,0 +1,227 @@
+classes:
+    cube:
+        collision: true # is the object to be avoided in the pathfinder
+        position:
+            frame_id: /map
+            type: pickable
+            a: 0
+        shape:
+            type: rect
+            width: 0.06
+            height: 0.06
+        _marker:
+            ns: cubes
+            z_scale: 0.06
+            z: 0.03
+            orientation: [0, 0, 0]
+
+    ball:
+        collision: false
+        position:
+            frame_id: /map
+            type: pickable
+            a: 0
+        shape:
+            type: circle
+            radius: 0.022
+        color: green #default, overritten when orange
+        _marker:
+            ns: balls
+            type: sphere
+            z_scale: 0.044
+            z: 1 #default
+            orientation: [0, 0, 0]
+
+
+objects:
+    container_grape_1:
+        cube_1:
+            class: cube
+            position:
+                x: 0.850
+                y: 1.520
+            color: black
+        cube_2:
+            class: cube
+            position:
+                x: 0.790
+                y: 1.460
+            color: green
+        cube_3:
+            class: cube
+            position:
+                x: 0.850
+                y: 1.460
+            color: yellow
+        cube_4:
+            class: cube
+            position:
+                x: 0.910
+                y: 1.460
+            color: orange
+        cube_5:
+            class: cube
+            position:
+                x: 0.850
+                y: 1.400
+            color: blue
+
+    container_grape_2:
+        cube_1:
+            class: cube
+            position:
+                x: 0.3
+                y: 0.95
+            color: black
+        cube_2:
+            class: cube
+            position:
+                x: 0.24
+                y: 0.89
+            color: green
+        cube_3:
+            class: cube
+            position:
+                x: 0.3
+                y: 0.89
+            color: yellow
+        cube_4:
+            class: cube
+            position:
+                x: 0.36
+                y: 0.89
+            color: orange
+        cube_5:
+            class: cube
+            position:
+                x: 0.3
+                y: 0.83
+            color: blue
+
+    container_grape_3:
+        cube_1:
+            class: cube
+            position:
+                x: 1.1
+                y: 0.56
+            color: black
+        cube_2:
+            class: cube
+            position:
+                x: 1.04
+                y: 0.5
+            color: green
+        cube_3:
+            class: cube
+            position:
+                x: 1.1
+                y: 0.5
+            color: yellow
+        cube_4:
+            class: cube
+            position:
+                x: 1.16
+                y: 0.5
+            color: orange
+        cube_5:
+            class: cube
+            position:
+                x: 1.1
+                y: 0.44
+            color: blue
+
+    container_grape_4:
+        cube_1:
+            class: cube
+            position:
+                x: 2.150
+                y: 1.520
+            color: black
+        cube_2:
+            class: cube
+            position:
+                x: 2.210
+                y: 1.460
+            color: green
+        cube_3:
+            class: cube
+            position:
+                x: 2.150
+                y: 1.460
+            color: yellow
+        cube_4:
+            class: cube
+            position:
+                x: 2.090
+                y: 1.460
+            color: orange
+        cube_5:
+            class: cube
+            position:
+                x: 2.150
+                y: 1.400
+            color: blue
+
+    container_grape_5:
+        cube_1:
+            class: cube
+            position:
+                x: 2.7
+                y: 0.95
+            color: black
+        cube_2:
+            class: cube
+            position:
+                x: 2.76
+                y: 0.89
+            color: green
+        cube_3:
+            class: cube
+            position:
+                x: 2.7
+                y: 0.89
+            color: yellow
+        cube_4:
+            class: cube
+            position:
+                x: 2.64
+                y: 0.89
+            color: orange
+        cube_5:
+            class: cube
+            position:
+                x: 2.7
+                y: 0.83
+            color: blue
+
+    container_grape_6:
+        cube_1:
+            class: cube
+            position:
+                x: 1.9
+                y: 0.56
+            color: black
+        cube_2:
+            class: cube
+            position:
+                x: 1.96
+                y: 0.5
+            color: green
+        cube_3:
+            class: cube
+            position:
+                x: 1.9
+                y: 0.5
+            color: yellow
+        cube_4:
+            class: cube
+            position:
+                x: 1.84
+                y: 0.5
+            color: orange
+        cube_5:
+            class: cube
+            position:
+                x: 1.9
+                y: 0.44
+            color: blue

@@ -1,0 +1,19 @@
+<div uib-accordion-group
+class="panel-default action-accord"
+ng-class="{'panel-danger' : !$ctrl.action.active || $ctrl.goal.status.status == 2 || $ctrl.goal.status.status >= 4,
+           'panel-info' : $ctrl.goal.status.status == 1 || $ctrl.goal.status.status == 0,
+           'panel-success' : $ctrl.goal.status.status == 3,
+           'panel-default' : $ctrl.goal.status.status <= -1 }"
+  is-open="$ctrl.action.isOpen"
+  is-disabled="!$ctrl.action.active">
+  <uib-accordion-heading>
+    {{ $ctrl.action.abbr }}
+    <div style="float: right"> <small> {{ ['PENDING', 'ACTIVE', 'PREEMPTED', 'SUCCEEDED', 'ABORTED', 'REJECTED', 'PREEMPTING', 'RECALLING', 'RECALLED'][$ctrl.goal.status.status] }}</small>  <small style="font-size: 12px;">({{ $ctrl.action.type }})</small></div>
+    <div style="clear: both;"></div>
+  </uib-accordion-heading>
+
+  <ng-include ng-if="$ctrl.action.active" src="$ctrl.fileName"></ng-include>
+  <button class="btn btn-default btn-md pull-right" type="button" ng-click="$ctrl.sendGoal($ctrl.message)" >
+    Send goal
+  </button>
+</div>

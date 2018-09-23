@@ -1,0 +1,43 @@
+
+<div
+  uib-accordion-group class="panel-default topic-accord"
+  ng-class="{'panel-success': $ctrl.toggle,
+             'panel-danger': !$ctrl.topic.active}"
+  is-open="$ctrl.topic.isOpen"
+  is-disabled="!$ctrl.topic.active">
+  <uib-accordion-heading>
+    {{ $ctrl.topic.abbr }}
+    <button
+      ng-if="$ctrl.topic.active"
+      class="btn btn-default btn-sm pull-right sub-btn" ng-click="$event.stopPropagation();$event.preventDefault();$ctrl.toggleSubscription(!$ctrl.toggle);"
+      ng-model="$ctrl.toggle"
+      style="margin-bottom: -13px; margin-top: -7px"
+      uib-btn-checkbox>
+      {{ $ctrl.toggle ? 'Unsubscribe' : 'Subscribe' }}
+    </button>
+    <div style="float: right">
+      <small style="font-size: 12px;">({{ $ctrl.topic.active ? $ctrl.topic.type : 'Not running !' }})</small>
+    </div>
+    <div style="clear: both;"></div>
+  </uib-accordion-heading>
+
+  <div ng-if="$ctrl.topic.active" style="display: flex;">
+    <div style="flex-grow: 1;">
+      <ng-include ng-if="$ctrl.topic.active" src="$ctrl.fileName"></ng-include>
+    </div>
+    <div style="display:flex;flex-direction:column;">
+      <div style="flex-grow: 1;"></div>
+      <div style="text-align:right;margin-left: 15px;" class="form-group">
+        <button
+          class="btn btn-default input-group"
+          type="button"
+          ng-disabled="$ctrl.isSubscribing"
+          ng-click="$ctrl.publishMessage($ctrl.message)">
+          Publish
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</div>

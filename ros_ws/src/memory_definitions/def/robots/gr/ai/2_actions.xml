@@ -1,0 +1,303 @@
+<actions>
+	<!-- Game Management routines -->
+	<action ref="jack">
+		<params/>
+		<actions exec="all" order="linear">
+			<tasklist repeat="3">
+				<orderref ref="ask_for_jack"/>
+			</tasklist>
+			<orderref ref="wait_for_jack"/>
+		</actions>
+	</action>
+
+	<action ref="game_start" name="Game start routine actions">
+		<params/>
+		<actions>
+			<orderref ref="set_robot_pos">
+				<position_waypoint>way_spawn_gr</position_waypoint>
+			</orderref>
+
+			<actionref ref="jack"/>
+
+			<orderref ref="timer_start">
+				<duration>98</duration>
+			</orderref>
+
+			<orderref ref="set_game_status_ingame"/>
+		</actions>
+	</action>
+
+	<action ref="game_setup" name="Game setup">
+		<params/>
+		<actions>
+			<orderref ref="delay" name="5 points bee loaded" reward="5"/>
+			<orderref ref="delay" name="5 points home installed" reward="5"/>
+		</actions>
+	</action>
+
+
+	<!-- Actuators macros -->
+	<action ref="open_arm_wide" name="Open arm wide"> <!-- Should be replaced with a call to actuators (and set a PRESET named CLOSE)-->
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="actuator_ax12_set_pos">
+				<motor_id>3</motor_id>
+				<position>620</position>
+			</orderref>
+		</actions>
+	</action>
+
+	<action ref="close_arm_slow" name="Close arm slow"> <!-- Should be replaced with a call to actuators (and set a PRESET named CLOSE)-->
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="actuator_ax12_set_pos">
+				<motor_id>3</motor_id>
+				<position>120</position>
+				<speed>170</speed>
+			</orderref>
+		</actions>
+	</action>
+
+	<action ref="open_arm_slow" name="Open arm slow"> <!-- Should be replaced with a call to actuators (and set a PRESET named CLOSE)-->
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="actuator_ax12_set_pos">
+				<motor_id>3</motor_id>
+				<position>610</position>
+				<speed>180</speed>
+			</orderref>
+		</actions>
+	</action>
+
+	<action ref="close_arm" name="Close arm"> <!-- Should be replaced with a call to actuators (and set a PRESET named CLOSE)-->
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="actuator_ax12_set_pos">
+				<motor_id>3</motor_id>
+				<position>120</position>
+			</orderref>
+		</actions>
+	</action>
+
+
+	<!-- Game actions -->
+	<action ref="activate_button" name="Go and activate Home Button">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="navigator_goto_waypoint" name="approach button">
+				<waypoint_name>way_button_approach</waypoint_name>
+				<direction>1</direction>
+			</orderref>
+
+			<orderref ref="asserv_pwm" name="accost button">
+				<left>-100</left>
+				<right>-100</right>
+				<duration>1200</duration>
+			</orderref>
+
+			<orderref ref="delay" reward="25">
+				<duration>1.2</duration>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint" name="go back to approach">
+				<position_waypoint>way_button_approach_back</position_waypoint>
+                		<direction>1</direction>
+			</orderref>
+		</actions>
+	</action>
+
+	<action ref="push_grape_1" name="Simply push grape 1 cubes to the zone" reward="5">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_grape_1_approach</position_waypoint>
+				<direction>0</direction>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_grape_1_pushed</position_waypoint>
+				<direction>0</direction>
+			</orderref>
+			<orderref ref="asserv_pwm">
+				<left>-200</left>
+				<right>-200</right>
+				<duration>500</duration>
+			</orderref>
+
+			<orderref ref="delay">
+				<duration>0.5</duration>
+			</orderref>
+		</actions>
+	</action>
+
+	<action ref="push_grape_2" name="Simply push grape 2 cubes to the zone" reward="5">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="navigator_goto_waypoint" name="go behind the cubes">
+				<waypoint_name>way_grape_2_approach</waypoint_name>
+				<mode>0</mode>
+			</orderref>
+
+			<orderref ref="navigator_goto_waypoint" name="go behind the cubes">
+				<waypoint_name>way_grape_2_accost</waypoint_name>
+				<direction>0</direction>
+			</orderref>
+
+			<orderref ref="navigator_goto_waypoint" name="push them to the zone">
+				<waypoint_name>way_grape_2_pushed</waypoint_name>
+				<direction>0</direction>
+			</orderref>
+
+			<orderref ref="navigator_goto_waypoint" name="release">
+				<waypoint_name>way_grape_2_released</waypoint_name>
+			</orderref>
+		</actions>
+	</action>
+
+	<!--<action ref="push_bee" name="Push bee">-->
+		<!--<params></params>-->
+		<!--<actions exec="all" order="linear">-->
+			<!--<team name="green">-->
+				<!--<orderref ref="actuator_ax12_set_pos">-->
+					<!--<motor_id>1</motor_id>-->
+					<!--<position>612</position>-->
+				<!--</orderref>-->
+
+				<!--<orderref ref="actuator_ax12_set_pos">-->
+					<!--<motor_id>3</motor_id>-->
+					<!--<position>250</position>-->
+					<!--<speed>150</speed>-->
+				<!--</orderref>-->
+			<!--</team>-->
+
+			<!--<team name="orange">-->
+				<!--<orderref ref="actuator_ax12_set_pos">-->
+					<!--<motor_id>1</motor_id>-->
+					<!--<position>412</position>-->
+				<!--</orderref>-->
+
+				<!--<orderref ref="actuator_ax12_set_pos">-->
+					<!--<motor_id>3</motor_id>-->
+					<!--<position>660</position>-->
+					<!--<speed>150</speed>-->
+				<!--</orderref>-->
+			<!--</team>-->
+		<!--</actions>-->
+	<!--</action>-->
+
+	<action ref="activate_bee" name="Activate bee" reward="50">
+		<params></params>
+		<actions exec="all" order="linear">
+			<team name="green">
+				<orderref ref="navigator_goto_waypoint" name="approach bee">
+					<waypoint_name>way_bee_approach_green</waypoint_name>
+				</orderref>
+
+				<actionref ref="open_arm_wide" name="open arm" />
+
+				<orderref ref="navigator_goto_waypoint" name="accost bee">
+					<waypoint_name>way_bee_accost_green</waypoint_name>
+				</orderref>
+
+				<actionref ref="close_arm_slow" name="close arm" />
+			</team>
+			<team name="orange">
+				<orderref ref="navigator_goto_waypoint" name="approach bee">
+					<waypoint_name>way_bee_approach_orange</waypoint_name>
+				</orderref>
+
+				<orderref ref="navigator_goto_waypoint" name="accost bee">
+					<waypoint_name>way_bee_accost_orange</waypoint_name>
+				</orderref>
+
+				<actionref ref="open_arm_slow" name="open arm"/>
+
+				<orderref ref="delay">
+					<duration>0.5</duration>
+				</orderref>
+
+				<actionref ref="close_arm" name="close arm"/>
+
+				<orderref ref="navigator_goto_waypoint" name="accost bee">
+					<waypoint_name>way_bee_approach_orange</waypoint_name>
+					<direction>0</direction>
+				</orderref>
+			</team>
+
+			<!--<orderref ref="asserv_pwm" name="accost button">-->
+				<!--<left>150</left>-->
+				<!--<right>150</right>-->
+				<!--<duration>3000</duration>-->
+			<!--</orderref>-->
+		</actions>
+	</action>
+
+	<action ref="get_cubes" reward="8">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_cube_close_bee</position_waypoint>
+				<direction>0</direction>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_past_cube_1</position_waypoint>
+				<direction>1</direction>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_past_cube_2</position_waypoint>
+				<direction>1</direction>
+				<mode>0</mode>
+			</orderref>
+
+
+			<orderref ref="asserv_pwm" name="accost button">
+				<left>200</left>
+				<right>200</right>
+				<duration>1000</duration>
+			</orderref>
+	
+			<orderref ref="delay">
+				<duration>1</duration>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_cube_2</position_waypoint>
+				<direction>0</direction>
+				<mode>0</mode>
+			</orderref>
+
+
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_cube_3</position_waypoint>
+				<direction>1</direction>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_past_cube_3</position_waypoint>
+				<direction>1</direction>
+			</orderref>
+
+			<orderref ref="asserv_goto_waypoint">
+				<position_waypoint>way_next_cube_3</position_waypoint>
+				<direction>1</direction>
+				<mode>0</mode>
+			</orderref>
+
+
+			<orderref ref="asserv_pwm" name="accost button">
+				<left>200</left>
+				<right>200</right>
+				<duration>1000</duration>
+			</orderref>
+
+			<orderref ref="delay">
+				<duration>1</duration>
+			</orderref>
+		</actions>
+	</action>
+
+
+</actions>

@@ -1,0 +1,41 @@
+<config>
+    <map>
+        <feature>
+            <position x="0" y="0" a="0"/>
+            <shape type="rect" w="3" h="2"/>
+            <marker>
+                <type>mesh</type>
+                <ns>table</ns>
+                <scale x="0.001" y="0.001" z="0.001"/>
+                <position x="0" y="0" z="0"/>
+                <orientation x="1.57079632679" y="0" z="0"/>
+                <color r="0.8" g="0.8" b="0.8" a="1"/>
+                <mesh_path>package://memory_definitions/def/map/robotcities2018_map.stl</mesh_path>
+            </marker>
+        </feature>
+    </map>
+
+    <layers>
+        <layer name="ground"/>
+        <layer name="belt"/>
+
+        <layer name="pathfinder">
+            <include name="ground"/>
+            <include name="belt"/>
+        </layer>
+    </layers>
+
+    <colors>
+        <color name="green"  r="" g="" b="" a=""/>
+        <color name="orange" r="" g="" b="" a=""/>
+
+        <color name="black"  r="" g="" b="" a=""/> <!-- additional cube colors -->
+        <color name="yellow" r="" g="" b="" a=""/>
+        <color name="blue"   r="" g="" b="" a=""/>
+        <color name="white"  r="" g="" b="" a=""/>
+    </colors>
+
+    <markers>
+
+    </markers>
+</config>

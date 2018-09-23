@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>11</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>660</x>
+      <y>330</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>scheduler
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>638</x>
+      <y>286</y>
+      <w>264</w>
+      <h>242</h>
+    </coordinates>
+    <panel_attributes>ai
+--
+lt=..
+layer=2
+
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>660</x>
+      <y>396</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>scripts
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>660</x>
+      <y>462</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>game_status
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>638</x>
+      <y>550</y>
+      <w>264</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>memory
+--
+bg=green
+lt=..
+layer=2
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>660</x>
+      <y>594</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>memory
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>660</x>
+      <y>660</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>definitions
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>352</x>
+      <y>286</y>
+      <w>264</w>
+      <h>242</h>
+    </coordinates>
+    <panel_attributes>feedback
+--
+lt=..
+layer=2
+
+bg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>374</x>
+      <y>330</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>webclient
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>374</x>
+      <y>396</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>rviz
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>374</x>
+      <y>462</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>simulator
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>924</x>
+      <y>286</y>
+      <w>264</w>
+      <h>242</h>
+    </coordinates>
+    <panel_attributes>navigation
+--
+lt=..
+layer=2
+
+bg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>946</x>
+      <y>330</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>navigator
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>946</x>
+      <y>396</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>pathfinder
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>946</x>
+      <y>462</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>collisions
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>924</x>
+      <y>550</y>
+      <w>264</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>movement
+--
+lt=..
+layer=2
+
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>946</x>
+      <y>594</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>actuators
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>1210</x>
+      <y>286</y>
+      <w>264</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>processing
+--
+bg=orange
+lt=..
+layer=2
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>330</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lidar_objects
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>396</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>belt_interpreter
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>1210</x>
+      <y>484</y>
+      <w>264</w>
+      <h>308</h>
+    </coordinates>
+    <panel_attributes>recognition
+--
+bg=yellow
+lt=..
+layer=2
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>528</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>localizer
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>594</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>enemy_tracker
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>660</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>cube_finder
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>726</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>cp_recognizer
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>1496</x>
+      <y>286</y>
+      <w>264</w>
+      <h>638</h>
+    </coordinates>
+    <panel_attributes>drivers
+--
+bg=gray
+lt=..
+layer=2
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>330</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lidar
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>396</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>imu
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>462</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>displacement
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>528</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>camera
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>660</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>ax12
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>726</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>ard_asserv
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>792</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>ard_others
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>858</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>ard_hmi
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1518</x>
+      <y>594</y>
+      <w>220</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>pico_flexx
+layer=5
+bg=white
+transparency=0
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>330</x>
+      <y>242</y>
+      <w>1452</w>
+      <h>704</h>
+    </coordinates>
+    <panel_attributes>Architecture ROS - coupe18</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,118 @@
+<div class="container-fluid">
+  <!--<center>
+    <button class="btn btn-info" ng-click="$ctrl.refresh()">
+      Refresh
+    </button>
+
+  </center><br />-->
+
+  <!-- No connection alert -->
+  <div class="alert alert-danger col-sm-6 col-sm-offset-3" role="alert" ng-if="!$ctrl.ros.isConnected">
+    <p class="lead"><i class="glyphicon glyphicon-warning-sign"></i> Whoops...</p>
+    The WebClient is <b>not connected</b> to a robot running rosbridge_suite at {{ $ctrl.setting.address }}:{{ $ctrl.setting.port }}. You can change the URL in the <i>Settings</i> tab.
+  </div>
+
+  <div class="row" ng-if="$ctrl.ros.isConnected">
+    <div class="cols-xs-12 col-sm-8">
+      <div class="row">
+        <!-- Sidebar menu -->
+        <div class="col-sm-3">
+          <!-- Domains -->
+          <div class="panel panel-default panel-domain"
+               ng-class="{ 'panel-active': ($ctrl.activeDomain == domain),
+                           'panel-danger': !$ctrl.isDomainActive(domain) }"
+               ng-repeat="domain in $ctrl.ros.getExpectedDomains()"
+               ng-click="$ctrl.setActiveDomain(domain)">
+
+               <div class="panel-heading">
+                 <h3 class="panel-title text-capitalize">{{ domain }}</h3>
+               </div>
+          </div>
+          <center><div class="panel panel-info panel-domain" ng-click="$ctrl.showUnexpected = !$ctrl.showUnexpected">
+            <div class="panel-heading">
+              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-down' : !$ctrl.showUnexpected,
+                        'glyphicon-chevron-up' : $ctrl.showUnexpected }"></span>
+
+
+              {{ $ctrl.showUnexpected ? ' Hide unexpected' : 'Show unexpected'}}
+
+              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-down' : !$ctrl.showUnexpected,
+                        'glyphicon-chevron-up' : $ctrl.showUnexpected }"></span>
+            </div>
+          </div></center>
+          <hr ng-if="$ctrl.setting.showUnexpected"/>
+
+          <div class="panel panel-default panel-domain"
+               ng-class="{ 'panel-active': ($ctrl.activeDomain == domain) }"
+               ng-repeat="domain in $ctrl.ros.getUnexpectedDomains()"
+               ng-click="$ctrl.setActiveDomain(domain)"
+               ng-if="$ctrl.showUnexpected && !!$ctrl.ros.getServicesForDomain(domain).length">
+
+               <div class="panel-heading">
+                 <h3 class="panel-title text-capitalize">{{ domain }}</h3>
+               </div>
+          </div>
+
+          <hr/>
+          <!-- Global parameters -->
+          <cc-parameter ng-repeat="parameter in $ctrl.Domains.getGlobalParameters($ctrl.ros.data.parameters)" ng-show="$ctrl.Domains.filterAdvanced(parameter.name, false)" parameter="parameter"></cc-parameter>
+        </div>
+
+        <div class="col-sm-9">
+          <div ng-repeat="domain in $ctrl.ros.getDomains()" ng-show="$ctrl.activeDomain == domain">
+            <p class="lead text-capitalize" style="font-size: 28px;float: left;">{{ domain }}</p>
+            <div style="float: right">
+              <button class="btn btn-default" ng-click="$ctrl.expandAll(domain)">
+                Expand all
+              </button>
+              <button class="btn btn-default" ng-click="$ctrl.collapseAll(domain)">
+                Collapse all
+              </button>
+            </div>
+            <div style="clear: both;"></div>
+
+            <uib-accordion close-others="false">
+              <!-- Services -->
+              <div ng-repeat="service in $ctrl.ros.getServicesForDomain(domain)">
+                <cc-service service="service"></cc-service>
+                <div style="height:7px;"></div>
+              </div>
+
+              <!-- Actions -->
+              <div ng-repeat="action in $ctrl.ros.getActionsForDomain(domain)">
+                <cc-action action="action"></cc-action>
+                <div style="height:7px;"></div>
+              </div>
+
+            </uib-accordion>
+            <!-- Parameters -->
+            <cc-parameter parameter="parameter" ng-repeat="parameter in $ctrl.Domains.getDataForDomain($ctrl.ros.data.parameters, domain, $ctrl.setting.advanced)"></cc-parameter>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-4 sidebar hidden-xs">
+      <!-- Console Log -->
+      <div class="console">
+        <table class="table">
+          <tr ng-repeat="logEntry in $ctrl.logs" ng-show="logEntry.level >= $ctrl.setting.log_level">
+            <td>
+              <strong ng-class="{
+                        'text-danger bg-danger': logEntry.level > 8,
+                        'text-danger': logEntry.level == 8,
+                        'text-warning': logEntry.level == 4,
+                        'text-info': logEntry.level == 2,
+                        'text-muted': logEntry.level < 2 }" >
+                {{ logEntry.abbr }}
+              </strong>
+              <small><i class="glyphicon glyphicon-time"></i> {{ logEntry.dateString }}</small>
+            </td>
+            <td>{{ logEntry.msg }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

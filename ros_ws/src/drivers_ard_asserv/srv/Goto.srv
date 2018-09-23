@@ -1,0 +1,9 @@
+# GOTO command, x and y in mm, a in radians
+uint8 GOTO = 0
+uint8 GOTOA = 1
+uint8 ROT = 2
+uint8 ROTNOMODULO = 3
+uint8 mode
+geometry_msgs/Pose2D position
+---
+bool response

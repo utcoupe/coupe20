@@ -1,0 +1,14 @@
+
+<div class="service-container" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+  <div class="form-group">
+    <div class="input-group">
+      <input type="text" class="form-control" ng-model="input" placeholder="JSON"></input>
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="$ctrl.callService(input, true)">Call</button>
+      </span>
+    </div>
+  </div>
+</div>
+<div>
+  <p ng-show="$ctrl.result">Result: {{ $ctrl.result }}</p>
+</div>

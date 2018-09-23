@@ -1,0 +1,5 @@
+# SetPos service sets the position of the robot
+geometry_msgs/Pose2D position
+string position_waypoint
+---
+bool response

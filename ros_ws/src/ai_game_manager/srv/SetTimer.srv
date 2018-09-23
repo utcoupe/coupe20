@@ -1,0 +1,10 @@
+uint8 ACTION_START  = 0 # Start the timer. Will be triggered at the set duration.
+# uint8 ACTION_PAUSE  = 1 # Pause the timer. Won't count the time until resumed.
+# uint8 ACTION_RESUME = 2 # Resume the timer.
+uint8 ACTION_RESET  = 3 # Set elapsed time to zero, no matter the state of the timer.
+uint8 ACTION_STOP   = 4 # Stops the timer. CAUTION Will set game_status to HALT (will stop everything).
+uint8 action
+
+float32 duration # For ACTION_START only: set the timer duration before it sends HALT.
+---
+bool success

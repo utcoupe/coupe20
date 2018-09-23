@@ -1,0 +1,64 @@
+
+<!-- set variables, not clean but no need for another controller -->
+<div ng-show="false" ng-init="modes = ['SPD MAX', 'ACC MAX', 'PID Right', 'PID Left', 'PID All']"></div>
+<div ng-show="false" ng-init="$ctrl.message.mode = 1"></div>
+
+<div class="service-container col-autofit">
+  <div class="form-group">
+    <label>Mode</label>
+    <div class="input-group">
+      <select class="form-control" ng-model="$ctrl.message.mode">
+        <option ng-repeat="m in modes" ng-value="$index">{{ m }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="$ctrl.message.mode >= 2 && $ctrl.message.mode <= 4">
+    <label>P</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.p">
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="$ctrl.message.mode >= 2 && $ctrl.message.mode <= 4">
+    <label>I</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.i">
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="$ctrl.message.mode >= 2 && $ctrl.message.mode <= 4">
+    <label>D</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.d">
+    </div>
+  </div>
+
+
+  <div class="form-group" ng-show="$ctrl.message.mode == 0">
+    <label>Speed max</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.spd">
+      <span class="input-group-addon">m/s</span>
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="$ctrl.message.mode == 0" ng-init="$ctrl.message.spd_ratio = 0.6">
+    <label>Speed ratio</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.spd_ratio">
+      <span class="input-group-addon">rad/m</span>
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="$ctrl.message.mode == 1">
+    <label>Acceleration max</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.acc">
+      <span class="input-group-addon">m/s²</span>
+    </div>
+  </div>
+</div>
+<button class="btn btn-default btn-md pull-right" type="button" ng-click="$ctrl.callService($ctrl.message)" >
+  Set {{ modes[$ctrl.message.mode]}}
+</button>

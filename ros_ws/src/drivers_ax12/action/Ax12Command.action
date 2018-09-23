@@ -1,0 +1,15 @@
+# goal
+uint8 JOINT = 0
+uint8 WHEEL = 1
+
+uint8 motor_id
+uint16 position # 0 to 1023
+uint16 speed # 1 to 1023 in joint mode, 0 to 2047 in wheel mode
+
+uint8 mode
+---
+# result
+bool success
+---
+#feedback
+uint16 position

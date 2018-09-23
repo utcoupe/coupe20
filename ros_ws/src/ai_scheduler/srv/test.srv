@@ -1,0 +1,5 @@
+geometry_msgs/Pose2D position
+float64 speed
+string goal_type
+---
+bool success

@@ -1,0 +1,21 @@
+<div class="topic-container col-autofit">
+
+  <div class="form-group">
+    <label>Sensor ID</label>
+    <div class="input-group" style="grid-column: 1">
+      <input
+        type="text"
+        class="form-control"
+        ng-model="$ctrl.message.sensor_id"
+        ng-readonly="$ctrl.isSubscribing"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Range</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.range" ng-readonly="$ctrl.isSubscribing">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+</div>

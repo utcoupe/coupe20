@@ -1,0 +1,67 @@
+<classes>
+    <zones>
+    
+    </zones>
+
+    <objects>
+        <object class="wall">
+        </object>
+
+        <object class="cube_green">
+            <features>
+                <feature layer="ground">
+                    <position x="0" y="0" a="0"/>
+                    <shape type="rect" w="0" h="0"/>
+                    <color name="green"/>
+                    <marker>
+                        <scale z="0.06"/>
+                        <position z="0.3"/>
+                        <orientation x="0" y="0"/>
+                    </marker>
+                </feature>
+            </features>
+        </object>
+
+        <object class="ball_green">
+            <features>
+                <feature>
+                    <shape type="circle" r="0.022"/>
+                    <color name="green"/>
+                    <marker type="sphere">
+                        <scale z="0.044"/>
+                        <position z="0.3"/>
+                        <orientation x="0" y="0"/>
+                    </marker>
+                </feature>
+            </features>
+        </object>
+
+        <object class="ball_orange">
+            <features>
+                <feature>
+                    <shape type="circle" r="0.022"/>
+                    <color name="green"/>
+                    <marker type="sphere">
+                        <scale z="0.044"/>
+                        <position z="0.3"/>
+                        <orientation x="0" y="0"/>
+                    </marker>
+                </feature>
+            </features>
+        </object>
+
+        <object class="cube_green">
+            <features>
+                <feature id="main" layer="ground">
+                    <shape type="rect" w="0.06" h="0.06"/>
+                    <color name="green"/>
+                    <marker>
+                        <scale z="0.044"/>
+                        <position z="0.3"/>
+                        <orientation x="0" y="0"/>
+                    </marker>
+                </feature>
+            </features>
+        </object>
+    </objects>
+</classes>

@@ -1,0 +1,8 @@
+# Specific action file for complex action "arm" of the big robot, 2018
+string frame_id
+float32 x
+float32 y
+float32 timeout # secs, 0 for no timeout
+---
+bool success
+---

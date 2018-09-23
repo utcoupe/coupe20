@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actuators> 
+    <act name="canon" id="0" type="pwm" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="ON" value="55" />
+            <preset name="OFF" value="0" />
+        </positions>
+    </act>
+
+    <act name="servo_button" id="3" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OPEN" value="170" />
+            <preset name="CLOSE" value="20" />
+            <preset name="armed" value="42" />
+        </positions>
+    </act>
+    <act name="servo_front_lift" id="0" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OPEN" value="80" />
+            <preset name="CLOSE" value="10" />
+        </positions>
+    </act>
+    <act name="servo_back_lift" id="1" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OPEN" value="80" />
+            <preset name="CLOSE" value="10" />
+        </positions>
+    </act>
+    <act name="servo_lock" id="2" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="LEFT" value="10" />
+            <preset name="RIGHT" value="125" />
+        </positions>
+    </act>
+
+
+    <act name="cubeholder" id="5" type="ax12" family="ax12">
+        <timeout value="300"/> <!-- Default timeout -->
+        <positions default="10">
+            <preset name="OPEN" value="170" />
+            <preset name="CLOSE" value="10" />
+        </positions>
+    </act>
+    <act name="cc1" id="1" type="pwm" family="arduino">
+        <timeout value="10000"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="spinmax" value="390" />
+        </positions>
+    </act>
+    <act name="barrel" id="6" type="ax12" family="ax12">
+        <timeout value="300"/> <!-- Default timeout -->
+        <positions default="450">
+            <preset name="HIGH" value="450" />
+            <preset name="CANON" value="850" />
+            <preset name="BIN" value="250" />
+        </positions>
+    </act>
+    <act name="vacum_pump" id="0" type="digital" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OFF" value="0" />
+            <preset name="ON" value="1" />
+        </positions>
+    </act>
+    <act name="solenoid" id="0" type="digital" family="arduino"> <!--- eletrovanne en francais -->
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OFF" value="0" />
+            <preset name="ON" value="1" />
+        </positions>
+    </act>
+    <act name="arm_elevator" id="0" type="stepper" family="arduino">
+        <timeout value="1000"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="GO_UP" value="900 " />
+            <preset name="GO_DOWN" value="-900" />
+        </positions>
+    </act>
+</actuators>

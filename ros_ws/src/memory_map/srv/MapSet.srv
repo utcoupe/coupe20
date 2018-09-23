@@ -1,0 +1,17 @@
+# Service to override the desired value(s) in the map database.
+# Please refer to the README file on how to override a specific datum.
+uint8 MODE_ADD     = 0  # Create a DictManager (only one at a time). 
+                        # Subdicts will be automagically created.
+uint8 MODE_REPLACE = 1  # Change a set of values in a dict.
+uint8 MODE_REMOVE  = 2  # Delete a value or a full dict (with its subdicts)
+uint8 mode
+# TODO ADD can only create a Dict, not a series of dicts (e.g. /objects/new_1/new_2:Object={} not supported)
+
+string request_path # Path examples :
+                    # To create a full dict : /objects/cube_42:MapObject={"type": "object", "etc": True}
+                    # To change a value : /objects/cube_14/position/x=0.42,y=0.84,a=3.14
+                    # To remove a full dict : /objects/cube_12
+---
+# A false response most probably means the request path or new value isn't valid.
+# Try to refer to the map logs. A failed SET request will generate a ROS error log on /rosout.
+bool success

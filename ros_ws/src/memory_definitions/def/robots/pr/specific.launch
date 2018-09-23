@@ -1,0 +1,7 @@
+<launch>
+    <group ns="processing">
+        <include file="$(find processing_lidar_objects)/lidar_objects.launch" ns="lidar_objects"/>
+    </group>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf_publisher" args="0.08 -0.07 0 0 0 3.14 robot laser" />
+</launch>

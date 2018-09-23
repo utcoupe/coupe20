@@ -1,0 +1,54 @@
++++++++++### Main git ignore files
+### Beware, there are som gitignore files in subdirectories, for local and specific files
+
+# Generated executables
+*.elf
+*.hex
+
+# Generated CMake associated files
+build/
+CMakeCache*
+CMakeFiles*
+cmake_install*
+
+# Generated make associated files
+Makefile*
+
+# Generated scons / arduino files
+.sconsign.dblite
+*find_port
+
+# Generated python files
+__pycache__/
+*calculate_xy
+
+# Generated npm / node files
+node_modules/
+npm-debug.log
+
+# IDE specific files
+*.sublime*
+.idea
+.vscode/
+cmake-build-debug/
+
+# UTCoupe folders
+bin/
+
+# UTCoupe files
+tmp.bmp
+config.js
+
+# Some other files
+*get_distance
+*get_distance_intensity
+*get_multiecho
+*get_multiecho_intensity
+*sensor_parameter
+*sync_time_stamp
+*liburg_c.a
+*.swp
+.directory
+
+# SymLink to default ROS CMakeLists.txt
+ros_ws/src/CMakeLists.txt

@@ -1,0 +1,16 @@
+<div uib-accordion-group
+class="panel-default service-accord"
+ng-class="{'panel-default' : $ctrl.flashState == -1,
+           'panel-info' : $ctrl.flashState == 0,
+           'panel-success' : $ctrl.flashState == 1,
+           'panel-danger' : $ctrl.flashState == 2 || !$ctrl.service.active}"
+  is-open="$ctrl.service.isOpen"
+  is-disabled="!$ctrl.service.active">
+  <uib-accordion-heading>
+    {{ $ctrl.service.abbr }}
+    <div style="float: right">  <small style="font-size: 12px;">({{ $ctrl.service.type }})</small></div>
+    <div style="clear: both;"></div>
+  </uib-accordion-heading>
+
+  <ng-include ng-if="$ctrl.service.active" src="$ctrl.fileName"></ng-include>
+</div>

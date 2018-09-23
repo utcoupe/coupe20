@@ -1,0 +1,1 @@
+uint16 score # Current reward points estimated by ai/scheduler.

@@ -1,0 +1,6 @@
+<div class="service-container col-autofit">
+  <button class="btn btn-default" ng-class="{'btn-danger': enabled}" ng-model="enabled" ng-click="$ctrl.callService({data: enabled})" uib-btn-checkbox>
+    <span ng-show="enabled">Enabled</span>
+    <span ng-show="!enabled">Disabled</span>
+  </button>
+</div>

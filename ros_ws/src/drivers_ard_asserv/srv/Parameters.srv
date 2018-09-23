@@ -1,0 +1,16 @@
+# Parameters lists the dynamic parameters of the asserv
+# For future, may be implemented using a parameter server
+uint8 SPDMAX = 0
+uint8 ACCMAX = 1
+uint8 PIDRIGHT = 2
+uint8 PIDLEFT = 3
+uint8 PIDALL = 4
+uint8 mode
+uint16 acc
+uint16 spd
+float32 spd_ratio
+float32 p
+float32 i
+float32 d
+---
+bool response

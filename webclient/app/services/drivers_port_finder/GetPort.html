@@ -1,0 +1,20 @@
+<div class="service-container col-autofit">
+  <div class="form-group">
+    <label>Component</label>
+    <div class="input-group" style="grid-column: 1">
+      <input
+        type="text"
+        class="form-control"
+        ng-model="$ctrl.message.component"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+  <div>
+    <label>&zwnj;</label>
+    <p ng-show="$ctrl.result">Result: {{ $ctrl.result.port }}</p>
+  </div>
+</div>
+
+<button class="btn btn-default btn-md pull-right" type="button" ng-click="$ctrl.callService($ctrl.message)">
+  Get port
+</button>

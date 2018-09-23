@@ -1,0 +1,70 @@
+<div uib-accordion-group class="panel-default" ng-class="{'panel-success': $ctrl.toggle}" is-open="$ctrl.topic.isOpen">
+  <uib-accordion-heading>
+    {{ $ctrl.topic.abbr }}
+
+    <button class="btn btn-default btn-sm pull-right sub-btn" ng-click="$event.stopPropagation();$event.preventDefault();$ctrl.toggleSubscription(!$ctrl.toggle);" ng-model="$ctrl.toggle" uib-btn-checkbox>{{ $ctrl.toggle ? 'Unsubscribe' : 'Subscribe' }}</button>
+    <div style="float: right">  <small style="font-size: 12px;">({{ $ctrl.topic.type }})</small></div>
+
+    <div style="clear: both;"></div>
+  </uib-accordion-heading>
+
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-6">
+        <form class="form-horizontal form-margin">
+          <div class="form-group">
+            <label>Acceleration X</label>
+            <div class="input-group">
+              <input type="number" class="form-control" ng-model="$ctrl.message.linear_acceleration.x" ng-readonly="$ctrl.isSubscribing">
+              <span class="input-group-addon">m/s<sup>2</sup></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Acceleration Y</label>
+            <div class="input-group">
+              <input type="number" class="form-control" ng-model="$ctrl.message.linear_acceleration.y" ng-readonly="$ctrl.isSubscribing">
+              <span class="input-group-addon">m/s<sup>2</sup></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Acceleration Z</label>
+            <div class="input-group">
+              <input type="number" class="form-control" ng-model="$ctrl.message.linear_acceleration.z" ng-readonly="$ctrl.isSubscribing">
+              <span class="input-group-addon">m/s<sup>2</sup></span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-sm-6">
+        <form class="form-horizontal form-margin">
+          <div class="form-group">
+            <label>Angular Velocity X</label>
+            <div class="input-group">
+              <input type="number" class="form-control" ng-model="$ctrl.message.angular_velocity.x" ng-readonly="$ctrl.isSubscribing">
+              <span class="input-group-addon">rad/s</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Angular Velocity Y</label>
+            <div class="input-group">
+              <input type="number" class="form-control" ng-model="$ctrl.message.angular_velocity.y" ng-readonly="$ctrl.isSubscribing">
+              <span class="input-group-addon">rad/s</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Angular Velocity Z</label>
+            <div class="input-group">
+              <input type="number" class="form-control" ng-model="$ctrl.message.angular_velocity.z" ng-readonly="$ctrl.isSubscribing">
+              <span class="input-group-addon">rad/s</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

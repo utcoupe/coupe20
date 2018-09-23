@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>navigation_pathfinder</name>
+    <version>0.0.1</version>
+    <description>The navigation_pathfinder package</description>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe Association</maintainer>
+    <license>GPLv3</license>
+    <author email="mindstan@hotmail.fr">Mindstan</author>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>roscpp</depend>
+    <depend>roslib</depend>
+    <depend>std_msgs</depend>
+    <depend>message_generation</depend>
+    <depend>geometry_msgs</depend>
+    <depend>dynamic_reconfigure</depend>
+    <depend>ai_game_manager</depend>
+    <depend>memory_map</depend>
+    <depend>recognition_objects_classifier</depend>
+    <exec_depend>message_runtime</exec_depend>
+    <export>
+    </export>
+</package>

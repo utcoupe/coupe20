@@ -1,0 +1,58 @@
+<div class="action-container col-autofit">
+  <div class="form-group">
+    <label>Mode</label>
+    <div class="input-group">
+      <select class="form-control" ng-model="$ctrl.message.mode" ng-init="$ctrl.message.mode = 0">
+        <option ng-value="0">GOTO</option>
+        <option ng-value="1">GOTOA</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Direction</label>
+    <div class="input-group">
+      <select class="form-control" ng-model="$ctrl.message.direction" ng-init="$ctrl.message.direction = 2">
+        <option ng-value="0">BACKWARD</option>
+        <option ng-value="1">FORWARD</option>
+        <option ng-value="2">AUTOMATIC</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>X</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.target_pos.x">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+  <div class="form-group">
+
+    <label>Y</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.target_pos.y">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+
+  <div class="form-group" ng-if="$ctrl.message.mode == 1">
+    <label>&theta;</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.target_pos.theta">
+      <span class="input-group-addon">rad</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Collisions</label>
+    <div class="input-group">
+      <input type="checkbox" ng-model="$ctrl.message.disable_collisions"> Disable
+    </div>
+  </div>
+
+</div>
+
+<div ng-if="!!$ctrl.goal.isFinished">
+Result : {{ $ctrl.goal.result.success }}
+</div>

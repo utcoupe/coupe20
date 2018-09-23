@@ -1,0 +1,62 @@
+<div class="topic-container" style="grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));">
+
+  <div class="form-group">
+    <label>PWM Left</label>
+    <div class="input-group">
+      <input
+        type="number"
+        class="form-control"
+        ng-model="$ctrl.message.pwm_speed_left"
+        ng-readonly="$ctrl.isSubscribing"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>PWM Right</label>
+    <div class="input-group">
+      <input
+        type="number"
+        class="form-control"
+        ng-model="$ctrl.message.pwm_speed_right"
+        ng-readonly="$ctrl.isSubscribing"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Left Wheel</label>
+    <div class="input-group">
+      <input
+        type="number"
+        class="form-control"
+        ng-model="$ctrl.message.wheel_speed_left"
+        ng-readonly="$ctrl.isSubscribing"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Right Wheel</label>
+    <div class="input-group">
+      <input
+        type="number"
+        class="form-control"
+        ng-model="$ctrl.message.wheel_speed_right"
+        ng-readonly="$ctrl.isSubscribing"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Linear</label>
+    <div class="input-group">
+      <input
+        type="number"
+        class="form-control"
+        ng-model="$ctrl.message.linear_speed"
+        ng-readonly="$ctrl.isSubscribing"></input>
+      <span class="input-group-addon"></span>
+    </div>
+  </div>
+</div>

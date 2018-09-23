@@ -1,0 +1,28 @@
+<belt>
+  <params>
+    <param type="pololu">
+      <max_range>2</max_range> <!-- meters -->
+      <angle>0.44</angle> <!-- rad -->
+      <precision>0.05</precision> <!-- percents -->
+      <scale_responsive>1</scale_responsive> <!-- boolean : responds to scaling after computation or not -->
+    </param>
+    <param type="teraranger">
+      <max_range>5</max_range> <!-- meters -->
+      <angle>0.05235988</angle> <!-- rad -->
+      <precision>0.03</precision> <!-- percents -->
+      <scale_responsive>0</scale_responsive> <!-- boolean : responds to scaling after computation or not -->
+    </param>
+  </params>
+  <sensors>
+    <sensor id="sensor1" type="pololu"> <!-- x, y in meters, a in rad -->
+      <x>0.125</x>
+      <y>0.073</y>
+      <a>3.1415</a>
+    </sensor>
+    <sensor id="sensor2" type="pololu"> <!-- x, y in meters, a in rad -->
+      <x>0.125</x>
+      <y>-0.047</y>
+      <a>3.1415</a>
+    </sensor>
+  </sensors>
+</belt>

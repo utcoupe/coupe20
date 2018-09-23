@@ -1,0 +1,5 @@
+# Client nodes use this service to notify ai/game_manager that 
+# their initialization is done.
+string node_name  # Origin node name (format /namespace/packagename)
+bool success      # Whether the node initialized correctly
+---

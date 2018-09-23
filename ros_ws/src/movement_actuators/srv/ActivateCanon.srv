@@ -1,0 +1,10 @@
+# Service to activate the canon on PR
+# This will start the canon wheel and activate the flipper servo motors.
+# This service does not activate the barrel.
+
+# If value = -1, deactivate the canon.
+# If value = 0, let the server determine the fire distance.
+# If not, value has to contain the fire distance, in meters.
+float32 fire_distance
+---
+bool success

@@ -1,0 +1,4 @@
+# EmergencyStop service the the emergency stop flag. If 1, the robot stops right now.
+bool enable
+---
+bool response

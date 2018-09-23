@@ -1,0 +1,55 @@
+<div style="width:100%; height: 100%;">
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; float:left">
+      <center>PWM Speed Left</center>
+      <canvas id="line1" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; float:right">
+      <center>PWM Speed Right</center>
+      <canvas id="line2" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; display: inline-block">
+      <center>X Position</center>
+      <canvas id="line3" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; float:right">
+      <center>Orientation</center>
+      <canvas id="line4" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; float:left">
+      <center>Y Position</center>
+      <canvas id="line5" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; display: inline-block">
+
+      <uib-accordion>
+        <cc-service service="{ name: '/drivers/ard_asserv/parameters',
+                               type: 'drivers_ard_asserv/Parameters',
+                               isOpen: true,
+                               fetched: true,
+                               active: true
+                               }"></cc-service>
+      </uib-accordion>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; float:left">
+      <center>Wheel Speed Right</center>
+      <canvas id="line6" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; float:right">
+      <center>Wheel Speed Right</center>
+      <canvas id="line7" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+
+    <div class="chart-wrapper" style="width:calc(100% / 3); height:33%; display: inline-block">
+      <center>Linear Speed</center>
+      <canvas id="line8" width="1" height="1" class="chart chart-line"></canvas>
+    </div>
+</div>

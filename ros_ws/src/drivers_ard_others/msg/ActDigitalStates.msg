@@ -1,0 +1,1 @@
+bool[] states # ordered by ID, gives true/false for HIGH/LOW states.

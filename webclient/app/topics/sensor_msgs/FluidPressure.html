@@ -1,0 +1,22 @@
+<div uib-accordion-group class="panel-default" ng-class="{'panel-success': $ctrl.toggle}" is-open="$ctrl.topic.isOpen">
+  <uib-accordion-heading>
+    {{ $ctrl.topic.abbr }}
+
+    <button class="btn btn-default btn-sm pull-right sub-btn" ng-click="$event.stopPropagation();$event.preventDefault();$ctrl.toggleSubscription(!$ctrl.toggle);" ng-model="$ctrl.toggle" uib-btn-checkbox>{{ $ctrl.toggle ? 'Unsubscribe' : 'Subscribe' }}</button>
+    <div style="float: right">  <small style="font-size: 12px;">({{ $ctrl.topic.type }})</small></div>
+
+    <div style="clear: both;"></div>
+  </uib-accordion-heading>
+
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-12">
+        <button class="btn btn-default pull-right" type="button" ng-disabled="$ctrl.isSubscribing" style="margin-left: 10px;" ng-click="$ctrl.publishMessage($ctrl.message)">Publish</button>
+        <div class="input-group">
+          <input type="number" class="form-control" ng-model="$ctrl.message.fluid_pressure" ng-readonly="$ctrl.isSubscribing">
+          <span class="input-group-addon">Pa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

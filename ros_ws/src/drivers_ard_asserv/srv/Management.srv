@@ -1,0 +1,9 @@
+# Management is all the commands to manage the asserv
+uint8 KILLG = 0     #go to next order
+uint8 CLEANG = 1    #cancal all orders
+uint8 PAUSE = 2     #pause control
+uint8 RESUME = 3    #resume control
+uint8 RESET_ID = 4  #reset last finished id to 0
+uint8 mode
+---
+bool response

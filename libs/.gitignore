@@ -1,0 +1,7 @@
+# Ignore all files...
+*
+
+#..other than archive
+!.gitignore
+!*.tgz
+!*.tar.gz

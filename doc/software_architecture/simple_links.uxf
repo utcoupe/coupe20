@@ -1,0 +1,960 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>12</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>312</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>scheduler
+layer=5
+transparency=0
+valign=center
+group=2
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>528</x>
+      <y>264</y>
+      <w>288</w>
+      <h>264</h>
+    </coordinates>
+    <panel_attributes>ai
+--
+lt=..
+layer=2
+
+group=2
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>384</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>scripts
+layer=5
+transparency=0
+valign=center
+group=2
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>456</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>game_status
+layer=5
+transparency=0
+valign=center
+group=2
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>528</x>
+      <y>600</y>
+      <w>288</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>memory
+--
+bg=green
+lt=..
+layer=2
+
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>648</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>map
+layer=5
+bg=white
+transparency=0
+valign=center
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>720</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>definitions
+layer=5
+bg=white
+transparency=0
+valign=center
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>168</x>
+      <y>264</y>
+      <w>288</w>
+      <h>264</h>
+    </coordinates>
+    <panel_attributes>feedback
+--
+lt=..
+layer=2
+
+bg=pink
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>192</x>
+      <y>312</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>webclient
+layer=5
+bg=white
+transparency=0
+valign=center
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>192</x>
+      <y>384</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>rviz
+layer=5
+bg=white
+transparency=0
+valign=center
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>192</x>
+      <y>456</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>simulator
+layer=5
+bg=white
+transparency=0
+valign=center
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>888</x>
+      <y>264</y>
+      <w>288</w>
+      <h>264</h>
+    </coordinates>
+    <panel_attributes>navigation
+--
+lt=..
+layer=2
+
+bg=white
+group=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>912</x>
+      <y>312</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>navigator
+layer=5
+bg=white
+transparency=0
+valign=center
+group=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>912</x>
+      <y>384</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>pathfinder
+layer=5
+bg=white
+transparency=0
+valign=center
+group=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>912</x>
+      <y>456</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>collisions
+layer=5
+bg=white
+transparency=0
+valign=center
+group=5</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>888</x>
+      <y>600</y>
+      <w>288</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>movement
+--
+lt=..
+layer=2
+
+bg=cyan
+group=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>912</x>
+      <y>648</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>actuators
+layer=5
+bg=white
+transparency=0
+valign=center
+group=4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>1248</x>
+      <y>264</y>
+      <w>288</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>processing
+--
+bg=light_gray
+lt=..
+layer=2
+
+group=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1272</x>
+      <y>312</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lidar_objects
+layer=5
+bg=white
+transparency=0
+valign=center
+group=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1272</x>
+      <y>384</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>belt_interpreter
+layer=5
+bg=white
+transparency=0
+valign=center
+group=6</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>1248</x>
+      <y>528</y>
+      <w>288</w>
+      <h>336</h>
+    </coordinates>
+    <panel_attributes>recognition
+--
+bg=orange
+lt=..
+layer=2
+
+group=7</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1272</x>
+      <y>576</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>localizer
+layer=5
+bg=white
+transparency=0
+valign=center
+group=7</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1272</x>
+      <y>648</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>enemy_tracker
+layer=5
+bg=white
+transparency=0
+valign=center
+group=7</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1272</x>
+      <y>720</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>cube_finder
+layer=5
+bg=white
+transparency=0
+valign=center
+group=7</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1272</x>
+      <y>792</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>cp_recognizer
+layer=5
+bg=white
+transparency=0
+valign=center
+group=7</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>1608</x>
+      <y>264</y>
+      <w>288</w>
+      <h>696</h>
+    </coordinates>
+    <panel_attributes>drivers
+--
+bg=gray
+lt=..
+layer=2
+
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>312</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lidar
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>384</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>ax12
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>456</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>ard_others
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>528</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>ard_asserv
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>672</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>displacement
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>744</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>camera
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>816</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>pico_flexx
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>888</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>ard_hmi
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1632</x>
+      <y>600</y>
+      <w>240</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>imu
+layer=5
+bg=white
+transparency=0
+valign=center
+group=8</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>144</x>
+      <y>216</y>
+      <w>1776</w>
+      <h>768</h>
+    </coordinates>
+    <panel_attributes>Architecture ROS - connexions principales - coupe18
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>564</x>
+      <y>348</y>
+      <w>36</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>528</x>
+      <y>336</y>
+      <w>48</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>20.0;10.0;10.0;10.0;10.0;110.0;20.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>336</y>
+      <w>72</w>
+      <h>348</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;270.0;10.0;270.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>312</y>
+      <w>156</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>924</x>
+      <y>348</y>
+      <w>36</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>888</x>
+      <y>336</y>
+      <w>48</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>20.0;10.0;10.0;10.0;10.0;110.0;20.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>324</y>
+      <w>156</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;280.0;110.0;280.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>504</x>
+      <y>480</y>
+      <w>1152</w>
+      <h>444</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=red</panel_attributes>
+    <additional_attributes>40.0;10.0;10.0;10.0;10.0;350.0;940.0;350.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>312</y>
+      <w>156</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1140</x>
+      <y>384</y>
+      <w>516</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=blue</panel_attributes>
+    <additional_attributes>10.0;230.0;50.0;230.0;50.0;80.0;380.0;80.0;380.0;10.0;410.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1140</x>
+      <y>480</y>
+      <w>516</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=blue</panel_attributes>
+    <additional_attributes>10.0;160.0;60.0;160.0;60.0;10.0;410.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>408</y>
+      <w>156</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;50.0;110.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1140</x>
+      <y>312</y>
+      <w>516</w>
+      <h>252</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=blue</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;160.0;380.0;160.0;380.0;190.0;410.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1140</x>
+      <y>396</y>
+      <w>156</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=gray</panel_attributes>
+    <additional_attributes>10.0;60.0;60.0;60.0;60.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>576</y>
+      <w>156</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0;60.0;30.0;110.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>588</y>
+      <w>156</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;80.0;110.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>768</y>
+      <w>156</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;30.0;50.0;30.0;50.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>600</y>
+      <w>156</w>
+      <h>252</h>
+    </coordinates>
+    <panel_attributes>layer=10</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;190.0;110.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1212</x>
+      <y>312</y>
+      <w>84</w>
+      <h>384</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=gray</panel_attributes>
+    <additional_attributes>50.0;300.0;10.0;300.0;10.0;10.0;50.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1224</x>
+      <y>408</y>
+      <w>72</w>
+      <h>276</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=gray</panel_attributes>
+    <additional_attributes>40.0;210.0;10.0;210.0;10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1212</x>
+      <y>312</y>
+      <w>84</w>
+      <h>444</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=gray</panel_attributes>
+    <additional_attributes>50.0;350.0;10.0;350.0;10.0;10.0;50.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>720</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>732</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>744</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>312</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>324</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>336</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>384</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>396</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>408</y>
+      <w>72</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=black</panel_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>672</y>
+      <w>516</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=orange</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0;80.0;70.0;410.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1140</x>
+      <y>324</y>
+      <w>156</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>layer=10
+fg=gray</panel_attributes>
+    <additional_attributes>10.0;120.0;60.0;120.0;60.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+</diagram>

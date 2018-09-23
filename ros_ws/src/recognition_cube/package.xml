@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>recognition_cube</name>
+    <version>0.0.0</version>
+    <description>
+        The recognition_cube package find the center of the closest cube of the robot
+    </description>
+    <license>GPLv3</license>
+    <author email="utcoupe@assos.utc.fr">milesial</author>
+    <maintainer email="utcoupe@asso.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>rospy</depend>
+    <depend>geometry_msgs</depend>
+    <depend>tf2</depend>
+    <depend>tf2_ros</depend>
+    <export>
+    </export>
+</package>

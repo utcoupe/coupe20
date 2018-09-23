@@ -1,0 +1,4 @@
+string request # e.g. processing/Belt.xml
+---
+string path
+bool success

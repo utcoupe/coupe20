@@ -1,0 +1,1 @@
+string[] strategies_names

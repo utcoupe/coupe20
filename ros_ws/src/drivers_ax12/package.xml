@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>drivers_ax12</name>
+  <version>0.0.0</version>
+  <description>The drivers_ax12 package</description>
+
+  <license>GPLv3</license>
+  <author email="utcoupe@assos.utc.fr">milesial</author>
+  <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>drivers_port_finder</build_depend>
+  <build_depend>ai_game_manager</build_depend>
+  <build_depend>dynamixel_sdk</build_depend>
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>drivers_port_finder</exec_depend>
+  <exec_depend>ai_game_manager</exec_depend>
+  <exec_depend>memory_definition</exec_depend>
+
+  <export>
+  </export>
+</package>

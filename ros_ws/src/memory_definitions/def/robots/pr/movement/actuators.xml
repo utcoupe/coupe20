@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actuators> 
+    <act name="canon" id="0" type="pwm" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="ON"  value="60" />
+            <preset name="MID" value="40"/>
+            <preset name="OFF" value="0" />
+        </positions>
+    </act>
+
+    <act name="servo_button" id="3" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OPEN" value="170" />
+            <preset name="CLOSE" value="20" />
+            <preset name="armed" value="42" />
+        </positions>
+    </act>
+    <act name="servo_front_lift" id="0" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OPEN" value="80" />
+            <preset name="CLOSE" value="10" />
+        </positions>
+    </act>
+    <act name="servo_back_lift" id="1" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="OPEN" value="80" />
+            <preset name="CLOSE" value="10" />
+        </positions>
+    </act>
+    <act name="servo_lock" id="2" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="LEFT" value="10" />
+            <preset name="RIGHT" value="100" />
+        </positions>
+    </act>
+    <act name="servo_flipper_side_canon" id="3" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="15">
+            <preset name="MIN" value="15" />
+            <preset name="MAX" value="90" />
+        </positions>
+    </act>
+    <act name="servo_flipper_side_bin" id="4" type="servo" family="arduino">
+        <timeout value="500"/> <!-- Default timeout -->
+        <positions default="100">
+            <preset name="MIN" value="100" />
+            <preset name="MAX" value="20" />
+        </positions>
+    </act>
+
+
+    <act name="cubeholder" id="5" type="ax12" family="ax12">
+        <timeout value="300"/> <!-- Default timeout -->
+        <positions default="10">
+            <preset name="OPEN" value="170" />
+            <preset name="CLOSE" value="10" />
+        </positions>
+    </act>
+    <act name="cc1" id="1" type="pwm" family="arduino">
+        <timeout value="10000"/> <!-- Default timeout -->
+        <positions default="0">
+            <preset name="spinmax" value="390" />
+        </positions>
+    </act>
+    <act name="barrel" id="6" type="ax12" family="ax12">
+        <timeout value="1500"/> <!-- Default timeout -->
+        <positions default="500">
+            <preset name="HIGH" value="500" />
+            <preset name="CANON" value="850" />
+            <preset name="BIN" value="320" />
+        </positions>
+    </act>
+</actuators>

@@ -1,0 +1,1 @@
+RectangleStamped[] rects

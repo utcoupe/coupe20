@@ -1,0 +1,9 @@
+# Service to get items, attributes and objects from the map.
+# Please refer to the README file on how to request a specific datum.
+string request_path
+---
+# Response can either be a simple string object (with a string, int, bool etc. inside) or a JSON dictionary.
+# An false success field most probably means the request path isn't valid.
+# Try to refer to the map logs. A failed GET request will generate a ROS error log on /rosout.
+bool success
+string response

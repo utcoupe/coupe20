@@ -1,0 +1,59 @@
+<div class="panel panel-default">
+  <div class="panel-heading clearfix">
+    <div class="row">
+      <div class="col-sm-6">
+        <label>Frame</label>
+        <input type="text" class="form-control"
+               ng-model="$ctrl.transform.frame"
+               ng-change="$ctrl.refresh()"></input>
+      </div>
+      <div class=""></div>
+      <div class="col-sm-6">
+        <label>Fixed</label>
+        <input type="text" class="form-control"
+               ng-model="$ctrl.transform.fixed"
+               ng-change="$ctrl.refresh()"></input>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body" ng-show="$ctrl.transform.fixed && $ctrl.transform.frame && $ctrl.transform.response">
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Tx </label>
+          <br>
+          {{ $ctrl.transform.response.translation.x.toFixed(5) }}
+        </div>
+        <div class="col-md-4">
+          <label>Ty </label>
+          <br>
+          {{ $ctrl.transform.response.translation.y.toFixed(5) }}
+        </div>
+        <div class="col-md-4">
+          <label>Tz </label>
+          <br>
+          {{ $ctrl.transform.response.translation.z.toFixed(5) }}
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Rx </label>
+          <br>
+          {{ $ctrl.transform.response.rotation.x.toFixed(5) }}
+        </div>
+        <div class="col-md-4">
+          <label>Ry </label>
+          <br>
+          {{ $ctrl.transform.response.rotation.y.toFixed(5) }}
+        </div>
+        <div class="col-md-4">
+          <label>Rz </label>
+          <br>
+          {{ $ctrl.transform.response.rotation.z.toFixed(5) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

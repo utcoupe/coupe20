@@ -1,0 +1,26 @@
+<orders> <!-- Creating an order with the same ref as a system order will override the latest. -->
+	<!-- Actuators -->
+	<order ref="actuator_ax12_set_pos" duration="1.5">
+		<message dest="/drivers/ax12" timeout="8">
+			<param name="motor_id" type="int"/>
+			<param name="position" type="int"/> <!-- Set either a preset or param-->
+			<param name="speed" type="int" optional="true">0</param>
+			<param name="mode" type="int" preset="true">0</param>
+		</message>
+		<response>
+			<param name="success" type="bool" condition="==">1</param>
+		</response>
+	</order>
+
+	<order ref="arm_goto" duration="1.5">
+		<message dest="/movement/actuators/arm">
+			<param name="frame_id" type="string"/>
+			<param name="x" type="float"/>
+			<param name="y" type="float"/>
+			<param name="timeout" type="float">10.0</param>
+		</message>
+		<response>
+			<param name="success" type="bool" condition="==">1</param>
+		</response>
+	</order>
+</orders>

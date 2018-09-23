@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>navigation_navigator</name>
+    <version>0.0.2</version>
+    <description>The movement/navigation/navigator package for coupe18</description>
+    <license>GLPv3</license>
+    <author email="mindstan@hotmail.fr">Gaëtan Blond</author>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>message_generation</build_depend>
+    <depend>rospy</depend>
+    <depend>std_msgs</depend>
+    <depend>actionlib</depend>
+    <depend>tf</depend>
+    <depend>interactive_markers</depend>
+    <depend>actionlib_msgs</depend>
+    <depend>visualization_msgs</depend>
+    <depend>navigation_pathfinder</depend>
+    <depend>drivers_ard_asserv</depend>
+    <depend>memory_map</depend>
+    <depend>ai_game_manager</depend>
+    <exec_depend>message_runtime</exec_depend>
+    <export>
+    </export>
+</package>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>drivers_port_finder</name>
+    <version>0.0.1</version>
+    <description>
+        Package which determines which serial component is connected on which port.
+    </description>
+    <license>GPLv3</license>
+    <author email="tomesman@gmail.com">Thomas Fuhrmann</author>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>message_generation</build_depend>
+    <depend>rospy</depend>
+    <depend>std_msgs</depend>>
+    <exec_depend>message_runtime</exec_depend>
+    <export>
+    </export>
+</package>

@@ -1,0 +1,5 @@
+# This service will reply with a list of all the map objects available.
+bool collisions_only # consider only objects that can collide with the robot
+---
+bool success
+string[] objects # JSON definition of each retrieved object.

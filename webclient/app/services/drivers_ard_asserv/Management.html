@@ -1,0 +1,13 @@
+
+<div ng-show="false"
+ng-init="commands = ['KILLG', 'CLEANG', 'PAUSE', 'RESUME', 'RESET_ID']"></div>
+
+<div class="service-container col-autofit" style="margin-bottom:-15px;">
+  <div ng-repeat="c in commands" class="form-group">
+    <center>
+      <button class="btn btn-default btn-md" type="button"  ng-click="$ctrl.callService({mode: $index})">
+        {{ c }}
+      </button>
+    </center>
+  </div>
+</div>

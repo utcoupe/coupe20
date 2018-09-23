@@ -1,0 +1,51 @@
+<!-- set variables, not clean but no need for another controller -->
+<div ng-show="false" ng-init="modes = ['Position', 'Position & Angle', 'Angle', 'Angle (no modulo)']"></div>
+<div ng-show="false" ng-init="x = 0; y = 0; a = 0;"></div>
+
+
+
+<div class="service-container col-autofit">
+  <div class="form-group">
+    <label>Mode</label>
+    <div class="input-group">
+      <select class="form-control" ng-model="command" ng-init="command = 0">
+        <option ng-repeat="m in modes" ng-value="$index">{{ m }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="command == 0 || command == 1">
+    <label>X</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="x">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="command == 0 || command == 1">
+    <label>Y</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="y">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="command > 0">
+    <label>Angle</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="a">
+      <span class="input-group-addon">deg</span>
+    </div>
+  </div>
+</div>
+
+<button class="btn btn-default btn-md pull-right" type="button" ng-click="$ctrl.callService({
+    position: {
+      x,
+      y,
+      theta: a * 3.14159 / 180
+    },
+    mode: command
+})">
+  Go to {{ modes[command] | lowercase}}
+</button>

@@ -1,0 +1,14 @@
+
+<div class="service-container col-autofit">
+  <button type="button" class="btn btn-danger btn-lg"
+          ng-click="$ctrl.callService({'enable': true})">
+    <span style="font-size: x-large;">
+      <span class="glyphicon glyphicon-warning-sign"></span>
+      &ensp;<strong>EMERGENCY STOP</strong>&ensp;
+      <span class="glyphicon glyphicon-warning-sign"></span>
+    </span>
+  </button>
+  <button type="button pull-right"
+          ng-click="$ctrl.callService({'enable': false})"
+          class="btn btn-default btn-md">Start again</button>
+</div>

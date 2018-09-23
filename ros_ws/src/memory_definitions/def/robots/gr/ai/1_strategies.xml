@@ -1,0 +1,47 @@
+<strategies>
+	<teams>
+		<team name="green"/>
+		<team name="orange"/>
+	</teams>
+
+	<!-- Real game strategies -->
+	<strategy name="button_bee_cube">
+		<actionref ref="game_setup"/>
+		<actionref ref="game_start"/>
+
+		<tasklist name="Main actions">
+			<actionref ref="activate_button"/>
+			<actionref ref="activate_bee"/>
+			<actionref ref="get_cubes"/>
+		</tasklist>
+	</strategy>
+
+	<!-- Test strategies -->
+	<strategy name="test_button">
+		<actionref ref="game_setup"/>
+		<actionref ref="game_start"/>
+
+		<tasklist name="Main actions">
+			<actionref ref="activate_button" reward="25"/>
+		</tasklist>
+	</strategy>
+
+	<strategy name="test_button_bee">
+		<actionref ref="game_setup"/>
+		<actionref ref="game_start"/>
+
+		<tasklist name="Main actions">
+			<actionref ref="activate_button" reward="25"/>
+			<actionref ref="activate_bee" reward="50"/>
+		</tasklist>
+	</strategy>
+
+	<strategy name="cube">
+		<actionref ref="game_setup"/>
+		<actionref ref="game_start"/>
+
+		<tasklist name="Main actions">
+			<actionref ref="get_cubes" reward="5"/>
+		</tasklist>
+	</strategy>
+</strategies>

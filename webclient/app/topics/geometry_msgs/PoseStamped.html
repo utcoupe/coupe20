@@ -1,0 +1,52 @@
+<div class="topic-container col-autofit">
+  <div class="form-group">
+    <label>X</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.pose.position.x" ng-readonly="$ctrl.isSubscribing">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+  <div class="form-group">
+
+    <label>Y</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.pose.position.y" ng-readonly="$ctrl.isSubscribing">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Z</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-model="$ctrl.message.pose.position.z" ng-readonly="$ctrl.isSubscribing">
+      <span class="input-group-addon">m</span>
+    </div>
+  </div>
+</div>
+<div class="topic-container col-autofit">
+  <!-- TODO: check if these ng-value work -->
+  <div class="form-group">
+    <label>Q0</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-value="$ctrl.Quaternions.getRoll($ctrl.message.pose.orientation)" ng-readonly="true">
+      <span class="input-group-addon">°</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Pitch</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-value="$ctrl.Quaternions.getPitch($ctrl.message.pose.orientation)" ng-readonly="true">
+      <span class="input-group-addon">°</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Yaw</label>
+    <div class="input-group">
+      <input type="number" class="form-control" ng-value="$ctrl.Quaternions.getYaw($ctrl.message.pose.orientation)" ng-readonly="true">
+      <span class="input-group-addon">°</span>
+    </div>
+  </div>
+
+</div>

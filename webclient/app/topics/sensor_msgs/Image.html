@@ -1,0 +1,20 @@
+<div uib-accordion-group class="panel-default" ng-class="{'panel-success': $ctrl.toggle}" is-open="$ctrl.topic.isOpen">
+  <uib-accordion-heading>
+    {{ $ctrl.topic.abbr }}
+
+    <button class="btn btn-default btn-sm pull-right sub-btn" ng-click="$event.stopPropagation();$event.preventDefault();$ctrl.toggleSubscription(!$ctrl.toggle);" ng-model="$ctrl.toggle" uib-btn-checkbox>{{ $ctrl.toggle ? 'Unsubscribe' : 'Subscribe' }}</button>
+    <div style="float: right">  <small style="font-size: 12px;">({{ $ctrl.topic.type }})</small></div>
+
+    <div style="clear: both;"></div>
+  </uib-accordion-heading>
+
+  <div class="panel-body" ng-if="$ctrl.toggle">
+    <div class="row">
+      <div class="col-sm-12">
+        <center>
+          <img class="img-responsive img-thumbnail" ng-src="http://{{ $ctrl.setting.address }}:{{ $ctrl.setting.imagePreview.port }}/stream?topic={{ $ctrl.topic.name }}&quality={{ $ctrl.setting.imagePreview.quality }}&width={{ $ctrl.setting.imagePreview.width }}&height={{ $ctrl.setting.imagePreview.height }}">
+        </center>
+      </div>
+    </div>
+  </div>
+</div>

@@ -25,7 +25,7 @@ public:
     /**
      * Shortcut for path in inside referential and type.
      */
-    typedef std::vector<Point> Path;
+    using Path = std::vector<Point>;
     
     enum class FindPathStatus {NO_ERROR, NO_PATH_FOUND, MAP_NOT_LOADED, START_END_POS_NOT_VALID};
 

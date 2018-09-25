@@ -4,13 +4,13 @@ class AsservController {
     this.$interval = $interval;
 
 
-    Ros.listen('/drivers/ard_asserv/pose2d', function (e) {
+    Ros.listen('drivers/ard_asserv/pose2d', function (e) {
       this.pushDataToChart(2, e.x);
       this.pushDataToChart(3, e.theta);
       this.pushDataToChart(4, e.y);
     }.bind(this))
 
-    Ros.listen('/drivers/ard_asserv/speed', function (e) {
+    Ros.listen('drivers/ard_asserv/speed', function (e) {
       this.pushDataToChart(0, e.pwm_speed_left);
       this.pushDataToChart(1, e.pwm_speed_right);
       this.pushDataToChart(5, e.wheel_speed_left);

@@ -173,15 +173,15 @@ void on_ros_event(const drivers_ard_hmi::ROSEvent& msg){
         ui.switchToFrame(4);
 }
 
-ros::Subscriber<drivers_ard_hmi::SetStrategies> sub_strats     ("/feedback/ard_hmi/set_strategies", &on_set_strategies);
-ros::Subscriber<drivers_ard_hmi::SetTeams>      sub_teams      ("/feedback/ard_hmi/set_teams", &on_set_teams);
-ros::Subscriber<drivers_ard_hmi::ROSEvent>      sub_ros_events ("/feedback/ard_hmi/ros_event", &on_ros_event);
-ros::Subscriber<ai_game_manager::GameStatus>    sub_game_status("/ai/game_manager/status",     &on_game_status);
-ros::Subscriber<ai_game_manager::GameTime>             sub_game_timer ("/ai/game_manager/time",       &on_game_timer);
-ros::Subscriber<ai_scheduler::AIScore>          sub_score      ("/ai/scheduler/score",         &on_score);
+ros::Subscriber<drivers_ard_hmi::SetStrategies> sub_strats     ("feedback/ard_hmi/set_strategies", &on_set_strategies);
+ros::Subscriber<drivers_ard_hmi::SetTeams>      sub_teams      ("feedback/ard_hmi/set_teams", &on_set_teams);
+ros::Subscriber<drivers_ard_hmi::ROSEvent>      sub_ros_events ("feedback/ard_hmi/ros_event", &on_ros_event);
+ros::Subscriber<ai_game_manager::GameStatus>    sub_game_status("ai/game_manager/status",     &on_game_status);
+ros::Subscriber<ai_game_manager::GameTime>             sub_game_timer ("ai/game_manager/time",       &on_game_timer);
+ros::Subscriber<ai_scheduler::AIScore>          sub_score      ("ai/scheduler/score",         &on_score);
 
 drivers_ard_hmi::HMIEvent hmi_event_msg;
-ros::Publisher hmi_event_pub("/feedback/ard_hmi/hmi_event", &hmi_event_msg);
+ros::Publisher hmi_event_pub("feedback/ard_hmi/hmi_event", &hmi_event_msg);
 
 
 

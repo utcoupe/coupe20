@@ -20,8 +20,8 @@ class CollisionsNode():
         self.subscriptions = CollisionsSubscriptions()
         Map.Robot = self.subscriptions.create_robot()
 
-        rospy.Service("/navigation/collisions/set_active", ActivateCollisions, self.on_set_active)
-        self.pub = rospy.Publisher("/navigation/collisions/warner", PredictedCollision, queue_size=1)
+        rospy.Service("navigation/collisions/set_active", ActivateCollisions, self.on_set_active)
+        self.pub = rospy.Publisher("navigation/collisions/warner", PredictedCollision, queue_size=1)
 
         self.markers = MarkersPublisher()
         self.subscriptions.send_init()

@@ -13,7 +13,7 @@ __date__ = 06/01/2018
 
 NODE_NAME = "teraranger"
 PUBLISH_INTERVAL = 0.02  # in ms
-GET_PORT_SERVICE_NAME = "/drivers/port_finder/get_port"
+GET_PORT_SERVICE_NAME = "drivers/port_finder/get_port"
 GET_PORT_SERVICE_TIMEOUT = 15  # in seconds
 WATCHDOG_PERIOD = 0.1  # in seconds
 
@@ -41,7 +41,7 @@ class Teraranger:
             rospy.logerr("Teraranger port has not been found, start the node but can't send real data...")
             status.ready(False)
         self._range_value = 0.0
-        self._pub_belt_range = rospy.Publisher("/drivers/ard_others/belt_ranges", BeltRange, queue_size=1)
+        self._pub_belt_range = rospy.Publisher("drivers/ard_others/belt_ranges", BeltRange, queue_size=1)
         self._sub_terarange = rospy.Subscriber("/teraranger_one", Range, self._callback_teranranger_range)
         while not rospy.is_shutdown():
             if self._connected:

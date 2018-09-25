@@ -13,8 +13,8 @@ COLLISIONS_WATCHDOG_TIME = 0.3
 
 class CollisionsClient(object):
     def __init__ (self, callbackStop, callbackResume):
-        self.WARNER_TOPIC = "/navigation/collisions/warner"
-        self.ACTIVATE_COLLISIONS_SERVICE_NAME = "/navigation/collisions/set_active"
+        self.WARNER_TOPIC = "navigation/collisions/warner"
+        self.ACTIVATE_COLLISIONS_SERVICE_NAME = "navigation/collisions/set_active"
         self._callbackStop = callbackStop
         self._callbackResume = callbackResume
         self._tmr_collisions_check = rospy.Timer(rospy.Duration(COLLISIONS_WATCHDOG_TIME), self._callback_timer_collisions_watchdog)

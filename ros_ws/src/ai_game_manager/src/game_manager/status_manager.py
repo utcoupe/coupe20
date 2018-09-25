@@ -10,13 +10,13 @@ class StatusManager():
     INIT_TIMEOUT = 40 # seconds to wait for the nodes to send their init response before timeout.
 
     def __init__(self):
-        self._node_ready_notif = rospy.Service("/ai/game_manager/node_ready", NodeReady, self.on_node_ready)
-        self._set_status_srv   = rospy.Service("/ai/game_manager/set_status", SetStatus, self.on_set_status)
-        self._game_status_pub  = rospy.Publisher("/ai/game_manager/status", GameStatus,        queue_size = 10)
-        self._arm_pub          = rospy.Publisher("/ai/game_manager/arm",    ArmRequest,        queue_size = 1)
-        self._nodes_status_pub = rospy.Publisher("/ai/game_manager/nodes_status", NodesStatus, queue_size = 10)
+        self._node_ready_notif = rospy.Service("ai/game_manager/node_ready", NodeReady, self.on_node_ready)
+        self._set_status_srv   = rospy.Service("ai/game_manager/set_status", SetStatus, self.on_set_status)
+        self._game_status_pub  = rospy.Publisher("ai/game_manager/status", GameStatus,        queue_size = 10)
+        self._arm_pub          = rospy.Publisher("ai/game_manager/arm",    ArmRequest,        queue_size = 1)
+        self._nodes_status_pub = rospy.Publisher("ai/game_manager/nodes_status", NodesStatus, queue_size = 10)
 
-        rospy.Subscriber("/feedback/ard_hmi/hmi_event", HMIEvent, self.on_hmi_event)
+        rospy.Subscriber("feedback/ard_hmi/hmi_event", HMIEvent, self.on_hmi_event)
 
         self.game_status = Status.STATUS_INIT
         self.init_status = Status.INIT_INITIALIZING

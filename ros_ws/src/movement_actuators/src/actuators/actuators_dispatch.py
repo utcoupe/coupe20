@@ -26,9 +26,9 @@ class ActuatorsDispatch(ActuatorsAbstract):
         # This counter enables to keep a track of orders sent to arduino
         self._order_id_counter = 0
         self._act_parser = actuators_parser.ActuatorsParser()
-        self._pub_ard_move = rospy.Publisher('/drivers/ard_others/move', drivers_ard_others.msg.Move, queue_size=3)
-        self._sub_ard_response = rospy.Subscriber('/drivers/ard_others/move_response', drivers_ard_others.msg.MoveResponse, self._callback_move_response)
-        self._act_cli_ax12 = actionlib.ActionClient('/drivers/ax12', Ax12CommandAction)
+        self._pub_ard_move = rospy.Publisher('drivers/ard_others/move', drivers_ard_others.msg.Move, queue_size=3)
+        self._sub_ard_response = rospy.Subscriber('drivers/ard_others/move_response', drivers_ard_others.msg.MoveResponse, self._callback_move_response)
+        self._act_cli_ax12 = actionlib.ActionClient('drivers/ax12', Ax12CommandAction)
         self._act_cli_ax12.wait_for_server(rospy.Duration(10))
         self._isHalted = False
 

@@ -4,9 +4,9 @@
 
 using namespace std;
 
-const string READY_SRV = "/ai/game_manager/node_ready";
-const string ARM_SRV   = "/ai/game_manager/arm";
-const string HALT_SRV  = "/ai/game_manager/status";
+const string READY_SRV = "ai/game_manager/node_ready";
+const string ARM_SRV   = "ai/game_manager/arm";
+const string HALT_SRV  = "ai/game_manager/status";
 const auto TIMEOUT_READY_SRV = ros::Duration(15.0);
 
 StatusServices::StatusServices(const string& namespaceName, const string& packageName, ArmCallback_t armCallback, StatusCallback_t statusCallback) :

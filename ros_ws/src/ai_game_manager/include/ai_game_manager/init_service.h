@@ -25,7 +25,7 @@ public:
      * @brief Initialize the status service and saves the callbacks for the future requests and events.
      * 
      * Creates the service `(nodename)/arm` that will be called by `ai_game_manager` main node when all the node in our network must arm.
-     * It subscribes also to the topic `/ai/game_manager/status`. To avoid any compatibility problems between std C++ and boost, statusCallback is not directly connected, it will be called through _on_arm member function.
+     * It subscribes also to the topic `ai/game_manager/status`. To avoid any compatibility problems between std C++ and boost, statusCallback is not directly connected, it will be called through _on_arm member function.
      * 
      * @param namespaceName The name of the node namespace.
      * @param packageName The name of the package or node.
@@ -37,7 +37,7 @@ public:
     /**
      * @brief Notify the `ai/game_manager` main node that the current node tried to launch and say if it succeeded.
      * 
-     * Calls the service `/ai/game_manager/node_ready` with the node name and the success boolean as parameters.
+     * Calls the service `ai/game_manager/node_ready` with the node name and the success boolean as parameters.
      * 
      * @param success Indicates if the node succeeded to start and initialize.
      */

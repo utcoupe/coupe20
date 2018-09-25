@@ -30,8 +30,8 @@ const string                GR_MAP_FILE_NAME            = "layer_pathfinder.bmp"
 
 const size_t                SIZE_MAX_QUEUE              = 10;
 const double                SAFETY_MARGIN               = 0.15;
-const string                MAP_GET_OBJECTS_SERVER      = "/memory/map/get_objects";
-const string                OBJECTS_CLASSIFIER_TOPIC    = "/recognition/objects_classifier/objects";
+const string                MAP_GET_OBJECTS_SERVER      = "memory/map/get_objects";
+const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_classifier/objects";
 
 template<typename T>
 unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic);

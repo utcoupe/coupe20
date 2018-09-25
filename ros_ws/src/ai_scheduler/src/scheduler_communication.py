@@ -28,29 +28,29 @@ class RequestTypes(object):
     @staticmethod
     def init():
         RequestTypes.SERVERS = {
-            "/ai/scheduler/score":               (RequestTypes.PUB_MSG, ai_scheduler.msg.AIScore),
-            "/ai/game_manager/set_status":        (RequestTypes.SERVICE, ai_game_manager.srv.SetStatus),
-            "/ai/game_manager/set_timer":               (RequestTypes.SERVICE, ai_game_manager.srv.SetTimer),
-            "/ai/game_manager/delay":                   (RequestTypes.SERVICE, ai_game_manager.srv.Delay),
+            "ai/scheduler/score":               (RequestTypes.PUB_MSG, ai_scheduler.msg.AIScore),
+            "ai/game_manager/set_status":        (RequestTypes.SERVICE, ai_game_manager.srv.SetStatus),
+            "ai/game_manager/set_timer":               (RequestTypes.SERVICE, ai_game_manager.srv.SetTimer),
+            "ai/game_manager/delay":                   (RequestTypes.SERVICE, ai_game_manager.srv.Delay),
 
-            "/memory/map/get":                   (RequestTypes.SERVICE, memory_map.srv.MapGet),
-            "/memory/map/set":                   (RequestTypes.SERVICE, memory_map.srv.MapSet),
-            "/memory/map/transfer":              (RequestTypes.SERVICE, memory_map.srv.MapTransfer),
+            "memory/map/get":                   (RequestTypes.SERVICE, memory_map.srv.MapGet),
+            "memory/map/set":                   (RequestTypes.SERVICE, memory_map.srv.MapSet),
+            "memory/map/transfer":              (RequestTypes.SERVICE, memory_map.srv.MapTransfer),
 
-            "/navigation/navigator/goto_action": (RequestTypes.ACTION,  navigation_navigator.msg.DoGotoAction, navigation_navigator.msg.DoGotoGoal),
-            "/navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigation_navigator.msg.DoGotoWaypointAction, navigation_navigator.msg.DoGotoWaypointGoal),
-            "/movement/actuators/dispatch":      (RequestTypes.ACTION,  movement_actuators.msg.DispatchAction, movement_actuators.msg.DispatchGoal),
-            "/movement/actuators/barrel":        (RequestTypes.ACTION, movement_actuators.msg.BarrelAction, movement_actuators.msg.BarrelGoal),
-            "/movement/actuators/arm":           (RequestTypes.ACTION, movement_actuators.msg.ArmAction, movement_actuators.msg.ArmGoal),
-            "/movement/actuators/activate_canon":        (RequestTypes.SERVICE, movement_actuators.srv.ActivateCanon),
+            "navigation/navigator/goto_action": (RequestTypes.ACTION,  navigation_navigator.msg.DoGotoAction, navigation_navigator.msg.DoGotoGoal),
+            "navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigation_navigator.msg.DoGotoWaypointAction, navigation_navigator.msg.DoGotoWaypointGoal),
+            "movement/actuators/dispatch":      (RequestTypes.ACTION,  movement_actuators.msg.DispatchAction, movement_actuators.msg.DispatchGoal),
+            "movement/actuators/barrel":        (RequestTypes.ACTION, movement_actuators.msg.BarrelAction, movement_actuators.msg.BarrelGoal),
+            "movement/actuators/arm":           (RequestTypes.ACTION, movement_actuators.msg.ArmAction, movement_actuators.msg.ArmGoal),
+            "movement/actuators/activate_canon":        (RequestTypes.SERVICE, movement_actuators.srv.ActivateCanon),
 
-            "/drivers/ard_asserv/set_pos":       (RequestTypes.SERVICE, drivers_ard_asserv.srv.SetPos),
-            "/drivers/ard_asserv/pwm": (RequestTypes.SERVICE, drivers_ard_asserv.srv.Pwm),
-            "/drivers/ard_asserv/goto_action": (RequestTypes.ACTION, drivers_ard_asserv.msg.DoGotoAction, drivers_ard_asserv.msg.DoGotoGoal),
-            "/drivers/ax12":                (RequestTypes.ACTION, drivers_ax12.msg.Ax12CommandAction, drivers_ax12.msg.Ax12CommandGoal),
+            "drivers/ard_asserv/set_pos":       (RequestTypes.SERVICE, drivers_ard_asserv.srv.SetPos),
+            "drivers/ard_asserv/pwm": (RequestTypes.SERVICE, drivers_ard_asserv.srv.Pwm),
+            "drivers/ard_asserv/goto_action": (RequestTypes.ACTION, drivers_ard_asserv.msg.DoGotoAction, drivers_ard_asserv.msg.DoGotoGoal),
+            "drivers/ax12":                (RequestTypes.ACTION, drivers_ax12.msg.Ax12CommandAction, drivers_ax12.msg.Ax12CommandGoal),
 
-            "/feedback/ard_hmi/ros_event":       (RequestTypes.PUB_MSG, drivers_ard_hmi.msg.ROSEvent),
-            "/feedback/ard_hmi/hmi_event":       (RequestTypes.SUB_MSG, drivers_ard_hmi.msg.HMIEvent)}
+            "feedback/ard_hmi/ros_event":       (RequestTypes.PUB_MSG, drivers_ard_hmi.msg.ROSEvent),
+            "feedback/ard_hmi/hmi_event":       (RequestTypes.SUB_MSG, drivers_ard_hmi.msg.HMIEvent)}
 
     @staticmethod
     def getRequestType(dest):

@@ -18,10 +18,10 @@ class Localizer(object):
         self._br = tf2_ros.TransformBroadcaster()
 
         # TODO : subscribe to all sources of info
-        self._sub_asserv = rospy.Subscriber("/drivers/ard_asserv/pose2d", Pose2D,
+        self._sub_asserv = rospy.Subscriber("drivers/ard_asserv/pose2d", Pose2D,
                                           self.callback_asserv)
-        self._lidar_sub = rospy.Subscriber("/processing/lidar_objects/raw_cube", Obstacles, self.lidar_callback)
-        self._srv_lidar_pos = rospy.Service("/recognition/localizer/recognition_cube", Cube_localizer, self.callback_lidar_pos)
+        self._lidar_sub = rospy.Subscriber("processing/lidar_objects/raw_cube", Obstacles, self.lidar_callback)
+        self._srv_lidar_pos = rospy.Service("recognition/localizer/recognition_cube", Cube_localizer, self.callback_lidar_pos)
         self._data_asserv = None
 
         self._segments = {'map': [], 'unknown': []}

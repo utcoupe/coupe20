@@ -23,13 +23,13 @@ class ActuatorsCanon:
     WATER_TOWER_POSITION = Pose2D(0.125, 2.267, 0.0)
 
     def __init__(self):
-        self._client = actionlib.SimpleActionClient('/movement/actuators/dispatch', DispatchAction)
+        self._client = actionlib.SimpleActionClient('movement/actuators/dispatch', DispatchAction)
         self._client.wait_for_server(rospy.Duration(DISPATCH_SERVER_TIMEOUT))
         self._tmr_flipper_activate = False
         self._tmr_flipper = rospy.Timer(rospy.Duration(FLIPPER_PERIOD), self._callback_timer_flipper)
-        self._srv_canon = rospy.Service("/movement/actuators/activate_canon", ActivateCanon, self._callback_activate_canon)
+        self._srv_canon = rospy.Service("movement/actuators/activate_canon", ActivateCanon, self._callback_activate_canon)
         # Subscribe to Pose2D for asserv in order to compute distance to the goal
-        self._sub_asserv = rospy.Subscriber("/drivers/ard_asserv/pose2d", Pose2D, self._callback_position)
+        self._sub_asserv = rospy.Subscriber("drivers/ard_asserv/pose2d", Pose2D, self._callback_position)
         self._data_asserv = None
         # Boolean used for flipper toggle values, as they just flip on 2 values
         self._flipper_state = False

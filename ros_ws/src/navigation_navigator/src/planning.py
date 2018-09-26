@@ -41,6 +41,7 @@ class Plan(object):
         self._hasAngle = False
         self._disablePathfinder = False
         self._direction = Directions.AUTOMATIC
+        self.invalidStartOrEndPos = False
     
     def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder):
         self._endPos = endPos
@@ -48,6 +49,7 @@ class Plan(object):
         self._direction = direction
         self._disablePathfinder = disablePathfinder
         self.replan(startPos)
+        self.invalidStartOrEndPos = False
     
     def replan(self, startPos):
         if len(self._currentPath) > 0:
@@ -60,7 +62,12 @@ class Plan(object):
         try:
             if not self._disablePathfinder:
                 # sends a request to the pathfinder
-                path = self._pathfinderClient.FindPath(startPos, self._endPos)
+                (path, invalidPos) = self._pathfinderClient.FindPath(startPos, self._endPos)
+
+                if invalidPos:
+                    self.invalidStartOrEndPos = True
+                    raise Exception("Invalid start or end position detected!")
+
                 self._printPath (path)
                 # then sends the path point per point to the arduino_asserv
                 path.pop(0) # Removes the first point (we are already on startPos)

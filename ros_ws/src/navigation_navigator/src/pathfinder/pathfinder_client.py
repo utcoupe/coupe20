@@ -24,9 +24,9 @@ class PathfinderClient(object):
             rospy.logfatal (error_str)
     
     def FindPath (self, startPos, endPos):
-        path = ""
+        response = ""
         try:
-            path = self.pathfinderFindPathService(startPos, endPos)
+            response = self.pathfinderFindPathService(startPos, endPos)
         except rospy.ServiceException, e:
             error_str = "Error when trying to use "
             error_str += self.PATHFINDER_FINDPATH_SERVICE_NAME
@@ -34,7 +34,7 @@ class PathfinderClient(object):
             rospy.logerr (error_str)
             raise Exception
         else:
-            if (not path.success) or (len(path.path) == 0):
+            if response.return_code == response.NO_PATH_FOUND:
                 raise Exception("No path found.")
             else:
-                return path.path
+                return (response.path, (response.return_code == response.START_END_POS_NOT_VALID))

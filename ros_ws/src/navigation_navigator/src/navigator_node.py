@@ -74,9 +74,9 @@ class NavigatorNode(object):
 
     def _planResultCallback (self, result):
         self._isCanceling = False
-        if result == True or self._idCurrentTry == NB_MAX_TRY:
-            if self._idCurrentTry == NB_MAX_TRY and not result:
-                rospy.logerr("Something wrong happened with our goal, aborting")
+        if result == True or self._idCurrentTry == NB_MAX_TRY or self._currentPlan.invalidStartOrEndPos:
+            if (self._idCurrentTry == NB_MAX_TRY and not result) or self._currentPlan.invalidStartOrEndPos:
+                rospy.logerr("Something wrong happened with our goal, aborting...")
             else:
                 rospy.loginfo("Goal successful")
             self._currentStatus = NavigatorStatuses.NAV_IDLE

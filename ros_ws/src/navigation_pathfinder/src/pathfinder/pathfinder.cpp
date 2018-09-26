@@ -130,9 +130,13 @@ bool Pathfinder::exploreGraph(Vect2DShort& distMap, const Point& startPos, const
     vector<Point> previousPositions, nextPositions;
     short distFromEnd = 0;
     
-    previousPositions.push_back(endPos);
     distMap[endPos.getY()][endPos.getX()] = distFromEnd;
+    if (startPos == endPos)
+        return true;
+    
+    previousPositions.push_back(endPos);
     distFromEnd++;
+    
     while (!previousPositions.empty())
     {
         for (const Point& prevPos : previousPositions)

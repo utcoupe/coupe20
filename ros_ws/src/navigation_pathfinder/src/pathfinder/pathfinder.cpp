@@ -32,7 +32,7 @@ Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<PosConvertor> conve
 }
 
 
-bool Pathfinder::findPath(const Point& startPos, const Point& endPos, Path& path)
+Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Point& endPos, Path& path)
 {
     ROS_DEBUG_STREAM("START: " << startPos);
     ROS_DEBUG_STREAM("END: " << endPos);
@@ -40,12 +40,18 @@ bool Pathfinder::findPath(const Point& startPos, const Point& endPos, Path& path
     if (_allowedPositions.empty() || _allowedPositions.front().empty())
     {
         ROS_ERROR("Allowed positions is empty. Did you load the file?");
-        return false;
+        return FindPathStatus::MAP_NOT_LOADED;
     }
 
     _dynBarriersMng->fetchOccupancyDatas(_allowedPositions.front().size(), _allowedPositions.size());
     
     auto startTime = chrono::high_resolution_clock::now();
+    
+    if (!isValid(startPos) || !isValid(endPos))
+    {
+        ROS_ERROR("Start or end position is not valid!");
+        return FindPathStatus::START_END_POS_NOT_VALID;
+    }
     
     // Creates a map filled with -1
     auto mapDist = Vect2DShort(
@@ -56,7 +62,7 @@ bool Pathfinder::findPath(const Point& startPos, const Point& endPos, Path& path
         if (_renderAfterComputing)
             _mapStorage.saveMapToFile(_renderFile, _allowedPositions, _dynBarriersMng, Path(), Path());
         ROS_ERROR_STREAM("No path found !");
-        return true;
+        return FindPathStatus::NO_PATH_FOUND;
     }
     
     Path rawPath = retrievePath(mapDist, startPos, endPos);
@@ -70,7 +76,7 @@ bool Pathfinder::findPath(const Point& startPos, const Point& endPos, Path& path
     if (_renderAfterComputing)
         _mapStorage.saveMapToFile(_renderFile, _allowedPositions, _dynBarriersMng, rawPath, path);
     
-    return true;
+    return FindPathStatus::NO_ERROR;
 }
 
 bool Pathfinder::findPathCallback(navigation_pathfinder::FindPath::Request& req, navigation_pathfinder::FindPath::Response& rep)
@@ -82,21 +88,28 @@ bool Pathfinder::findPathCallback(navigation_pathfinder::FindPath::Request& req,
     auto startPos = pose2DToPoint(req.posStart);
     auto endPos = pose2DToPoint(req.posEnd);
     
-    bool no_error = findPath(startPos, endPos, path);
-    if (!no_error)
-        return false;
-    for (const Point& pos : path)
-        rep.path.push_back(pointToPose2D(pos));
-    if (!path.empty())
-    {
-        rep.success = true;
-        rep.path.front() = req.posStart;
-        rep.path.back() = req.posEnd;
+    auto statusCode = findPath(startPos, endPos, path);
+    switch (statusCode) {
+        case FindPathStatus::MAP_NOT_LOADED: // [[fallthrough]] to be uncommented if annoying warnings
+        case FindPathStatus::START_END_POS_NOT_VALID:
+            rep.return_code = rep.START_END_POS_NOT_VALID;
+            ROS_DEBUG_STREAM("Answering: Invalid posision for start or end");
+            break;
+
+        case FindPathStatus::NO_PATH_FOUND:
+            rep.return_code = rep.NO_PATH_FOUND;
+            ROS_DEBUG_STREAM("Answering: no path found");
+            break;
+
+        case FindPathStatus::NO_ERROR:
+            for (const Point& pos : path)
+                rep.path.push_back(pointToPose2D(pos));
+            rep.return_code = rep.PATH_FOUND;
+            rep.path.front() = req.posStart;
+            rep.path.back() = req.posEnd;
+            ROS_DEBUG_STREAM("Answering: " << pathRosToStr(rep.path));
+            break;
     }
-    else
-        rep.success = false;
-    
-    ROS_DEBUG_STREAM("Answering: " << pathRosToStr(rep.path) << ", " << (rep.success?"true":"false"));
     
     return true;
 }
@@ -117,15 +130,13 @@ bool Pathfinder::exploreGraph(Vect2DShort& distMap, const Point& startPos, const
     vector<Point> previousPositions, nextPositions;
     short distFromEnd = 0;
     
-    if (!isValid(startPos) || !isValid(endPos))
-    {
-        ROS_ERROR("Start or end position is not valid!");
-        return false;
-    }
+    distMap[endPos.getY()][endPos.getX()] = distFromEnd;
+    if (startPos == endPos)
+        return true;
     
     previousPositions.push_back(endPos);
-    distMap[endPos.getY()][endPos.getX()] = distFromEnd;
     distFromEnd++;
+    
     while (!previousPositions.empty())
     {
         for (const Point& prevPos : previousPositions)

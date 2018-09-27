@@ -25,7 +25,9 @@ public:
     /**
      * Shortcut for path in inside referential and type.
      */
-    typedef std::vector<Point> Path;
+    using Path = std::vector<Point>;
+    
+    enum class FindPathStatus {NO_ERROR, NO_PATH_FOUND, MAP_NOT_LOADED, START_END_POS_NOT_VALID};
 
     /**
      * Initialize the pathfinder by loading given image file containing static barriers positions, and the size of a rectangle containing all input positions (here the table).
@@ -44,7 +46,7 @@ public:
      * @param endPos End position.
      * @param path Will contain the shortest path between startPos and endPos if a path was found.
      */
-    bool findPath(const Point& startPos, const Point& endPos, Path& path);
+    FindPathStatus findPath(const Point& startPos, const Point& endPos, Path& path);
     /**
      * Callback for the ros FindPath service. Coordinates are converted between the outside and inside referential.
      * @param req The request, containing the start and end positions.

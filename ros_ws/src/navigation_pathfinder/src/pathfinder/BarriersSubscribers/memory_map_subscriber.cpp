@@ -32,18 +32,6 @@ void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQu
 
 void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& heightGrid)
 {
-    if(_occupancyGrid.size() == heightGrid)
-        return;
-
-    memory_map::MapGetObjects srv;
-    srv.request.collisions_only = true;
-    if (!_srvGetMapObjects.call(srv) || !srv.response.success)
-    {
-        ROS_ERROR("Error when trying to call memory_map/MapGetObjects");
-        return;
-    }
-    _lastReceivedJsons.clear();
-    
     if (_occupancyGrid.size() != heightGrid || (heightGrid != 0 && _occupancyGrid.front().size() != widthGrid))
         _occupancyGrid = vector< vector<bool> > (
             heightGrid,
@@ -53,6 +41,15 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
         for (unsigned row = 0; row < _occupancyGrid.size(); row++)
             for (unsigned column = 0; column < _occupancyGrid.front().size(); column++)
                 _occupancyGrid[row][column] = false;
+
+    memory_map::MapGetObjects srv;
+    srv.request.collisions_only = true;
+    if (!_srvGetMapObjects.call(srv) || !srv.response.success)
+    {
+        ROS_ERROR("Error when trying to call memory_map/MapGetObjects");
+        return;
+    }
+    _lastReceivedJsons.clear();
     
     for (auto&& object : srv.response.objects)
     {

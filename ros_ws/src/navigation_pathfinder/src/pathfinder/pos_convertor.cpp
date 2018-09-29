@@ -48,6 +48,17 @@ double PosConvertor::fromRosToMapDistance(const double& dist) const
 
 void PosConvertor::setSizes(std::pair<double, double> sizeRos, std::pair<double, double> sizeMap)
 {
-    _sizeRos = sizeRos;
+    setRosSize(sizeRos);
+    setMapSize(sizeMap);
+}
+
+void PosConvertor::setMapSize(std::pair<double, double> sizeMap)
+{
     _sizeMap = sizeMap;
 }
+
+void PosConvertor::setRosSize(std::pair<double, double> sizeRos)
+{
+    _sizeRos = sizeRos;
+}
+

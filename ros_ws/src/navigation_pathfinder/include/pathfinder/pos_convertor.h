@@ -35,6 +35,9 @@ public:
     // Getters & Setters
     void setSizes (std::pair<double,double> sizeRos, std::pair<double,double> sizeMap);
     
+    void setRosSize(std::pair<double,double> sizeRos);
+    void setMapSize(std::pair<double,double> sizeMap);
+    
     void setInvertedY(bool invertedY) { _invertedY = invertedY; }
     
 private:

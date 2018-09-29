@@ -32,13 +32,9 @@ public:
     /**
      * Initialize the pathfinder by loading given image file containing static barriers positions, and the size of a rectangle containing all input positions (here the table).
      * @param mapFileName The name of the image file to load.
-     * @param convertor The convertor shared with other parts of the programm.
-     * @param tableSize The reference size in the outside referential.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
-     * @param render Tells if an image must be generated to debug if a path was found.
-     * @param renderFile The image file name that will be generated to debug.
      */
-    Pathfinder(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor, const std::pair< double, double >& tableSize, std::shared_ptr<DynamicBarriersManager> dynBarriersMng, bool render = false, const std::string& renderFile = "tmp.bmp");
+    Pathfinder(const std::string& mapFileName, std::shared_ptr<DynamicBarriersManager> dynBarriersMng);
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -47,28 +43,18 @@ public:
      * @param path Will contain the shortest path between startPos and endPos if a path was found.
      */
     FindPathStatus findPath(const Point& startPos, const Point& endPos, Path& path);
-    /**
-     * Callback for the ros FindPath service. Coordinates are converted between the outside and inside referential.
-     * @param req The request, containing the start and end positions.
-     * @param rep The response, will contain the shortest path if it exists.
-     */
-    bool findPathCallback(navigation_pathfinder::FindPath::Request &req, navigation_pathfinder::FindPath::Response &rep);
     
-    /**
-     * Callback for ros PathfinderNodeConfig dynamic reconfigure service.
-     * @param config The new configuration to use.
-     * @param level *Not used.*
-     */
-    void reconfigureCallback(navigation_pathfinder::PathfinderNodeConfig &config, uint32_t level);
+    void activatePathRendering(bool activate);
+    
+    void setPathToRenderOutputFile(std::string path); // TODO C++17 filesystem::path
+    
+    std::pair<unsigned, unsigned> getMapSize();
 
 private:
     /** Shortcut to define a 2D array of short. **/
     typedef std::vector<std::vector<short> > Vect2DShort;
     /** Shortcut to define a 2D array of bool. vector<bool> is a special type, different from vector<T> **/
     typedef std::vector<std::vector<bool> > Vect2DBool;
-    
-    /** Convertor object between inside and outside referentials **/
-    std::shared_ptr<PosConvertor> _convertor;
     
     /** Manager for loading and saving image files **/
     MapStorage _mapStorage;
@@ -121,32 +107,12 @@ private:
      */
     std::vector<Point> directions() const;
     
-    // Convertors
-    /**
-     * Converts a position from the outside referential and type to the inside ones.
-     * @param pos The position in the outside referential and type.
-     * @return The position in the inside referential and type.
-     */
-    Point pose2DToPoint(const geometry_msgs::Pose2D& pos) const;
-    /**
-     * Converts a position from the inside referential and type to the outside ones.
-     * @param pos The position in the inside referential and type.
-     * @return The position in the outside referential and type.
-     */
-    geometry_msgs::Pose2D pointToPose2D(const Point& pos) const;
-    
     /**
      * Convert the path in the inside type to a string for debugging purposes.
      * @param path The path in inside referential and type.
      * @return The path in string format.
      */
     std::string pathMapToStr(const Path& path);
-    /**
-     * Convert the path in the outside type to a string for debugging purposes.
-     * @param path The path in outside referential and type.
-     * @return The path in string format.
-     */
-    std::string pathRosToStr(const std::vector<geometry_msgs::Pose2D>& path);
 };
 
 #endif // PATHFINDER_H

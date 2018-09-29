@@ -7,28 +7,13 @@
 
 using namespace std;
 
-Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<PosConvertor> convertor, const std::pair< double, double >& tableSize,
-                       shared_ptr<DynamicBarriersManager> dynBarriersMng, bool render, const string& renderFile)
+Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<DynamicBarriersManager> dynBarriersMng)
 {
-    _renderAfterComputing = render;
-    _renderFile = renderFile;
+    _renderAfterComputing = false;
+    _renderFile = "tmp.bmp";
     _dynBarriersMng = dynBarriersMng;
     
     _allowedPositions = _mapStorage.loadAllowedPositionsFromFile(mapFileName);
-    if (_allowedPositions.size() == 0)
-        ROS_FATAL("Allowed positions empty. Cannot define a scale. Please restart the node, it may crash soon.");
-    else
-    {
-        _convertor = convertor;
-
-        if (_allowedPositions.front().size() * _allowedPositions.size() > 200000) {
-            ROS_WARN("Map image is big, the pathfinder may be very slow ! (150x100px works fine)");
-        }
-
-        _convertor->setSizes(tableSize, make_pair<double,double>(_allowedPositions.front().size(), _allowedPositions.size()));
-        _dynBarriersMng->setConvertor(_convertor);
-        _dynBarriersMng->fetchOccupancyDatas(_allowedPositions.front().size(), _allowedPositions.size());
-    }
 }
 
 
@@ -49,7 +34,8 @@ Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Poi
     
     if (!isValid(startPos) || !isValid(endPos))
     {
-        ROS_ERROR("Start or end position is not valid!");
+        ROS_ERROR("Start or end position is not valid!");if (_renderAfterComputing)
+            _mapStorage.saveMapToFile(_renderFile, _allowedPositions, _dynBarriersMng, Path(), Path());
         return FindPathStatus::START_END_POS_NOT_VALID;
     }
     
@@ -79,50 +65,22 @@ Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Poi
     return FindPathStatus::NO_ERROR;
 }
 
-bool Pathfinder::findPathCallback(navigation_pathfinder::FindPath::Request& req, navigation_pathfinder::FindPath::Response& rep)
+void Pathfinder::activatePathRendering(bool activate)
 {
-    Path path;
-    
-    ROS_INFO_STREAM("Received request from (" << req.posStart.x << "," << req.posStart.y << ") to (" << req.posEnd.x << ", " << req.posEnd.y << ")");
-    
-    auto startPos = pose2DToPoint(req.posStart);
-    auto endPos = pose2DToPoint(req.posEnd);
-    
-    auto statusCode = findPath(startPos, endPos, path);
-    switch (statusCode) {
-        case FindPathStatus::MAP_NOT_LOADED: // [[fallthrough]] to be uncommented if annoying warnings
-        case FindPathStatus::START_END_POS_NOT_VALID:
-            rep.return_code = rep.START_END_POS_NOT_VALID;
-            ROS_DEBUG_STREAM("Answering: Invalid posision for start or end");
-            break;
-
-        case FindPathStatus::NO_PATH_FOUND:
-            rep.return_code = rep.NO_PATH_FOUND;
-            ROS_DEBUG_STREAM("Answering: no path found");
-            break;
-
-        case FindPathStatus::NO_ERROR:
-            for (const Point& pos : path)
-                rep.path.push_back(pointToPose2D(pos));
-            rep.return_code = rep.PATH_FOUND;
-            rep.path.front() = req.posStart;
-            rep.path.back() = req.posEnd;
-            ROS_DEBUG_STREAM("Answering: " << pathRosToStr(rep.path));
-            break;
-    }
-    
-    return true;
+    _renderAfterComputing = activate;
 }
 
-void Pathfinder::reconfigureCallback(navigation_pathfinder::PathfinderNodeConfig& config, uint32_t level)
+void Pathfinder::setPathToRenderOutputFile(std::string path)
 {
-    ROS_INFO_STREAM ("Reconfigure request : " << config.render << " " << config.renderFile << " " << config.safetyMargin);
-    _renderAfterComputing = config.render;
-    _renderFile = config.renderFile;
-    // TODO detect env var and home
-    _dynBarriersMng->updateSafetyMargin(config.safetyMargin);
+    _renderFile = path;
 }
 
+std::pair<unsigned int, unsigned int> Pathfinder::getMapSize()
+{
+    if (_allowedPositions.size() == 0)
+        return {0,0};
+    return { _allowedPositions.front().size(), _allowedPositions.size() };
+}
 
 
 bool Pathfinder::exploreGraph(Vect2DShort& distMap, const Point& startPos, const Point& endPos)
@@ -284,40 +242,12 @@ std::vector< Point > Pathfinder::directions() const
     return dirs; // Should use move semantics with recent compilators
 }
 
-Point Pathfinder::pose2DToPoint(const geometry_msgs::Pose2D& pos) const
-{
-    auto convertedPos = _convertor->fromRosToMapPos(pair<double, double>(pos.x, pos.y));
-    return Point(convertedPos.first, convertedPos.second);
-}
-
-geometry_msgs::Pose2D Pathfinder::pointToPose2D(const Point& pos) const
-{
-    auto convertedPos = _convertor->fromMapToRosPos(pair<double, double>(pos.getX(), pos.getY()));
-    geometry_msgs::Pose2D newPos;
-    newPos.x = convertedPos.first;
-    newPos.y = convertedPos.second;
-    return newPos;
-}
-
 string Pathfinder::pathMapToStr(const Path& path)
 {
     ostringstream os;
     string str = "[";
     for (const Point& pos : path)
         os << pos << ", ";
-    str += os.str();
-    if (str.length() > 2)
-        str.erase(str.end()-2, str.end());
-    str += "]";
-    return str;
-}
-
-string Pathfinder::pathRosToStr(const vector<geometry_msgs::Pose2D>& path)
-{
-    ostringstream os;
-    string str = "[";
-    for (const geometry_msgs::Pose2D& pos : path)
-        os << "(" << pos.x << ", " << pos.y << ")" << ", ";
     str += os.str();
     if (str.length() > 2)
         str.erase(str.end()-2, str.end());

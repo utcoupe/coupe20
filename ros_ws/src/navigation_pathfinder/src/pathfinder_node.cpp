@@ -23,7 +23,7 @@ using namespace Recognition;
 const string                NAMESPACE_NAME              = "navigation";
 const string                NODE_NAME                   = "pathfinder";
 
-const string                FINDPATH_SERVICE_NAME       = "/" + NAMESPACE_NAME + "/" + NODE_NAME + "/find_path";
+const string                FINDPATH_SERVICE_NAME       = NAMESPACE_NAME + "/" + NODE_NAME + "/find_path";
 const pair<double, double>  TABLE_SIZE                  = {3.0, 2.0}; // Scale corresponding to messages received by the node
 const string                PR_MAP_FILE_NAME            = "layer_ground.bmp";
 const string                GR_MAP_FILE_NAME            = "layer_pathfinder.bmp"; //"/ros_ws/src/navigation_pathfinder/def/map.bmp"; for debug purposes

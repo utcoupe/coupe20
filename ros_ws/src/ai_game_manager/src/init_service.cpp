@@ -13,7 +13,7 @@ StatusServices::StatusServices(const string& namespaceName, const string& packag
     _armCallback(std::move(armCallback)),
     _statusCallback(std::move(statusCallback))
 {
-    _nodeName = "/" + namespaceName + "/" + packageName;
+    _nodeName = namespaceName + "/" + packageName;
     if (_armCallback)
         _armServer = _nodeHandle.subscribe(ARM_SRV, 10, &StatusServices::_on_arm, this);
     if (_statusCallback)

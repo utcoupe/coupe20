@@ -15,7 +15,7 @@ class StatusServices(object):
     HALT_SRV  = "ai/game_manager/status"     # Topic that can be used to know when HALT is activated (if the node needs to be stopped).
 
     def __init__(self, namespace, packagename, arm_cb = None, status_cb = None):
-        self.node_name = "/{}/{}".format(namespace, packagename)
+        self.node_name = "{}/{}".format(namespace, packagename)
         if arm_cb: rospy.Subscriber(self.ARM_SRV, ArmRequest, arm_cb)
         if status_cb: rospy.Subscriber(self.HALT_SRV, GameStatus, status_cb)
 

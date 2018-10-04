@@ -27,7 +27,7 @@ __date__ = 17/10/2017
 
 NODE_NAME       = "navigator"
 NODE_NAMESPACE  = "navigation"
-FULL_NODE_NAME  = "/" + NODE_NAMESPACE + "/" + NODE_NAME
+FULL_NODE_NAME  = NODE_NAMESPACE + "/" + NODE_NAME
 
 NB_MAX_TRY      = 7
 TIME_MAX_STOP   = 1 # sec

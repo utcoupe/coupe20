@@ -3,51 +3,33 @@
 
     <param name="robot"  value="$(arg robot)"/>
 
-    <group ns="ai">
         <node pkg="ai_game_manager" name="game_manager" type="game_manager_node.py" output="screen"/>
         <node pkg="ai_scheduler"   name="scheduler"   type="scheduler_node.py"   output="screen"/>
-    </group>
 
-	<group ns="memory">
 		<node pkg="memory_definitions"    name="definitions" type="definitions_node.py" output="screen" />
 		<node pkg="memory_map"            name="map"         type="map_node.py"         output="screen" />
-	</group>
 
-    <group ns="recognition">
 		<node pkg="recognition_localizer"     name="localizer"     type="localizer_node.py"     output="screen"/>
 		<node pkg="recognition_enemy_tracker" name="enemy_tracker" type="enemy_tracker_node.py" output="screen"/>
 		<node pkg="recognition_objects_classifier" name="object_classifier" type="objects_classifier_node" output="screen"/>
-	</group>
 
-    <group ns="drivers">
 		<node pkg="drivers_ard_asserv"    name="ard_asserv"  type="ard_asserv_node.py" output="screen"/>
 		<node pkg="drivers_port_finder"   name="port_finder" type="port_finder_node.py" output="screen"/>
 		<node pkg="drivers_teraranger"    name="teraranger"  type="teraranger_node.py" output="screen"/>
 		<node pkg="drivers_ax12"          name="ax12"        type="ax12_node" output="screen"/>
-	</group>
 
-    <group ns="processing">
 		<node pkg="processing_belt_interpreter" name="belt_interpreter" type="belt_interpreter_node.py" output="screen" />
-	</group>
 
-    <group ns="navigation">
 		<node pkg="navigation_collisions"       name="collisions" type="collisions_node.py"         output="screen" />
 		<node pkg="navigation_navigator"        name="navigator"  type="navigator_node.py"          output="screen" />
 		<node pkg="navigation_pathfinder"       name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
-	</group>
 
-    <group ns="movement">
 		<node pkg="movement_actuators"          name="actuators"  type="actuators_node.py"          output="screen" />
-	</group>
 
-  <group ns="external_nodes">
       <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
-  </group>
 
-  <group ns="markers_servers">
 			<node pkg="drivers_ard_asserv"    name="asserv_marker_server"  type="marker_server_node.py" />
       <node pkg="navigation_navigator"    name="navigator_marker_server"  type="marker_server_node.py" />
-  </group>
 
 	<include file="$(find memory_definitions)/def/robots/$(arg robot)/specific.launch"/>
 </launch>

@@ -35,7 +35,7 @@ def callback(req):
 
 def server():
     rospy.init_node('definitions')
-    s = rospy.Service('/memory/definitions/get', GetDefinition, callback)
+    s = rospy.Service('memory/definitions/get', GetDefinition, callback)
     rospy.logdebug("Definitions server ready")
 
     # Tell ai/game_manager the node initialized successfuly.

@@ -14,7 +14,7 @@ class MapClient(object):
     def __init__ (self):
         self._fillWaypointSrv = ""
 
-        self.FILLWAYPOINTS_SERVICE_NAME = "/memory/map/fill_waypoint"
+        self.FILLWAYPOINTS_SERVICE_NAME = "memory/map/fill_waypoint"
 
         self._connectToServer()
 

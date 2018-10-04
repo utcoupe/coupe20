@@ -17,7 +17,7 @@ class Color:
 class ActuatorsBarrel(ActuatorsAbstract):
     def __init__(self):
 
-        self.COLOR_SENSOR_TOPIC = '/drivers/ard_others/color'
+        self.COLOR_SENSOR_TOPIC = 'drivers/ard_others/color'
         self.BARREL_NAME = 'barrel' # name in the dispatcher
         self.PRESET_BIN = 'BIN'
         self.PRESET_NORMAL = 'HIGH'
@@ -31,7 +31,7 @@ class ActuatorsBarrel(ActuatorsAbstract):
 
         self.BALL_COUNT = 8
 
-        self._client = actionlib.SimpleActionClient('/movement/actuators/dispatch', DispatchAction)
+        self._client = actionlib.SimpleActionClient('movement/actuators/dispatch', DispatchAction)
         self._client.wait_for_server(rospy.Duration(10))
 
         self._curr_color = Color.UNKNOWN

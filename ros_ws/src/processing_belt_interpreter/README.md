@@ -2,8 +2,8 @@
 
 This node listen for sensor data from the belt, converts the ranges into rectangles taking in account the cone angle of the sensors and the range precision. It then splits the rectangles into two groups : those that belong to the map, and those that are unknown objects and may be dangerous.
 
-- Listens `/drivers/ard_others/belt_ranges`
-- Publishes on `/processing/belt_interpreter/rects_filtered`
+- Listens `drivers/ard_others/belt_ranges`
+- Publishes on `processing/belt_interpreter/rects_filtered`
 - Fetches definition in `processing/belt.xml`
 
 ## Initialization

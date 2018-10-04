@@ -21,7 +21,7 @@ def processFeedback(feedback):
     
     p = feedback.pose.position
     try:
-        srv = rospy.ServiceProxy("/drivers/ard_asserv/set_pos", SetPos)
+        srv = rospy.ServiceProxy("drivers/ard_asserv/set_pos", SetPos)
         q = [[o.x, o.y, o.z, o.w] for o in [feedback.pose.orientation]][0]
 
         msg = SetPosRequest()
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     # 'commit' changes and send to all clients
     server.applyChanges()
 
-    rospy.Subscriber("/drivers/ard_asserv/pose2d", Pose2D, poseCallback)
+    rospy.Subscriber("drivers/ard_asserv/pose2d", Pose2D, poseCallback)
 
     rospy.spin()
 

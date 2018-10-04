@@ -23,7 +23,7 @@ extern  String belt_sensors_names[];
 VL53L0X belt_sensors[NUM_BELT_SENSORS];
 
 drivers_ard_others::BeltRange belt_range_msg;
-ros::Publisher belt_ranges_pub("/drivers/ard_others/belt_ranges", &belt_range_msg);
+ros::Publisher belt_ranges_pub("drivers/ard_others/belt_ranges", &belt_range_msg);
 
 void init_belt_sensors(ros::NodeHandle* nh) {
     node_handle_belt_sensor = nh;
@@ -77,7 +77,7 @@ void loop_belt_sensors() {
 ros::NodeHandle* node_handle_color_sensor = NULL;
 
 drivers_ard_others::Color color_msg;
-ros::Publisher color_pub("/drivers/ard_others/color", &color_msg);
+ros::Publisher color_pub("drivers/ard_others/color", &color_msg);
 
 // This structure is used to store the current values
 uint8_t color_sensor_rgb_values[3];

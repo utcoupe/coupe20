@@ -35,7 +35,7 @@ class MapLoader():
         '''
         Loads the description file by getting it from the 'memory/definitions' ROS package.
         '''
-        get_def = rospy.ServiceProxy('/memory/definitions/get', GetDefinition)
+        get_def = rospy.ServiceProxy('memory/definitions/get', GetDefinition)
         try:
             get_def.wait_for_service(timeout = 2)
         except:

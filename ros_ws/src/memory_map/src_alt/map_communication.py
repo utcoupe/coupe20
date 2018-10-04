@@ -10,11 +10,11 @@ from occupancy import OccupancyGenerator
 
 
 class Servers():
-    GET_SERV        = "/memory/map/get"
-    SET_SERV        = "/memory/map/set"
-    TRANSFER_SERV   = "/memory/map/transfer"
-    OCCUPANCY_SERV  = "/memory/map/get_occupancy"
-    FILLWP_SERV     = "/memory/map/fill_waypoint"
+    GET_SERV        = "memory/map/get"
+    SET_SERV        = "memory/map/set"
+    TRANSFER_SERV   = "memory/map/transfer"
+    OCCUPANCY_SERV  = "memory/map/get_occupancy"
+    FILLWP_SERV     = "memory/map/fill_waypoint"
 
 class MapServices():
     def __init__(self, occupancy_generator):

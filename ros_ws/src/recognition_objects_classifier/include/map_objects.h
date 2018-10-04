@@ -10,7 +10,7 @@
 #include "shapes.h"
 
 
-const std::string MAP_GET_SERVICE = "/memory/map/get";
+const std::string MAP_GET_SERVICE = "memory/map/get";
 const std::string MAP_OBJECTS = "/terrain/walls/layer_belt/*";
 
 class MapObjects {

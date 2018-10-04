@@ -15,7 +15,7 @@ class Localizer(object):
         self._br = tf2_ros.TransformBroadcaster()
 
         # TODO : subscribe to all sources of info
-        self._sub_asserv = rospy.Subscriber("/drivers/ard_asserv/pose2d", Pose2D,
+        self._sub_asserv = rospy.Subscriber("drivers/ard_asserv/pose2d", Pose2D,
                                           self.callback_asserv)
 
         self._data_asserv = None

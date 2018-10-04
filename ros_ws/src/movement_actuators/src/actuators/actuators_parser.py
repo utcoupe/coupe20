@@ -9,7 +9,7 @@ __author__ = "Thomas Fuhrmann", "P. Potiron"
 __date__ = 11/04/2018
 
 XML_FILE = "movement/actuators.xml"
-GET_DEFINITION_SERVICE_NAME = "/memory/definitions/get"
+GET_DEFINITION_SERVICE_NAME = "memory/definitions/get"
 GET_DEFINITION_SERVICE_TIMEOUT = 15
 
 

@@ -39,7 +39,7 @@ class ActuatorsArm(ActuatorsAbstract):
 
         self._pub_static_transform(self.ORIGIN_X, self.ORIGIN_Y)
 
-        self._client = actionlib.ActionClient('/drivers/ax12', Ax12CommandAction)
+        self._client = actionlib.ActionClient('drivers/ax12', Ax12CommandAction)
         self._client.wait_for_server(rospy.Duration(10))
 
         rospy.logdebug('Ax12 server found')
@@ -202,8 +202,8 @@ class ActuatorsArm(ActuatorsAbstract):
         self._broadcaster.sendTransform(tr)
 
     def _fetch_and_parse_config(self):
-        rospy.wait_for_service('/memory/definitions/get')
-        service = rospy.ServiceProxy('/memory/definitions/get', GetDefinition)
+        rospy.wait_for_service('memory/definitions/get')
+        service = rospy.ServiceProxy('memory/definitions/get', GetDefinition)
 
         try:
             path = service('movement/arm.yml').path

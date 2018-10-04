@@ -21,8 +21,8 @@
 const double MAX_STOP_TIME = 3; // timeout (secs)
 const double MAIN_FREQUENCY = 15;
 const uint8_t POSITION_MARGIN = 6;
-const std::string PORT_FINDER_SERVICE = "/drivers/port_finder/get_port";
-const std::string GAME_STATUS_TOPIC = "/ai/game_manager/status";
+const std::string PORT_FINDER_SERVICE = "drivers/port_finder/get_port";
+const std::string GAME_STATUS_TOPIC = "ai/game_manager/status";
 
 
 typedef actionlib::ServerGoalHandle <drivers_ax12::Ax12CommandAction> GoalHandle;

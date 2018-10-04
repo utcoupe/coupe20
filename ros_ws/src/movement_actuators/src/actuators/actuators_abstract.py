@@ -17,7 +17,7 @@ class ActuatorsAbstract:
         self._action_type = None
         if action_name != "" and action_type is not None:
             self._action_type = action_type
-            self._action_server = actionlib.ActionServer("/movement/" + NODE_NAME + "/" + action_name, action_type, self._callback_action, auto_start=False)
+            self._action_server = actionlib.ActionServer("movement/" + NODE_NAME + "/" + action_name, action_type, self._callback_action, auto_start=False)
             self._action_server.start()
         else:
             rospy.logerr("ActuatorsAbstract class can not be built without action_name and action_type, aborting.")

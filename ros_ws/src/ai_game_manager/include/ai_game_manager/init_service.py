@@ -10,12 +10,12 @@ from ai_game_manager.srv import NodeReady
 
 
 class StatusServices(object):
-    READY_SRV = "/ai/game_manager/node_ready" # Service to call when the node has finished its init phase (successful or not).
-    ARM_SRV   = "/ai/game_manager/arm"        # Server the node can use if it needs to be calibrated at one point (called by scheduler before jack)
-    HALT_SRV  = "/ai/game_manager/status"     # Topic that can be used to know when HALT is activated (if the node needs to be stopped).
+    READY_SRV = "ai/game_manager/node_ready" # Service to call when the node has finished its init phase (successful or not).
+    ARM_SRV   = "ai/game_manager/arm"        # Server the node can use if it needs to be calibrated at one point (called by scheduler before jack)
+    HALT_SRV  = "ai/game_manager/status"     # Topic that can be used to know when HALT is activated (if the node needs to be stopped).
 
     def __init__(self, namespace, packagename, arm_cb = None, status_cb = None):
-        self.node_name = "/{}/{}".format(namespace, packagename)
+        self.node_name = "{}/{}".format(namespace, packagename)
         if arm_cb: rospy.Subscriber(self.ARM_SRV, ArmRequest, arm_cb)
         if status_cb: rospy.Subscriber(self.HALT_SRV, GameStatus, status_cb)
 

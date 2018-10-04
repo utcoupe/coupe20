@@ -27,9 +27,9 @@ class CollisionsSubscriptions(object):
         self._vel_angular = 0.0
 
         # Subscribing to dependencies
-        rospy.Subscriber("/navigation/navigator/status", Status, self._on_nav_status)
-        rospy.Subscriber("/recognition/objects_classifier/objects", ClassifiedObjects, self._on_classifier)
-        rospy.Subscriber("/drivers/ard_asserv/speed", RobotSpeed, self.on_robot_speed)
+        rospy.Subscriber("navigation/navigator/status", Status, self._on_nav_status)
+        rospy.Subscriber("recognition/objects_classifier/objects", ClassifiedObjects, self._on_classifier)
+        rospy.Subscriber("drivers/ard_asserv/speed", RobotSpeed, self.on_robot_speed)
 
         self.game_status = StatusServices("navigation", "collisions", None, self._on_game_status)
 
@@ -39,7 +39,7 @@ class CollisionsSubscriptions(object):
     def create_robot(self):
         try: # Getting the robot shape and creating the robot instance
             robot_type = rospy.get_param("/robot").lower()
-            map_get_client = rospy.ServiceProxy("/memory/map/get", MapGet)
+            map_get_client = rospy.ServiceProxy("memory/map/get", MapGet)
             map_get_client.wait_for_service(2.0)
             shape = json.loads(map_get_client("/entities/" + robot_type + "/shape/*").response)
             if not shape["type"] == "rect":

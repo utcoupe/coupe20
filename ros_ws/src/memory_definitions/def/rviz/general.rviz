@@ -163,7 +163,7 @@ Visualization Manager:
       Opacity: 0.75
       Segments color: 170; 170; 0
       Segments thickness: 0.0299999993
-      Topic: /processing/lidar_objects/obstacles
+      Topic: processing/lidar_objects/obstacles
       Unreliable: false
       Value: true
     - Class: rviz/Marker

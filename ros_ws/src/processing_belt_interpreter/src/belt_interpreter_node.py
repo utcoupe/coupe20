@@ -28,8 +28,8 @@ class BeltInterpreter(object):
         # template for the sensor frame id, with '{}' being the sensor id
         self.SENSOR_FRAME_ID = "belt_{}"
         self.DEF_FILE = "processing/belt.xml"
-        self.TOPIC = "/processing/belt_interpreter/rects"
-        self.SENSORS_TOPIC = "/drivers/ard_others/belt_ranges"
+        self.TOPIC = "processing/belt_interpreter/rects"
+        self.SENSORS_TOPIC = "drivers/ard_others/belt_ranges"
 
         self.PUB_RATE = rospy.Rate(10)
 
@@ -221,7 +221,7 @@ class BeltInterpreter(object):
         self._broadcaster.sendTransform(tr_list)
 
     def fetch_definition(self):
-        get_def = rospy.ServiceProxy('/memory/definitions/get', GetDefinition)
+        get_def = rospy.ServiceProxy('memory/definitions/get', GetDefinition)
         get_def.wait_for_service()
 
         try:

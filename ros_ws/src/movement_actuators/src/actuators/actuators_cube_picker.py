@@ -15,11 +15,11 @@ DEFAULT_ELEVATOR_TIMEOUT = 1000
 
 class ActuatorsCubePicker(ActuatorsAbstract):
     def __init__(self):
-        self._client_arm = actionlib.SimpleActionClient('/movement/actuators/arm', ArmAction)
+        self._client_arm = actionlib.SimpleActionClient('movement/actuators/arm', ArmAction)
         self._client_arm.wait_for_server()
-        self._client_act = actionlib.SimpleActionClient('/movement/actuators/dispatch', DispatchAction)
+        self._client_act = actionlib.SimpleActionClient('movement/actuators/dispatch', DispatchAction)
         self._client_act.wait_for_server()
-        #self._srv_cube_picker = rospy.Service("/movement/actuators/pick_cube", CubePicker, self._callback_pick_cube)
+        #self._srv_cube_picker = rospy.Service("movement/actuators/pick_cube", CubePicker, self._callback_pick_cube)
         ActuatorsAbstract.__init__(self,
                                    action_name='cubePicker',
                                    action_type=CubePickerAction)
@@ -73,7 +73,7 @@ class ActuatorsCubePicker(ActuatorsAbstract):
         self._action_reached(goal_id, success, CubePickerResult(success=success))
 
     def _get_cube_pos(self):
-        cube_srv = rospy.ServiceProxy('/recognition/localizer/recognition_cube', Cube_localizer)
+        cube_srv = rospy.ServiceProxy('recognition/localizer/recognition_cube', Cube_localizer)
         # rospy.loginfo('--------------------------- CubePicker wait for service')
         # try :
         #     rospy.wait_for_service(cube_srv, 2)

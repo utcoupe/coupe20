@@ -22,7 +22,7 @@ class Strategy(Task):
         return self.TASKS.getNext()
 
     def sendReward(self, communicator):
-        communicator.SendRequest("/ai/scheduler/score", {"score": self.TASKS.getActiveReward()})
+        communicator.SendRequest("ai/scheduler/score", {"score": self.TASKS.getActiveReward()})
 
     def getStatus(self, text_version=False):
         return self.TASKS.getStatus(text_version)

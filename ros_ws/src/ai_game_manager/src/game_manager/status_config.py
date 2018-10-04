@@ -8,30 +8,30 @@ class Status():
     INIT_FAILED       = 2 # Nodes responded false or didn't respond after before the init timeout.
 
     INIT_CHECKLIST = {  # Please comment the lines instead of deleting them.
-        "/ai/scheduler": None,
+        "ai/scheduler": None,
 
-        "/memory/map": None,
-        "/memory/definitions": None,
+        "memory/map": None,
+        "memory/definitions": None,
 
-        "/navigation/navigator": None,
-        "/navigation/pathfinder": None,
-        "/navigation/collisions": None,
+        "navigation/navigator": None,
+        "navigation/pathfinder": None,
+        "navigation/collisions": None,
 
-        "/movement/actuators": None,
+        "movement/actuators": None,
 
-        "/recognition/localizer": None,
-        "/recognition/enemy_tracker": None,
-        # "/recognition/cube_finder": None,
-        # "/recognition/cp_recognizer": None,
-        "/recognition/objects_classifier": None,
+        "recognition/localizer": None,
+        "recognition/enemy_tracker": None,
+        # "recognition/cube_finder": None,
+        # "recognition/cp_recognizer": None,
+        "recognition/objects_classifier": None,
 
-        "/processing/belt_interpreter": None,
-        # "/processing/lidar_objects": None,
+        "processing/belt_interpreter": None,
+        # "processing/lidar_objects": None,
 
-        "/drivers/ard_asserv": None,
-        #"/drivers/ard_hmi": None,
-        #"/drivers/ard_others": None,
-        "/drivers/port_finder": None,
-        "/drivers/ax12": None,
-        "/drivers/teraranger": None,
+        "drivers/ard_asserv": None,
+        #"drivers/ard_hmi": None,
+        #"drivers/ard_others": None,
+        "drivers/port_finder": None,
+        "drivers/ax12": None,
+        "drivers/teraranger": None,
     }

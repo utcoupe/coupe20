@@ -12,6 +12,12 @@
 class PathfinderROSInterface
 {
 public:
+    /**
+     * Initialize the pathfinder main algorithm and some interface components.
+     * 
+     * @param mapFileName The path to the image containing the static obstacles.
+     * @param convertor The convertor that will be used to convert positions between the two referencials.
+     */
     PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor);
     
     /**
@@ -28,11 +34,22 @@ public:
      */
     void reconfigureCallback(navigation_pathfinder::PathfinderNodeConfig &config, uint32_t level);
     
+    /**
+     * Adds a subscriber to the manager.
+     * 
+     * @param subscriber A unique_ptr&& containing the initialized subscriber.
+     */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
 private:
+    /**
+     * Pointer to the main algorithm
+     */
     std::unique_ptr<Pathfinder> pathfinderPtr_;
     
+    /**
+     * The barrier subscribers manager
+     */
     std::shared_ptr<DynamicBarriersManager> dynBarriersMng_;
     
     /** Convertor object between inside and outside referentials **/

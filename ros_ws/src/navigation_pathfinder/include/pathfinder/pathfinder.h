@@ -27,6 +27,9 @@ public:
      */
     using Path = std::vector<Point>;
     
+    /**
+     * Defines return statuses for the find path algorithm.
+     */
     enum class FindPathStatus {NO_ERROR, NO_PATH_FOUND, MAP_NOT_LOADED, START_END_POS_NOT_VALID};
 
     /**
@@ -44,10 +47,22 @@ public:
      */
     FindPathStatus findPath(const Point& startPos, const Point& endPos, Path& path);
     
+    /**
+     * Set to true to generate a debug image after all searches
+     */
     void activatePathRendering(bool activate);
     
-    void setPathToRenderOutputFile(std::string path); // TODO C++17 filesystem::path
+    /**
+     * Set the path to the debug image. See activatePathRendering to activate this feature.
+     * @TODO Use instead C++17 filesystem::path
+     * 
+     * @param path The path to the image.
+     */
+    void setPathToRenderOutputFile(std::string path);
     
+    /**
+     * Return the sizes of the internal barrier map.
+     */
     std::pair<unsigned, unsigned> getMapSize();
 
 private:

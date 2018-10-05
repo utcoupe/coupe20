@@ -25,14 +25,14 @@ class ActuatorsNode():
         self.is_halted = False
 
         rospy.init_node('actuators')
-        self._namespace = '/movement/actuators/'
+        self._namespace = 'movement/actuators/'
         self._action_name = '{}dispatch'.format(self._namespace)
         self._lock = threading.RLock()
         self._call_stack = {}
         self._action_server = actionlib.SimpleActionServer( self._action_name, movement_actuators.msg.dispatchAction, execute_cb=self.dispatch, auto_start=False)
-        self._arduino_move = rospy.Publisher( '/drivers/ard_others/move', drivers_ard_others.msg.Move, queue_size=30)  # TODO check the queue_size
-        self._arduino_response = rospy.Subscriber( '/drivers/ard_others/move_response', drivers_ard_others.msg.MoveResponse, self.ard_callback)
-        self._ax12_client = actionlib.SimpleActionClient('/drivers/ax12', drivers_ax12.msg.Ax12CommandAction)
+        self._arduino_move = rospy.Publisher( 'drivers/ard_others/move', drivers_ard_others.msg.Move, queue_size=30)  # TODO check the queue_size
+        self._arduino_response = rospy.Subscriber( 'drivers/ard_others/move_response', drivers_ard_others.msg.MoveResponse, self.ard_callback)
+        self._ax12_client = actionlib.SimpleActionClient('drivers/ax12', drivers_ax12.msg.Ax12CommandAction)
         self._action_server.start()
 
 

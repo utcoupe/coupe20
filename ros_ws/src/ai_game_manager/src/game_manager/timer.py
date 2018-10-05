@@ -44,11 +44,11 @@ class Timer():
 
 class TimerManager():
     def __init__(self):
-        self._set_timer_srv = rospy.Service("/ai/game_manager/set_timer", SetTimer,  self.on_set_timer)
-        self._delay_srv     = rospy.Service("/ai/game_manager/delay",     Delay,  self.on_delay)
-        self._timer_pub     = rospy.Publisher("/ai/game_manager/time",    GameTime,  queue_size = 10)
+        self._set_timer_srv = rospy.Service("ai/game_manager/set_timer", SetTimer,  self.on_set_timer)
+        self._delay_srv     = rospy.Service("ai/game_manager/delay",     Delay,  self.on_delay)
+        self._timer_pub     = rospy.Publisher("ai/game_manager/time",    GameTime,  queue_size = 10)
 
-        rospy.Subscriber("/ai/game_manager/status", GameStatus, self.on_status)
+        rospy.Subscriber("ai/game_manager/status", GameStatus, self.on_status)
         self._game_status = Status.STATUS_INIT
 
         self.timer = Timer()
@@ -101,6 +101,6 @@ class TimerManager():
         self._game_status = req.game_status
 
     def set_game_status(self, status):
-        rospy.wait_for_service("/ai/game_manager/set_status", timeout = 2)
-        service = rospy.ServiceProxy("/ai/game_manager/set_status", SetStatus)
+        rospy.wait_for_service("ai/game_manager/set_status", timeout = 2)
+        service = rospy.ServiceProxy("ai/game_manager/set_status", SetStatus)
         return service(status)

@@ -7,7 +7,7 @@ from navigation_pathfinder.srv import *
 
 class PathfinderClient(object):
     def __init__ (self):
-        self.PATHFINDER_FINDPATH_SERVICE_NAME = "/navigation/pathfinder/find_path"
+        self.PATHFINDER_FINDPATH_SERVICE_NAME = "navigation/pathfinder/find_path"
         self.pathfinderFindPathService = ""
         self._ConnectToServer ()
     

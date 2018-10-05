@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     rospy.init_node("navigator_interactive_marker")
 
-    client = actionlib.SimpleActionClient('/navigation/navigator/goto_action', DoGotoAction)
+    client = actionlib.SimpleActionClient('navigation/navigator/goto_action', DoGotoAction)
     client.wait_for_server()
 
     server = InteractiveMarkerServer("navigator_marker")

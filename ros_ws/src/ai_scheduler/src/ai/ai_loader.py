@@ -60,7 +60,7 @@ class AILoader():
             return None
 
     def _get_path(self, filename):
-        get_def = rospy.ServiceProxy('/memory/definitions/get', GetDefinition)
+        get_def = rospy.ServiceProxy('memory/definitions/get', GetDefinition)
 
         try:
             get_def.wait_for_service(10)

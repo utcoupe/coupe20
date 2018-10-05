@@ -12,8 +12,8 @@
 using namespace processing_belt_interpreter;
 using namespace processing_lidar_objects;
 
-const std::string BELT_TOPIC = "/processing/belt_interpreter/rects";
-const std::string LIDAR_TOPIC = "/processing/lidar_objects/obstacles";
+const std::string BELT_TOPIC = "processing/belt_interpreter/rects";
+const std::string LIDAR_TOPIC = "processing/lidar_objects/obstacles";
 
 
 class ObjectsListener {

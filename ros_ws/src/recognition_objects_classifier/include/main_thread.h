@@ -25,7 +25,7 @@ struct Point {
     bool is_map;
 };
 
-const std::string PUB_TOPIC = "/recognition/objects_classifier/objects";
+const std::string PUB_TOPIC = "recognition/objects_classifier/objects";
 
 const int SENSORS_NBR = 6;
 

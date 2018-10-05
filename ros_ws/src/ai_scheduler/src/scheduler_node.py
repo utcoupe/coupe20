@@ -21,9 +21,9 @@ class AINode():
         self._hmi_init = False
         self._ai_start_request = False
 
-        self._strat_publisher = rospy.Publisher("/feedback/ard_hmi/set_strategies", SetStrategies, queue_size=10)
-        self._teams_publisher = rospy.Publisher("/feedback/ard_hmi/set_teams", SetTeams, queue_size=10)
-        rospy.Subscriber("/feedback/ard_hmi/hmi_event", HMIEvent, self.on_hmi_event)
+        self._strat_publisher = rospy.Publisher("feedback/ard_hmi/set_strategies", SetStrategies, queue_size=10)
+        self._teams_publisher = rospy.Publisher("feedback/ard_hmi/set_teams", SetTeams, queue_size=10)
+        rospy.Subscriber("feedback/ard_hmi/hmi_event", HMIEvent, self.on_hmi_event)
 
         # Sending init status to ai/game_manager, subscribing to game_status status pub.
         status_services = StatusServices(self.DepartmentName, self.PackageName, self.on_arm)

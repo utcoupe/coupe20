@@ -66,7 +66,7 @@ AF_Stepper stepper_actuators_objects[NUM_STEPPER_ACTUATORS];
 // Actuators ROS callbacks
 
 drivers_ard_others::MoveResponse move_response_msg;
-ros::Publisher move_responses_pub("/drivers/ard_others/move_response", &move_response_msg);
+ros::Publisher move_responses_pub("drivers/ard_others/move_response", &move_response_msg);
 
 void send_move_response(int16_t order_nb, bool success) {
     if(success) nh.loginfo("Move request succeeded.");
@@ -155,16 +155,16 @@ void on_move(const drivers_ard_others::Move& msg){
     if(msg.order_nb != 0) send_move_response(msg.order_nb, success); // send response if order_nb provided.
 }
 
-ros::Subscriber<drivers_ard_others::Move> sub_move("/drivers/ard_others/move", &on_move);
+ros::Subscriber<drivers_ard_others::Move> sub_move("drivers/ard_others/move", &on_move);
 
 drivers_ard_others::ActDigitalStates digital_states_msg;
-ros::Publisher digital_states_pub("/drivers/ard_others/digital_act_states", &digital_states_msg);
+ros::Publisher digital_states_pub("drivers/ard_others/digital_act_states", &digital_states_msg);
 drivers_ard_others::ActPWMStates pwm_states_msg;
-ros::Publisher pwm_states_pub("/drivers/ard_others/pwm_act_states", &pwm_states_msg);
+ros::Publisher pwm_states_pub("drivers/ard_others/pwm_act_states", &pwm_states_msg);
 drivers_ard_others::ActServoStates servo_states_msg;
-ros::Publisher servo_states_pub("/drivers/ard_others/servo_act_states", &servo_states_msg);
+ros::Publisher servo_states_pub("drivers/ard_others/servo_act_states", &servo_states_msg);
 drivers_ard_others::ActServoStates stepper_states_msg;
-ros::Publisher stepper_states_pub("/drivers/ard_others/stepper_act_states", &stepper_states_msg);
+ros::Publisher stepper_states_pub("drivers/ard_others/stepper_act_states", &stepper_states_msg);
 
 // Digital actuators
 void init_digital_actuators() {

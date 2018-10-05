@@ -13,7 +13,7 @@ from drivers_ard_asserv.msg import *
 from drivers_ard_asserv.srv import *
 
 class AsservClient(object):
-    ASSERV_NODE_NAME = "/drivers/ard_asserv"
+    ASSERV_NODE_NAME = "drivers/ard_asserv"
     ASSERV_GOTO_SERVICE_NAME = ASSERV_NODE_NAME + "/goto"
     ASSERV_POSE_TOPIC_NAME = ASSERV_NODE_NAME + "/pose2d"
     ASSERV_GOTOACTION_NAME = ASSERV_NODE_NAME + "/goto_action"

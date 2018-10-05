@@ -18,8 +18,8 @@ __author__ = "Thomas Fuhrmann"
 __date__ = 21/10/2017
 
 NODE_NAME = "ard_asserv"
-GET_PORT_SERVICE_NAME = "/drivers/port_finder/get_port"
-GET_MAP_SERVICE_NAME = "/memory/map/fill_waypoint"
+GET_PORT_SERVICE_NAME = "drivers/port_finder/get_port"
+GET_MAP_SERVICE_NAME = "memory/map/fill_waypoint"
 GET_PORT_SERVICE_TIMEOUT = 25  # in seconds
 GET_MAP_SERVICE_TIMEOUT = 15  # in seconds
 
@@ -46,16 +46,16 @@ class Asserv:
         self._is_halted = False
         # Init ROS stuff
         rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.INFO)
-        self._pub_robot_pose = rospy.Publisher("/drivers/" + NODE_NAME + "/pose2d", Pose2D, queue_size=5)
-        self._pub_robot_speed = rospy.Publisher("/drivers/" + NODE_NAME + "/speed", RobotSpeed, queue_size=5)
-        self._srv_goto = rospy.Service("/drivers/" + NODE_NAME + "/goto", Goto, self._callback_goto)
-        self._srv_pwm = rospy.Service("/drivers/" + NODE_NAME + "/pwm", Pwm, self._callback_pwm)
-        self._srv_speed = rospy.Service("/drivers/" + NODE_NAME + "/speed", Speed, self._callback_speed)
-        self._srv_set_pos = rospy.Service("/drivers/" + NODE_NAME + "/set_pos", SetPos, self._callback_set_pos)
-        self._srv_emergency_stop = rospy.Service("/drivers/" + NODE_NAME + "/emergency_stop", EmergencyStop, self._callback_emergency_stop)
-        self._srv_params = rospy.Service("/drivers/" + NODE_NAME + "/parameters", Parameters, self._callback_asserv_param)
-        self._srv_management = rospy.Service("/drivers/" + NODE_NAME + "/management", Management, self._callback_management)
-        self._act_goto = actionlib.ActionServer("/drivers/" + NODE_NAME + "/goto_action", DoGotoAction, self._callback_action_goto, auto_start=False)
+        self._pub_robot_pose = rospy.Publisher("drivers/" + NODE_NAME + "/pose2d", Pose2D, queue_size=5)
+        self._pub_robot_speed = rospy.Publisher("drivers/" + NODE_NAME + "/speed", RobotSpeed, queue_size=5)
+        self._srv_goto = rospy.Service("drivers/" + NODE_NAME + "/goto", Goto, self._callback_goto)
+        self._srv_pwm = rospy.Service("drivers/" + NODE_NAME + "/pwm", Pwm, self._callback_pwm)
+        self._srv_speed = rospy.Service("drivers/" + NODE_NAME + "/speed", Speed, self._callback_speed)
+        self._srv_set_pos = rospy.Service("drivers/" + NODE_NAME + "/set_pos", SetPos, self._callback_set_pos)
+        self._srv_emergency_stop = rospy.Service("drivers/" + NODE_NAME + "/emergency_stop", EmergencyStop, self._callback_emergency_stop)
+        self._srv_params = rospy.Service("drivers/" + NODE_NAME + "/parameters", Parameters, self._callback_asserv_param)
+        self._srv_management = rospy.Service("drivers/" + NODE_NAME + "/management", Management, self._callback_management)
+        self._act_goto = actionlib.ActionServer("drivers/" + NODE_NAME + "/goto_action", DoGotoAction, self._callback_action_goto, auto_start=False)
         self._pub_tf_odom = tf2_ros.TransformBroadcaster()
         self._act_goto.start()
         self._srv_client_map_fill_waypoints = None

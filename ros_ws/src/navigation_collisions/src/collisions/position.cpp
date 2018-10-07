@@ -1,7 +1,5 @@
 #include "collisions/position.h"
 
-#include <cmath>
-
 using namespace std;
 
 Point Position::toPoint() const {

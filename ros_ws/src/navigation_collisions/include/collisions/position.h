@@ -11,7 +11,7 @@ public:
         Position({x, y}, angle)
     {}
     
-    Position (Point pos, double angle):
+    Position (Point pos = {0, 0}, double angle = 0.0):
         Point(pos),
         _a(angle)
     {}

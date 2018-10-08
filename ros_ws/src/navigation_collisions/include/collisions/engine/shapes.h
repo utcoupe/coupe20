@@ -74,6 +74,7 @@ private:
 };
 
 class RectObstacle: public MapObstacle {
+public:
     RectObstacle(Position pos, double width, double height, double velocity = 0.0):
         MapObstacle(pos, velocity),
         _width(width),
@@ -86,6 +87,9 @@ class RectObstacle: public MapObstacle {
         using namespace std::string_literals;
         return {"rect"s};
     }
+    
+    double getWidth() const { return _width; }
+    double getHeight() const { return _height; }
         
 private:
     double _width, _height;

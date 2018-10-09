@@ -14,7 +14,6 @@ __author__ = "Thomas Fuhrmann"
 __date__ = 18/01/2017
 
 NODE_NAME = "port_finder"
-PACKAGE_NAME = "drivers_" + NODE_NAME
 ARDUINO_LIST = ("mega", "nano", "uno", "leo")
 #TODO put it in xml file
 ARDUINO_NODE_LIST = ("ard_asserv",)
@@ -36,7 +35,7 @@ class PortFinder:
         self._rosserial_call_list = []
         # Init ROS stuff
         rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.INFO)
-        def_dir = rospkg.RosPack().get_path(PACKAGE_NAME) + "/def"
+        def_dir = rospkg.RosPack().get_path(NODE_NAME) + "/def"
         self._parse_xml_file(def_dir + "/components_list.xml")
         self._parse_dmesg()
         self._associate_port()

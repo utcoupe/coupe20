@@ -273,59 +273,59 @@ std::string Ax12Server::fetch_port(const std::string &service_name) {
 
 const Ax12Table::Register *Ax12Server::service_param_to_register(uint8_t param) {
     switch (param) {
-        case drivers_ax12::SetAx12ParamRequest::ID:
+        case driver_ax12::SetAx12ParamRequest::ID:
             return &ID;
-        case drivers_ax12::SetAx12ParamRequest::BAUD_RATE:
+        case driver_ax12::SetAx12ParamRequest::BAUD_RATE:
             return &BAUD_RATE;
-        case drivers_ax12::SetAx12ParamRequest::RETURN_DELAY_TIME:
+        case driver_ax12::SetAx12ParamRequest::RETURN_DELAY_TIME:
             return &RETURN_DELAY_TIME;
-        case drivers_ax12::SetAx12ParamRequest::CW_ANGLE_LIMIT:
+        case driver_ax12::SetAx12ParamRequest::CW_ANGLE_LIMIT:
             return &CW_ANGLE_LIMIT;
-        case drivers_ax12::SetAx12ParamRequest::CCW_ANGLE_LIMIT:
+        case driver_ax12::SetAx12ParamRequest::CCW_ANGLE_LIMIT:
             return &CCW_ANGLE_LIMIT;
-        case drivers_ax12::SetAx12ParamRequest::HIGHEST_TEMPERATURE:
+        case driver_ax12::SetAx12ParamRequest::HIGHEST_TEMPERATURE:
             return &HIGHEST_TEMPERATURE;
-        case drivers_ax12::SetAx12ParamRequest::LOWEST_VOLTAGE:
+        case driver_ax12::SetAx12ParamRequest::LOWEST_VOLTAGE:
             return &LOWEST_VOLTAGE;
-        case drivers_ax12::SetAx12ParamRequest::HIGHEST_VOLTAGE:
+        case driver_ax12::SetAx12ParamRequest::HIGHEST_VOLTAGE:
             return &HIGHEST_VOLTAGE;
-        case drivers_ax12::SetAx12ParamRequest::MAX_TORQUE:
+        case driver_ax12::SetAx12ParamRequest::MAX_TORQUE:
             return &MAX_TORQUE;
-        case drivers_ax12::SetAx12ParamRequest::STATUS_RETURN_LEVEL:
+        case driver_ax12::SetAx12ParamRequest::STATUS_RETURN_LEVEL:
             return &STATUS_RETURN_LEVEL;
-        case drivers_ax12::SetAx12ParamRequest::ALARM_LED:
+        case driver_ax12::SetAx12ParamRequest::ALARM_LED:
             return &ALARM_LED;
-        case drivers_ax12::SetAx12ParamRequest::ALARM_SHUTDOWN:
+        case driver_ax12::SetAx12ParamRequest::ALARM_SHUTDOWN:
             return &ALARM_SHUTDOWN;
-        case drivers_ax12::SetAx12ParamRequest::TORQUE_ENABLE:
+        case driver_ax12::SetAx12ParamRequest::TORQUE_ENABLE:
             return &TORQUE_ENABLE;
-        case drivers_ax12::SetAx12ParamRequest::LED:
+        case driver_ax12::SetAx12ParamRequest::LED:
             return &LED;
-        case drivers_ax12::SetAx12ParamRequest::CW_COMPLIANCE_MARGIN:
+        case driver_ax12::SetAx12ParamRequest::CW_COMPLIANCE_MARGIN:
             return &CW_COMPLIANCE_MARGIN;
-        case drivers_ax12::SetAx12ParamRequest::CCW_COMPLIANCE_MARGIN:
+        case driver_ax12::SetAx12ParamRequest::CCW_COMPLIANCE_MARGIN:
             return &CCW_COMPLIANCE_MARGIN;
-        case drivers_ax12::SetAx12ParamRequest::CW_COMPLIANCE_SLOPE:
+        case driver_ax12::SetAx12ParamRequest::CW_COMPLIANCE_SLOPE:
             return &CW_COMPLIANCE_SLOPE;
-        case drivers_ax12::SetAx12ParamRequest::CCW_COMPLIANCE_SLOPE:
+        case driver_ax12::SetAx12ParamRequest::CCW_COMPLIANCE_SLOPE:
             return &CCW_COMPLIANCE_SLOPE;
-        case drivers_ax12::SetAx12ParamRequest::GOAL_POSITION:
+        case driver_ax12::SetAx12ParamRequest::GOAL_POSITION:
             return &GOAL_POSITION;
-        case drivers_ax12::SetAx12ParamRequest::MOVING_SPEED:
+        case driver_ax12::SetAx12ParamRequest::MOVING_SPEED:
             return &MOVING_SPEED;
-        case drivers_ax12::SetAx12ParamRequest::TORQUE_LIMIT:
+        case driver_ax12::SetAx12ParamRequest::TORQUE_LIMIT:
             return &TORQUE_LIMIT;
-        case drivers_ax12::SetAx12ParamRequest::LOCK:
+        case driver_ax12::SetAx12ParamRequest::LOCK:
             return &LOCK;
-        case drivers_ax12::SetAx12ParamRequest::PUNCH:
+        case driver_ax12::SetAx12ParamRequest::PUNCH:
             return &PUNCH;
         default:
             return nullptr;
     }
 }
 
-bool Ax12Server::execute_set_service_cb(drivers_ax12::SetAx12Param::Request &req,
-                                        drivers_ax12::SetAx12Param::Response &res) {
+bool Ax12Server::execute_set_service_cb(driver_ax12::SetAx12Param::Request &req,
+                                        driver_ax12::SetAx12Param::Response &res) {
 
     if (!driver_.motor_id_exists(req.motor_id)) {
         ROS_ERROR_STREAM("AX-12 set_param service server received a request for motor ID " << req.motor_id

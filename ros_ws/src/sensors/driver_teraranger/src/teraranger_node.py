@@ -2,7 +2,7 @@
 
 import subprocess
 import rospy
-from drivers_ard_others.msg import *
+from ard_others.msg import *
 from drivers_port_finder.srv import *
 from game_manager import StatusServices
 from sensor_msgs.msg import Range

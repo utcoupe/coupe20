@@ -3,8 +3,8 @@
 import rospy
 import actionlib
 from math import sqrt, pow
-from movement_actuators.srv import *
-from movement_actuators.msg import DispatchAction, DispatchGoal
+from dispatcher.srv import *
+from dispatcher.msg import DispatchAction, DispatchGoal
 from geometry_msgs.msg import Pose2D
 
 __author__ = "Thomas Fuhrmann"

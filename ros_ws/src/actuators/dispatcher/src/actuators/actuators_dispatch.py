@@ -5,11 +5,11 @@ import threading
 from functools import partial
 from actuators_abstract import *
 import actuators_parser
-from movement_actuators.msg import DispatchAction, DispatchResult
-from drivers_ax12.msg import Ax12CommandGoal, Ax12CommandAction
+from dispatcher.msg import DispatchAction, DispatchResult
+from driver_ax12.msg import Ax12CommandGoal, Ax12CommandAction
 from actionlib_msgs.msg import GoalStatus
-import drivers_ard_others.msg
-import drivers_ax12.msg
+import ard_others.msg
+import driver_ax12.msg
 
 __author__ = "Thomas Fuhrmann"
 __date__ = 9/04/2018
@@ -26,8 +26,8 @@ class ActuatorsDispatch(ActuatorsAbstract):
         # This counter enables to keep a track of orders sent to arduino
         self._order_id_counter = 0
         self._act_parser = actuators_parser.ActuatorsParser()
-        self._pub_ard_move = rospy.Publisher('drivers/ard_others/move', drivers_ard_others.msg.Move, queue_size=3)
-        self._sub_ard_response = rospy.Subscriber('drivers/ard_others/move_response', drivers_ard_others.msg.MoveResponse, self._callback_move_response)
+        self._pub_ard_move = rospy.Publisher('drivers/ard_others/move', ard_others.msg.Move, queue_size=3)
+        self._sub_ard_response = rospy.Subscriber('drivers/ard_others/move_response', ard_others.msg.MoveResponse, self._callback_move_response)
         self._act_cli_ax12 = actionlib.ActionClient('drivers/ax12', Ax12CommandAction)
         self._act_cli_ax12.wait_for_server(rospy.Duration(10))
         self._isHalted = False
@@ -111,7 +111,7 @@ class ActuatorsDispatch(ActuatorsAbstract):
             rospy.logwarn("Unknow ax12 goal received : {}".format(received_goal_id))
 
     def _send_to_arduino(self, ard_id, ard_type, param):
-        msg = drivers_ard_others.msg.Move()
+        msg = ard_others.msg.Move()
         msg.id = ard_id
         msg.type = {
                 'digital': msg.TYPE_DIGITAL,
@@ -130,14 +130,14 @@ class ActuatorsDispatch(ActuatorsAbstract):
         except ValueError as ex:
             rospy.logerr("Try to dispatch an ax12 order with invalid position... Reject it.")
             return None
-        goal = drivers_ax12.msg.Ax12CommandGoal()
+        goal = driver_ax12.msg.Ax12CommandGoal()
         goal.motor_id = int(motor_id)
         if order.lower() == "joint":
-            goal.mode = drivers_ax12.msg.Ax12CommandGoal.JOINT
+            goal.mode = driver_ax12.msg.Ax12CommandGoal.JOINT
             goal.speed = 0
             goal.position = goal_position
         elif order.lower() == "wheel":
-            goal.mode = drivers_ax12.msg.Ax12CommandGoal.WHEEL
+            goal.mode = driver_ax12.msg.Ax12CommandGoal.WHEEL
             goal.speed = goal_position
         else:
             rospy.logerr("Bad order: {}, expected joint or wheel".format(order))

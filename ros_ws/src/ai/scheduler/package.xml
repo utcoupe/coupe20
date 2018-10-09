@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>ai_scheduler</name>
+    <name>scheduler</name>
     <version>0.0.0</version>
-    <description>The ai_scheduler package</description>
+    <description>The scheduler package</description>
     <license>GPLv3</license>
     <author email="pielaclau@gmail.com">MadeInPierre</author>
     <maintainer email="utcoupe@assos.utc.fr">UTCoupe Association</maintainer>

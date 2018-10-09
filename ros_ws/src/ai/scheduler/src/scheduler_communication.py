@@ -3,19 +3,19 @@ import time
 import rospy
 import actionlib
 
-import ai_scheduler.msg
-import ai_scheduler.srv
+import scheduler.msg
+import scheduler.srv
 
 import navigator.msg
-import movement_actuators.msg
-import movement_actuators.srv
+import dispatcher.msg
+import dispatcher.srv
 import memory_map.srv
 import game_manager.srv
 import game_manager.srv
 import drivers_ard_hmi.msg
 import drivers_ard_asserv.srv
 import drivers_ard_asserv.msg
-import drivers_ax12.msg
+import driver_ax12.msg
 
 class RequestTypes(object):
     PUB_MSG = 0
@@ -28,7 +28,7 @@ class RequestTypes(object):
     @staticmethod
     def init():
         RequestTypes.SERVERS = {
-            "ai/scheduler/score":               (RequestTypes.PUB_MSG, ai_scheduler.msg.AIScore),
+            "ai/scheduler/score":               (RequestTypes.PUB_MSG, scheduler.msg.AIScore),
             "ai/game_manager/set_status":        (RequestTypes.SERVICE, game_manager.srv.SetStatus),
             "ai/game_manager/set_timer":               (RequestTypes.SERVICE, game_manager.srv.SetTimer),
             "ai/game_manager/delay":                   (RequestTypes.SERVICE, game_manager.srv.Delay),
@@ -39,15 +39,15 @@ class RequestTypes(object):
 
             "navigation/navigator/goto_action": (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
             "navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),
-            "movement/actuators/dispatch":      (RequestTypes.ACTION,  movement_actuators.msg.DispatchAction, movement_actuators.msg.DispatchGoal),
-            "movement/actuators/barrel":        (RequestTypes.ACTION, movement_actuators.msg.BarrelAction, movement_actuators.msg.BarrelGoal),
-            "movement/actuators/arm":           (RequestTypes.ACTION, movement_actuators.msg.ArmAction, movement_actuators.msg.ArmGoal),
-            "movement/actuators/activate_canon":        (RequestTypes.SERVICE, movement_actuators.srv.ActivateCanon),
+            "movement/actuators/dispatch":      (RequestTypes.ACTION,  dispatcher.msg.DispatchAction, dispatcher.msg.DispatchGoal),
+            "movement/actuators/barrel":        (RequestTypes.ACTION, dispatcher.msg.BarrelAction, dispatcher.msg.BarrelGoal),
+            "movement/actuators/arm":           (RequestTypes.ACTION, dispatcher.msg.ArmAction, dispatcher.msg.ArmGoal),
+            "movement/actuators/activate_canon":        (RequestTypes.SERVICE, dispatcher.srv.ActivateCanon),
 
             "drivers/ard_asserv/set_pos":       (RequestTypes.SERVICE, drivers_ard_asserv.srv.SetPos),
             "drivers/ard_asserv/pwm": (RequestTypes.SERVICE, drivers_ard_asserv.srv.Pwm),
             "drivers/ard_asserv/goto_action": (RequestTypes.ACTION, drivers_ard_asserv.msg.DoGotoAction, drivers_ard_asserv.msg.DoGotoGoal),
-            "drivers/ax12":                (RequestTypes.ACTION, drivers_ax12.msg.Ax12CommandAction, drivers_ax12.msg.Ax12CommandGoal),
+            "drivers/ax12":                (RequestTypes.ACTION, driver_ax12.msg.Ax12CommandAction, driver_ax12.msg.Ax12CommandGoal),
 
             "feedback/ard_hmi/ros_event":       (RequestTypes.PUB_MSG, drivers_ard_hmi.msg.ROSEvent),
             "feedback/ard_hmi/hmi_event":       (RequestTypes.SUB_MSG, drivers_ard_hmi.msg.HMIEvent)}

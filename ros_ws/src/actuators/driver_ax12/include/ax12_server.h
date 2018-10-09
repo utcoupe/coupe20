@@ -1,6 +1,6 @@
 
-#ifndef DRIVERS_AX12_AX12_SERVER_H
-#define DRIVERS_AX12_AX12_SERVER_H
+#ifndef driver_ax12_AX12_SERVER_H
+#define driver_ax12_AX12_SERVER_H
 
 #include <string>
 #include <list>
@@ -8,8 +8,8 @@
 
 #include <ros/console.h>
 #include <actionlib/server/action_server.h>
-#include <drivers_ax12/Ax12CommandAction.h>
-#include <drivers_ax12/SetAx12Param.h>
+#include <driver_ax12/Ax12CommandAction.h>
+#include <driver_ax12/SetAx12Param.h>
 #include <drivers_port_finder/GetPort.h>
 #include <memory_definitions/GetDefinition.h>
 #include <game_manager/init_service.h>
@@ -25,21 +25,21 @@ const std::string PORT_FINDER_SERVICE = "drivers/port_finder/get_port";
 const std::string GAME_STATUS_TOPIC = "ai/game_manager/status";
 
 
-typedef actionlib::ServerGoalHandle <drivers_ax12::Ax12CommandAction> GoalHandle;
+typedef actionlib::ServerGoalHandle <driver_ax12::Ax12CommandAction> GoalHandle;
 
 
 class Ax12Server {
 
 protected:
     ros::NodeHandle nh_;
-    actionlib::ActionServer <drivers_ax12::Ax12CommandAction> as_;
+    actionlib::ActionServer <driver_ax12::Ax12CommandAction> as_;
     ros::ServiceServer set_param_service;
     ros::Subscriber game_status_sub_;
     std::list <GoalHandle> joint_goals_;
 
     // create messages that are used to published feedback/result
-    drivers_ax12::Ax12CommandFeedback feedback_;
-    drivers_ax12::Ax12CommandResult result_;
+    driver_ax12::Ax12CommandFeedback feedback_;
+    driver_ax12::Ax12CommandResult result_;
 
     Ax12Driver driver_;
     ros::Timer timer_;
@@ -53,7 +53,7 @@ public:
 
     void cancel_goal_cb(GoalHandle goal_handle);
 
-    bool execute_set_service_cb(drivers_ax12::SetAx12Param::Request &req, drivers_ax12::SetAx12Param::Response &res);
+    bool execute_set_service_cb(driver_ax12::SetAx12Param::Request &req, driver_ax12::SetAx12Param::Response &res);
 
     void game_status_cb(const game_manager::GameStatusConstPtr &status);
 
@@ -74,4 +74,4 @@ public:
     ~Ax12Server();
 };
 
-#endif //DRIVERS_AX12_AX12_SERVER_H
+#endif //driver_ax12_AX12_SERVER_H

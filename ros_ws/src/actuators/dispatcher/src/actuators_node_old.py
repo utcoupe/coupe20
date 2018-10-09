@@ -6,10 +6,10 @@ import time
 import random
 import threading
 import actionlib
-import movement_actuators.msg
-from src.movement_actuators.src.actuators import actuators_properties
-import drivers_ard_others.msg
-import drivers_ax12.msg
+import dispatcher.msg
+from src.dispatcher.src.actuators import actuators_properties
+import ard_others.msg
+import driver_ax12.msg
 from game_manager import StatusServices
 from game_manager.msg import GameStatus
 
@@ -19,7 +19,7 @@ def current_milli_time(): return int(round(time.time() * 1000))
 class ActuatorsNode():
     """Dispatch commands from AI to the correct node"""
 
-    _result = movement_actuators.msg.dispatchResult()
+    _result = dispatcher.msg.dispatchResult()
 
     def __init__(self):
         self.is_halted = False
@@ -29,10 +29,10 @@ class ActuatorsNode():
         self._action_name = '{}dispatch'.format(self._namespace)
         self._lock = threading.RLock()
         self._call_stack = {}
-        self._action_server = actionlib.SimpleActionServer( self._action_name, movement_actuators.msg.dispatchAction, execute_cb=self.dispatch, auto_start=False)
-        self._arduino_move = rospy.Publisher( 'drivers/ard_others/move', drivers_ard_others.msg.Move, queue_size=30)  # TODO check the queue_size
-        self._arduino_response = rospy.Subscriber( 'drivers/ard_others/move_response', drivers_ard_others.msg.MoveResponse, self.ard_callback)
-        self._ax12_client = actionlib.SimpleActionClient('drivers/ax12', drivers_ax12.msg.Ax12CommandAction)
+        self._action_server = actionlib.SimpleActionServer( self._action_name, dispatcher.msg.dispatchAction, execute_cb=self.dispatch, auto_start=False)
+        self._arduino_move = rospy.Publisher( 'drivers/ard_others/move', ard_others.msg.Move, queue_size=30)  # TODO check the queue_size
+        self._arduino_response = rospy.Subscriber( 'drivers/ard_others/move_response', ard_others.msg.MoveResponse, self.ard_callback)
+        self._ax12_client = actionlib.SimpleActionClient('drivers/ax12', driver_ax12.msg.Ax12CommandAction)
         self._action_server.start()
 
 
@@ -91,7 +91,7 @@ class ActuatorsNode():
         self._action_server.set_succeeded(False)
 
     def sendToArduino(self, ard_id, ard_type, order, param, timeout):
-        msg = drivers_ard_others.msg.Move()
+        msg = ard_others.msg.Move()
         msg.id = ard_id
         msg.type = {
                 'digital': msg.TYPE_DIGITAL,
@@ -120,14 +120,14 @@ class ActuatorsNode():
         return success
 
     def sendToAx12(self, id, order, param, timeout):
-        goal = drivers_ax12.msg.Ax12CommandGoal()
+        goal = driver_ax12.msg.Ax12CommandGoal()
         goal.motor_id = int(id)
         if order.lower() == "joint":
-            goal.mode = drivers_ax12.msg.Ax12CommandGoal.JOINT
+            goal.mode = driver_ax12.msg.Ax12CommandGoal.JOINT
             goal.speed = 0
             goal.position = int(param)
         elif order.lower() == "wheel":
-            goal.mode = drivers_ax12.msg.Ax12CommandGoal.WHEEL
+            goal.mode = driver_ax12.msg.Ax12CommandGoal.WHEEL
             goal.speed = int(param)
         else:
             rospy.logerr("Bad order: {}, expected joint or wheel".format(order))

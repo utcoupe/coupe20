@@ -1,6 +1,6 @@
 
-#ifndef DRIVERS_AX12_AX12_DRIVER_H
-#define DRIVERS_AX12_AX12_DRIVER_H
+#ifndef driver_ax12_AX12_DRIVER_H
+#define driver_ax12_AX12_DRIVER_H
 
 #include <dynamixel_sdk/dynamixel_sdk.h>
 #include <memory>
@@ -44,4 +44,4 @@ public:
 
 };
 
-#endif //DRIVERS_AX12_AX12_DRIVER_H
+#endif //driver_ax12_AX12_DRIVER_H

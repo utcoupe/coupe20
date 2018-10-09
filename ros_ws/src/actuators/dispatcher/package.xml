@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>movement_actuators</name>
+    <name>dispatcher</name>
     <version>0.0.2</version>
     <description>The actuators package</description>
     <license>GPLv3</license>

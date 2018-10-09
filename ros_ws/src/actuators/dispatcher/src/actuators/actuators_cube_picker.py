@@ -5,9 +5,9 @@ import actionlib
 from actuators_abstract import ActuatorsAbstract
 from actionlib_msgs.msg import GoalStatus
 from geometry_msgs.msg import Pose2D
-from movement_actuators.srv import *
+from dispatcher.srv import *
 from recognition_cube.srv import *
-from movement_actuators.msg import CubePickerAction, ArmGoal, ArmAction, CubePickerResult, DispatchAction, DispatchGoal
+from dispatcher.msg import CubePickerAction, ArmGoal, ArmAction, CubePickerResult, DispatchAction, DispatchGoal
 from geometry_msgs.msg import PointStamped
 
 STEPPER_ELEVATOR_NAME = 'arm_elevator'

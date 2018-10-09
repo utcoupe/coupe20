@@ -3,7 +3,7 @@ project(drivers_teraranger)
 
 find_package(catkin REQUIRED COMPONENTS
     drivers_port_finder
-    drivers_ard_others
+    ard_others
     game_manager
     sensor_msgs
 )
@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
     CATKIN_DEPENDS
     drivers_port_finder
-    drivers_ard_others
+    ard_others
     sensor_msgs
 )
 

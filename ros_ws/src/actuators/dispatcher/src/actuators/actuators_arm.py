@@ -5,9 +5,9 @@ import rospy
 import tf2_ros
 from actionlib_msgs.msg import GoalStatus
 from actuators_abstract import ActuatorsAbstract
-from drivers_ax12.msg import Ax12CommandGoal, Ax12CommandAction
+from driver_ax12.msg import Ax12CommandGoal, Ax12CommandAction
 from geometry_msgs.msg import TransformStamped, PointStamped
-from movement_actuators.msg import ArmAction, ArmResult
+from dispatcher.msg import ArmAction, ArmResult
 from memory_definitions.srv import GetDefinition
 from functools import partial
 import yaml

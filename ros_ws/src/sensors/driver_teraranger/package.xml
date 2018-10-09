@@ -12,7 +12,7 @@
     <depend>rospy</depend>
     <depend>sensor_msgs</depend>>
     <depend>drivers_port_finder</depend>>
-    <depend>drivers_ard_others</depend>>
+    <depend>ard_others</depend>>
     <depend>game_manager</depend>>
     <export>
     </export>

@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
     rospy
     roscpp
     std_msgs
-    ai_scheduler
+    scheduler
     message_generation
 )
 

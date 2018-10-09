@@ -2,8 +2,8 @@
 import actionlib
 import rospy
 from actuators_abstract import ActuatorsAbstract
-from movement_actuators.msg import BarrelAction, BarrelResult, DispatchAction, DispatchGoal
-import drivers_ard_others.msg
+from dispatcher.msg import BarrelAction, BarrelResult, DispatchAction, DispatchGoal
+import ard_others.msg
 
 from actionlib.action_client import CommState
 
@@ -36,7 +36,7 @@ class ActuatorsBarrel(ActuatorsAbstract):
 
         self._curr_color = Color.UNKNOWN
 
-        self._color_client = rospy.Subscriber(self.COLOR_SENSOR_TOPIC, drivers_ard_others.msg.Color, self._color_callback)
+        self._color_client = rospy.Subscriber(self.COLOR_SENSOR_TOPIC, ard_others.msg.Color, self._color_callback)
 
         self._team_color = Color.ORANGE if rospy.get_param('/current_team', 'orange') == 'orange' else Color.GREEN
 

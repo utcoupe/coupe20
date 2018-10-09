@@ -1,6 +1,6 @@
 
-#ifndef DRIVERS_AX12_AX12_TABLE_H
-#define DRIVERS_AX12_AX12_TABLE_H
+#ifndef driver_ax12_AX12_TABLE_H
+#define driver_ax12_AX12_TABLE_H
 
 #include <stdint.h>
 
@@ -66,4 +66,4 @@ namespace Ax12Table {
 }
 
 
-#endif //DRIVERS_AX12_AX12_TABLE_H
+#endif //driver_ax12_AX12_TABLE_H

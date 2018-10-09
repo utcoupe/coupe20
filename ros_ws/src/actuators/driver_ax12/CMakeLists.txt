@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(drivers_ax12)
+project(driver_ax12)
 
 add_compile_options(-std=c++14)
 
@@ -35,7 +35,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES drivers_ax12
+  LIBRARIES driver_ax12
   CATKIN_DEPENDS actionlib actionlib_msgs roscpp std_msgs drivers_port_finder game_manager
 )
 

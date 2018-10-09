@@ -9,7 +9,7 @@
 	</group>
     <group ns="ai">
          <node pkg="game_manager" name="game_status" type="game_status_node.py" />
-         <node pkg="ai_scheduler" name="scheduler" type="scheduler_node.py" output="screen" />
+         <node pkg="scheduler" name="scheduler" type="scheduler_node.py" output="screen" />
          <node pkg="game_manager" name="timer" type="timer_node.py" />
     </group>
     <group ns="recognition">

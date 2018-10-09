@@ -4,7 +4,7 @@ This package takes care of choosing what actions to take based on an `actions` d
 The definition files are located under `src/Definitions`.
 
 This package also contains the main launch files that start all system nodes.
-In order to launch the main program with all system nodes, run `roslaunch robot_ai_scheduler main.launch` after sourcing the workspace.
+In order to launch the main program with all system nodes, run `roslaunch robot_scheduler main.launch` after sourcing the workspace.
 
 ## AI Scheduler
 

@@ -12,8 +12,8 @@
 #include <drivers_ax12/SetAx12Param.h>
 #include <drivers_port_finder/GetPort.h>
 #include <memory_definitions/GetDefinition.h>
-#include <ai_game_manager/init_service.h>
-#include <ai_game_manager/GameStatus.h>
+#include <game_manager/init_service.h>
+#include <game_manager/GameStatus.h>
 
 #include "ax12_driver.h"
 
@@ -55,7 +55,7 @@ public:
 
     bool execute_set_service_cb(drivers_ax12::SetAx12Param::Request &req, drivers_ax12::SetAx12Param::Response &res);
 
-    void game_status_cb(const ai_game_manager::GameStatusConstPtr &status);
+    void game_status_cb(const game_manager::GameStatusConstPtr &status);
 
     std::string fetch_port(const std::string &service_name);
 

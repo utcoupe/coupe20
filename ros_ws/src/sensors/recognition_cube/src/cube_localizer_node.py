@@ -4,7 +4,7 @@ import tf
 import tf2_ros
 import math
 from geometry_msgs.msg import Pose2D, TransformStamped
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 from processing_lidar_objects.msg import Obstacles
 from recognition_cube.srv import *
 from recognition_objects_classifier.msg import *

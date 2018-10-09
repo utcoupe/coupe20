@@ -15,5 +15,5 @@
     <depend>geometry_msgs</depend>
     <depend>tf2_ros</depend>
     <depend>actionlib_msgs</depend>
-    <depend>ai_game_manager</depend>
+    <depend>game_manager</depend>
 </package>

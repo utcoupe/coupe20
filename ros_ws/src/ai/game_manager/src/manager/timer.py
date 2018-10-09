@@ -1,11 +1,11 @@
 import time, rospy
 
-from ai_game_manager.msg import GameStatus
-from ai_game_manager.srv import SetStatus
-from ai_game_manager import StatusServices
+from game_manager.msg import GameStatus
+from game_manager.srv import SetStatus
+from game_manager import StatusServices
 
-from ai_game_manager.srv import SetTimer, SetTimerResponse, Delay, DelayResponse
-from ai_game_manager.msg import GameTime
+from game_manager.srv import SetTimer, SetTimerResponse, Delay, DelayResponse
+from game_manager.msg import GameTime
 
 class Status():
     STATUS_INIT   = 0

@@ -7,8 +7,8 @@ from drivers_ard_asserv.srv import *
 from drivers_ard_asserv.msg import *
 from drivers_port_finder.srv import *
 import asserv
-from ai_game_manager import StatusServices
-from ai_game_manager.msg import GameStatus
+from game_manager import StatusServices
+from game_manager.msg import GameStatus
 from memory_map.srv import FillWaypoint
 from memory_map.msg import Waypoint
 import tf

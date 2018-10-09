@@ -8,9 +8,9 @@
 		<node pkg="memory_map" name="map" type="map_node.py" output="screen"/>
 	</group>
     <group ns="ai">
-         <node pkg="ai_game_manager" name="game_status" type="game_status_node.py" />
+         <node pkg="game_manager" name="game_status" type="game_status_node.py" />
          <node pkg="ai_scheduler" name="scheduler" type="scheduler_node.py" output="screen" />
-         <node pkg="ai_game_manager" name="timer" type="timer_node.py" />
+         <node pkg="game_manager" name="timer" type="timer_node.py" />
     </group>
     <group ns="recognition">
 		<node pkg="recognition_localizer" name="localizer" type="localizer_node.py" />
@@ -29,7 +29,7 @@
 
 	<group ns="navigation">
 		<node pkg="navigation_collisions" name="collisions" type="collisions_node.py" />
-		<node pkg="navigation_navigator" name="navigator" type="navigator_node.py" output="screen" />
+		<node pkg="navigator" name="navigator" type="navigator_node.py" output="screen" />
 		<node pkg="navigation_pathfinder" name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
 	</group>
 </launch>

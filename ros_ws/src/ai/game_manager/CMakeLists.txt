@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ai_game_manager)
+project(game_manager)
 
 add_compile_options(-std=c++14)
 

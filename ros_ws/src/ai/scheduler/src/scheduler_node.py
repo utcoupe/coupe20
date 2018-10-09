@@ -5,8 +5,8 @@ from scheduler_communication import AICommunication
 from ai import RobotAI, GameProperties
 
 from drivers_ard_hmi.msg import SetStrategies, SetTeams, HMIEvent
-from ai_game_manager.srv import SetStatus
-from ai_game_manager import StatusServices
+from game_manager.srv import SetStatus
+from game_manager import StatusServices
 
 
 class AINode():

@@ -3,7 +3,7 @@ import rospy
 import tf
 import tf2_ros
 from geometry_msgs.msg import Pose2D, TransformStamped
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 class Localizer(object):

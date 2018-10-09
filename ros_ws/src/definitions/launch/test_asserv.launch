@@ -3,7 +3,7 @@
     <param name="robot"  value="$(arg robot)" />
 
     <group ns="ai">
-        <node pkg="ai_game_manager" name="game_status" type="game_status_node.py" output="screen"/>
+        <node pkg="game_manager" name="game_status" type="game_status_node.py" output="screen"/>
     </group>
 
     <group ns="memory">

@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   drivers_port_finder
-  ai_game_manager
+  game_manager
   memory_definitions
   dynamixel_sdk
 )
@@ -36,7 +36,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES drivers_ax12
-  CATKIN_DEPENDS actionlib actionlib_msgs roscpp std_msgs drivers_port_finder ai_game_manager
+  CATKIN_DEPENDS actionlib actionlib_msgs roscpp std_msgs drivers_port_finder game_manager
 )
 
 include_directories(

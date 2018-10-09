@@ -11,7 +11,7 @@ from memory_definitions.srv import GetDefinition
 from processing_belt_interpreter.msg import *
 from drivers_ard_others.msg import BeltRange
 from geometry_msgs.msg import Pose2D, TransformStamped, PointStamped
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 from dynamic_reconfigure.server import Server
 from processing_belt_interpreter.cfg import BeltInterpreterConfig
 

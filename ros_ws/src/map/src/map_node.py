@@ -4,7 +4,7 @@ import map_manager
 import map_communication
 from markers import MarkersPublisher
 from occupancy import OccupancyGenerator
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 class MapNode():

@@ -17,7 +17,7 @@
     <depend>tf2_ros</depend>
     <depend>processing_lidar_objects</depend>
     <depend>processing_belt_interpreter</depend>
-    <depend>ai_game_manager</depend>
+    <depend>game_manager</depend>
     <depend>dynamic_reconfigure</depend>
     <exec_depend>message_runtime</exec_depend>
     <export>

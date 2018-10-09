@@ -9,7 +9,7 @@ from geometry_msgs.msg import Pose2D
 from navigation_collisions.msg import PredictedCollision
 from navigation_collisions.srv import ActivateCollisions, ActivateCollisionsResponse
 
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 class CollisionsNode():

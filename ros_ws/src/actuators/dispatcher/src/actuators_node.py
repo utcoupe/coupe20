@@ -3,8 +3,8 @@
 
 import rospy
 import actuators
-from ai_game_manager import StatusServices
-from ai_game_manager.msg import GameStatus
+from game_manager import StatusServices
+from game_manager.msg import GameStatus
 
 __author__ = "P. Potiron", "Thomas Fuhrmann"
 __date__ = 9/04/2018

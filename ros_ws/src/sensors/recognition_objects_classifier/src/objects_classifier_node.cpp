@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <ai_game_manager/init_service.h>
+#include <game_manager/init_service.h>
 
 #include "main_thread.h"
 #include "objects_listener.h"

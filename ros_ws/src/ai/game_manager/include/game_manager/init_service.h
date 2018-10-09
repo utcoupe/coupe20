@@ -3,28 +3,28 @@
 
 #include <ros/ros.h>
 
-#include "ai_game_manager/GameStatus.h"
-#include "ai_game_manager/ArmRequest.h"
-#include "ai_game_manager/NodeReady.h"
+#include "game_manager/GameStatus.h"
+#include "game_manager/ArmRequest.h"
+#include "game_manager/NodeReady.h"
 
 #include <functional>
 
 /**
- * @brief Main class of the lib `ai_game_manager`.
+ * @brief Main class of the lib `game_manager`.
  * It implements most of the python script `init_service.py` does.
  */
 class StatusServices
 {
 public:
     /** @brief Type of the callback for the arm request */
-    using ArmCallback_t = std::function<void (const ai_game_manager::ArmRequest::ConstPtr &)>;
+    using ArmCallback_t = std::function<void (const game_manager::ArmRequest::ConstPtr &)>;
     /** @brief Type of the callback for the status event */
-    using StatusCallback_t = std::function<void (const ai_game_manager::GameStatus::ConstPtr &)>;
+    using StatusCallback_t = std::function<void (const game_manager::GameStatus::ConstPtr &)>;
     
     /**
      * @brief Initialize the status service and saves the callbacks for the future requests and events.
      * 
-     * Creates the service `(nodename)/arm` that will be called by `ai_game_manager` main node when all the node in our network must arm.
+     * Creates the service `(nodename)/arm` that will be called by `game_manager` main node when all the node in our network must arm.
      * It subscribes also to the topic `ai/game_manager/status`. To avoid any compatibility problems between std C++ and boost, statusCallback is not directly connected, it will be called through _on_arm member function.
      * 
      * @param namespaceName The name of the node namespace.
@@ -53,8 +53,8 @@ private:
     ros::Subscriber _armServer;
     ros::Subscriber _gameStatusSubscriber;
 
-    void _on_arm(const ai_game_manager::ArmRequest::ConstPtr& msg);
-    void _on_gameStatus(const ai_game_manager::GameStatus::ConstPtr& msg);
+    void _on_arm(const game_manager::ArmRequest::ConstPtr& msg);
+    void _on_gameStatus(const game_manager::GameStatus::ConstPtr& msg);
 };
 
 #endif // AI_GAME_STATUS_INIT_SERVICE_H

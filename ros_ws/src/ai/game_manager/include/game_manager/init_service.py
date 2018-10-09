@@ -5,8 +5,8 @@ import rospy
 Imported from ai/game_manager.
 '''
 
-from ai_game_manager.msg import GameStatus, ArmRequest
-from ai_game_manager.srv import NodeReady
+from game_manager.msg import GameStatus, ArmRequest
+from game_manager.srv import NodeReady
 
 
 class StatusServices(object):

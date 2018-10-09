@@ -8,8 +8,8 @@ import rospy
 import actionlib
 
 from geometry_msgs.msg import Pose2D
-from navigation_navigator.srv import Goto
-from navigation_navigator.msg import Status, DoGotoResult, DoGotoGoal, DoGotoAction, DoGotoWaypointResult, DoGotoWaypointAction
+from navigator.srv import Goto
+from navigator.msg import Status, DoGotoResult, DoGotoGoal, DoGotoAction, DoGotoWaypointResult, DoGotoWaypointAction
 
 from pathfinder import PathfinderClient
 from asserv import AsservClient
@@ -19,7 +19,7 @@ from map import MapClient
 from planning import Plan
 #
 
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 __author__ = "Gaëtan Blond"

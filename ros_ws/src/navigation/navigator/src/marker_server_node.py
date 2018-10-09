@@ -3,7 +3,7 @@
 import actionlib
 from interactive_markers.interactive_marker_server import *
 from interactive_markers.menu_handler import *
-from navigation_navigator.msg import DoGotoAction, DoGotoGoal
+from navigator.msg import DoGotoAction, DoGotoGoal
 from tf.transformations import euler_from_quaternion
 from visualization_msgs.msg import *
 from visualization_msgs.msg import Marker

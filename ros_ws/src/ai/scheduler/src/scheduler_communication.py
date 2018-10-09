@@ -6,12 +6,12 @@ import actionlib
 import ai_scheduler.msg
 import ai_scheduler.srv
 
-import navigation_navigator.msg
+import navigator.msg
 import movement_actuators.msg
 import movement_actuators.srv
 import memory_map.srv
-import ai_game_manager.srv
-import ai_game_manager.srv
+import game_manager.srv
+import game_manager.srv
 import drivers_ard_hmi.msg
 import drivers_ard_asserv.srv
 import drivers_ard_asserv.msg
@@ -29,16 +29,16 @@ class RequestTypes(object):
     def init():
         RequestTypes.SERVERS = {
             "ai/scheduler/score":               (RequestTypes.PUB_MSG, ai_scheduler.msg.AIScore),
-            "ai/game_manager/set_status":        (RequestTypes.SERVICE, ai_game_manager.srv.SetStatus),
-            "ai/game_manager/set_timer":               (RequestTypes.SERVICE, ai_game_manager.srv.SetTimer),
-            "ai/game_manager/delay":                   (RequestTypes.SERVICE, ai_game_manager.srv.Delay),
+            "ai/game_manager/set_status":        (RequestTypes.SERVICE, game_manager.srv.SetStatus),
+            "ai/game_manager/set_timer":               (RequestTypes.SERVICE, game_manager.srv.SetTimer),
+            "ai/game_manager/delay":                   (RequestTypes.SERVICE, game_manager.srv.Delay),
 
             "memory/map/get":                   (RequestTypes.SERVICE, memory_map.srv.MapGet),
             "memory/map/set":                   (RequestTypes.SERVICE, memory_map.srv.MapSet),
             "memory/map/transfer":              (RequestTypes.SERVICE, memory_map.srv.MapTransfer),
 
-            "navigation/navigator/goto_action": (RequestTypes.ACTION,  navigation_navigator.msg.DoGotoAction, navigation_navigator.msg.DoGotoGoal),
-            "navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigation_navigator.msg.DoGotoWaypointAction, navigation_navigator.msg.DoGotoWaypointGoal),
+            "navigation/navigator/goto_action": (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
+            "navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),
             "movement/actuators/dispatch":      (RequestTypes.ACTION,  movement_actuators.msg.DispatchAction, movement_actuators.msg.DispatchGoal),
             "movement/actuators/barrel":        (RequestTypes.ACTION, movement_actuators.msg.BarrelAction, movement_actuators.msg.BarrelGoal),
             "movement/actuators/arm":           (RequestTypes.ACTION, movement_actuators.msg.ArmAction, movement_actuators.msg.ArmGoal),

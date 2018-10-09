@@ -1,6 +1,6 @@
 #include "ax12_server.h"
 
-#include <ai_game_manager/ArmRequest.h>
+#include <game_manager/ArmRequest.h>
 
 #include <memory>
 
@@ -351,7 +351,7 @@ bool Ax12Server::execute_set_service_cb(drivers_ax12::SetAx12Param::Request &req
     return true;
 }
 
-void Ax12Server::game_status_cb(const ai_game_manager::GameStatusConstPtr &status) {
+void Ax12Server::game_status_cb(const game_manager::GameStatusConstPtr &status) {
     if (!is_halted && status->game_status == status->STATUS_HALT) {
         is_halted = true;
         driver_.toggle_torque(false);
@@ -378,7 +378,7 @@ Ax12Server::Ax12Server(const std::string &action_name, const std::string &servic
     as_.start();
 
     status_services_ = std::make_unique<StatusServices>(
-        "drivers", "ax12", [this](const ai_game_manager::ArmRequest::ConstPtr &){
+        "drivers", "ax12", [this](const game_manager::ArmRequest::ConstPtr &){
             driver_.scan_motors(); // TODO: uncomment and test if arm can be called while in game ???
             // driver_.toggle_torque(true);
         });

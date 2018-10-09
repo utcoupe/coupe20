@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>navigation_navigator</name>
+    <name>navigator</name>
     <version>0.0.2</version>
     <description>The movement/navigation/navigator package for coupe18</description>
     <license>GLPv3</license>
@@ -18,7 +18,7 @@
     <depend>navigation_pathfinder</depend>
     <depend>drivers_ard_asserv</depend>
     <depend>memory_map</depend>
-    <depend>ai_game_manager</depend>
+    <depend>game_manager</depend>
     <exec_depend>message_runtime</exec_depend>
     <export>
     </export>

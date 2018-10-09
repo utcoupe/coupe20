@@ -1,6 +1,6 @@
 #include <utility>
 
-#include "ai_game_manager/init_service.h"
+#include "game_manager/init_service.h"
 
 using namespace std;
 
@@ -26,8 +26,8 @@ void StatusServices::setReady(bool success)
     {
         if (!ros::service::waitForService(READY_SRV, TIMEOUT_READY_SRV))
             throw Errors::SERVICE_TIMEOUT;
-        ros::ServiceClient readyPub = _nodeHandle.serviceClient<ai_game_manager::NodeReady>(READY_SRV);
-        ai_game_manager::NodeReady msg;
+        ros::ServiceClient readyPub = _nodeHandle.serviceClient<game_manager::NodeReady>(READY_SRV);
+        game_manager::NodeReady msg;
         msg.request.success = success;
         msg.request.node_name = _nodeName;
         if (!readyPub.call(msg))
@@ -44,12 +44,12 @@ void StatusServices::setReady(bool success)
 }
 
 
-void StatusServices::_on_arm(const ai_game_manager::ArmRequest::ConstPtr& msg)
+void StatusServices::_on_arm(const game_manager::ArmRequest::ConstPtr& msg)
 {
     _armCallback(msg);
 }
 
-void StatusServices::_on_gameStatus(const ai_game_manager::GameStatus::ConstPtr& msg)
+void StatusServices::_on_gameStatus(const game_manager::GameStatus::ConstPtr& msg)
 {
     _statusCallback(msg);
 }

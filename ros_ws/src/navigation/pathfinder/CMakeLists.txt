@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
     genmsg
     geometry_msgs
     dynamic_reconfigure
-    ai_game_manager
+    game_manager
     memory_map
     recognition_objects_classifier
 )

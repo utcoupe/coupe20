@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
     tf2_ros
     geometry_msgs
     actionlib
-    ai_game_manager
+    game_manager
 )
 
 # Generate services in the 'srv' folder

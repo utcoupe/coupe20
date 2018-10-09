@@ -7,7 +7,7 @@ import rospy
 import rospkg
 import xml.etree.ElementTree as ET
 from drivers_port_finder.srv import *
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 __author__ = "Thomas Fuhrmann"

@@ -7,10 +7,10 @@ from collisions_robot import Robot
 from collisions_engine import Point, Position, Velocity, SegmentObstacle, RectObstacle, CircleObstacle
 
 from memory_map.srv import MapGet
-from navigation_navigator.msg import Status
+from navigator.msg import Status
 from drivers_ard_asserv.msg import RobotSpeed
 from recognition_objects_classifier.msg import ClassifiedObjects
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 class CollisionsSubscriptions(object):

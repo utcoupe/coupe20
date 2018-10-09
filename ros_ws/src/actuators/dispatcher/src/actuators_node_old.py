@@ -10,8 +10,8 @@ import movement_actuators.msg
 from src.movement_actuators.src.actuators import actuators_properties
 import drivers_ard_others.msg
 import drivers_ax12.msg
-from ai_game_manager import StatusServices
-from ai_game_manager.msg import GameStatus
+from game_manager import StatusServices
+from game_manager.msg import GameStatus
 
 
 def current_milli_time(): return int(round(time.time() * 1000))

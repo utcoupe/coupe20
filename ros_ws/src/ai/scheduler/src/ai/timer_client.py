@@ -1,5 +1,5 @@
 import rospy
-from ai_game_manager.msg import GameTime
+from game_manager.msg import GameTime
 
 class TimerClient():
     def __init__(self):

@@ -13,7 +13,7 @@
     <depend>sensor_msgs</depend>>
     <depend>drivers_port_finder</depend>>
     <depend>drivers_ard_others</depend>>
-    <depend>ai_game_manager</depend>>
+    <depend>game_manager</depend>>
     <export>
     </export>
 </package>

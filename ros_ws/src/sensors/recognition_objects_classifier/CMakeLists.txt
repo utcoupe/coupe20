@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     message_generation
     geometry_msgs
-    ai_game_manager
+    game_manager
     processing_lidar_objects
     processing_belt_interpreter
     std_msgs

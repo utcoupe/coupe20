@@ -4,7 +4,7 @@ project(drivers_teraranger)
 find_package(catkin REQUIRED COMPONENTS
     drivers_port_finder
     drivers_ard_others
-    ai_game_manager
+    game_manager
     sensor_msgs
 )
 

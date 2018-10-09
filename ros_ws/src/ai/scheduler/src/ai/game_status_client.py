@@ -1,5 +1,5 @@
 import rospy
-from ai_game_manager.msg import GameStatus
+from game_manager.msg import GameStatus
 
 class GameStatusConstants():
     STATUS_INIT   = 0

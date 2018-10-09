@@ -6,7 +6,7 @@ from libtools import Rect
 from enemy_tracker_tracker import EnemiesData
 import enemy_tracker_properties
 import rospy
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 
 
 class EnemyTrackerNode():

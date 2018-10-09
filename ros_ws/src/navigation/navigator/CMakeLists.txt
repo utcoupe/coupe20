@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(navigation_navigator)
+project(navigator)
 
 find_package(catkin REQUIRED COMPONENTS
     message_generation
@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
     memory_map
     tf
     interactive_markers
-    ai_game_manager
+    game_manager
 )
 
 ################################################

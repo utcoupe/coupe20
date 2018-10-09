@@ -13,7 +13,7 @@
     <depend>message_generation</depend>
     <depend>geometry_msgs</depend>
     <depend>dynamic_reconfigure</depend>
-    <depend>ai_game_manager</depend>
+    <depend>game_manager</depend>
     <depend>memory_map</depend>
     <depend>recognition_objects_classifier</depend>
     <exec_depend>message_runtime</exec_depend>

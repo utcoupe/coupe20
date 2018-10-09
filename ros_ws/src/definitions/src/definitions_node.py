@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from memory_definitions.srv import *
-from ai_game_manager import StatusServices
+from game_manager import StatusServices
 import rospy
 import rospkg
 import os

@@ -15,8 +15,8 @@
     <depend>interactive_markers</depend>
     <depend>actionlib_msgs</depend>
     <depend>visualization_msgs</depend>
-    <depend>navigation_pathfinder</depend>
-    <depend>drivers_ard_asserv</depend>
+    <depend>pathfinder</depend>
+    <depend>ard_asserv</depend>
     <depend>memory_map</depend>
     <depend>game_manager</depend>
     <exec_depend>message_runtime</exec_depend>

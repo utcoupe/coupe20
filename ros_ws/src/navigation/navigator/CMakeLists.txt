@@ -9,8 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
     visualization_msgs
     actionlib
     actionlib_msgs
-    navigation_pathfinder
-    drivers_ard_asserv
+    pathfinder
+    ard_asserv
     memory_map
     tf
     interactive_markers

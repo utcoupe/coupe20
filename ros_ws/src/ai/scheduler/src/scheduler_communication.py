@@ -13,8 +13,8 @@ import memory_map.srv
 import game_manager.srv
 import game_manager.srv
 import ard_hmi.msg
-import drivers_ard_asserv.srv
-import drivers_ard_asserv.msg
+import ard_asserv.srv
+import ard_asserv.msg
 import driver_ax12.msg
 
 class RequestTypes(object):
@@ -44,9 +44,9 @@ class RequestTypes(object):
             "movement/actuators/arm":           (RequestTypes.ACTION, dispatcher.msg.ArmAction, dispatcher.msg.ArmGoal),
             "movement/actuators/activate_canon":        (RequestTypes.SERVICE, dispatcher.srv.ActivateCanon),
 
-            "drivers/ard_asserv/set_pos":       (RequestTypes.SERVICE, drivers_ard_asserv.srv.SetPos),
-            "drivers/ard_asserv/pwm": (RequestTypes.SERVICE, drivers_ard_asserv.srv.Pwm),
-            "drivers/ard_asserv/goto_action": (RequestTypes.ACTION, drivers_ard_asserv.msg.DoGotoAction, drivers_ard_asserv.msg.DoGotoGoal),
+            "drivers/ard_asserv/set_pos":       (RequestTypes.SERVICE, ard_asserv.srv.SetPos),
+            "drivers/ard_asserv/pwm": (RequestTypes.SERVICE, ard_asserv.srv.Pwm),
+            "drivers/ard_asserv/goto_action": (RequestTypes.ACTION, ard_asserv.msg.DoGotoAction, ard_asserv.msg.DoGotoGoal),
             "drivers/ax12":                (RequestTypes.ACTION, driver_ax12.msg.Ax12CommandAction, driver_ax12.msg.Ax12CommandGoal),
 
             "feedback/ard_hmi/ros_event":       (RequestTypes.PUB_MSG, ard_hmi.msg.ROSEvent),

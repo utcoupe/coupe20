@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>drivers_ard_asserv</name>
+    <name>ard_asserv</name>
     <version>0.0.1</version>
     <description>
         The package that manages a serial communication between the arduino in charge of the asserv and the ros system. It provides services that redirects commands to the arduino, and topics that convey information from it.

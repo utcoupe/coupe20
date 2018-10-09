@@ -35,6 +35,6 @@ __Note__ : A protection has been set that does not allow you to create new keys 
 
 # Topics
 
-This package will soon publish an image feed of the OccupancyGrid. `navigation_pathfinder` will be the main subscriber package. (__TODO__ or publish
-a dictionary dedicated to physical obstacles. This would reduce the amount of traffic and memory usage if `navigation_pathfinder` is the only
+This package will soon publish an image feed of the OccupancyGrid. `pathfinder` will be the main subscriber package. (__TODO__ or publish
+a dictionary dedicated to physical obstacles. This would reduce the amount of traffic and memory usage if `pathfinder` is the only
 subscriber).

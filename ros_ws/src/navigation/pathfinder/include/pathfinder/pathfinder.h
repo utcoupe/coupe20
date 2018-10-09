@@ -3,8 +3,8 @@
 
 #include <ros/console.h>
 
-#include "navigation_pathfinder/FindPath.h"
-#include "navigation_pathfinder/PathfinderNodeConfig.h"
+#include "pathfinder/FindPath.h"
+#include "pathfinder/PathfinderNodeConfig.h"
 
 #include "pathfinder/map_storage.h"
 #include "pathfinder/point.h"
@@ -52,14 +52,14 @@ public:
      * @param req The request, containing the start and end positions.
      * @param rep The response, will contain the shortest path if it exists.
      */
-    bool findPathCallback(navigation_pathfinder::FindPath::Request &req, navigation_pathfinder::FindPath::Response &rep);
+    bool findPathCallback(pathfinder::FindPath::Request &req, pathfinder::FindPath::Response &rep);
     
     /**
      * Callback for ros PathfinderNodeConfig dynamic reconfigure service.
      * @param config The new configuration to use.
      * @param level *Not used.*
      */
-    void reconfigureCallback(navigation_pathfinder::PathfinderNodeConfig &config, uint32_t level);
+    void reconfigureCallback(pathfinder::PathfinderNodeConfig &config, uint32_t level);
 
 private:
     /** Shortcut to define a 2D array of short. **/

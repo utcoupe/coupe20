@@ -4,7 +4,7 @@ import math
 import rospy
 from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
-from drivers_ard_asserv.msg import RobotSpeed
+from ard_asserv.msg import RobotSpeed
 
 __author__ = "Thomas Fuhrmann & milesial"
 __date__ = 19/04/2018

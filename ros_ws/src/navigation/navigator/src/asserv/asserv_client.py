@@ -8,9 +8,9 @@ from actionlib.action_client import CommState
 
 from geometry_msgs.msg import Pose2D
 
-from drivers_ard_asserv.msg import *
+from ard_asserv.msg import *
 
-from drivers_ard_asserv.srv import *
+from ard_asserv.srv import *
 
 class AsservClient(object):
     ASSERV_NODE_NAME = "drivers/ard_asserv"

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(navigation_pathfinder)
+project(pathfinder)
 
 add_compile_options(-std=c++14)
 

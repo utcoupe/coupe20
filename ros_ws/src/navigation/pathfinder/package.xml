@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>navigation_pathfinder</name>
+    <name>pathfinder</name>
     <version>0.0.1</version>
-    <description>The navigation_pathfinder package</description>
+    <description>The pathfinder package</description>
     <maintainer email="utcoupe@assos.utc.fr">UTCoupe Association</maintainer>
     <license>GPLv3</license>
     <author email="mindstan@hotmail.fr">Mindstan</author>

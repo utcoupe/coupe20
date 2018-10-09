@@ -12,7 +12,7 @@
 	</group>
 
     <group ns="drivers">
-        <node pkg="drivers_ard_asserv" name="ard_asserv" type="ard_asserv_node.py" output="screen" />
+        <node pkg="ard_asserv" name="ard_asserv" type="ard_asserv_node.py" output="screen" />
         <node pkg="port_finder" name="port_finder" type="port_finder_node.py" output="screen" />
     </group>
 

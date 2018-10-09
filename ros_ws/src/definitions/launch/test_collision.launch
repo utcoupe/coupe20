@@ -18,7 +18,7 @@
 	</group>
 
     <group ns="drivers">
-		<node pkg="drivers_ard_asserv" name="ard_asserv" type="ard_asserv_node.py" output="screen" />
+		<node pkg="ard_asserv" name="ard_asserv" type="ard_asserv_node.py" output="screen" />
 		<node pkg="port_finder"   name="port_finder" type="port_finder_node.py" output="screen"/>
 		<!-- node pkg="driver_teraranger"    name="teraranger"  type="teraranger_node.py" output="screen"/-->
 	</group>
@@ -28,8 +28,8 @@
 	</group>
 
 	<group ns="navigation">
-		<node pkg="navigation_collisions" name="collisions" type="collisions_node.py" />
+		<node pkg="collisions" name="collisions" type="collisions_node.py" />
 		<node pkg="navigator" name="navigator" type="navigator_node.py" output="screen" />
-		<node pkg="navigation_pathfinder" name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
+		<node pkg="pathfinder" name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
 	</group>
 </launch>

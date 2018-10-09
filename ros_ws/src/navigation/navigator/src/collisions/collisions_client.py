@@ -2,8 +2,8 @@
 # -*-coding:Utf-8 -*
 
 import rospy
-from navigation_collisions.msg import PredictedCollision
-from navigation_collisions.srv import ActivateCollisions
+from collisions.msg import PredictedCollision
+from collisions.srv import ActivateCollisions
 
 __author__ = "Gaëtan Blond"
 __date__ = 11/12/2017

@@ -13,22 +13,22 @@
 		<node pkg="recognition_enemy_tracker" name="enemy_tracker" type="enemy_tracker_node.py" output="screen"/>
 		<node pkg="recognition_objects_classifier" name="object_classifier" type="objects_classifier_node" output="screen"/>
 
-		<node pkg="drivers_ard_asserv"    name="ard_asserv"  type="ard_asserv_node.py" output="screen"/>
+		<node pkg="ard_asserv"    name="ard_asserv"  type="ard_asserv_node.py" output="screen"/>
 		<node pkg="port_finder"   name="port_finder" type="port_finder_node.py" output="screen"/>
 		<node pkg="driver_teraranger"    name="teraranger"  type="teraranger_node.py" output="screen"/>
 		<node pkg="driver_ax12"          name="ax12"        type="ax12_node" output="screen"/>
 
 		<node pkg="belt_interpreter" name="belt_interpreter" type="belt_interpreter_node.py" output="screen" />
 
-		<node pkg="navigation_collisions"       name="collisions" type="collisions_node.py"         output="screen" />
+		<node pkg="collisions"       name="collisions" type="collisions_node.py"         output="screen" />
 		<node pkg="navigator"        name="navigator"  type="navigator_node.py"          output="screen" />
-		<node pkg="navigation_pathfinder"       name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
+		<node pkg="pathfinder"       name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
 
 		<node pkg="dispatcher"          name="actuators"  type="actuators_node.py"          output="screen" />
 
       <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
-			<node pkg="drivers_ard_asserv"    name="asserv_marker_server"  type="marker_server_node.py" />
+			<node pkg="ard_asserv"    name="asserv_marker_server"  type="marker_server_node.py" />
       <node pkg="navigator"    name="navigator_marker_server"  type="marker_server_node.py" />
 
 	<include file="$(find definitions)/def/robots/$(arg robot)/specific.launch"/>

@@ -7,7 +7,7 @@ import os
 from math import pi
 import rospy
 from geometry_msgs.msg import Pose2D
-from drivers_ard_asserv.msg import RobotSpeed
+from ard_asserv.msg import RobotSpeed
 from asserv_abstract import *
 import protocol_parser
 import math

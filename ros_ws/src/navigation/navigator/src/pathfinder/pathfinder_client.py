@@ -3,7 +3,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose2D
-from navigation_pathfinder.srv import *
+from pathfinder.srv import *
 
 class PathfinderClient(object):
     def __init__ (self):

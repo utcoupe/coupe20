@@ -79,7 +79,7 @@ Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Poi
     return FindPathStatus::NO_ERROR;
 }
 
-bool Pathfinder::findPathCallback(navigation_pathfinder::FindPath::Request& req, navigation_pathfinder::FindPath::Response& rep)
+bool Pathfinder::findPathCallback(pathfinder::FindPath::Request& req, pathfinder::FindPath::Response& rep)
 {
     Path path;
     
@@ -114,7 +114,7 @@ bool Pathfinder::findPathCallback(navigation_pathfinder::FindPath::Request& req,
     return true;
 }
 
-void Pathfinder::reconfigureCallback(navigation_pathfinder::PathfinderNodeConfig& config, uint32_t level)
+void Pathfinder::reconfigureCallback(pathfinder::PathfinderNodeConfig& config, uint32_t level)
 {
     ROS_INFO_STREAM ("Reconfigure request : " << config.render << " " << config.renderFile << " " << config.safetyMargin);
     _renderAfterComputing = config.render;

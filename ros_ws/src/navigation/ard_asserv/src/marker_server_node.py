@@ -5,7 +5,7 @@ import rospy
 from interactive_markers.interactive_marker_server import *
 from visualization_msgs.msg import *
 from visualization_msgs.msg import Marker
-from drivers_ard_asserv.srv import SetPos, SetPosRequest
+from ard_asserv.srv import SetPos, SetPosRequest
 
 from tf.transformations import euler_from_quaternion
 from tf.transformations import quaternion_from_euler

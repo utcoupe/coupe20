@@ -31,7 +31,7 @@ add_service_files(
     FILES
     Goto.srv
 )
-
+   
 ## Generate actions in the 'action' folder
 add_action_files(
     FILES
@@ -73,7 +73,7 @@ catkin_install_python(
 )
 
 install(
-    DIRECTORY src/asserv src/collisions src/localizer src/map src/pathfinder
+    DIRECTORY src/asserv_client src/collisions_client src/localizer_client src/map_client src/pathfinder_client
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     PATTERN "*.pyc" EXCLUDE
 )

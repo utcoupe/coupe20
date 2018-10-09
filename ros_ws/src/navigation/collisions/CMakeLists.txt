@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(navigation_collisions)
+project(collisions)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
     rospy
     std_msgs
     geometry_msgs
-    memory_map
+    static_map
     message_generation
 )
 

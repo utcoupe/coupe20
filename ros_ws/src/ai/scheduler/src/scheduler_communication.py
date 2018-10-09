@@ -9,7 +9,7 @@ import scheduler.srv
 import navigator.msg
 import dispatcher.msg
 import dispatcher.srv
-import memory_map.srv
+import static_map.srv
 import game_manager.srv
 import game_manager.srv
 import ard_hmi.msg
@@ -33,9 +33,9 @@ class RequestTypes(object):
             "ai/game_manager/set_timer":               (RequestTypes.SERVICE, game_manager.srv.SetTimer),
             "ai/game_manager/delay":                   (RequestTypes.SERVICE, game_manager.srv.Delay),
 
-            "memory/map/get":                   (RequestTypes.SERVICE, memory_map.srv.MapGet),
-            "memory/map/set":                   (RequestTypes.SERVICE, memory_map.srv.MapSet),
-            "memory/map/transfer":              (RequestTypes.SERVICE, memory_map.srv.MapTransfer),
+            "memory/map/get":                   (RequestTypes.SERVICE, static_map.srv.MapGet),
+            "memory/map/set":                   (RequestTypes.SERVICE, static_map.srv.MapSet),
+            "memory/map/transfer":              (RequestTypes.SERVICE, static_map.srv.MapTransfer),
 
             "navigation/navigator/goto_action": (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
             "navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),

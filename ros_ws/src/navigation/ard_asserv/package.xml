@@ -17,7 +17,7 @@
     <depend>actionlib_msgs</depend>
     <depend>port_finder</depend>
     <depend>game_manager</depend>
-    <depend>memory_map</depend>
+    <depend>static_map</depend>
     <depend>tf</depend>
     <depend>tf2_ros</depend>
     <exec_depend>message_runtime</exec_depend>

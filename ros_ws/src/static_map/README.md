@@ -4,7 +4,7 @@ This is the Map Manager package. It is essentially the database that holds all t
 in the robot's environment. This includes the objects' positions, containers and the robot's containers.
 
 This package temporarily holds the RViz config file. In order to use it, open the file from RViz __before__ launching the node itself
- (`rosrun memory_map map_node.py`). If not launched, the node will not publish its markers.
+ (`rosrun static_map map_node.py`). If not launched, the node will not publish its markers.
 
 # Services
 

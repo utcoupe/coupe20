@@ -8,7 +8,7 @@
 
     <group ns="memory">
 		<node pkg="definitions"    name="definitions" type="definitions_node.py" output="screen" />
-		<node pkg="memory_map"            name="map"         type="map_node.py"         output="screen" />
+		<node pkg="static_map"            name="map"         type="map_node.py"         output="screen" />
 	</group>
 
     <group ns="drivers">

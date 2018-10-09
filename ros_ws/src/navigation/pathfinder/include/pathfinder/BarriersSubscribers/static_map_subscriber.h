@@ -1,5 +1,5 @@
-#ifndef MEMORY_MAP_SUBSCRIBER_H
-#define MEMORY_MAP_SUBSCRIBER_H
+#ifndef static_map_SUBSCRIBER_H
+#define static_map_SUBSCRIBER_H
 
 #include "pathfinder/BarriersSubscribers/abstract_barriers_subscriber.h"
 #include "pathfinder/pos_convertor.h"
@@ -34,4 +34,4 @@ namespace Memory {
     };
 }
 
-#endif // MEMORY_MAP_SUBSCRIBER_H
+#endif // static_map_SUBSCRIBER_H

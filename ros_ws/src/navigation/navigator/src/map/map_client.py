@@ -3,8 +3,8 @@
 
 import rospy
 
-from memory_map.srv import FillWaypoint
-from memory_map.msg import Waypoint
+from static_map.srv import FillWaypoint
+from static_map.msg import Waypoint
 
 
 __author__ = "Gaëtan Blond"

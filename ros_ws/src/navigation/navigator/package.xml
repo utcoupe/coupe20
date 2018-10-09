@@ -17,7 +17,7 @@
     <depend>visualization_msgs</depend>
     <depend>pathfinder</depend>
     <depend>ard_asserv</depend>
-    <depend>memory_map</depend>
+    <depend>static_map</depend>
     <depend>game_manager</depend>
     <exec_depend>message_runtime</exec_depend>
     <export>

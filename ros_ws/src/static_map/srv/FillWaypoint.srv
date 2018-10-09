@@ -1,9 +1,9 @@
-# Service that takes an incomplete memory_map/Waypoint message 
+# Service that takes an incomplete static_map/Waypoint message 
 # and that responds with the same message with the rest of the fields
 # completed if possible.
 # E.g. Send a waypoint with only its name and you will get the same 
 # thing with the XY filled (if the waypoint exists).
-memory_map/Waypoint waypoint
+static_map/Waypoint waypoint
 ---
 bool success
-memory_map/Waypoint filled_waypoint # WARNING frame_id is NOT FILLED for now, assuming it is /map.
+static_map/Waypoint filled_waypoint # WARNING frame_id is NOT FILLED for now, assuming it is /map.

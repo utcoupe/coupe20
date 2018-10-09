@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>memory_map</name>
+    <name>static_map</name>
     <version>0.0.0</version>
-    <description>The memory_map package</description>
+    <description>The static_map package</description>
     <license>GLPv3</license>
     <author email="pielaclau@gmail.com">MadeInPierre</author>
     <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>

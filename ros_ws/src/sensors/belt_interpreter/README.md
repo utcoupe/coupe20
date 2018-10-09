@@ -8,7 +8,7 @@ This node listen for sensor data from the belt, converts the ranges into rectang
 
 ## Initialization
 
-At the start of the node, it fetches all map objects from its layer (`/terrain/walls/layer_belt/*`) thanks to the `memory_map` package.If it fails doing that, the node shuts down.
+At the start of the node, it fetches all map objects from its layer (`/terrain/walls/layer_belt/*`) thanks to the `static_map` package.If it fails doing that, the node shuts down.
 
 It is also responsible for publishing the static transforms, one for each sensor, relative to the `/robot` transform. The transforms are computed from each sensor position and angle relative to the robot, all defined in the `belt.xml` definition file that get fetched thanks to the `memory_definition` package.
 

@@ -47,7 +47,7 @@ class OccupancyGenerator():
         world_size = (float(world.get("/terrain/shape/width")), float(world.get("/terrain/shape/height")))
         img_size = (img_width, int(img_width * (world_size[1] / world_size[0])))
 
-        final_path = rospkg.RosPack().get_path("memory_map") + "/def/occupancy/" + layer_name + ".bmp"
+        final_path = rospkg.RosPack().get_path("static_map") + "/def/occupancy/" + layer_name + ".bmp"
         layers = world.get("/terrain/walls/^")
         if not layer_name in layers.Dict.keys():
             rospy.logerr("    Couldn't find layer '{}'. Aborting.".format(layer_name))

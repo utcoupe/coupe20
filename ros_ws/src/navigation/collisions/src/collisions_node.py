@@ -6,8 +6,8 @@ from obstacles_stack import Map, ObstaclesStack
 from markers_publisher import MarkersPublisher
 
 from geometry_msgs.msg import Pose2D
-from navigation_collisions.msg import PredictedCollision
-from navigation_collisions.srv import ActivateCollisions, ActivateCollisionsResponse
+from collisions.msg import PredictedCollision
+from collisions.srv import ActivateCollisions, ActivateCollisionsResponse
 
 from game_manager import StatusServices
 

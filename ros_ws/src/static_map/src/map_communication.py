@@ -3,8 +3,8 @@ import json
 import time
 
 import rospy
-import memory_map.msg
-import memory_map.srv
+import static_map.msg
+import static_map.srv
 from map_manager import SetMode, Map, DictManager
 from occupancy import OccupancyGenerator
 
@@ -19,12 +19,12 @@ class Servers():
 
 class MapServices():
     def __init__(self, occupancy_generator):
-        self.GetSERV       = rospy.Service(Servers.GET_SERV, memory_map.srv.MapGet,                self.on_get)
-        self.SetSERV       = rospy.Service(Servers.SET_SERV, memory_map.srv.MapSet,                self.on_set)
-        self.TransferSERV  = rospy.Service(Servers.TRANSFER_SERV, memory_map.srv.MapTransfer,      self.on_transfer)
-        self.OccupancySERV = rospy.Service(Servers.OCCUPANCY_SERV, memory_map.srv.MapGetOccupancy, self.on_get_occupancy)
-        self.ObjectsSERV   = rospy.Service(Servers.OBJECTS_SERV, memory_map.srv.MapGetObjects,     self.on_get_objects)
-        self.FillWPSERV    = rospy.Service(Servers.FILLWP_SERV, memory_map.srv.FillWaypoint,       self.on_fill_waypoint)
+        self.GetSERV       = rospy.Service(Servers.GET_SERV, static_map.srv.MapGet,                self.on_get)
+        self.SetSERV       = rospy.Service(Servers.SET_SERV, static_map.srv.MapSet,                self.on_set)
+        self.TransferSERV  = rospy.Service(Servers.TRANSFER_SERV, static_map.srv.MapTransfer,      self.on_transfer)
+        self.OccupancySERV = rospy.Service(Servers.OCCUPANCY_SERV, static_map.srv.MapGetOccupancy, self.on_get_occupancy)
+        self.ObjectsSERV   = rospy.Service(Servers.OBJECTS_SERV, static_map.srv.MapGetObjects,     self.on_get_objects)
+        self.FillWPSERV    = rospy.Service(Servers.FILLWP_SERV, static_map.srv.FillWaypoint,       self.on_fill_waypoint)
         self.occupancy_generator = occupancy_generator
 
     def on_get(self, req):
@@ -42,7 +42,7 @@ class MapServices():
 
         rospy.logdebug("    Responding: " + str(response))
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return memory_map.srv.MapGetResponse(success, json.dumps(response))
+        return static_map.srv.MapGetResponse(success, json.dumps(response))
 
     def on_get_objects(self, req):
         s = time.time() * 1000
@@ -56,7 +56,7 @@ class MapServices():
 
         rospy.logdebug("    Responding: {} object(s) found.".format(len(objects)))
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return memory_map.srv.MapGetObjectsResponse(success, objects)
+        return static_map.srv.MapGetObjectsResponse(success, objects)
 
     def on_set(self, req):
         s = time.time() * 1000
@@ -74,7 +74,7 @@ class MapServices():
 
         rospy.logdebug("    Responding: " + str(success))
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return memory_map.srv.MapSetResponse(success)
+        return static_map.srv.MapSetResponse(success)
 
     def on_transfer(self, req):
         s = time.time() * 1000
@@ -90,7 +90,7 @@ class MapServices():
 
         rospy.logdebug("    Responding: " + str(success))
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return memory_map.srv.MapTransferResponse(success)
+        return static_map.srv.MapTransferResponse(success)
 
     def on_get_occupancy(self, req):
         s = time.time() * 1000
@@ -104,7 +104,7 @@ class MapServices():
 
         rospy.logdebug("    Responding: " + str(path))
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return memory_map.srv.MapGetOccupancyResponse(path)
+        return static_map.srv.MapGetOccupancyResponse(path)
 
     def on_fill_waypoint(self, req):
         s = time.time() * 1000
@@ -130,7 +130,7 @@ class MapServices():
         success, w = False, None
         if filled_waypoint_name is not None and filled_waypoint is not None:
             success = True
-            w = memory_map.msg.Waypoint()
+            w = static_map.msg.Waypoint()
             w.name = filled_waypoint_name
             w.frame_id = filled_waypoint.get("position/frame_id")
             w.pose.x, w.pose.y = filled_waypoint.get("position/x"), filled_waypoint.get("position/y")
@@ -147,4 +147,4 @@ class MapServices():
                                                                   ", {}".format(w.pose.theta) if w.has_angle else ""))
 
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return memory_map.srv.FillWaypointResponse(success, w)
+        return static_map.srv.FillWaypointResponse(success, w)

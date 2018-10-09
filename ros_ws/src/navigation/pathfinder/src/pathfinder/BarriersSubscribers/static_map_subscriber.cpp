@@ -1,6 +1,6 @@
-#include "pathfinder/BarriersSubscribers/memory_map_subscriber.h"
+#include "pathfinder/BarriersSubscribers/static_map_subscriber.h"
 
-#include "memory_map/MapGetObjects.h"
+#include "static_map/MapGetObjects.h"
 
 #include <cmath>
 
@@ -27,7 +27,7 @@ bool MapSubscriber::hasBarrier(const geometry_msgs::Pose2D& pos)
 
 void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic)
 {
-    _srvGetMapObjects = nodeHandle.serviceClient<memory_map::MapGetObjects>(topic);
+    _srvGetMapObjects = nodeHandle.serviceClient<static_map::MapGetObjects>(topic);
 }
 
 void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& heightGrid)
@@ -42,11 +42,11 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
             for (unsigned column = 0; column < _occupancyGrid.front().size(); column++)
                 _occupancyGrid[row][column] = false;
 
-    memory_map::MapGetObjects srv;
+    static_map::MapGetObjects srv;
     srv.request.collisions_only = true;
     if (!_srvGetMapObjects.call(srv) || !srv.response.success)
     {
-        ROS_ERROR("Error when trying to call memory_map/MapGetObjects");
+        ROS_ERROR("Error when trying to call static_map/MapGetObjects");
         return;
     }
     _lastReceivedJsons.clear();

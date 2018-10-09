@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
     actionlib_msgs
     pathfinder
     ard_asserv
-    memory_map
+    static_map
     tf
     interactive_markers
     game_manager

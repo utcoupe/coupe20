@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
     actionlib
     port_finder
     game_manager
-    memory_map
+    static_map
     tf
     tf2_ros
 )

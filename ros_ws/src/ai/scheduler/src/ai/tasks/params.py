@@ -22,7 +22,7 @@
 import copy
 import std_msgs.msg
 import geometry_msgs.msg
-import memory_map.msg
+import static_map.msg
 
 import rospy
 
@@ -261,7 +261,7 @@ class Pose2DParser(Param):
 
 class WaypointParser(Param):
     TYPE_NAME = "waypoint"
-    TYPE_ROS = memory_map.msg.Waypoint
+    TYPE_ROS = static_map.msg.Waypoint
 
     def __init__(self, xml=None):
         self.value = {

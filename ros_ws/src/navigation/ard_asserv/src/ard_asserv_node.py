@@ -9,8 +9,8 @@ from port_finder.srv import *
 import asserv
 from game_manager import StatusServices
 from game_manager.msg import GameStatus
-from memory_map.srv import FillWaypoint
-from memory_map.msg import Waypoint
+from static_map.srv import FillWaypoint
+from static_map.msg import Waypoint
 import tf
 import tf2_ros
 
@@ -79,9 +79,9 @@ class Asserv:
         try:
             rospy.wait_for_service(GET_MAP_SERVICE_NAME, GET_MAP_SERVICE_TIMEOUT)
             self._srv_client_map_fill_waypoints = rospy.ServiceProxy(GET_MAP_SERVICE_NAME, FillWaypoint)
-            rospy.logdebug("Memory_map has been found.")
+            rospy.logdebug("static_map has been found.")
         except rospy.ROSException as exc:
-            rospy.logwarn("Memory_map has not been launched...")
+            rospy.logwarn("static_map has not been launched...")
         # Tell ai/game_manager the node initialized successfuly.
         StatusServices("drivers", "ard_asserv", None, self._callback_game_status).ready(not is_simu)
 
@@ -159,7 +159,7 @@ class Asserv:
                 wpt.has_angle = True
                 set_position = self._srv_client_map_fill_waypoints.call(wpt).filled_waypoint.pose
             else:
-                rospy.logwarn("[ASSERV] Received a waypoint request but memory_map seems not to be launched...")
+                rospy.logwarn("[ASSERV] Received a waypoint request but static_map seems not to be launched...")
         if self._asserv_instance:
             ret_value = self._asserv_instance.set_pos(set_position.x, set_position.y, set_position.theta)
         else:
@@ -291,7 +291,7 @@ class Asserv:
                     wpt.has_angle = True
                     pos = self._srv_client_map_fill_waypoints.call(wpt).filled_waypoint.pose
                 else:
-                    rospy.logwarn("[ASSERV] Received a waypoint request but memory_map seems not to be launched...")
+                    rospy.logwarn("[ASSERV] Received a waypoint request but static_map seems not to be launched...")
                     goal_handled.set_rejected()
                     return
 

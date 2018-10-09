@@ -10,7 +10,7 @@
 #include "pathfinder/map_storage.h"
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/point.h"
-#include "pathfinder/BarriersSubscribers/memory_map_subscriber.h"
+#include "pathfinder/BarriersSubscribers/static_map_subscriber.h"
 #include "pathfinder/BarriersSubscribers/recognition_objects_classifier_subscriber.h"
 #include "pathfinder/pos_convertor.h"
 
@@ -46,7 +46,7 @@ int main (int argc, char* argv[])
     ros::NodeHandle nodeHandle;
     
     auto robotName = fetchRobotName(nodeHandle);
-    string memoryMapPath = ros::package::getPath("memory_map") + "/def/occupancy/";
+    string memoryMapPath = ros::package::getPath("static_map") + "/def/occupancy/";
     string mapPath = memoryMapPath + GR_MAP_FILE_NAME;
     if (robotName == "pr")
         mapPath = PR_MAP_FILE_NAME;

@@ -1,18 +1,18 @@
 #include <ros/ros.h>
 #include <nlohmann/json.hpp>
 
-#include <memory_map/MapGet.h>
+#include <static_map/MapGet.h>
 
 #include "map_objects.h"
 
 using namespace nlohmann;
 
 void MapObjects::fetch_map_objects() {
-    ros::ServiceClient client = nh_.serviceClient<memory_map::MapGet>(MAP_GET_SERVICE);
+    ros::ServiceClient client = nh_.serviceClient<static_map::MapGet>(MAP_GET_SERVICE);
 
     client.waitForExistence();
 
-    memory_map::MapGet srv;
+    static_map::MapGet srv;
 
     srv.request.request_path = MAP_OBJECTS;
 
@@ -53,7 +53,7 @@ void MapObjects::fetch_map_objects() {
         ROS_INFO_STREAM("Fetched " << map_shapes_.size() << " map shapes successfully");
 
     } else {
-        ROS_ERROR("Failed to contact memory_map, static objects not fetched");
+        ROS_ERROR("Failed to contact static_map, static objects not fetched");
     }
 }
 

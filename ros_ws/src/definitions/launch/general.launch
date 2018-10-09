@@ -7,7 +7,7 @@
         <node pkg="scheduler"   name="scheduler"   type="scheduler_node.py"   output="screen"/>
 
 		<node pkg="definitions"    name="definitions" type="definitions_node.py" output="screen" />
-		<node pkg="memory_map"            name="map"         type="map_node.py"         output="screen" />
+		<node pkg="static_map"            name="map"         type="map_node.py"         output="screen" />
 
 		<node pkg="localizer"     name="localizer"     type="localizer_node.py"     output="screen"/>
 		<node pkg="recognition_enemy_tracker" name="enemy_tracker" type="enemy_tracker_node.py" output="screen"/>

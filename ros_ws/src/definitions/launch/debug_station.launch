@@ -4,7 +4,7 @@
     <param name="robot"  value="$(arg robot)" />
 
 	<group ns="feedback">
-        <node pkg="rviz" name="rviz" type="rviz" args="/home/jack/Programming/Robotics/UTCoupe/coupe18/ros_ws/src/memory_definitions/def/rviz/general.rviz"/>
+        <node pkg="rviz" name="rviz" type="rviz" args="/home/jack/Programming/Robotics/UTCoupe/coupe18/ros_ws/src/definitions/def/rviz/general.rviz"/>
     </group>
 
 </launch>

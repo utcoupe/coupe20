@@ -4,7 +4,7 @@ import rospy
 import xml.etree.ElementTree as ET
 from tasks import GameProperties, Strategy, TaskList, Action, Order
 
-from memory_definitions.srv import GetDefinition
+from definitions.srv import GetDefinition
 
 class AILoader():
     STRATEGIES_FILE    = "1_strategies.xml"

@@ -5,7 +5,7 @@ from geometry_msgs.msg import Pose2D, TransformStamped
 import actionlib
 from drivers_ard_asserv.srv import *
 from drivers_ard_asserv.msg import *
-from drivers_port_finder.srv import *
+from port_finder.srv import *
 import asserv
 from game_manager import StatusServices
 from game_manager.msg import GameStatus

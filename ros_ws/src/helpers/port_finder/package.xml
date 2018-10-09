@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>drivers_port_finder</name>
+    <name>port_finder</name>
     <version>0.0.1</version>
     <description>
         Package which determines which serial component is connected on which port.

@@ -104,7 +104,7 @@ catkin_install_python(
 )
 
 install(
-    DIRECTORY src/game_manager
+    DIRECTORY src/manager
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     PATTERN "*.pyc" EXCLUDE
 )

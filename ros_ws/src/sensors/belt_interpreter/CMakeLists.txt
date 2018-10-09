@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(processing_belt_interpreter)
+project(belt_interpreter)
 
 find_package(catkin REQUIRED COMPONENTS
     message_generation

@@ -4,12 +4,12 @@
 
 #include "ros/ros.h"
 #include "main_thread.h"
-#include "processing_belt_interpreter/BeltRects.h"
+#include "belt_interpreter/BeltRects.h"
 #include "processing_lidar_objects/Obstacles.h"
 
 #include <string>
 
-using namespace processing_belt_interpreter;
+using namespace belt_interpreter;
 using namespace processing_lidar_objects;
 
 const std::string BELT_TOPIC = "processing/belt_interpreter/rects";

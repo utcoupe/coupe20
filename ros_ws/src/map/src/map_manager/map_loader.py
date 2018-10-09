@@ -3,7 +3,7 @@ import os
 import yaml
 import rospy
 
-from memory_definitions.srv import GetDefinition
+from definitions.srv import GetDefinition
 
 class LoadingHelpers():
     '''

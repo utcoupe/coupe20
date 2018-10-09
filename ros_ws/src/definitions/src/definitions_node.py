@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from memory_definitions.srv import *
+from definitions.srv import *
 from game_manager import StatusServices
 import rospy
 import rospkg
 import os
 
 
-PACKAGE_NAME = "memory_definitions"
+PACKAGE_NAME = "definitions"
 
 def callback(req):
     def_dir = rospkg.RosPack().get_path(PACKAGE_NAME) + "/def"

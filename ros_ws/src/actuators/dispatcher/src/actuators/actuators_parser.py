@@ -3,7 +3,7 @@
 
 import xml.etree.ElementTree as ET
 import rospy
-from memory_definitions.srv import GetDefinition
+from definitions.srv import GetDefinition
 
 __author__ = "Thomas Fuhrmann", "P. Potiron"
 __date__ = 11/04/2018

@@ -19,7 +19,7 @@ namespace Recognition
         
     private:
         using Objects       = recognition_objects_classifier::ClassifiedObjects;
-        using Rectangle     = processing_belt_interpreter::RectangleStamped;
+        using Rectangle     = belt_interpreter::RectangleStamped;
         using Circle        = recognition_objects_classifier::CircleObstacleStamped;
         using Segment       = recognition_objects_classifier::SegmentObstacleStamped;
         

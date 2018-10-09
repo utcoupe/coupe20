@@ -8,7 +8,7 @@ from actuators_abstract import ActuatorsAbstract
 from driver_ax12.msg import Ax12CommandGoal, Ax12CommandAction
 from geometry_msgs.msg import TransformStamped, PointStamped
 from dispatcher.msg import ArmAction, ArmResult
-from memory_definitions.srv import GetDefinition
+from definitions.srv import GetDefinition
 from functools import partial
 import yaml
 

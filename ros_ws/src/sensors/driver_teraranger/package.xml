@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>drivers_teraranger</name>
+    <name>driver_teraranger</name>
     <version>0.0.1</version>
     <description>
         Teraranger driver interface.
@@ -11,7 +11,7 @@
     <buildtool_depend>catkin</buildtool_depend>
     <depend>rospy</depend>
     <depend>sensor_msgs</depend>>
-    <depend>drivers_port_finder</depend>>
+    <depend>port_finder</depend>>
     <depend>ard_others</depend>>
     <depend>game_manager</depend>>
     <export>

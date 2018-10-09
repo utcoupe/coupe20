@@ -2,7 +2,7 @@ import time, rospy
 
 from game_manager.msg import GameStatus, NodesStatus, ArmRequest
 from game_manager.srv import SetStatus, SetStatusResponse, NodeReady, NodeReadyResponse
-from drivers_ard_hmi.msg import HMIEvent
+from ard_hmi.msg import HMIEvent
 
 from status_config import Status
 

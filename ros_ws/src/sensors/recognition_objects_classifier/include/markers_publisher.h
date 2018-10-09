@@ -8,7 +8,7 @@
 #include <visualization_msgs/Marker.h>
 #include <ros/ros.h>
 
-#include "processing_belt_interpreter/RectangleStamped.h"
+#include "belt_interpreter/RectangleStamped.h"
 #include "recognition_objects_classifier/CircleObstacleStamped.h"
 #include "recognition_objects_classifier/SegmentObstacleStamped.h"
 
@@ -22,8 +22,8 @@ protected:
     ros::Publisher pub_;
 
 public:
-    void publish_rects(const std::vector<processing_belt_interpreter::RectangleStamped> &map_rects,
-                       const std::vector<processing_belt_interpreter::RectangleStamped> &unknown_rects);
+    void publish_rects(const std::vector<belt_interpreter::RectangleStamped> &map_rects,
+                       const std::vector<belt_interpreter::RectangleStamped> &unknown_rects);
 
     void publish_circles(const std::vector<recognition_objects_classifier::CircleObstacleStamped> &map_circles,
                          const std::vector<recognition_objects_classifier::CircleObstacleStamped> &unknown_circles);

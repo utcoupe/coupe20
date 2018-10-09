@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
     genmsg
     actionlib_msgs
     actionlib
-    drivers_port_finder
+    port_finder
     game_manager
     memory_map
     tf

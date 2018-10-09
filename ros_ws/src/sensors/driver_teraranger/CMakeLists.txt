@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(drivers_teraranger)
+project(driver_teraranger)
 
 find_package(catkin REQUIRED COMPONENTS
-    drivers_port_finder
+    port_finder
     ard_others
     game_manager
     sensor_msgs
@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
     CATKIN_DEPENDS
-    drivers_port_finder
+    port_finder
     ard_others
     sensor_msgs
 )

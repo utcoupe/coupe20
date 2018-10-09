@@ -11,7 +11,7 @@ terrain:
         z: 0.0
         orientation: [1.57079632679, 0, 0]
         color: light_gray
-        mesh_path: "package://memory_definitions/def/map/robotcities2018_map.stl"
+        mesh_path: "package://definitions/def/map/robotcities2018_map.stl"
     walls:
         layer_ground:
             wall_top:

@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     message_generation
 
-    drivers_ard_hmi
+    ard_hmi
 )
 
 ################################################

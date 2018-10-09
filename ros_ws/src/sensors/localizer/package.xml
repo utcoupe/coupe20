@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>recognition_localizer</name>
+    <name>localizer</name>
     <version>0.0.0</version>
     <description>
-        The recognition_localizer package updates the tf /robot thanks to the odometry data from the asserv and other data like lidar.
+        The localizer package updates the tf /robot thanks to the odometry data from the asserv and other data like lidar.
     </description>
     <license>GPLv3</license>
     <author email="utcoupe@assos.utc.fr">milesial</author>

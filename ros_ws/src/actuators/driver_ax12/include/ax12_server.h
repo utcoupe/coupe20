@@ -10,8 +10,8 @@
 #include <actionlib/server/action_server.h>
 #include <driver_ax12/Ax12CommandAction.h>
 #include <driver_ax12/SetAx12Param.h>
-#include <drivers_port_finder/GetPort.h>
-#include <memory_definitions/GetDefinition.h>
+#include <port_finder/GetPort.h>
+#include <definitions/GetDefinition.h>
 #include <game_manager/init_service.h>
 #include <game_manager/GameStatus.h>
 

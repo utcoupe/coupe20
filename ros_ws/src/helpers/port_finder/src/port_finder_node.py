@@ -6,7 +6,7 @@ import serial
 import rospy
 import rospkg
 import xml.etree.ElementTree as ET
-from drivers_port_finder.srv import *
+from port_finder.srv import *
 from game_manager import StatusServices
 
 

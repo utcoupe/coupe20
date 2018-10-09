@@ -3,7 +3,7 @@
 import subprocess
 import rospy
 from ard_others.msg import *
-from drivers_port_finder.srv import *
+from port_finder.srv import *
 from game_manager import StatusServices
 from sensor_msgs.msg import Range
 from numpy import inf

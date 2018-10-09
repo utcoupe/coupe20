@@ -10,7 +10,7 @@
                 <position x="0" y="0" z="0"/>
                 <orientation x="1.57079632679" y="0" z="0"/>
                 <color r="0.8" g="0.8" b="0.8" a="1"/>
-                <mesh_path>package://memory_definitions/def/map/robotcities2018_map.stl</mesh_path>
+                <mesh_path>package://definitions/def/map/robotcities2018_map.stl</mesh_path>
             </marker>
         </feature>
     </map>

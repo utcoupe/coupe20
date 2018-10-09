@@ -4,7 +4,7 @@ import rospy
 from scheduler_communication import AICommunication
 from ai import RobotAI, GameProperties
 
-from drivers_ard_hmi.msg import SetStrategies, SetTeams, HMIEvent
+from ard_hmi.msg import SetStrategies, SetTeams, HMIEvent
 from game_manager.srv import SetStatus
 from game_manager import StatusServices
 

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>processing_belt_interpreter</name>
+    <name>belt_interpreter</name>
     <version>0.0.1</version>
     <description>
         Takes a list of ranges from the distance sensors surrounding the robot and filters out the points

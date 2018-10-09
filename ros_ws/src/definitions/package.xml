@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>memory_definitions</name>
+    <name>definitions</name>
     <version>0.0.0</version>
     <description>
         Package with all the definition files the others packages need.

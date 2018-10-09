@@ -4,8 +4,8 @@
 #include "markers_publisher.h"
 
 void MarkersPublisher::publish_rects(
-        const std::vector<processing_belt_interpreter::RectangleStamped> &map_rects,
-        const std::vector<processing_belt_interpreter::RectangleStamped> &unknown_rects) {
+        const std::vector<belt_interpreter::RectangleStamped> &map_rects,
+        const std::vector<belt_interpreter::RectangleStamped> &unknown_rects) {
 
     static unsigned int id_counter = 0;
 
@@ -21,7 +21,7 @@ void MarkersPublisher::publish_rects(
     marker.scale.z = Z_SCALE;
     marker.ns = "rects";
 
-    const std::vector<processing_belt_interpreter::RectangleStamped> both_lists[2] = {std::move(map_rects),
+    const std::vector<belt_interpreter::RectangleStamped> both_lists[2] = {std::move(map_rects),
                                                                                 std::move(unknown_rects)};
 
     for (const auto &list : both_lists) {

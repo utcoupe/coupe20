@@ -11,7 +11,7 @@
 #include "main_thread.h"
 
 
-void MainThread::classify_and_publish_rects(processing_belt_interpreter::BeltRects &rects) {
+void MainThread::classify_and_publish_rects(belt_interpreter::BeltRects &rects) {
 
     {
         std::lock_guard<std::mutex> lk(lists_mutex_);
@@ -111,7 +111,7 @@ void MainThread::classify_and_publish_rects(processing_belt_interpreter::BeltRec
 }
 
 std::pair<float, float> MainThread::compute_division_steps(
-        const processing_belt_interpreter::RectangleStamped &rect) {
+        const belt_interpreter::RectangleStamped &rect) {
 
     auto samples_x = static_cast<unsigned int>(rect.w / STEP_X);
     auto samples_y = static_cast<unsigned int>(rect.h / STEP_Y);
@@ -138,7 +138,7 @@ std::pair<float, float> MainThread::compute_division_steps(
 }
 
 bool MainThread::fetch_transform_and_adjust_stamp(
-        processing_belt_interpreter::RectangleStamped &rect,
+        belt_interpreter::RectangleStamped &rect,
         geometry_msgs::TransformStamped &transform_out) {
 
     ros::Time common_time;
@@ -168,7 +168,7 @@ bool MainThread::fetch_transform_and_adjust_stamp(
 }
 
 
-void MainThread::transform_rect(processing_belt_interpreter::RectangleStamped &rect,
+void MainThread::transform_rect(belt_interpreter::RectangleStamped &rect,
                                 geometry_msgs::TransformStamped &transform) {
 
     geometry_msgs::PoseStamped pose_static_frame, pose_map_frame;

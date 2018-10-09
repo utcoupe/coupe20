@@ -7,13 +7,13 @@
     </group>
 
     <group ns="memory">
-		<node pkg="memory_definitions"    name="definitions" type="definitions_node.py" output="screen" />
+		<node pkg="definitions"    name="definitions" type="definitions_node.py" output="screen" />
 		<node pkg="memory_map"            name="map"         type="map_node.py"         output="screen" />
 	</group>
 
     <group ns="drivers">
         <node pkg="drivers_ard_asserv" name="ard_asserv" type="ard_asserv_node.py" output="screen" />
-        <node pkg="drivers_port_finder" name="port_finder" type="port_finder_node.py" output="screen" />
+        <node pkg="port_finder" name="port_finder" type="port_finder_node.py" output="screen" />
     </group>
 
     <group ns="external_nodes">

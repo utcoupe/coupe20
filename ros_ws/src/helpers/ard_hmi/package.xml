@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>drivers_ard_hmi</name>
+  <name>ard_hmi</name>
   <version>0.0.0</version>
-  <description>The drivers_ard_hmi package</description>
+  <description>The ard_hmi package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -20,7 +20,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/drivers_ard_hmi</url> -->
+  <!-- <url type="website">http://wiki.ros.org/ard_hmi</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->

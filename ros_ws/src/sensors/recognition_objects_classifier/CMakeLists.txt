@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     game_manager
     processing_lidar_objects
-    processing_belt_interpreter
+    belt_interpreter
     std_msgs
     tf2
     tf2_ros
@@ -30,7 +30,7 @@ add_message_files(
 generate_messages(
     DEPENDENCIES
     processing_lidar_objects
-    processing_belt_interpreter
+    belt_interpreter
     geometry_msgs
     std_msgs
 )

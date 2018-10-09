@@ -15,7 +15,7 @@
     <depend>geometry_msgs</depend>
     <depend>actionlib</depend>
     <depend>actionlib_msgs</depend>
-    <depend>drivers_port_finder</depend>
+    <depend>port_finder</depend>
     <depend>game_manager</depend>
     <depend>memory_map</depend>
     <depend>tf</depend>

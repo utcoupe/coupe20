@@ -7,7 +7,7 @@
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
 
-#include <processing_belt_interpreter/BeltRects.h>
+#include <belt_interpreter/BeltRects.h>
 #include "processing_lidar_objects/Obstacles.h"
 #include <recognition_objects_classifier/ClassifiedObjects.h>
 
@@ -79,14 +79,14 @@ protected:
     void pub_loop(const ros::TimerEvent &);
 
     std::pair<float, float> compute_division_steps(
-            const processing_belt_interpreter::RectangleStamped &rect);
+            const belt_interpreter::RectangleStamped &rect);
 
     bool fetch_transform_and_adjust_stamp(
-            processing_belt_interpreter::RectangleStamped &rect,
+            belt_interpreter::RectangleStamped &rect,
             geometry_msgs::TransformStamped &transform_out);
 
     void transform_rect(
-            processing_belt_interpreter::RectangleStamped &rect,
+            belt_interpreter::RectangleStamped &rect,
             geometry_msgs::TransformStamped &transform);
 
     void notify_threads_and_wait(int num_points);
@@ -98,7 +98,7 @@ public:
 
     ~MainThread();
 
-    void classify_and_publish_rects(processing_belt_interpreter::BeltRects &rects);
+    void classify_and_publish_rects(belt_interpreter::BeltRects &rects);
 
     void classify_and_publish_lidar_objects(processing_lidar_objects::Obstacles &obstacles);
 };

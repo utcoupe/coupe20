@@ -248,16 +248,16 @@ std::string Ax12Server::fetch_port(const std::string &service_name) {
     std::string port;
 
     if (!ros::service::waitForService(service_name, 25000)) {
-        ROS_ERROR("Failed to contact drivers_port_finder (service not up)");
+        ROS_ERROR("Failed to contact port_finder (service not up)");
     } else {
-        ros::ServiceClient client = nh_.serviceClient<drivers_port_finder::GetPort>(service_name);
-        drivers_port_finder::GetPort srv;
+        ros::ServiceClient client = nh_.serviceClient<port_finder::GetPort>(service_name);
+        port_finder::GetPort srv;
         srv.request.component = "usb2ax";
 
         if (client.call(srv)) {
             port = srv.response.port;
         } else {
-            ROS_ERROR("Failed to fetch the AX-12 port from drivers_port_finder");
+            ROS_ERROR("Failed to fetch the AX-12 port from port_finder");
         }
     }
 

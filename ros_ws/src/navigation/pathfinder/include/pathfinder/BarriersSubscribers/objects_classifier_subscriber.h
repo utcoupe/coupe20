@@ -1,9 +1,9 @@
-#ifndef RECOGNITION_OBJECTS_CLASSIFIER_SUBSCRIBER
-#define RECOGNITION_OBJECTS_CLASSIFIER_SUBSCRIBER
+#ifndef objects_classifier_SUBSCRIBER
+#define objects_classifier_SUBSCRIBER
 
 #include "abstract_barriers_subscriber.h"
 
-#include "recognition_objects_classifier/ClassifiedObjects.h"
+#include "objects_classifier/ClassifiedObjects.h"
 
 #include <vector>
 
@@ -18,10 +18,10 @@ namespace Recognition
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
     private:
-        using Objects       = recognition_objects_classifier::ClassifiedObjects;
+        using Objects       = objects_classifier::ClassifiedObjects;
         using Rectangle     = belt_interpreter::RectangleStamped;
-        using Circle        = recognition_objects_classifier::CircleObstacleStamped;
-        using Segment       = recognition_objects_classifier::SegmentObstacleStamped;
+        using Circle        = objects_classifier::CircleObstacleStamped;
+        using Segment       = objects_classifier::SegmentObstacleStamped;
         
         std::vector<Rectangle> lastRects;
         std::vector<Circle> lastCircles;
@@ -41,4 +41,4 @@ namespace Recognition
     };
 } // namespace Recognition
 
-#endif // RECOGNITION_OBJECTS_CLASSIFIER_SUBSCRIBER
+#endif // objects_classifier_SUBSCRIBER

@@ -15,7 +15,7 @@
     <depend>dynamic_reconfigure</depend>
     <depend>game_manager</depend>
     <depend>static_map</depend>
-    <depend>recognition_objects_classifier</depend>
+    <depend>objects_classifier</depend>
     <exec_depend>message_runtime</exec_depend>
     <export>
     </export>

@@ -6,7 +6,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #include <static_map/MapGet.h>
-#include <recognition_objects_classifier/ClassifiedObjects.h>
+#include <objects_classifier/ClassifiedObjects.h>
 
 #include "main_thread.h"
 
@@ -221,10 +221,10 @@ void MainThread::classify_and_publish_lidar_objects(processing_lidar_objects::Ob
     classified_objects_.map_segments.clear();
     classified_objects_.unknown_segments.clear();
 
-    recognition_objects_classifier::CircleObstacleStamped circle_s;
+    objects_classifier::CircleObstacleStamped circle_s;
     circle_s.header = obstacles.header;
 
-    recognition_objects_classifier::SegmentObstacleStamped segment_s;
+    objects_classifier::SegmentObstacleStamped segment_s;
     segment_s.header = obstacles.header;
 
     // remove segments that are inside circles
@@ -291,7 +291,7 @@ void MainThread::classify_and_publish_lidar_objects(processing_lidar_objects::Ob
 
 }
 
-void MainThread::reconfigure_callback(recognition_objects_classifier::ObjectsClassifierConfig &config, uint32_t level) {
+void MainThread::reconfigure_callback(objects_classifier::ObjectsClassifierConfig &config, uint32_t level) {
     MIN_MAP_FRAC = config.MIN_MAP_FRAC;
     map_objects_.WALLS_MARGIN = config.WALLS_MARGIN;
     ROS_INFO_STREAM("Setting MIN_MAP_FRAC to " << MIN_MAP_FRAC << " and WALLS_MARGIN to " << map_objects_.WALLS_MARGIN);
@@ -299,7 +299,7 @@ void MainThread::reconfigure_callback(recognition_objects_classifier::ObjectsCla
 
 MainThread::MainThread(ros::NodeHandle &nh) :
         nh_(nh),
-        pub_(nh.advertise<recognition_objects_classifier::ClassifiedObjects>(PUB_TOPIC, 1)),
+        pub_(nh.advertise<objects_classifier::ClassifiedObjects>(PUB_TOPIC, 1)),
         tl_(tf_buffer_),
         markers_publisher_(nh),
         map_objects_(nh),

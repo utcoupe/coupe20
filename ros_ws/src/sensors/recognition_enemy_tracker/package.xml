@@ -12,5 +12,5 @@
     <depend>rospy</depend>
     <depend>std_msgs</depend>
     <depend>game_manager</depend>
-    <depend>recognition_objects_classifier</depend>
+    <depend>objects_classifier</depend>
 </package>

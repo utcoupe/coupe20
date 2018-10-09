@@ -1,6 +1,6 @@
 
-#ifndef RECOGNITION_OBJECTS_CLASSIFIER_OBJECTS_LISTENER_H
-#define RECOGNITION_OBJECTS_CLASSIFIER_OBJECTS_LISTENER_H
+#ifndef objects_classifier_OBJECTS_LISTENER_H
+#define objects_classifier_OBJECTS_LISTENER_H
 
 #include "ros/ros.h"
 #include "main_thread.h"
@@ -37,4 +37,4 @@ public:
 
 };
 
-#endif //RECOGNITION_OBJECTS_CLASSIFIER_OBJECTS_LISTENER_H
+#endif //objects_classifier_OBJECTS_LISTENER_H

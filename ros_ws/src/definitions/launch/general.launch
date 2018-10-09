@@ -11,7 +11,7 @@
 
 		<node pkg="localizer"     name="localizer"     type="localizer_node.py"     output="screen"/>
 		<node pkg="recognition_enemy_tracker" name="enemy_tracker" type="enemy_tracker_node.py" output="screen"/>
-		<node pkg="recognition_objects_classifier" name="object_classifier" type="objects_classifier_node" output="screen"/>
+		<node pkg="objects_classifier" name="object_classifier" type="objects_classifier_node" output="screen"/>
 
 		<node pkg="ard_asserv"    name="ard_asserv"  type="ard_asserv_node.py" output="screen"/>
 		<node pkg="port_finder"   name="port_finder" type="port_finder_node.py" output="screen"/>

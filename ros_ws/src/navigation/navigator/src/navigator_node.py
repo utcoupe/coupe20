@@ -11,11 +11,11 @@ from geometry_msgs.msg import Pose2D
 from navigator.srv import Goto
 from navigator.msg import Status, DoGotoResult, DoGotoGoal, DoGotoAction, DoGotoWaypointResult, DoGotoWaypointAction
 
-from pathfinder import PathfinderClient
-from asserv import AsservClient
-from localizer import LocalizerClient
-from collisions import CollisionsClient
-from map import MapClient
+from pathfinder_client import PathfinderClient
+from asserv_client import AsservClient
+from localizer_client import LocalizerClient
+from collisions_client import CollisionsClient
+from map_client import MapClient
 from planning import Plan
 #
 

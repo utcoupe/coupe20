@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>recognition_objects_classifier</name>
+    <name>objects_classifier</name>
     <version>0.0.1</version>
     <description>
         Takes objects (rects, circles, segments) and classifies them as outside the map or as inside the map.

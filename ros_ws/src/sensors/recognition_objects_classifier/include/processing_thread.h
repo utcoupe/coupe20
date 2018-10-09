@@ -1,6 +1,6 @@
 
-#ifndef RECOGNITION_OBJECTS_CLASSIFIER_PROCESSING_THREAD_H
-#define RECOGNITION_OBJECTS_CLASSIFIER_PROCESSING_THREAD_H
+#ifndef objects_classifier_PROCESSING_THREAD_H
+#define objects_classifier_PROCESSING_THREAD_H
 
 #include <thread>
 #include <mutex>
@@ -64,4 +64,4 @@ public:
             map_(other.map_) {}
 };
 
-#endif //RECOGNITION_OBJECTS_CLASSIFIER_PROCESSING_THREAD_H
+#endif //objects_classifier_PROCESSING_THREAD_H

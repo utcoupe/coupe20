@@ -1,4 +1,4 @@
-#include "pathfinder/BarriersSubscribers/recognition_objects_classifier_subscriber.h"
+#include "pathfinder/BarriersSubscribers/objects_classifier_subscriber.h"
 
 #include <cmath>
 

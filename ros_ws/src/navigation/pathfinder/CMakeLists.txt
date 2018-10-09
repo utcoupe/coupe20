@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
     dynamic_reconfigure
     game_manager
     static_map
-    recognition_objects_classifier
+    objects_classifier
 )
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH}) # Please note the use of CMAKE_CURRENT_SOURCE_DIR

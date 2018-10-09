@@ -3,13 +3,13 @@ project(recognition_enemy_tracker)
 
 find_package(catkin REQUIRED COMPONENTS
     game_manager
-    recognition_objects_classifier
+    objects_classifier
 )
 
 catkin_package(
     CATKIN_DEPENDS
     game_manager
-    recognition_objects_classifier
+    objects_classifier
 )
 
 include_directories(

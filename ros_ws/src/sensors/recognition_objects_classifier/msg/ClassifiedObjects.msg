@@ -1,8 +1,8 @@
 belt_interpreter/RectangleStamped[] map_rects
-recognition_objects_classifier/CircleObstacleStamped[] map_circles
-recognition_objects_classifier/SegmentObstacleStamped[] map_segments
+objects_classifier/CircleObstacleStamped[] map_circles
+objects_classifier/SegmentObstacleStamped[] map_segments
 
 belt_interpreter/RectangleStamped[] unknown_rects
-recognition_objects_classifier/CircleObstacleStamped[] unknown_circles
-recognition_objects_classifier/SegmentObstacleStamped[] unknown_segments
+objects_classifier/CircleObstacleStamped[] unknown_circles
+objects_classifier/SegmentObstacleStamped[] unknown_segments
 

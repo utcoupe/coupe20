@@ -1,6 +1,6 @@
 
-#ifndef RECOGNITION_OBJECTS_CLASSIFIER_SHAPES_H
-#define RECOGNITION_OBJECTS_CLASSIFIER_SHAPES_H
+#ifndef objects_classifier_SHAPES_H
+#define objects_classifier_SHAPES_H
 
 class Shape {
 public:
@@ -33,4 +33,4 @@ public:
 
 // TODO: polygon
 
-#endif //RECOGNITION_OBJECTS_CLASSIFIER_SHAPES_H
+#endif //objects_classifier_SHAPES_H

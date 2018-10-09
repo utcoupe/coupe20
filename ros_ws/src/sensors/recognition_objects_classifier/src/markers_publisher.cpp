@@ -43,8 +43,8 @@ void MarkersPublisher::publish_rects(
 }
 
 void MarkersPublisher::publish_circles(
-        const std::vector<recognition_objects_classifier::CircleObstacleStamped> &map_circles,
-        const std::vector<recognition_objects_classifier::CircleObstacleStamped> &unknown_circles) {
+        const std::vector<objects_classifier::CircleObstacleStamped> &map_circles,
+        const std::vector<objects_classifier::CircleObstacleStamped> &unknown_circles) {
 
     static unsigned int id_counter = 0;
 
@@ -60,7 +60,7 @@ void MarkersPublisher::publish_circles(
     marker.scale.z = Z_SCALE;
     marker.ns = "circles";
 
-    const std::vector<recognition_objects_classifier::CircleObstacleStamped> both_lists[2] = {std::move(map_circles),
+    const std::vector<objects_classifier::CircleObstacleStamped> both_lists[2] = {std::move(map_circles),
                                                                                         std::move(unknown_circles)};
 
     for (const auto &list : both_lists) {
@@ -82,8 +82,8 @@ void MarkersPublisher::publish_circles(
 }
 
 void MarkersPublisher::publish_segments(
-        const std::vector<recognition_objects_classifier::SegmentObstacleStamped> &map_segments,
-        const std::vector<recognition_objects_classifier::SegmentObstacleStamped> &unknown_segments) {
+        const std::vector<objects_classifier::SegmentObstacleStamped> &map_segments,
+        const std::vector<objects_classifier::SegmentObstacleStamped> &unknown_segments) {
 
 
     static unsigned int id_counter = 0;
@@ -103,7 +103,7 @@ void MarkersPublisher::publish_segments(
 
     geometry_msgs::Point point;
 
-    const std::vector<recognition_objects_classifier::SegmentObstacleStamped> both_lists[2] = {std::move(map_segments),
+    const std::vector<objects_classifier::SegmentObstacleStamped> both_lists[2] = {std::move(map_segments),
                                                                                           std::move(unknown_segments)};
 
     for (const auto &list : both_lists) {

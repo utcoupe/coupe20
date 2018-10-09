@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(recognition_objects_classifier)
+project(objects_classifier)
 
 add_compile_options(-std=c++11)
 

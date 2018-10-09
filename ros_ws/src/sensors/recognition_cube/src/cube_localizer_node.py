@@ -7,7 +7,7 @@ from geometry_msgs.msg import Pose2D, TransformStamped
 from game_manager import StatusServices
 from processing_lidar_objects.msg import Obstacles
 from recognition_cube.srv import *
-from recognition_objects_classifier.msg import *
+from objects_classifier.msg import *
 
 class Localizer(object):
     def __init__(self):

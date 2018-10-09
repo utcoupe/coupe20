@@ -8,8 +8,8 @@ from collisions_engine import Point, Position, Velocity, SegmentObstacle, RectOb
 
 from static_map.srv import MapGet
 from navigator.msg import Status
-from drivers_ard_asserv.msg import RobotSpeed
-from recognition_objects_classifier.msg import ClassifiedObjects
+from ard_asserv.msg import RobotSpeed
+from objects_classifier.msg import ClassifiedObjects
 from game_manager import StatusServices
 
 

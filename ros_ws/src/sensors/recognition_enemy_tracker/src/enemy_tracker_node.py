@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 # -*-coding:Utf-8 -*
 
-from recognition_objects_classifier.msg import ClassifiedObjects
+from objects_classifier.msg import ClassifiedObjects
 from libtools import Rect
 from enemy_tracker_tracker import EnemiesData
 import enemy_tracker_properties

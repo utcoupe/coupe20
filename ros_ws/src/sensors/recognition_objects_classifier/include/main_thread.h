@@ -1,6 +1,6 @@
 
-#ifndef RECOGNITION_OBJECTS_CLASSIFIER_MAIN_THREAD_H
-#define RECOGNITION_OBJECTS_CLASSIFIER_MAIN_THREAD_H
+#ifndef objects_classifier_MAIN_THREAD_H
+#define objects_classifier_MAIN_THREAD_H
 
 #include <vector>
 
@@ -9,10 +9,10 @@
 
 #include <belt_interpreter/BeltRects.h>
 #include "processing_lidar_objects/Obstacles.h"
-#include <recognition_objects_classifier/ClassifiedObjects.h>
+#include <objects_classifier/ClassifiedObjects.h>
 
 #include <dynamic_reconfigure/server.h>
-#include "recognition_objects_classifier/ObjectsClassifierConfig.h"
+#include "objects_classifier/ObjectsClassifierConfig.h"
 
 #include "map_objects.h"
 #include "processing_thread.h"
@@ -55,7 +55,7 @@ protected:
 
     ros::NodeHandle &nh_;
 
-    recognition_objects_classifier::ClassifiedObjects classified_objects_;
+    objects_classifier::ClassifiedObjects classified_objects_;
     std::mutex lists_mutex_;
 
     ros::Publisher pub_;
@@ -74,7 +74,7 @@ protected:
     tf2_ros::Buffer tf_buffer_;
     tf2_ros::TransformListener tl_;
 
-    dynamic_reconfigure::Server<recognition_objects_classifier::ObjectsClassifierConfig> dyn_server_;
+    dynamic_reconfigure::Server<objects_classifier::ObjectsClassifierConfig> dyn_server_;
 
     void pub_loop(const ros::TimerEvent &);
 
@@ -91,7 +91,7 @@ protected:
 
     void notify_threads_and_wait(int num_points);
 
-    void reconfigure_callback(recognition_objects_classifier::ObjectsClassifierConfig &config, uint32_t level);
+    void reconfigure_callback(objects_classifier::ObjectsClassifierConfig &config, uint32_t level);
 
 public:
     MainThread(ros::NodeHandle &nh);
@@ -104,4 +104,4 @@ public:
 };
 
 
-#endif //RECOGNITION_OBJECTS_CLASSIFIER_MAIN_THREAD_H
+#endif //objects_classifier_MAIN_THREAD_H

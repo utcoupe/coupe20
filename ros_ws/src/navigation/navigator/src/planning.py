@@ -9,8 +9,8 @@ from collections import OrderedDict
 
 import rospy
 
-from asserv import AsservClient
-from pathfinder import PathfinderClient
+from asserv_client import AsservClient
+from pathfinder_client import PathfinderClient
 
 class PlanStatuses:
     IDLE        = 0

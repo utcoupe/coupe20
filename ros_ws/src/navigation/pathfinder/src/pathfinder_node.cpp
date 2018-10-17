@@ -25,7 +25,7 @@ const string                NODE_NAME                   = "pathfinder";
 const string                FINDPATH_SERVICE_NAME       = NAMESPACE_NAME + "/" + NODE_NAME + "/find_path";
 const pair<double, double>  TABLE_SIZE                  = {3.0, 2.0}; // Scale corresponding to messages received by the node
 const string                PR_MAP_FILE_NAME            = "layer_ground.bmp";
-const string                GR_MAP_FILE_NAME            = "layer_pathfinder.bmp"; //"/ros_ws/src/navigation_pathfinder/def/map.bmp"; for debug purposes
+const string                GR_MAP_FILE_NAME            = "layer_pathfinder.bmp"; //"/ros_ws/src/pathfinder/def/map.bmp"; for debug purposes
 const string                DEFAULT_ROBOT_NAME          = "gr";
 
 const size_t                SIZE_MAX_QUEUE              = 10;
@@ -60,7 +60,7 @@ int main (int argc, char* argv[])
     
     // Select the configuration depending on param robot
     auto robotName = fetchRobotName(nodeHandle);
-    string memoryMapPath = ros::package::getPath("memory_map") + "/def/occupancy/";
+    string memoryMapPath = ros::package::getPath("static_map") + "/def/occupancy/";
     string mapPath = memoryMapPath;
     if (robotName == "pr")
         mapPath += PR_MAP_FILE_NAME;
@@ -88,8 +88,8 @@ int main (int argc, char* argv[])
     ros::ServiceServer findPathServer = nodeHandle.advertiseService(FINDPATH_SERVICE_NAME, &PathfinderROSInterface::findPathCallback, &pathfinderInterface);
     
     // Configure the dynamic parameter service
-    dynamic_reconfigure::Server<navigation_pathfinder::PathfinderNodeConfig> server;
-    dynamic_reconfigure::Server<navigation_pathfinder::PathfinderNodeConfig>::CallbackType f;
+    dynamic_reconfigure::Server<pathfinder::PathfinderNodeConfig> server;
+    dynamic_reconfigure::Server<pathfinder::PathfinderNodeConfig>::CallbackType f;
     
     f = boost::bind(&PathfinderROSInterface::reconfigureCallback, &pathfinderInterface, _1, _2);
     server.setCallback(f);

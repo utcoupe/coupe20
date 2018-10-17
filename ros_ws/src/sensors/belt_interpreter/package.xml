@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>belt_interpreter</name>
+    <version>0.0.1</version>
+    <description>
+        Takes a list of ranges from the distance sensors surrounding the robot and filters out the points
+        pointing to an existing object in the map. The others may correspond to unknwown objects (enemies
+        for instance).
+        Publishes two lists in a topic corresponding with the categorized ranges.
+    </description>
+    <license>GPLv3</license>
+    <author email="utcoupe@assos.utc.fr">milesial</author>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>rospy</depend>
+    <depend>message_generation</depend>
+    <depend>tf2</depend>
+    <depend>tf2_ros</depend>
+    <exec_depend>message_runtime</exec_depend>
+    <export>
+    </export>
+</package>

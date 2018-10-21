@@ -5,8 +5,10 @@
 #include "collisions/position.h"
 
 #include <chrono>
-#include <string>
+#include <memory>
 #include <vector>
+
+enum class ObstacleTypes {UNDEFINED, SEGMENT, RECTANGLE, CIRCLE};
 
 class MapObstacle {
 public:
@@ -15,10 +17,7 @@ public:
         initializeMapObstacle(pos, velocity);
     }
     
-    const virtual std::string getTypeName() const {
-        using namespace std::string_literals;
-        return {"map"s};
-    };
+    const virtual ObstacleTypes getTypeName() const = 0;
     
     // Getters & setters
     Position getPos() const { return _pos; }
@@ -39,12 +38,15 @@ class SegmentObstacle: public MapObstacle {
 public:
     SegmentObstacle(const Point& firstPoint, const Point& lastPoint, double velocity = 0.0);
     
-    const std::string getTypeName() const override {
-        using namespace std::string_literals;
-        return { "segment"s };
+    const ObstacleTypes getTypeName() const override {
+        return ObstacleTypes::SEGMENT;
     }
     
     std::pair<Point,Point> segment() const { return {_first, _last}; }
+    
+    Point getFirst() const { return _first; }
+    Point getLast() const { return _last; }
+    double getLength() const { return _length; }
     
 private:
     Point _first, _last;
@@ -54,23 +56,19 @@ private:
 
 class CircleObstacle: public MapObstacle {
 public:
-    CircleObstacle(Position pos, double width, double height, double velocity = 0.0):
+    CircleObstacle(Position pos, double radius, double velocity = 0.0):
         MapObstacle(pos, velocity),
-        _width(width),
-        _height(height)
+        _radius(radius)
     {}
     
-    std::vector<SegmentObstacle> toSegments() const;
-    
-    const std::string getTypeName() const override {
-        using namespace std::string_literals;
-        return {"circle"s};
+    const ObstacleTypes getTypeName() const override {
+        return ObstacleTypes::CIRCLE;
     }
     
-private:
-    double _width, _height;
+    double getRadius() const { return _radius; }
     
-    ROS_DEPRECATED std::vector<Point> getCorners() const; // Calculs perso de @MadeInPierre, à vérifier
+private:
+    double _radius;
 };
 
 class RectObstacle: public MapObstacle {
@@ -83,9 +81,8 @@ public:
     
     std::vector<SegmentObstacle> toSegments() const;
     
-    const std::string getTypeName() const override {
-        using namespace std::string_literals;
-        return {"rect"s};
+    const ObstacleTypes getTypeName() const override {
+        return ObstacleTypes::RECTANGLE;
     }
     
     double getWidth() const { return _width; }
@@ -94,7 +91,9 @@ public:
 private:
     double _width, _height;
     
-    std::vector<Point> getCorners() const;
+    ROS_DEPRECATED std::vector<Point> getCorners() const; // Calculs perso de @MadeInPierre, à vérifier
 };
+
+using PtrObstacle = std::shared_ptr<MapObstacle>;
 
 #endif // COLLISIONS_ENGINE_SHAPES_H

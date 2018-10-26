@@ -24,6 +24,9 @@ std::vector<PtrObstacle> CollisionResolver::findCollisions(const std::vector<Ptr
                 collisions.push_back(obstShape);
                 intersecting = true;
             }
+            if (!intersecting && obstShape->getVelocity()) {
+                //
+            }
         }
     }
     return collisions;
@@ -110,11 +113,12 @@ bool CollisionResolver::intersect(PtrObstacle obst1, PtrObstacle obst2) {
         else {
             ROS_WARN("Tried to cast an undefined obsacle!");
         }
-    } catch (std::bad_cast err) {
+    } catch (const std::bad_cast& err) {
         ROS_ERROR_STREAM("Error when casting obstacles: " << err.what());
     } catch (...) {
         ROS_ERROR("Undefined throw when checking obstacles");
     }
+    return response;
 }
 
 bool CollisionResolver::_pointInRect(Position pos, const RectObstacle* rect)

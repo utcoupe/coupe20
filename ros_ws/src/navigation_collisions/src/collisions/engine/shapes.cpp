@@ -3,13 +3,13 @@
 #include <cmath>
 #include <utility>
 
-void MapObstacle::initializeMapObstacle(Position pos, double velocity) {
+void MapObstacle::initializeMapObstacle(Position pos, PtrVelocity velocity) {
     _pos = pos;
     _velocity = velocity;
 }
 
 
-SegmentObstacle::SegmentObstacle(const Point& firstPoint, const Point& lastPoint, double velocity):
+SegmentObstacle::SegmentObstacle(const Point& firstPoint, const Point& lastPoint, PtrVelocity velocity):
     MapObstacle(),
     _first(firstPoint),
     _last(lastPoint)

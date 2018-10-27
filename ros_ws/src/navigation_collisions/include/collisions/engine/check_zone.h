@@ -3,6 +3,7 @@
 
 #include "collisions/engine/constants.h"
 #include "collisions/position.h"
+#include "collisions/engine/engine.h"
 
 #include <memory>
 #include <vector>

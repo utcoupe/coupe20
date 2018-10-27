@@ -6,6 +6,9 @@
 
 #include <vector>
 
+class MapObstacle;
+using PtrObstacle = std::shared_ptr<MapObstacle>;
+
 class Collision {
 public:
     Collision(CollisionLevel level, PtrObstacle obstacle, double approxDistance):

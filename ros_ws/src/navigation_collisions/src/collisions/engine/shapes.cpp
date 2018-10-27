@@ -1,5 +1,7 @@
 #include "collisions/engine/shapes.h"
 
+#include "collisions/engine/check_zone.h"
+
 #include <cmath>
 #include <utility>
 

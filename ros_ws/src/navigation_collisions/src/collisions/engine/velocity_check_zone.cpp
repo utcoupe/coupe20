@@ -1,8 +1,9 @@
 #include "collisions/engine/velocity_check_zone.h"
 
+#include "collisions/engine/check_zone.h"
+
 #include "collisions/engine/constants.h"
 #include "collisions/engine/shapes.h"
-#include "collisions/engine/engine.h"
 
 std::vector<PtrObstacle> VelocityCheckZone::getShapes(Position robotPos, double velLinear, double velAngular, double maxDist) {
     if (abs(velLinear) < CollisionThresholds::VEL_MIN) {
@@ -23,6 +24,10 @@ std::vector<PtrObstacle> VelocityCheckZone::getShapes(Position robotPos, double 
         robotPos.getAngle()
     );
     return { std::make_shared<RectObstacle>(pos, width, height) };
+}
+
+std::vector<Collision> VelocityCheckZone::checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles) {
+    return checkCollisions(robotPos, obstacles, 0.0, 0.0);
 }
 
 std::vector<Collision> VelocityCheckZone::checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles, double velLinear, double velAngular)

@@ -7,5 +7,5 @@ std::vector<PtrObstacle> Velocity::getShapes(Position objectPos, double maxDist)
 
 std::vector<Collision> Velocity::checkCollisions(Position objectPos, std::vector<PtrObstacle> obstacles)
 {
-    return checkZone_.checkCollisions(objectPos, obstacles, velLinear_, velAngular_)
+    return checkZone_.checkCollisions(objectPos, obstacles, velLinear_, velAngular_);
 }

@@ -3,7 +3,6 @@
 
 #include "collisions/point.h"
 #include "collisions/position.h"
-#include "collisions/engine/check_zone.h"
 
 #include <chrono>
 #include <memory>
@@ -12,6 +11,7 @@
 enum class ObstacleTypes {UNDEFINED, SEGMENT, RECTANGLE, CIRCLE};
 
 class MapObstacle;
+class CheckZone;
 using PtrObstacle = std::shared_ptr<MapObstacle>;
 using PtrVelocity = std::shared_ptr<CheckZone>;
 

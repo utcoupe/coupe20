@@ -7,7 +7,7 @@ class PathCheckZone: public CheckZone
 {
 public:
     PathCheckZone(double width, double height, CollisionLevel collisionLevel):
-        CheckZone(width, height)
+        CheckZone(width, height, collisionLevel)
     {}
     
     std::vector<PtrObstacle> getShapes(Position robotPos) override;

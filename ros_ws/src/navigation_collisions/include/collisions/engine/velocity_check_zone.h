@@ -12,9 +12,7 @@ public:
     std::vector<PtrObstacle> getShapes(Position robotPos) override { return getShapes(robotPos, 0.0, 0.0); }
     std::vector<PtrObstacle> getShapes(Position robotPos, double velLinear, double velAngular, double maxDist = -1.0);
     
-    std::vector<Collision> checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles) override {
-        return checkCollisions(robotPos, obstacles, 0.0, 0.0);
-    }
+    std::vector<Collision> checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles) override;
     std::vector<Collision> checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles, double velLinear, double velAngular);
 };
 

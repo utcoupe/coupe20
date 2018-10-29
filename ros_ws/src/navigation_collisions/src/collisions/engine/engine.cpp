@@ -16,8 +16,12 @@ std::vector<PtrObstacle> findCollisions(const std::vector<PtrShape>& robotShapes
                 intersecting = true;
             }
             auto obstVelShapes = obstShape->getVelocityShapes();
-            if (!intersecting && !obstVelShapes.empty()) {
-                //
+            if (!intersecting) {
+                for (auto velShape: obstVelShapes) {
+                    if (robotShape->isCollidingWith(velShape.get())) {
+                        collisions.push_back(obstShape);
+                    }
+                }
             }
         }
     }

@@ -4,22 +4,24 @@
 #include "collisions/engine/constants.h"
 #include "collisions/position.h"
 #include "collisions/engine/engine.h"
+#include "collisions/obstacle.h"
+#include "collisions/engine/collision.h"
+#include "collisions/shapes/abstract_shape.h"
 
 #include <memory>
 #include <vector>
 
-class MapObstacle;
-class Collision;
-using PtrObstacle = std::shared_ptr<MapObstacle>;
-
 class CheckZone {
 public:
+    using ObstaclePtr = std::shared_ptr<Obstacle>;
+    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    
     CheckZone(double width, double height, CollisionLevel level):
         width_(width), height_(height), level_(level)
     {}
     
-    virtual std::vector<PtrObstacle> getShapes(Position robotPos) = 0;
-    virtual std::vector<Collision> checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles);
+    virtual std::vector<ShapePtr> getShapes(Position robotPos) = 0;
+    virtual std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles);
     
     CollisionLevel  getLevel()  const { return level_; }
     double          getHeight() const { return height_; }

@@ -3,10 +3,12 @@
 Obstacle::Obstacle(ShapePtr shape, VelocityPtr velocity):
     shape_(shape), velocity_(velocity)
 {
-    velocity_->setObjectPos(shape->getPos());
+    if (velocity_) {
+        velocity_->setObjectPos(shape->getPos());
+    }
 }
 
-std::vector<Obstacle:ShapePtr> Obstacle::getVelocityShapes (double maxDist) {
+std::vector<Obstacle::ShapePtr> Obstacle::getVelocityShapes (double maxDist) {
     if (velocity_)
         return velocity_->getShapes();
     return {};

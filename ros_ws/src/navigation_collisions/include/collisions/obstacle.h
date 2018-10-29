@@ -18,6 +18,8 @@ public:
     
     std::vector<ShapePtr> getVelocityShapes (double maxDist = -1.0);
     
+    Position getPos() const { return shape_->getPos(); }
+    
     std::chrono::duration<double, std::milli> getAge() const;
     
 protected:

@@ -9,14 +9,14 @@
 
 class Obstacle {
 public:
-    using ShapePtr = std::make_shared<CollisionsShapes::AbstractShape>;
-    using VelocityPtr = std::make_shared<ObstacleVelocity>;
+    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using VelocityPtr = std::shared_ptr<ObstacleVelocity>;
     
-    Obstacle(ShapePtr shape, VelocityPtr velocity);
+    Obstacle(ShapePtr shape, VelocityPtr velocity = nullptr);
     
     ShapePtr getShape() const { return shape_; }
     
-    std::vector<ShapePtr> getVelocityShapes (double maxDist = -1.0) { return velocity_->getShapes(); }
+    std::vector<ShapePtr> getVelocityShapes (double maxDist = -1.0);
     
     std::chrono::duration<double, std::milli> getAge() const;
     

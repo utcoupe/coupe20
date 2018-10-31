@@ -15,6 +15,9 @@ public:
     
     void updateWaypoints(std::vector<Position>&& newWaypoints) { waypoints_ = std::move(newWaypoints); }
     
+    bool hasWaypoints() const { return !waypoints_.empty(); }
+    Position getFirstWaypoint() const { return waypoints_.front(); }
+    
 private:
     std::vector<Position> waypoints_;
     

@@ -21,6 +21,9 @@ public:
     
     std::vector<ShapePtr> getShapes(Position objectPos, double maxDist = -1);
     std::vector<Collision> checkCollisions(Position objectPos, std::vector<ObstaclePtr> obstacles);
+    
+    void setVelLinear(double velLinear) { velLinear_ = velLinear; }
+    void setVelAngular(double velAngular) { velAngular_ = velAngular; }
         
 private:
     double velLinear_, velAngular_;

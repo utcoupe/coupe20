@@ -21,7 +21,7 @@ public:
     {}
     
     virtual std::vector<ShapePtr> getShapes(Position robotPos) = 0;
-    virtual std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles);
+    virtual std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) = 0;
     
     CollisionLevel  getLevel()  const { return level_; }
     double          getHeight() const { return height_; }

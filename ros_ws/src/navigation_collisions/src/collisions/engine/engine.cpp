@@ -6,7 +6,7 @@
 
 using namespace CollisionResolver;
 
-std::vector<PtrObstacle> findCollisions(const std::vector<PtrShape>& robotShapes, const std::vector<PtrObstacle>& obstacleShapes) {
+std::vector<PtrObstacle> CollisionResolver::findCollisions(const std::vector<PtrShape>& robotShapes, const std::vector<PtrObstacle>& obstacleShapes) {
     std::vector<PtrObstacle> collisions;
     for (auto& robotShape: robotShapes) {
         for (auto& obstShape: obstacleShapes) {

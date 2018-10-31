@@ -1,13 +1,16 @@
 #include "collisions/engine/path_check_zone.h"
 
-#include "collisions/engine/shapes.h"
+#include "collisions/shapes/rectangle.h"
+#include "collisions/shapes/circle.h"
 #include "collisions/engine/engine.h"
 #include "collisions/engine/constants.h"
 
-std::vector<PtrObstacle> PathCheckZone::getShapes(Position robotPos) {
+using namespace CollisionsShapes;
+
+std::vector<PathCheckZone::ShapePtr> PathCheckZone::getShapes(Position robotPos) {
     if (waypoints_.empty())
         return {};
-    std::vector<PtrObstacle> shapes;
+    std::vector<ShapePtr> shapes;
     auto path = getFullWaypoints(robotPos);
     for (unsigned idPos = 1; idPos < path.size(); idPos++) {
         const auto& prevPos = (idPos == 0 ? robotPos : path[idPos-1]);
@@ -24,9 +27,9 @@ std::vector<PtrObstacle> PathCheckZone::getShapes(Position robotPos) {
             angle
         );
         
-        shapes.push_back(std::make_shared<RectObstacle>(pos, dist, width_));
+        shapes.push_back(std::make_shared<Rectangle>(pos, dist, width_));
         if (idPos + 1 == path.size()) {
-            shapes.push_back(std::make_shared<RectObstacle>(
+            shapes.push_back(std::make_shared<Rectangle>(
                 Position(curPos.getX(), curPos.getY(), angle),
                 height_,
                 width_
@@ -34,7 +37,7 @@ std::vector<PtrObstacle> PathCheckZone::getShapes(Position robotPos) {
         }
         else {
             double ray = std::sqrt(width_ * width_ + height_ * height_) / 2.0;
-            shapes.push_back(std::make_shared<CircleObstacle>(
+            shapes.push_back(std::make_shared<Circle>(
                 curPos,
                 ray
             ));
@@ -43,7 +46,7 @@ std::vector<PtrObstacle> PathCheckZone::getShapes(Position robotPos) {
     return shapes;
 }
 
-std::vector<Collision> PathCheckZone::checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles)
+std::vector<Collision> PathCheckZone::checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles)
 {
     std::vector<Collision> collisions;
     auto shapes = getShapes(robotPos);

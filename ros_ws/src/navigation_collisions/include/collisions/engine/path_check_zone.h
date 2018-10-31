@@ -10,8 +10,8 @@ public:
         CheckZone(width, height, collisionLevel)
     {}
     
-    std::vector<PtrObstacle> getShapes(Position robotPos) override;
-    std::vector<Collision> checkCollisions(Position robotPos, std::vector<PtrObstacle> obstacles) override;
+    std::vector<ShapePtr> getShapes(Position robotPos) override;
+    std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) override;
     
     void updateWaypoints(std::vector<Position>&& newWaypoints) { waypoints_ = std::move(newWaypoints); }
     

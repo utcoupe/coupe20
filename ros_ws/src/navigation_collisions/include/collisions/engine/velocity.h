@@ -3,16 +3,24 @@
 
 #include "collisions/engine/velocity_check_zone.h"
 
+#include "collisions/obstacle.h"
+#include "collisions/shapes/abstract_shape.h"
+
+#include <memory>
+
 class Velocity {
 public:
+    using ObstaclePtr = std::shared_ptr<Obstacle>;
+    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    
     Velocity(double width, double height, double velLinear = 0.0, double velAngular = 0.0):
-        checkZone_(width, height, CollisionLevel::LEVEL_STOP),
         velLinear_(velLinear),
-        velAngular_(velAngular_)
+        velAngular_(velAngular),
+        checkZone_(width, height, CollisionLevel::LEVEL_STOP)
     {}
     
-    std::vector<PtrObstacle> getShapes(Position objectPos, double maxDist = -1);
-    std::vector<Collision> checkCollisions(Position objectPos, std::vector<PtrObstacle> obstacles);
+    std::vector<ShapePtr> getShapes(Position objectPos, double maxDist = -1);
+    std::vector<Collision> checkCollisions(Position objectPos, std::vector<ObstaclePtr> obstacles);
         
 private:
     double velLinear_, velAngular_;

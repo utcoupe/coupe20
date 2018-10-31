@@ -1,7 +1,5 @@
 #include "collisions/engine/velocity_check_zone.h"
 
-#include "collisions/engine/check_zone.h"
-
 #include "collisions/engine/constants.h"
 #include "collisions/shapes/rectangle.h"
 #include "collisions/obstacle_velocity.h"

@@ -24,7 +24,7 @@ public:
     void setPos(Position pos) { pos_ = pos; }
     void updateVelocity(double velLinear, double velAngular);
     void updateStatus(NavStatus status) { navStatus_ = status; }
-    void updateWaypoints(std::vector<Position>&& newWaypoints) { pathCheckZone_.updateWaypoints(std::move(newWaypoints); }
+    void updateWaypoints(std::vector<Position>&& newWaypoints) { pathCheckZone_.updateWaypoints(std::move(newWaypoints)); }
     
     std::vector<ShapePtr> getMainShapes();
     std::vector<ShapePtr> getPathShapes();

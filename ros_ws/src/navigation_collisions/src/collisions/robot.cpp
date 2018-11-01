@@ -1,7 +1,7 @@
 #include "collisions/robot.h"
 
 Robot::Robot(double width, double height) :
-    width_(width), height_(height), velocity_(width, height)
+    width_(width), height_(height), velocity_(width, height), pathCheckZone_(width, height, CollisionLevel::LEVEL_DANGER)
 {
 }
 
@@ -36,5 +36,5 @@ double Robot::getMaxMainDist() const
     if (pathCheckZone_.hasWaypoints())
         return pos_.norm2Dist(pathCheckZone_.getFirstWaypoint());
     else
-        return -1;
+        return -1.0;
 }

@@ -11,7 +11,7 @@
 class ObstacleStack {
 public:
     using ObstaclePtr = std::shared_ptr<Obstacle>;
-    ObstacleStack() = default;
+    ObstacleStack() : OBSTACLE_LIVESPAN(0.3) {}
     
     std::vector<ObstaclePtr> toList() const;
     
@@ -22,7 +22,7 @@ public:
     void garbageCollect();
     
 private:
-    const std::chrono::duration<double> OBSTACLE_LIVESPAN = 0.3;
+    const std::chrono::duration<double> OBSTACLE_LIVESPAN;
     std::forward_list<ObstaclePtr> beltPoints_, lidarObjects_, enemies_;
     
     void garbageCollect(std::forward_list<ObstaclePtr> list);

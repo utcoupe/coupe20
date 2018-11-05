@@ -11,6 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     memory_map
     message_generation
+    ai_game_manager
+    tf2
+    tf2_ros
+    tf
 )
 
 ##############

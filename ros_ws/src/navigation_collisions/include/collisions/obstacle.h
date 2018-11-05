@@ -20,7 +20,7 @@ public:
     
     Position getPos() const { return shape_->getPos(); }
     
-    std::chrono::duration<double, std::milli> getAge() const;
+    std::chrono::duration<double> getAge() const;
     
 protected:
     ShapePtr shape_;

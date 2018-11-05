@@ -14,6 +14,6 @@ std::vector<Obstacle::ShapePtr> Obstacle::getVelocityShapes (double maxDist) {
     return {};
 }
 
-std::chrono::duration<double, std::milli> Obstacle::getAge() const {
+std::chrono::duration<double> Obstacle::getAge() const {
     return std::chrono::system_clock::now() - spawnTime_;
 }

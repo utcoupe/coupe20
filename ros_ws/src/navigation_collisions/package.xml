@@ -15,6 +15,9 @@
     <depend>geometry_msgs</depend>
     <depend>memory_map</depend>
     <depend>ai_game_manager</depend>
+    <depend>navigation_navigator</depend>
+    <depend>drivers_ard_asserv</depend>
+    <depend>recognition_objects_classifier</depend>
     <depend>tf2</depend>
     <depend>tf2_ros</depend>
     <depend>tf</depend>

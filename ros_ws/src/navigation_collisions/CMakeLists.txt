@@ -12,6 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
     memory_map
     message_generation
     ai_game_manager
+    navigation_navigator
+    drivers_ard_asserv
+    recognition_objects_classifier
     tf2
     tf2_ros
     tf

@@ -13,7 +13,7 @@ public:
     std::vector<ShapePtr> getShapes(Position robotPos) override;
     std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) override;
     
-    void updateWaypoints(std::vector<Position>&& newWaypoints) { waypoints_ = std::move(newWaypoints); }
+    void updateWaypoints(const std::vector<Position>& newWaypoints) { waypoints_ = newWaypoints; }
     
     bool hasWaypoints() const { return !waypoints_.empty(); }
     Position getFirstWaypoint() const { return waypoints_.front(); }

@@ -5,10 +5,15 @@
 #include "collisions/shapes/segment.h"
 #include "collisions/obstacle_velocity.h"
 
+#include "memory_map/MapGet.h"
+
+#include <nlohmann/json.hpp>
 #include <ros/duration.h>
 
 #include <cmath>
 #include <string>
+
+using namespace nlohmann;
 
 const double CACHE_TIME_TF2_BUFFER = 5.0;
 const unsigned SIZE_MAX_QUEUE = 10;
@@ -16,11 +21,16 @@ const unsigned SIZE_MAX_QUEUE = 10;
 const std::string NAVIGATOR_STATUS_TOPIC = "navigation/navigator/status";
 const std::string OBJECTS_TOPIC          = "recognition/objects_classifier/objects";
 const std::string ASSERV_SPEED_TOPIC     = "drivers/ard_asserv/speed";
+const std::string MAP_GET_SERVER         = "memory/map/get";
 
 const std::string NODE_NAME      = "collisions";
 const std::string NAMESPACE_NAME = "navigation";
 
-const std::string MAP_TF_FRAME  = "map";
+const std::string MAP_TF_FRAME          = "map";
+const std::string PARAM_ROBOT_TYPE      = "/robot";
+const std::string DEFAULT_ROBOT_NAME    = "gr";
+const double      DEFAULT_ROBOT_WIDTH   = 0.4;
+const double      DEFAULT_ROBOT_HEIGHT  = 0.25;
 
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion);
 
@@ -28,8 +38,7 @@ inline constexpr double radToDegrees(double angle) {
     return angle * M_PI / 180;
 }
 
-CollisionsSubscriptions::CollisionsSubscriptions(ros::NodeHandle& nhandle, RobotPtr robot):
-robot_(robot),
+CollisionsSubscriptions::CollisionsSubscriptions(ros::NodeHandle& nhandle):
     tf2PosBuffer_(ros::Duration(CACHE_TIME_TF2_BUFFER)),
     tf2PosListener_(tf2PosBuffer_)
 {
@@ -57,6 +66,55 @@ robot_(robot),
         this->onGameStatus(status);
     });
 }
+
+void CollisionsSubscriptions::sendInit(bool success) {
+    gameStatus_->setReady(success);
+}
+
+CollisionsSubscriptions::RobotPtr CollisionsSubscriptions::createRobot(ros::NodeHandle& nhandle)
+{
+    double width, height;
+    std::string robotName = fetchRobotName(nhandle);
+    try {
+        auto mapGetClient = nhandle.serviceClient<memory_map::MapGet>(MAP_GET_SERVER);
+        memory_map::MapGet msg;
+        msg.request.request_path = "/entities/" + robotName + "/shape/*";
+        mapGetClient.waitForExistence();
+        if (!mapGetClient.call(msg) || !msg.response.success)
+            throw ros::Exception("Call failed.");
+        json shape = json::parse(msg.response.response);
+        if (shape["type"] != "rect")
+            throw ros::Exception("Shape '" + shape.at("type").get<std::string>() + "' not allowed.");
+        width = shape["width"];
+        height = shape["height"];
+    } catch(const ros::Exception& e) {
+        ROS_WARN_STREAM("Error when trying to contact '" + MAP_GET_SERVER + "' : " + e.what() + " Falling back to default robot's size value.");
+        width = DEFAULT_ROBOT_WIDTH;
+        height = DEFAULT_ROBOT_HEIGHT;
+    } catch(...) {
+        ROS_WARN_STREAM("Unknown error when trying to contact '" + MAP_GET_SERVER + "'. Falling back to default robot's size value..");
+        width = DEFAULT_ROBOT_WIDTH;
+        height = DEFAULT_ROBOT_HEIGHT;
+    }
+    robot_ = std::make_shared<Robot>(width, height);
+    return robot_;
+}
+
+void CollisionsSubscriptions::updateRobot()
+{
+    auto newPos = updateRobotPos();
+    if (newPos != Position(0,0,0)) {
+        robot_->setPos(newPos);
+    }
+    
+    robot_->updateStatus(navStatus_);
+    
+    if (!robotPathWaypoints_.empty()) {
+        robot_->updateWaypoints(robotPathWaypoints_);
+    }
+    robot_->updateVelocity(velLinear_, velAngular_);
+}
+
 
 void CollisionsSubscriptions::onAsservSpeed(const drivers_ard_asserv::RobotSpeed::ConstPtr& speed)
 {
@@ -134,6 +192,35 @@ void CollisionsSubscriptions::onObjects(const recognition_objects_classifier::Cl
     if (!newLidar.empty()) {
         obstacleStack.updateLidarObjects(newLidar);
     }
+}
+
+Position CollisionsSubscriptions::updateRobotPos()
+{
+    double tx, ty, rz;
+    try {
+        auto transform = tf2PosBuffer_.lookupTransform(MAP_TF_FRAME, "robot", ros::Time());
+        tx = transform.transform.translation.x;
+        ty = transform.transform.translation.y;
+        rz = radToDegrees(
+            quaternionToEuler(transform.transform.rotation).getAngle()
+        );
+    } catch (...) {
+        ROS_ERROR_ONCE("An unknown exception happened when trying to update robot's position from tf. This message will be printed once.");
+        tx = ty = rz = 0.0;
+    }
+    return { tx, ty, rz };
+}
+
+
+std::string CollisionsSubscriptions::fetchRobotName(ros::NodeHandle& nodeHandle)
+{
+    std::string robot_name; // TODO use C++17 init in if statement
+    if (nodeHandle.getParam("/robot", robot_name))
+    {
+        return robot_name;
+    }
+    ROS_WARN_STREAM("Error when trying to get '/robot' param. Falling back to default name \"" << DEFAULT_ROBOT_NAME << "\".");
+    return DEFAULT_ROBOT_NAME;
 }
 
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion)

@@ -22,11 +22,11 @@
 class CollisionsSubscriptions {
 public:
     using RobotPtr = std::shared_ptr<Robot>;
-    CollisionsSubscriptions(ros::NodeHandle& nhandle, RobotPtr robot);
+    CollisionsSubscriptions(ros::NodeHandle& nhandle);
     
     void sendInit(bool success = true);
     
-    Robot createRobot();
+    RobotPtr createRobot(ros::NodeHandle& nhandle);
     
     void updateRobot();
     
@@ -51,6 +51,14 @@ private:
     void onNavStatus(const navigation_navigator::Status::ConstPtr& status);
     void onObjects(const recognition_objects_classifier::ClassifiedObjects::ConstPtr& objects);
     Position updateRobotPos();
+    
+    /**
+     * Retrieve the robot's name from the parameters
+     * 
+     * @param nodeHandle The node handle used by the node
+     * @return The name of the robot
+     */
+    std::string fetchRobotName(ros::NodeHandle& nodeHandle);
 };
 
 #endif // COLLISIONS_COLLISIONS_SUBSCRIPTIONS

@@ -8,12 +8,12 @@
 
 Avant toute chose, il faut cloner le répertoire sur votre ordinateur :
 ```
-git clone git@github.com:utcoupe/coupe18.git
+git clone git@github.com:utcoupe/coupe19.git
 ```
 
 ### Configurer l'environnement de développement
 
-Un script d'installation automatique est disponible. Allez dans le dossier coupe18, et lancer simplement :
+Un script d'installation automatique est disponible. Allez dans le dossier `coupe19`, et lancer simplement :
 ```
 ./scripts/install_utcoupe_setup.sh
 ```
@@ -24,7 +24,7 @@ Si c'est votre première installation, répondez "y" à toutes les questions.
 
 Tout le système de cette année repose sur ROS (http://www.ros.org/), il faut donc compiler le système après l'avoir récupéré et configuré :
 ```
-cd coupe18/ros_ws
+cd coupe19/ros_ws
 catkin_make
 ```
 

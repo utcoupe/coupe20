@@ -27,6 +27,7 @@ const std::string NODE_NAME      = "collisions";
 const std::string NAMESPACE_NAME = "navigation";
 
 const std::string MAP_TF_FRAME          = "map";
+const std::string ROBOT_TF_FRAME        = "robot";
 const std::string PARAM_ROBOT_TYPE      = "/robot";
 const std::string DEFAULT_ROBOT_NAME    = "gr";
 const double      DEFAULT_ROBOT_WIDTH   = 0.4;
@@ -210,12 +211,14 @@ Position CollisionsSubscriptions::updateRobotPos()
 {
     double tx, ty, rz;
     try {
-        auto transform = tf2PosBuffer_.lookupTransform(MAP_TF_FRAME, "robot", ros::Time());
+        auto transform = tf2PosBuffer_.lookupTransform(MAP_TF_FRAME, ROBOT_TF_FRAME, ros::Time());
         tx = transform.transform.translation.x;
         ty = transform.transform.translation.y;
         rz = radToDegrees(
             quaternionToEuler(transform.transform.rotation).getAngle()
         );
+    } catch (tf2::TransformException &ex) {
+        ROS_WARN_STREAM("Error when trying to get /map/robot tf: " << ex.what());
     } catch (...) {
         ROS_ERROR_ONCE("An unknown exception happened when trying to update robot's position from tf. This message will be printed once.");
         tx = ty = rz = 0.0;

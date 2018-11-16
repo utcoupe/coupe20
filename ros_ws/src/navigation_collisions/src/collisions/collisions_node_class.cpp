@@ -7,6 +7,8 @@
 
 #include "navigation_collisions/PredictedCollision.h"
 
+#include <ros/console.h>
+
 #include <chrono>
 #include <functional>
 #include <string>
@@ -45,7 +47,7 @@ CollisionsNode::~CollisionsNode()
 void CollisionsNode::run()
 {
     auto rate = ros::Rate(RATE_RUN_HZ);
-    std::chrono::system_clock::time_point startTime, endTime;
+    std::chrono::system_clock::time_point startTime;
     
     while(!ros::isShuttingDown()) {
         startTime = std::chrono::system_clock::now();
@@ -58,8 +60,9 @@ void CollisionsNode::run()
         
         obstacleStack_->garbageCollect();
         
-        endTime = std::chrono::system_clock::now();
-        ROS_DEBUG_STREAM("Cycle done in " << (std::chrono::duration<double, std::milli>(endTime - startTime)).count() << "ms");
+        auto spentTime = std::chrono::duration<double, std::milli>(std::chrono::system_clock::now() - startTime);
+        
+        ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
         rate.sleep();
     }
 }

@@ -17,22 +17,27 @@
 #include <tf/transform_listener.h>
 
 #include <memory>
+#include <mutex>
 #include <vector>
 
 class CollisionsSubscriptions {
 public:
     using RobotPtr = std::shared_ptr<Robot>;
+    using ObstaclesStackPtr = std::shared_ptr<ObstaclesStack>;
     CollisionsSubscriptions(ros::NodeHandle& nhandle);
     
     void sendInit(bool success = true);
     
     RobotPtr createRobot(ros::NodeHandle& nhandle);
+    ObstaclesStackPtr getObstaclesStack() const { return obstaclesStack_; }
+    
     
     void updateRobot();
     
 private:
     RobotPtr robot_;
-    ObstacleStack obstacleStack;
+    ObstaclesStackPtr obstaclesStack_;
+    std::mutex mutexRobot_;
     
     tf2::BufferCore tf2PosBuffer_;
     tf2_ros::TransformListener tf2PosListener_;

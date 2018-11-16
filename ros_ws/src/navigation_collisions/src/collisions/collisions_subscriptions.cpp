@@ -16,7 +16,7 @@
 using namespace nlohmann;
 
 const double CACHE_TIME_TF2_BUFFER = 5.0;
-const unsigned SIZE_MAX_QUEUE = 10;
+const std::size_t SIZE_MAX_QUEUE = 10;
 
 const std::string NAVIGATOR_STATUS_TOPIC = "navigation/navigator/status";
 const std::string OBJECTS_TOPIC          = "recognition/objects_classifier/objects";
@@ -32,6 +32,8 @@ const std::string DEFAULT_ROBOT_NAME    = "gr";
 const double      DEFAULT_ROBOT_WIDTH   = 0.4;
 const double      DEFAULT_ROBOT_HEIGHT  = 0.25;
 
+#include <iostream>
+
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion);
 
 inline constexpr double radToDegrees(double angle) {
@@ -39,23 +41,25 @@ inline constexpr double radToDegrees(double angle) {
 }
 
 CollisionsSubscriptions::CollisionsSubscriptions(ros::NodeHandle& nhandle):
+    obstaclesStack_(std::make_shared<ObstaclesStack>()),
     tf2PosBuffer_(ros::Duration(CACHE_TIME_TF2_BUFFER)),
     tf2PosListener_(tf2PosBuffer_)
 {
-    asservSpeedSubscriber_ = nhandle.subscribe<drivers_ard_asserv::RobotSpeed>(
+    std::cerr << "Subscribing to " << ASSERV_SPEED_TOPIC << std::endl;
+    asservSpeedSubscriber_ = nhandle.subscribe(
         ASSERV_SPEED_TOPIC,
         SIZE_MAX_QUEUE,
         &CollisionsSubscriptions::onAsservSpeed,
         this
     );
-    navigatorStatusSubscriber_ = nhandle.subscribe<navigation_navigator::Status>(
+    navigatorStatusSubscriber_ = nhandle.subscribe(
         NAVIGATOR_STATUS_TOPIC,
         SIZE_MAX_QUEUE,
         &CollisionsSubscriptions::onNavStatus,
         this
     );
     
-    objectsSubscriber_ = nhandle.subscribe<recognition_objects_classifier::ClassifiedObjects>(
+    objectsSubscriber_ = nhandle.subscribe(
         OBJECTS_TOPIC,
         SIZE_MAX_QUEUE,
         &CollisionsSubscriptions::onObjects,
@@ -73,13 +77,16 @@ void CollisionsSubscriptions::sendInit(bool success) {
 
 CollisionsSubscriptions::RobotPtr CollisionsSubscriptions::createRobot(ros::NodeHandle& nhandle)
 {
+    std::lock_guard<std::mutex> lock(mutexRobot_);
     double width, height;
     std::string robotName = fetchRobotName(nhandle);
     try {
         auto mapGetClient = nhandle.serviceClient<memory_map::MapGet>(MAP_GET_SERVER);
         memory_map::MapGet msg;
         msg.request.request_path = "/entities/" + robotName + "/shape/*";
+        ROS_INFO_STREAM("Waiting for service \"" << MAP_GET_SERVER << "\"");
         mapGetClient.waitForExistence();
+        ROS_INFO_STREAM("Service found or timed out");
         if (!mapGetClient.call(msg) || !msg.response.success)
             throw ros::Exception("Call failed.");
         json shape = json::parse(msg.response.response);
@@ -102,6 +109,9 @@ CollisionsSubscriptions::RobotPtr CollisionsSubscriptions::createRobot(ros::Node
 
 void CollisionsSubscriptions::updateRobot()
 {
+    std::lock_guard<std::mutex> lock(mutexRobot_);
+    if (!robot_)
+        return;
     auto newPos = updateRobotPos();
     if (newPos != Position(0,0,0)) {
         robot_->setPos(newPos);
@@ -118,6 +128,7 @@ void CollisionsSubscriptions::updateRobot()
 
 void CollisionsSubscriptions::onAsservSpeed(const drivers_ard_asserv::RobotSpeed::ConstPtr& speed)
 {
+    std::lock_guard<std::mutex> lock(mutexRobot_);
     velLinear_ = speed->linear_speed;
     velAngular_ = 0.0;
 }
@@ -129,6 +140,7 @@ void CollisionsSubscriptions::onGameStatus(const ai_game_manager::GameStatus::Co
 
 void CollisionsSubscriptions::onNavStatus(const navigation_navigator::Status::ConstPtr& status)
 {
+    std::lock_guard<std::mutex> lock(mutexRobot_); // Needed ?
     if (status->status == status->NAV_IDLE)
         navStatus_ = Robot::NavStatus::IDLE;
     else if (status->status == status->NAV_NAVIGATING)
@@ -156,7 +168,7 @@ void CollisionsSubscriptions::onObjects(const recognition_objects_classifier::Cl
         newBelt.emplace_back(std::make_shared<Obstacle>(rectShape));
     }
     if (!newBelt.empty()) {
-        obstacleStack.updateBeltPoints(newBelt);
+        obstaclesStack_->updateBeltPoints(newBelt);
     }
     
     for (auto seg: objects->unknown_segments) {
@@ -190,7 +202,7 @@ void CollisionsSubscriptions::onObjects(const recognition_objects_classifier::Cl
         newLidar.emplace_back(std::make_shared<Obstacle>(circShape, velocity));
     }
     if (!newLidar.empty()) {
-        obstacleStack.updateLidarObjects(newLidar);
+        obstaclesStack_->updateLidarObjects(newLidar);
     }
 }
 

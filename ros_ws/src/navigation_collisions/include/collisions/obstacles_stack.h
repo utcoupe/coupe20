@@ -6,12 +6,13 @@
 #include <chrono>
 #include <forward_list>
 #include <memory>
+#include <mutex>
 #include <vector>
 
-class ObstacleStack {
+class ObstaclesStack {
 public:
     using ObstaclePtr = std::shared_ptr<Obstacle>;
-    ObstacleStack() : OBSTACLE_LIVESPAN(0.3) {}
+    ObstaclesStack() : OBSTACLE_LIVESPAN(0.3) {}
     
     std::vector<ObstaclePtr> toList() const;
     
@@ -24,8 +25,9 @@ public:
 private:
     const std::chrono::duration<double> OBSTACLE_LIVESPAN;
     std::forward_list<ObstaclePtr> beltPoints_, lidarObjects_, enemies_;
+    mutable std::mutex m_mutex_;
     
-    void garbageCollect(std::forward_list<ObstaclePtr> list);
+    void garbageCollect(std::forward_list<ObstaclePtr>& list);
 };
 
 #endif // COLLISIONS_OBSTACLES_STACK

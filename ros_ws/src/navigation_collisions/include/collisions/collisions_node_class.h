@@ -12,13 +12,18 @@
 
 #include <ros/ros.h>
 
+#include <thread>
+
 class CollisionsNode {
 public:
     using RobotPtr = std::shared_ptr<Robot>;
-    using ObstaclesStackPtr = std::shared_ptr<ObstacleStack>;
+    using ObstaclesStackPtr = std::shared_ptr<ObstaclesStack>;
     CollisionsNode();
+    ~CollisionsNode();
 
 private:
+    std::thread runThread_;
+    
     RobotPtr robot_;
     ObstaclesStackPtr obstacleStack_;
     bool active_ = false; // navigation/navigator activates this node through a service.

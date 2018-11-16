@@ -7,10 +7,11 @@ add_compile_options(-std=c++14)
 find_package(catkin REQUIRED COMPONENTS
     rospy
     roscpp
+    roslib
     std_msgs
     geometry_msgs
     memory_map
-    message_generation
+    genmsg
     ai_game_manager
     navigation_navigator
     drivers_ard_asserv
@@ -55,7 +56,7 @@ generate_messages(
 ###################################
 
 catkin_package(
-    CATKIN_DEPENDS rospy std_msgs message_runtime
+    CATKIN_DEPENDS rospy std_msgs message_runtime roslib
 )
 
 ###########

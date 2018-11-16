@@ -8,6 +8,7 @@
 #include "navigation_collisions/PredictedCollision.h"
 
 #include <chrono>
+#include <functional>
 #include <string>
 
 const std::string SET_ACTIVE_SERVICE    = "navigation/collisions/set_active";
@@ -18,6 +19,8 @@ const double RATE_RUN_HZ = 20.0;
 CollisionsNode::CollisionsNode():
     subscriptions_(nhandle_)
 {
+    ROS_INFO("Collisions node is starting. Please wait...");
+    obstacleStack_ = subscriptions_.getObstaclesStack();
     setActiveService_ = nhandle_.advertiseService(
         SET_ACTIVE_SERVICE,
         &CollisionsNode::onSetActive,
@@ -29,8 +32,15 @@ CollisionsNode::CollisionsNode():
     
     subscriptions_.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");
-    run();
+    runThread_ = std::thread([&](){ this->run(); });
+    runThread_.detach();
 }
+
+CollisionsNode::~CollisionsNode()
+{
+    runThread_.join();
+}
+
 
 void CollisionsNode::run()
 {

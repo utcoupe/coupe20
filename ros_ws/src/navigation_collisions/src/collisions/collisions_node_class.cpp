@@ -16,19 +16,19 @@ const std::string WARNER_TOPIC          = "navigation/collisions/warner";
 
 const double RATE_RUN_HZ = 20.0;
 
-CollisionsNode::CollisionsNode():
-    subscriptions_(nhandle_)
+CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
+    subscriptions_(nhandle)
 {
     ROS_INFO("Collisions node is starting. Please wait...");
     obstacleStack_ = subscriptions_.getObstaclesStack();
-    setActiveService_ = nhandle_.advertiseService(
+    setActiveService_ = nhandle.advertiseService(
         SET_ACTIVE_SERVICE,
         &CollisionsNode::onSetActive,
         this
     );
-    warnerPublisher_ = nhandle_.advertise<navigation_collisions::PredictedCollision>(WARNER_TOPIC, 1);
+    warnerPublisher_ = nhandle.advertise<navigation_collisions::PredictedCollision>(WARNER_TOPIC, 1);
     
-    robot_ = subscriptions_.createRobot(nhandle_);
+    robot_ = subscriptions_.createRobot(nhandle);
     
     subscriptions_.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");

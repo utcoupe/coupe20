@@ -11,7 +11,8 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     ros::init(argc, argv, "collisions");
-    CollisionsNode mainNode;
+    ros::NodeHandle nh;
+    CollisionsNode mainNode(nh);
     
     ros::spin();
     

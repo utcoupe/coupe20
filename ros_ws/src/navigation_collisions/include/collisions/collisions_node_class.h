@@ -18,7 +18,7 @@ class CollisionsNode {
 public:
     using RobotPtr = std::shared_ptr<Robot>;
     using ObstaclesStackPtr = std::shared_ptr<ObstaclesStack>;
-    CollisionsNode();
+    CollisionsNode(ros::NodeHandle& nhandle);
     ~CollisionsNode();
 
 private:
@@ -28,7 +28,6 @@ private:
     ObstaclesStackPtr obstacleStack_;
     bool active_ = false; // navigation/navigator activates this node through a service.
     CollisionsSubscriptions subscriptions_;
-    ros::NodeHandle nhandle_;
     ros::ServiceServer setActiveService_;
     ros::Publisher warnerPublisher_;
     

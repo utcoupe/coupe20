@@ -75,13 +75,13 @@ void CollisionsNode::publishCollision(const Collision& collision)
     
     switch(collision.getLevel()) {
     case CollisionLevel::LEVEL_STOP:
-        ROS_WARN_THROTTLE(0.2, "Found freaking clos collision, please stop!!!");
+        ROS_WARN_THROTTLE(0.2, "Found freaking close collision, please stop!!!");
         break;
     case CollisionLevel::LEVEL_DANGER:
         ROS_WARN_THROTTLE(0.5, "Found close collision intersecting with the path.");
         break;
     case CollisionLevel::LEVEL_POTENTIAL:
-        ROS_INFO_THROTTLE(1, "Foudn far-off collision intersecting with the path.");
+        ROS_INFO_THROTTLE(1, "Found far-off collision intersecting with the path.");
         break;
     }
     auto obst = collision.getObstacle();

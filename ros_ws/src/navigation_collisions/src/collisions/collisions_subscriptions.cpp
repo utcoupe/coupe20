@@ -96,11 +96,17 @@ CollisionsSubscriptions::RobotPtr CollisionsSubscriptions::createRobot(ros::Node
         width = shape["width"];
         height = shape["height"];
     } catch(const ros::Exception& e) {
-        ROS_WARN_STREAM("Error when trying to contact '" + MAP_GET_SERVER + "' : " + e.what() + " Falling back to default robot's size value.");
+        ROS_WARN_STREAM(
+            "Error when trying to contact '" << MAP_GET_SERVER << "' : " << e.what() 
+            << " Falling back to default robot's size value."
+        );
         width = DEFAULT_ROBOT_WIDTH;
         height = DEFAULT_ROBOT_HEIGHT;
     } catch(...) {
-        ROS_WARN_STREAM("Unknown error when trying to contact '" + MAP_GET_SERVER + "'. Falling back to default robot's size value..");
+        ROS_WARN_STREAM(
+            "Unknown error when trying to contact '" << MAP_GET_SERVER 
+            << "'. Falling back to default robot's size value.."
+        );
         width = DEFAULT_ROBOT_WIDTH;
         height = DEFAULT_ROBOT_HEIGHT;
     }
@@ -218,7 +224,10 @@ Position CollisionsSubscriptions::updateRobotPos()
             quaternionToEuler(transform.transform.rotation).getAngle()
         );
     } catch (tf2::TransformException &ex) {
-        ROS_WARN_STREAM("Error when trying to get /map/robot tf: " << ex.what());
+        ROS_WARN_STREAM(
+                "Error when trying to get " << ROBOT_TF_FRAME << " tf from "
+                << MAP_TF_FRAME << " tf: " << ex.what()
+        );
     } catch (...) {
         ROS_ERROR_ONCE("An unknown exception happened when trying to update robot's position from tf. This message will be printed once.");
         tx = ty = rz = 0.0;
@@ -230,11 +239,14 @@ Position CollisionsSubscriptions::updateRobotPos()
 std::string CollisionsSubscriptions::fetchRobotName(ros::NodeHandle& nodeHandle)
 {
     std::string robot_name; // TODO use C++17 init in if statement
-    if (nodeHandle.getParam("/robot", robot_name))
+    if (nodeHandle.getParam(PARAM_ROBOT_TYPE, robot_name))
     {
         return robot_name;
     }
-    ROS_WARN_STREAM("Error when trying to get '/robot' param. Falling back to default name \"" << DEFAULT_ROBOT_NAME << "\".");
+    ROS_WARN_STREAM(
+        "Error when trying to get \"" << PARAM_ROBOT_TYPE
+        << "\" param. Falling back to default name \"" << DEFAULT_ROBOT_NAME << "\"."
+    );
     return DEFAULT_ROBOT_NAME;
 }
 

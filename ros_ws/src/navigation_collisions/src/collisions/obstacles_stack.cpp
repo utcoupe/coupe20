@@ -13,21 +13,21 @@ void ObstaclesStack::updateBeltPoints(const std::vector<ObstaclePtr>& new_obstac
 {
     std::lock_guard<std::mutex> lock(m_mutex_);
     beltPoints_.clear();
-    beltPoints_.insert_after(beltPoints_.end(), new_obstacles.begin(), new_obstacles.end());
+    beltPoints_.insert_after(beltPoints_.before_begin(), new_obstacles.begin(), new_obstacles.end());
 }
 
 void ObstaclesStack::updateLidarObjects(const std::vector<ObstaclePtr>& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex_);
     lidarObjects_.clear();
-    lidarObjects_.insert_after(lidarObjects_.end(), new_obstacles.begin(), new_obstacles.end());
+    lidarObjects_.insert_after(lidarObjects_.before_begin(), new_obstacles.begin(), new_obstacles.end());
 }
 
 void ObstaclesStack::updateEnemies(const std::vector<ObstaclePtr>& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex_);
     enemies_.clear();
-    enemies_.insert_after(enemies_.end(), new_obstacles.begin(), new_obstacles.end());
+    enemies_.insert_after(enemies_.before_begin(), new_obstacles.begin(), new_obstacles.end());
 }
 
 void ObstaclesStack::garbageCollect()

@@ -12,6 +12,7 @@
 
 #include <ros/ros.h>
 
+#include <atomic>
 #include <thread>
 
 class CollisionsNode {
@@ -22,6 +23,7 @@ public:
     ~CollisionsNode();
 
 private:
+    std::atomic<bool> stopRunThread_ {false};
     std::thread runThread_;
     
     RobotPtr robot_;

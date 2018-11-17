@@ -35,12 +35,13 @@ CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
     subscriptions_.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");
     runThread_ = std::thread([&](){ this->run(); });
-    runThread_.detach();
 }
 
 CollisionsNode::~CollisionsNode()
 {
-    runThread_.join();
+    stopRunThread_ = true;
+    if (runThread_.joinable())
+        runThread_.join();
 }
 
 
@@ -49,7 +50,7 @@ void CollisionsNode::run()
     auto rate = ros::Rate(RATE_RUN_HZ);
     std::chrono::system_clock::time_point startTime;
     
-    while(!ros::isShuttingDown()) {
+    while(!stopRunThread_) {
         startTime = std::chrono::system_clock::now();
         subscriptions_.updateRobot();
         if (active_) {
@@ -108,6 +109,7 @@ bool CollisionsNode::onSetActive(navigation_collisions::ActivateCollisions::Requ
     if (!active_)
         msg = "Stopping";
     ROS_INFO_STREAM(msg << " collisions check.");
+    res.success = true;
     return true;
 }
 

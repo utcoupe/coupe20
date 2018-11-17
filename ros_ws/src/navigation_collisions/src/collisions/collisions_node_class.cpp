@@ -100,6 +100,8 @@ void CollisionsNode::publishCollision(const Collision& collision)
     default:
         ROS_WARN_ONCE("Found collision has a special shape that cannot be reported.");
     }
+    
+    warnerPublisher_.publish(msg);
 }
 
 bool CollisionsNode::onSetActive(navigation_collisions::ActivateCollisions::Request& req, navigation_collisions::ActivateCollisions::Response& res)

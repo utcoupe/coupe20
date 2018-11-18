@@ -11,26 +11,23 @@ PACKAGE_NAME = "definitions"
 
 def callback(req):
     def_dir = rospkg.RosPack().get_path(PACKAGE_NAME) + "/def"
-    req_split = req.request.split('/')
 
-    if req_split[0] in ["ai", "memory", "navigation", "movement", "processing", "recognition", "drivers"]:
-        if not rospy.has_param('/robot'):
-            rospy.logerr("Parameter '/robot' not set, cannot provide the definition file {}".format(req.request))
-            req_final = ""
-        else:
-            req_final = "robots/{}/{}".format(rospy.get_param("/robot").lower(), req.request)
-            if req_split[0] == "ai" and req_split[1] == "system_orders.xml": # exception.
-                req_final = req.request
-    else:
-        req_final = req.request
-
-
-    path = os.path.join(def_dir, req_final)
+    path = os.path.join(def_dir, req.request)
     if os.path.isfile(path):
         return GetDefinitionResponse(path, True)
     else:
-        rospy.logerr("Request failed, file {} does not exist !".format(path))
-        return GetDefinitionResponse("", False)
+        if rospy.has_param('/robot'):
+            req_final = "robots/{}/{}".format(rospy.get_param("/robot").lower(), req.request)
+            path = os.path.join(def_dir, req_final)
+
+            if os.path.isfile(path):
+                return GetDefinitionResponse(path, True)
+            else:
+                rospy.logerr("Request failed, file {} does not exist !".format(path))
+        else:
+            rospy.logerr("Parameter '/robot' not set, cannot provide the definition file {}".format(req.request))
+    
+    return GetDefinitionResponse("", False)
 
 
 def server():

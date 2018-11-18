@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
     tf2
     tf2_ros
     tf
+    visualization_msgs
 )
 
 set(NLOHMANN_JSON_HEADER_LOCATION "$ENV{UTCOUPE_WORKSPACE}/libs/json/single_include/")

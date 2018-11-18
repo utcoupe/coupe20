@@ -19,7 +19,8 @@ const std::string WARNER_TOPIC          = "navigation/collisions/warner";
 const double RATE_RUN_HZ = 20.0;
 
 CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
-    subscriptions_(nhandle)
+    subscriptions_(nhandle),
+    markersPublisher_(nhandle)
 {
     ROS_INFO("Collisions node is starting. Please wait...");
     obstacleStack_ = subscriptions_.getObstaclesStack();
@@ -50,20 +51,23 @@ void CollisionsNode::run()
     auto rate = ros::Rate(RATE_RUN_HZ);
     std::chrono::system_clock::time_point startTime;
     
-    while(!stopRunThread_) {
+    while(!stopRunThread_ && !ros::isShuttingDown()) {
         startTime = std::chrono::system_clock::now();
         subscriptions_.updateRobot();
         if (active_) {
             for (const auto& collision: robot_->checkCollisions(obstacleStack_->toList())) {
                 publishCollision(collision);
             }
+            markersPublisher_.publishCheckZones(robot_);
         }
         
+        markersPublisher_.publishObstacles(obstacleStack_->toList());
         obstacleStack_->garbageCollect();
         
         auto spentTime = std::chrono::duration<double, std::milli>(std::chrono::system_clock::now() - startTime);
         
         ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
+        ros::spinOnce();
         rate.sleep();
     }
 }

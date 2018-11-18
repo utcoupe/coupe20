@@ -2,8 +2,9 @@
 #define COLLISIONS_NODE_CLASS_H
 
 #include "collisions/collisions_subscriptions.h"
-#include "collisions/robot.h"
+#include "collisions/markers_publisher.h"
 #include "collisions/obstacles_stack.h"
+#include "collisions/robot.h"
 #include "collisions/engine/collision.h"
 #include "collisions/shapes/abstract_shape.h"
 
@@ -23,15 +24,16 @@ public:
     ~CollisionsNode();
 
 private:
-    std::atomic<bool> stopRunThread_ {false};
+    std::atomic_bool stopRunThread_ { false };
+    std::atomic_bool active_ { false }; // navigation/navigator activates this node through a service.
     std::thread runThread_;
     
     RobotPtr robot_;
     ObstaclesStackPtr obstacleStack_;
-    bool active_ = false; // navigation/navigator activates this node through a service.
     CollisionsSubscriptions subscriptions_;
     ros::ServiceServer setActiveService_;
     ros::Publisher warnerPublisher_;
+    MarkersPublisher markersPublisher_;
     
     void run();
     void publishCollision(const Collision& collision);

@@ -26,7 +26,7 @@ public:
 private:
     std::atomic_bool stopRunThread_ { false };
     std::atomic_bool active_ { false }; // navigation/navigator activates this node through a service.
-    std::thread runThread_;
+    ros::Timer timerRun;
     
     RobotPtr robot_;
     ObstaclesStackPtr obstacleStack_;
@@ -35,7 +35,7 @@ private:
     ros::Publisher warnerPublisher_;
     MarkersPublisher markersPublisher_;
     
-    void run();
+    void run(const ros::TimerEvent&);
     void publishCollision(const Collision& collision);
     bool onSetActive(navigation_collisions::ActivateCollisions::Request& req, navigation_collisions::ActivateCollisions::Response& res);
     

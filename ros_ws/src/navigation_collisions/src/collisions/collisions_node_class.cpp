@@ -35,41 +35,37 @@ CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
     
     subscriptions_.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");
-    runThread_ = std::thread([&](){ this->run(); });
+    timerRun = nhandle.createTimer(
+        ros::Duration(1 / RATE_RUN_HZ),
+        &CollisionsNode::run,
+        this
+    );
 }
 
 CollisionsNode::~CollisionsNode()
 {
-    stopRunThread_ = true;
-    if (runThread_.joinable())
-        runThread_.join();
+    // TODO
 }
 
 
-void CollisionsNode::run()
+void CollisionsNode::run(const ros::TimerEvent&)
 {
-    auto rate = ros::Rate(RATE_RUN_HZ);
     std::chrono::system_clock::time_point startTime;
-    
-    while(!stopRunThread_ && !ros::isShuttingDown()) {
-        startTime = std::chrono::system_clock::now();
-        subscriptions_.updateRobot();
-        if (active_) {
-            for (const auto& collision: robot_->checkCollisions(obstacleStack_->toList())) {
-                publishCollision(collision);
-            }
-            markersPublisher_.publishCheckZones(robot_);
+    startTime = std::chrono::system_clock::now();
+    subscriptions_.updateRobot();
+    if (active_) {
+        for (const auto& collision: robot_->checkCollisions(obstacleStack_->toList())) {
+            publishCollision(collision);
         }
-        
-        markersPublisher_.publishObstacles(obstacleStack_->toList());
-        obstacleStack_->garbageCollect();
-        
-        auto spentTime = std::chrono::duration<double, std::milli>(std::chrono::system_clock::now() - startTime);
-        
-        ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
-        ros::spinOnce();
-        rate.sleep();
+        markersPublisher_.publishCheckZones(robot_);
     }
+    
+    markersPublisher_.publishObstacles(obstacleStack_->toList());
+    obstacleStack_->garbageCollect();
+    
+    auto spentTime = std::chrono::duration<double, std::milli>(std::chrono::system_clock::now() - startTime);
+    
+    ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
 }
 
 void CollisionsNode::publishCollision(const Collision& collision)

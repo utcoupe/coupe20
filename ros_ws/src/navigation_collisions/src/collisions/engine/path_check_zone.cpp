@@ -13,8 +13,8 @@ std::vector<PathCheckZone::ShapePtr> PathCheckZone::getShapes(Position robotPos)
     std::vector<ShapePtr> shapes;
     auto path = getFullWaypoints(robotPos);
     for (unsigned idPos = 1; idPos < path.size(); idPos++) {
-        const auto& prevPos = (idPos == 0 ? robotPos : path[idPos-1]);
-        const auto& curPos = path[idPos];
+        auto prevPos = path[idPos - 1];
+        auto curPos = path[idPos];
         
         if (prevPos == curPos)
             continue;
@@ -36,12 +36,13 @@ std::vector<PathCheckZone::ShapePtr> PathCheckZone::getShapes(Position robotPos)
             ));
         }
         else {
-            double ray = std::sqrt(width_ * width_ + height_ * height_) / 2.0;
+            double ray = std::hypot(width_, height_) / 2.0;
             shapes.push_back(std::make_shared<Circle>(
                 curPos,
                 ray
             ));
         }
+        prevPos = curPos;
     }
     return shapes;
 }
@@ -63,6 +64,6 @@ std::vector<Collision> PathCheckZone::checkCollisions(Position robotPos, std::ve
 std::vector<Position> PathCheckZone::getFullWaypoints(Position robotPos) const
 {
     std::vector<Position> path = { robotPos };
-    path.insert(path.begin(), waypoints_.begin(), waypoints_.end());
+    path.insert(path.end(), waypoints_.begin(), waypoints_.end());
     return path;
 }

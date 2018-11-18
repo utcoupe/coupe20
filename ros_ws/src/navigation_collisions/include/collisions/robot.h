@@ -22,6 +22,8 @@ public:
     Robot(double width, double height);
     
     void setPos(Position pos) { pos_ = pos; }
+    Position getPos() const { return pos_; }
+    
     void updateVelocity(double velLinear, double velAngular);
     void updateStatus(NavStatus status) { navStatus_ = status; }
     void updateWaypoints(const std::vector<Position>& newWaypoints) { pathCheckZone_.updateWaypoints(newWaypoints); }

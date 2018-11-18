@@ -220,9 +220,7 @@ Position CollisionsSubscriptions::updateRobotPos()
         auto transform = tf2PosBuffer_.lookupTransform(MAP_TF_FRAME, ROBOT_TF_FRAME, ros::Time());
         tx = transform.transform.translation.x;
         ty = transform.transform.translation.y;
-        rz = radToDegrees(
-            quaternionToEuler(transform.transform.rotation).getAngle()
-        );
+        rz = quaternionToEuler(transform.transform.rotation).getAngle();
     } catch (tf2::TransformException &ex) {
         ROS_WARN_STREAM(
                 "Error when trying to get " << ROBOT_TF_FRAME << " tf from "

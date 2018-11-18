@@ -1,0 +1,67 @@
+<classes>
+    <class name="atom"/>
+
+    <class name="atom-vertical" dep="atom">
+        <shape type="rect" w="0.076" h="0.025"/>
+    </class>
+
+    <class name="atom-horizontal" dep="atom"/>
+        <shape type="circle" r="0.038"/>
+    </class>
+</classes>
+<objects>
+    <!-- Spawn zone -->
+    <container name="spawn_rd"/>
+    <container name="spawn_gd"/>
+    <container name="spawn_bd"/>
+    
+    <container name="spawn_atoms">
+        <container name="spawn_atoms_rd">
+            <object class="atom-horizontal">
+                <position x="" y="" a=""/>
+            </object>
+        </container>
+        
+        <container name="spawn_atoms_gd">
+            <object class="atom-horizontal">
+                <position x="" y="" a=""/>
+            </object>
+        </container>
+
+        <container name="spawn_atoms_bd">
+            <object class="atom-horizontal">
+                <position x="" y="" a=""/>
+            </object>
+        </container>
+    </container>
+
+    <!-- Accelerator -->
+    <container name="accelerator_station"/>
+    <container name="accelerator">
+        <object class="atom-vertical">
+            <position x="" y="" a=""/>
+            <color name="blue"/>
+        </object>
+    </container>
+    
+    <!-- Chaos -->
+    <container name="chaos">
+        <position x="" y=""/>
+        <shape type="circle" r="0.15"/>
+
+        <object class="atom-horizontal">
+            <color name="blue"/>
+        </object>
+        <object class="atom-horizontal">
+            <color name="green"/>
+        </object>
+        <object class="atom-horizontal">
+            <color name="red"/>
+        </object>
+        <object class="atom-horizontal">
+            <color name="red"/>
+        </object>
+    </container>
+    
+    <!-- Distributors -->
+</objects>

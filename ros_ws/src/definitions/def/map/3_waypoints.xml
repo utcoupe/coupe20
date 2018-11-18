@@ -1,0 +1,3 @@
+<waypoints>
+    <waypoint name="spawn" x="0.5" y="0.5" a="0" frame_id="map"/>
+</waypoints>

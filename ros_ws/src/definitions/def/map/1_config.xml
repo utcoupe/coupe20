@@ -1,0 +1,19 @@
+<config>
+    <teams>
+        <team name="left" default="true"/>
+        <team name="right">
+            <transform type="x_mirror"/>
+            <transform type="a_mirror"/>
+        </team>
+    </teams>
+
+    <colors>
+        <color name="light_gray" r="0.95" g="" b="" />
+        <color name="green"      r="0.1"  g="" b="" />
+        <color name="blue"       r="0.1"  g="" b="" />
+        <color name="yellow"     r="1"    g="" b="" />
+        <color name="black"      r="0.1"  g="" b="" />
+        <color name="orange"     r="1"    g="" b="" />
+        <color name="purple"     r="0.3"  g="" b="" />
+    </colors>
+</config>

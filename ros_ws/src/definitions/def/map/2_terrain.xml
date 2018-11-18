@@ -1,0 +1,27 @@
+<terrain>
+    <shape type="rect" w="3" h="2"/>
+    
+    <walls> <!-- Main walls -->
+        <wall name="wall_top">
+            <position x="" y="" a=""/> 
+            <shape type="rect" w="" h="" a=""/>
+        </wall>
+        
+        <wall name="wall_bottom">
+            <position x="" y="" a=""/>
+            <shape type="rect" w="" h="" a=""/>
+        </wall>
+        
+        <wall name="wall_left">
+            <feature x="" y="" a="" type="" w="" h=""/>
+            <position x="" y="" a=""/> 
+            <shape type="rect" w="" h=""/> 
+        </wall> 
+        
+        <wall name="wall_right">
+            <position x="" y="" a=""/>
+            <shape type="rect" w="" h="" a=""/>
+        </wall> 
+        <!-- TODO --> 
+    </walls>
+</terrain>

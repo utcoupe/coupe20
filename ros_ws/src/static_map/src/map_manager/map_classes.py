@@ -3,93 +3,46 @@ import copy, json
 import rospy
 from map_loader import LoadingHelpers
 from map_bases import DictManager
-from map_attributes import Position2D, Shape2D, MarkerRViz, Trajectory
+from map_attributes import Position2D, Shape2D, Color, MarkerRViz
 import map
 
 
-class Terrain(DictManager):
-    def __init__(self, initdict):
-        LoadingHelpers.checkKeysExist(initdict, "shape", "_marker", "walls")
-
-        # Instantiate the layers before creating the dict
-        for layer in initdict["walls"]:
-            initdict["walls"][layer] = Layer(initdict["walls"][layer])
-
-        super(Terrain, self).__init__({
-            "shape": Shape2D(initdict["shape"]),
-            "_marker": MarkerRViz(initdict["_marker"]),
-            "walls": DictManager(initdict["walls"]),
-        })
+class Terrain():
+    def __init__(self, xml):
+        LoadingHelpers.checkAttribExist(xml, "type")
+        self.Shape = Shape2D(xml)
+        self.Layers = [Layer(l) for l in xml.findall("layer")]
+        # TODO marker
 
 
-class Layer(DictManager):
-    def __init__(self, initdict):
-        self.includes = []
-        if "_include" in initdict.keys():
-            self.includes = [i for i in initdict["_include"]]
-            del initdict["_include"]
-
-        # Instantiate the walls before creating the dict
-        for wall in initdict:
-            initdict[wall] = Wall(initdict[wall])
-
-        super(Layer, self).__init__(initdict)
+class Layer():
+    def __init__(self, xml):
+        LoadingHelpers.checkAttribExist(xml, "name")
+        self.Name = xml.get("name")
+        self.Includes = [i.get("name") for i in xml.findall("include")]
+        self.Walls = [Wall(w) for w in xml.findall("wall")]
 
 
-class Wall(DictManager):
-    def __init__(self, initdict):
-        LoadingHelpers.checkKeysExist(initdict, "position", "shape")
-        super(Wall, self).__init__({
-            "position": Position2D(initdict["position"]),
-            "shape": Shape2D(initdict["shape"])
-        })
+class Wall():
+    def __init__(self, xml):
+        LoadingHelpers.checkChildExist(xml, "position", "shape")
+        self.Position = Position2D(xml.find("position"))
+        self.Shape    = Shape2D(xml.find("shape"))
 
 
-class Zone(DictManager):
-    def __init__(self, initdict):
-        LoadingHelpers.checkKeysExist(initdict, "position", "shape", "_marker", "properties")
-        super(Zone, self).__init__({
-            "position": Position2D(initdict["position"]),
-            "shape": Shape2D(initdict["shape"]),
-            "_marker": MarkerRViz(initdict["_marker"], shape = Shape2D(initdict["shape"])),
-            "properties": DictManager(initdict["properties"])
-        })
+class Waypoint():
+    def __init__(self, xml):
+        LoadingHelpers.checkAttribExist(xml, "name")
+        self.Name = xml.get("name")
+        self.Position = Position2D(xml)
 
 
-class Waypoint(DictManager):
-    def __init__(self, initdict):
-        LoadingHelpers.checkKeysExist(initdict, "position")
-        super(Waypoint, self).__init__({
-            "position": Position2D(initdict["position"])
-        })
+class Container():
+    def __init__(self, xml, xml_classes):
+        self.Elements =  [Container(c, xml_classes) for c in xml.findall("container")]
+        self.Elements += [Object(o, xml_classes)    for o in xml.findall("object")]
 
-
-class Entity(DictManager):
-    def __init__(self, initdict, obj_classes):
-        LoadingHelpers.checkKeysExist(initdict, "position", "shape", "_marker", "containers", "trajectory")
-
-        for container in initdict["containers"]:
-            initdict["containers"][container] = Container(initdict["containers"][container], obj_classes)
-
-        super(Entity, self).__init__({
-            "position": Position2D(initdict["position"]),
-            "shape": Shape2D(initdict["shape"]),
-            "_marker": MarkerRViz(initdict["_marker"]),
-            "chest": DictManager(initdict["containers"]),
-            "trajectory": Trajectory(initdict["trajectory"])
-        })
-
-
-class Container(DictManager):
-    def __init__(self, initdict, obj_classes):
-        for obj in initdict:
-            if "container_" in obj:
-                initdict[obj] = Container(initdict[obj], obj_classes)
-            else:
-                initdict[obj] = Object(initdict[obj], obj_classes)
-        super(Container, self).__init__(initdict)
-
-    def get_objects(self, collisions_only = False):
+    def get_objects(self, collisions_only = False): #TODO
         objects = []
         for o in self.Dict:
             if isinstance(self.Dict[o], Container):
@@ -102,33 +55,42 @@ class Container(DictManager):
         return objects
 
 
-class Object(DictManager):
-    def __init__(self, initdict, obj_classes):
-        # Autofilling if class is available
-        if "class" in initdict:
-            obj_class = copy.deepcopy([obj_classes[d] for d in obj_classes if d == initdict["class"]][0])
-            new_initdict = LoadingHelpers.mergeDicts(obj_class, initdict)
-            for field in ["position", "shape", "_marker"]:
-                if field in initdict and field in obj_class:
-                    new_initdict[field] = LoadingHelpers.mergeDicts(obj_class[field], initdict[field])
-                elif field in initdict:
-                    new_initdict[field] = initdict[field]
-                elif field in obj_class:
-                    new_initdict[field] = obj_class[field]
-            initdict = new_initdict
+class Object(object):
+    def __init__(self, xml, obj_classes, check_valid = True):
+        self.Position = Position2D(xml.find("position")) if xml.find("position") is not None else None
+        self.Shape    = Shape2D(xml.find("shape"))       if xml.find("shape")    is not None else None
+        self.Labels   = [l.get("name") for l in xml.find("labels").findall("label")] if xml.find("labels") else []
+        self.Marker   = None #TODO Markers Position2D(xml.find("position")) if xml.find("position") else None
 
-        LoadingHelpers.checkKeysExist(initdict, "collision", "position", "shape", "_marker")
+        self.Color = None
+        if xml.find("color") is not None:
+            LoadingHelpers.checkAttribExist(xml.find("color"), "name")
+            base = [c for c in map.MapManager.Colors if c.Name == xml.find("color").get("name")]
+            if base:
+                self.Color = copy.deepcopy(base[0])
+            else:
+                self.Color = Color(xml.find("color"))
 
-        d = {}
-        if "collision" in initdict:
-            d["collision"] = initdict["collision"]
-        if "color" in initdict:
-            d["color"] = [c for c in map.Map.Colors if c.Dict["name"] == initdict["color"]][0]
-        if "properties" in initdict:
-            d["properties"] = DictManager(initdict["properties"])
-        d["shape"] = Shape2D(initdict["shape"])
+        if xml.get("class"):
+            self.merge(copy.deepcopy([c for c in obj_classes if c.Name == xml.get("class")][0]))
+        
+        if check_valid is True: # disabled when creating a class
+            self.check_valid()
 
-        d["position"] = Position2D(initdict["position"])
-        d["_marker"]   = MarkerRViz(initdict["_marker"], shape = d["shape"] if "shape" in d else None, \
-                                                       color = d["color"] if "color" in d else None)
-        super(Object, self).__init__(d)
+    def merge(self, other): #self is prioritary
+        self.Position = self.Position if self.Position is not None else other.Position
+        self.Shape    = self.Shape    if self.Shape    is not None else other.Shape
+        self.Color    = self.Color    if self.Color    is not None else other.Color
+        self.Labels += other.Labels
+        
+        #self.Marker.merge(other.Marker) #TODO Markers
+    
+    def check_valid(self): # Checks if all values are not None (in case of class merges)
+        if None in [self.Position, self.Shape]:
+            print "nogood"
+
+class Class(Object):
+    def __init__(self, xml, obj_classes):
+        LoadingHelpers.checkAttribExist(xml, "name")
+        self.Name = xml.get("name")
+        super(Class, self).__init__(xml, obj_classes, check_valid = False)

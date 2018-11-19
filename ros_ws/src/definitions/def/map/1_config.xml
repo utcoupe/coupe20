@@ -8,12 +8,12 @@
     </teams>
 
     <colors>
-        <color name="light_gray" r="0.95" g="" b="" />
-        <color name="green"      r="0.1"  g="" b="" />
-        <color name="blue"       r="0.1"  g="" b="" />
-        <color name="yellow"     r="1"    g="" b="" />
-        <color name="black"      r="0.1"  g="" b="" />
-        <color name="orange"     r="1"    g="" b="" />
-        <color name="purple"     r="0.3"  g="" b="" />
+        <color name="light_gray" r="0.95" g="1" b="2" a="3" />
+        <color name="green"      r="0.1"  g="1" b="2" a="3" />
+        <color name="blue"       r="0.1"  g="1" b="2" a="3" />
+        <color name="yellow"     r="1"    g="1" b="2" a="3" />
+        <color name="black"      r="0.1"  g="1" b="2" a="3" />
+        <color name="orange"     r="0.9"    g="1" b="2" a="3" />
+        <color name="red"     r="0.3"  g="1" b="2" a="3" />
     </colors>
 </config>

@@ -5,7 +5,7 @@ import time
 import rospy
 import static_map.msg
 import static_map.srv
-from map_manager import SetMode, Map, DictManager
+from map_manager import SetMode, MapManager, DictManager
 from occupancy import OccupancyGenerator
 
 
@@ -32,7 +32,7 @@ class MapServices():
         rospy.loginfo("GET:" + str(req.request_path))
 
         success = False
-        response = Map.get(req.request_path)
+        response = MapManager.get(req.request_path)
         if isinstance(response, DictManager):
             rospy.logerr("    GET Request failed : '^' dict operator not allowed in services.")
             response = None
@@ -49,7 +49,7 @@ class MapServices():
         rospy.loginfo("GET_OBJECTS:collisions_only=" + str(req.collisions_only))
 
         success = False
-        objects = Map.get_objects(collisions_only=req.collisions_only)
+        objects = MapManager.get_objects(collisions_only=req.collisions_only)
 
         if objects != None:
             success = True
@@ -63,14 +63,13 @@ class MapServices():
         rospy.loginfo("SET:" + str(req.request_path))
 
         success = False
-        # success = Map.set(req.request_path, req.mode)
         try:
-            success = Map.set(req.request_path, req.mode)
+            success = MapManager.set(req.request_path, req.mode)
         except Exception as e:
             rospy.logerr("    SET Request failed (python reason) : " + str(e))
 
         if success:
-            Map.Dirty = True
+            MapManager.Dirty = True
 
         rospy.logdebug("    Responding: " + str(success))
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
@@ -79,11 +78,11 @@ class MapServices():
     def on_transfer(self, req):
         s = time.time() * 1000
         rospy.loginfo("TRANSFER:{} to {}".format(req.old_path, req.new_path))
-        elem, elem_name = Map.get(req.old_path + "/^"), req.old_path.split('/')[-1]
+        elem, elem_name = MapManager.get(req.old_path + "/^"), req.old_path.split('/')[-1]
         if elem:
-            success = Map.set(req.old_path, SetMode.MODE_DELETE) and \
-                      Map.set(req.new_path + "/{}".format(elem_name), SetMode.MODE_ADD, instance = elem)
-            Map.Dirty = True
+            success = MapManager.set(req.old_path, SetMode.MODE_DELETE) and \
+                      MapManager.set(req.new_path + "/{}".format(elem_name), SetMode.MODE_ADD, instance = elem)
+            MapManager.Dirty = True
         else:
             rospy.logerr("    TRANSFER Request failed : could not find the object at old_path '{}'.".format(req.old_path))
             success = False
@@ -111,9 +110,9 @@ class MapServices():
 
         filled_waypoint, filled_waypoint_name = None, req.waypoint.name
         if filled_waypoint_name is not None and filled_waypoint_name != '': # name was given, complete the rest
-            filled_waypoint = Map.get("/waypoints/{}/^".format(req.waypoint.name))
+            filled_waypoint = MapManager.get("/waypoints/{}/^".format(req.waypoint.name))
         else: # assume pose was given, find the waypoint name
-            waypoints = Map.get("/waypoints/^").Dict
+            waypoints = MapManager.get("/waypoints/^").Dict
             for w in waypoints:
                 if waypoints[w].get("position/x") == round(req.waypoint.pose.x, 3) and \
                    waypoints[w].get("position/y") == round(req.waypoint.pose.y, 3):

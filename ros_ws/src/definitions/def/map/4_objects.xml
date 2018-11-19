@@ -1,15 +1,17 @@
-<classes>
-    <class name="atom"/>
-
-    <class name="atom-vertical" dep="atom">
-        <shape type="rect" w="0.076" h="0.025"/>
-    </class>
-
-    <class name="atom-horizontal" dep="atom"/>
-        <shape type="circle" r="0.038"/>
-    </class>
-</classes>
 <objects>
+    <classes>
+        <class name="atom"/>
+
+        <class name="atom-vertical" class="atom">
+            <shape type="rect" w="0.076" h="0.025"/>
+        </class>
+
+        <class name="atom-horizontal" class="atom">
+            <shape type="circle" r="0.038"/>
+        </class>
+    </classes>
+
+
     <!-- Spawn zone -->
     <container name="spawn_rd"/>
     <container name="spawn_gd"/>
@@ -18,19 +20,19 @@
     <container name="spawn_atoms">
         <container name="spawn_atoms_rd">
             <object class="atom-horizontal">
-                <position x="" y="" a=""/>
+                <position x="42" y="1" a="1"/>
             </object>
         </container>
         
         <container name="spawn_atoms_gd">
             <object class="atom-horizontal">
-                <position x="" y="" a=""/>
+                <position x="1" y="1" a="1"/>
             </object>
         </container>
 
         <container name="spawn_atoms_bd">
             <object class="atom-horizontal">
-                <position x="" y="" a=""/>
+                <position x="1" y="1" a="1"/>
             </object>
         </container>
     </container>
@@ -39,27 +41,31 @@
     <container name="accelerator_station"/>
     <container name="accelerator">
         <object class="atom-vertical">
-            <position x="" y="" a=""/>
+            <position x="1" y="1" a="1"/>
             <color name="blue"/>
         </object>
     </container>
     
     <!-- Chaos -->
     <container name="chaos">
-        <position x="" y=""/>
+        <position x="1" y="1"/>
         <shape type="circle" r="0.15"/>
 
         <object class="atom-horizontal">
+            <position x="1" y="1"/>
             <color name="blue"/>
         </object>
         <object class="atom-horizontal">
             <color name="green"/>
+            <position x="1" y="1"/>
         </object>
         <object class="atom-horizontal">
             <color name="red"/>
+            <position x="1" y="1"/>
         </object>
         <object class="atom-horizontal">
             <color name="red"/>
+            <position x="1" y="1"/> 
         </object>
     </container>
     

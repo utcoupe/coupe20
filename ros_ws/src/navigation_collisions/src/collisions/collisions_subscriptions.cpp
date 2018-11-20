@@ -35,9 +35,9 @@ const double      DEFAULT_ROBOT_HEIGHT  = 0.25;
 
 #include <iostream>
 
-Position quaternionToEuler(geometry_msgs::Quaternion quaternion);
+Position quaternionToEuler(geometry_msgs::Quaternion quaternion) noexcept;
 
-inline constexpr double radToDegrees(double angle) {
+inline constexpr double radToDegrees(double angle) noexcept {
     return angle * M_PI / 180;
 }
 
@@ -136,7 +136,7 @@ void CollisionsSubscriptions::updateRobot()
 void CollisionsSubscriptions::onAsservSpeed(const drivers_ard_asserv::RobotSpeed::ConstPtr& speed)
 {
     std::lock_guard<std::mutex> lock(mutexRobot_);
-    velLinear_ = speed->linear_speed;
+    velLinear_ = static_cast<double>(speed->linear_speed);
     velAngular_ = 0.0;
 }
 
@@ -248,7 +248,7 @@ std::string CollisionsSubscriptions::fetchRobotName(ros::NodeHandle& nodeHandle)
     return DEFAULT_ROBOT_NAME;
 }
 
-Position quaternionToEuler(geometry_msgs::Quaternion quaternion)
+Position quaternionToEuler(geometry_msgs::Quaternion quaternion) noexcept
 {
     double qw, qx, qy, qz;
     qw = quaternion.w;

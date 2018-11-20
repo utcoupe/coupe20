@@ -7,25 +7,36 @@
 
 class Position: public Point {
 public:
-    Position (double x, double y, double angle):
+    constexpr Position (double x, double y, double angle) noexcept:
         Position({x, y}, angle)
     {}
     
-    Position (Point pos = {0, 0}, double angle = 0.0):
+    constexpr Position (Point pos = {0, 0}, double angle = 0.0) noexcept:
         Point(pos),
         _a(angle)
     {}
     
-    Point toPoint() const;
+    constexpr Point toPoint() const noexcept {
+        return {_x, _y};
+    }
     
     // Operators
-    bool operator== (const Position& other) const;
-    bool operator!= (const Position& other) const;
-    friend std::ostream& operator<<(std::ostream& os, const Position& pos);
+    constexpr bool operator== (const Position& other) const noexcept {
+        return this->toPoint() == other.toPoint() && _a == other.getAngle();
+    }
+    
+    constexpr bool operator!= (const Position& other) const noexcept{
+        return !this->operator==(other);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Position& pos) {
+        os << "(" << pos._x << "," << pos._y << ", " << pos._a <<  ")";
+        return os;
+    }
     
     // Getters & setters
-    double getAngle() const { return _a; }
-    void setAngle(const double angle) { _a = angle; }
+    constexpr double getAngle() const           noexcept { return _a; }
+    constexpr void setAngle(const double angle) noexcept { _a = angle; }
     
 protected:
     double _a;

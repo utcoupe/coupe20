@@ -17,7 +17,7 @@ const std::string NS_MARKERS_MAIN       = "collisions_main";
 const std::string NS_MARKERS_PATH       = "collisions_path";
 const std::string NS_MARKERS_OBSTACLES  = "collisions_obstacles";
 
-const std_msgs::ColorRGBA constructColorRGBA(double r, double g, double b, double a);
+const std_msgs::ColorRGBA constructColorRGBA(float r, float g, float b, float a) noexcept;
 
 const std_msgs::ColorRGBA COLOR_ROBOT_MAIN_SHAPES           = constructColorRGBA(1.0, 0.0, 0.0, 0.8);
 const std_msgs::ColorRGBA COLOR_ROBOT_PATH_SHAPES           = constructColorRGBA(1.0, 0.5, 0.0, 0.8);
@@ -26,7 +26,7 @@ const std_msgs::ColorRGBA COLOR_OBSTACLE_VELOCITY_SHAPES    = constructColorRGBA
 
 const std::string MARKER_FRAME_ID = "/map";
 
-geometry_msgs::Quaternion eulerToQuaternion(Position pos);
+geometry_msgs::Quaternion eulerToQuaternion(Position pos) noexcept;
 
 MarkersPublisher::MarkersPublisher(ros::NodeHandle& nhandle) {
     markersPubl_ = nhandle.advertise<visualization_msgs::Marker>(MARKERS_TOPIC, QUEUE_SIZE);
@@ -35,7 +35,7 @@ MarkersPublisher::MarkersPublisher(ros::NodeHandle& nhandle) {
 void MarkersPublisher::publishCheckZones(RobotPtr robot) {
     if (!isConnected())
         return;
-    unsigned index = 0;
+    int index = 0;
     for (auto shape: robot->getMainShapes()) {
         publishMarker(NS_MARKERS_MAIN, index, shape, 0.02, 0.01, COLOR_ROBOT_MAIN_SHAPES);
         index++;
@@ -52,7 +52,7 @@ void MarkersPublisher::publishCheckZones(RobotPtr robot) {
 void MarkersPublisher::publishObstacles(const std::vector<ObstaclePtr>& obstacles) {
     if (!isConnected())
         return;
-    unsigned index = 0;
+    int index = 0;
     for (auto obstacle: obstacles) {
         publishMarker(NS_MARKERS_OBSTACLES, index, obstacle->getShape(), 0.35, 0.35 / 2.0, COLOR_OBSTACLES_SHAPES);
         index++;
@@ -69,7 +69,7 @@ bool MarkersPublisher::isConnected() const {
     return markersPubl_.getNumSubscribers() > 0;
 }
 
-void MarkersPublisher::publishMarker(std::string ns, unsigned index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color) {
+void MarkersPublisher::publishMarker(std::string ns, int index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color) {
     visualization_msgs::Marker marker;
     marker.header.frame_id = MARKER_FRAME_ID;
     marker.ns = ns;
@@ -127,7 +127,7 @@ void MarkersPublisher::addCircleInfoToMarker(MarkersPublisher::ShapePtr shape, v
     marker.scale.y = circ->getRadius() * 2.0;
 }
 
-const std_msgs::ColorRGBA constructColorRGBA(double r, double g, double b, double a)
+const std_msgs::ColorRGBA constructColorRGBA(float r, float g, float b, float a) noexcept
 {
     std_msgs::ColorRGBA color;
     color.r = r;
@@ -138,7 +138,7 @@ const std_msgs::ColorRGBA constructColorRGBA(double r, double g, double b, doubl
 }
 
 
-geometry_msgs::Quaternion eulerToQuaternion(Position pos) {
+geometry_msgs::Quaternion eulerToQuaternion(Position pos) noexcept {
     double cr = std::cos(pos.getX() * 0.5);
     double sr = std::sin(pos.getX() * 0.5);
     double cp = std::cos(pos.getY() * 0.5);

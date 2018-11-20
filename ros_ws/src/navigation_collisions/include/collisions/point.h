@@ -1,6 +1,7 @@
 #ifndef COLLISIONS_POINT_H
 #define COLLISIONS_POINT_H
 
+#include <cmath>
 #include <ostream>
 
 #include "geometry_msgs/Pose2D.h"
@@ -12,24 +13,44 @@
 class Point
 {
 public:
-    Point (double x, double y) : _x(x), _y(y) {}
-    Point () : Point(0,0) {}
+    constexpr Point (double x, double y) noexcept : _x(x), _y(y) {}
+    constexpr Point () noexcept : Point(0,0) {}
     
-    double norm1Dist (const Point& other) const;
-    double norm2Dist(const Point& other) const;
+    constexpr double norm1Dist (const Point& other) const noexcept {
+        return std::abs (_x - other.getX()) + std::abs (_y - other.getY());
+    }
+    
+    constexpr double norm2Dist (const Point& other) const noexcept {
+        return std::hypot(other.getX(), other.getY());
+    }
     
     // Operators
-    Point operator+ (const Point& other) const;
-    Point operator/ (double divisor) const;
-    bool operator== (const Point& other) const;
-    bool operator!= (const Point& other) const;
-    friend std::ostream& operator<< (std::ostream& os, const Point& pos);
+    constexpr Point operator+ (const Point& other) const noexcept {
+        return {_x + other.getX(), _y + other.getY()};
+    }
+
+    constexpr Point operator/ (double divisor)     const noexcept {
+        return {_x / divisor, _y / divisor};
+    }
+    
+    constexpr bool operator== (const Point& other) const noexcept {
+        return _x == other.getX() && _y == other.getY();
+    }
+    
+    constexpr bool operator!= (const Point& other) const noexcept {
+        return !operator==(other);
+    }
+    
+    friend std::ostream& operator<< (std::ostream& os, const Point& pos) {
+        os << "(" << pos._x << "," << pos._y << ")";
+        return os;
+    }
     
     // Getters & Setters
-    double getX () const { return _x; }
-    void setX (const double& x) { _x = x; }
-    double getY () const { return _y; }
-    void setY (const double& y) { _y = y; }
+    constexpr double getX () const          noexcept { return _x; }
+    constexpr void   setX (const double& x) noexcept { _x = x; }
+    constexpr double getY () const          noexcept { return _y; }
+    constexpr void   setY (const double& y) noexcept { _y = y; }
     
 protected:
     double _x, _y;

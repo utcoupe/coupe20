@@ -8,7 +8,7 @@ using namespace CollisionsShapes;
 
 std::vector<VelocityCheckZone::ShapePtr> VelocityCheckZone::getShapes(Position robotPos, double velLinear, double velAngular, double maxDist) {
     ObstacleVelocity vel(width_, height_, velLinear, velAngular, robotPos);
-    return vel.getShapes();
+    return vel.getShapes(maxDist);
 }
 
 std::vector<Collision> VelocityCheckZone::checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) {

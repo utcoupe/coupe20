@@ -14,7 +14,7 @@ public:
     
     Obstacle(ShapePtr shape, VelocityPtr velocity = nullptr);
     
-    ShapePtr getShape() const { return shape_; }
+    ShapePtr getShape() const noexcept { return shape_; }
     
     std::vector<ShapePtr> getVelocityShapes (double maxDist = -1.0);
     

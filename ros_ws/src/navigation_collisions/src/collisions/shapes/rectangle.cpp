@@ -4,10 +4,6 @@
 
 using namespace CollisionsShapes;
 
-Rectangle::Rectangle(Position pos, double width, double height):
-    AbstractShape(pos), width_(width), height_(height)
-{}
-
 bool Rectangle::isCollidingWith(const CollisionsShapes::AbstractShape* otherShape) const
 {
     bool collides;

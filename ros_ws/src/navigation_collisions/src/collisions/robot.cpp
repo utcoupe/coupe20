@@ -1,14 +1,8 @@
 #include "collisions/robot.h"
 
-Robot::Robot(double width, double height) :
+Robot::Robot(double width, double height):
     width_(width), height_(height), velocity_(width, height), pathCheckZone_(width, height, CollisionLevel::LEVEL_DANGER)
 {
-}
-
-void Robot::updateVelocity(double velLinear, double velAngular)
-{
-    velocity_.setVelLinear(velLinear);
-    velocity_.setVelAngular(velAngular);
 }
 
 std::vector<Robot::ShapePtr> Robot::getMainShapes()

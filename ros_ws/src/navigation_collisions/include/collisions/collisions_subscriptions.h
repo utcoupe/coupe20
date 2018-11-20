@@ -29,7 +29,7 @@ public:
     void sendInit(bool success = true);
     
     RobotPtr createRobot(ros::NodeHandle& nhandle);
-    ObstaclesStackPtr getObstaclesStack() const { return obstaclesStack_; }
+    ObstaclesStackPtr getObstaclesStack() const noexcept { return obstaclesStack_; }
     
     
     void updateRobot();

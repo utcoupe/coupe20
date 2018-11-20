@@ -26,7 +26,7 @@ private:
     ros::Publisher markersPubl_;
     
     bool isConnected() const;
-    void publishMarker(std::string ns, unsigned index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color);
+    void publishMarker(std::string ns, int index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color);
     
     void addSegmentInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
     void addRectangleInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);

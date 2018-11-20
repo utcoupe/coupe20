@@ -2,10 +2,6 @@
 
 using namespace CollisionsShapes;
 
-Circle::Circle(Position pos, double radius):
-    AbstractShape(pos), radius_(radius)
-{}
-
 bool Circle::isCollidingWith(const AbstractShape* otherShape) const
 {
     bool collides = false;
@@ -25,7 +21,7 @@ bool Circle::isCollidingWith(const AbstractShape* otherShape) const
     return collides;
 }
 
-bool Circle::isCollidingWithSegment(const Segment* otherSeg) const
+bool Circle::isCollidingWithSegment(const Segment* otherSeg) const noexcept
 {
     Rectangle newRect(
         otherSeg->getPos(),
@@ -35,7 +31,7 @@ bool Circle::isCollidingWithSegment(const Segment* otherSeg) const
     return isCollidingWithRectangle(&newRect);
 }
 
-bool Circle::isCollidingWithRectangle(const Rectangle* otherRect) const
+bool Circle::isCollidingWithRectangle(const Rectangle* otherRect) const noexcept
 {
     Rectangle newRect(
         otherRect->getPos(),
@@ -43,11 +39,5 @@ bool Circle::isCollidingWithRectangle(const Rectangle* otherRect) const
         otherRect->getHeight() + radius_ * 2
     );
     return newRect.isInRect(pos_);
-}
-
-bool Circle::isCollidingWithCircle(const Circle* otherCirc) const
-{
-    double dist = otherCirc->getPos().norm2Dist(pos_);
-    return dist <= radius_ + otherCirc->getRadius();
 }
 

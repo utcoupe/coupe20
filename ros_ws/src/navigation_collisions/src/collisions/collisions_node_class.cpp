@@ -42,11 +42,6 @@ CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
     );
 }
 
-CollisionsNode::~CollisionsNode()
-{
-    // TODO
-}
-
 
 void CollisionsNode::run(const ros::TimerEvent&)
 {
@@ -71,7 +66,7 @@ void CollisionsNode::run(const ros::TimerEvent&)
 void CollisionsNode::publishCollision(const Collision& collision)
 {
     navigation_collisions::PredictedCollision msg;
-    msg.danger_level = static_cast<unsigned>(collision.getLevel());
+    msg.danger_level = static_cast<unsigned char>(collision.getLevel());
     
     switch(collision.getLevel()) {
     case CollisionLevel::LEVEL_STOP:
@@ -119,13 +114,13 @@ void CollisionsNode::addRectInfosToPredictedCollision(navigation_collisions::Pre
 {
     msg.obstacle_type = msg.TYPE_RECT;
     auto* rect = dynamic_cast<const CollisionsShapes::Rectangle* const>(shape);
-    msg.obstacle_width = rect->getWidth();
-    msg.obstacle_height = rect->getHeight();
+    msg.obstacle_width = static_cast<float>(rect->getWidth());
+    msg.obstacle_height = static_cast<float>(rect->getHeight());
 }
 
 void CollisionsNode::addCircInfosToPredictedCollision(navigation_collisions::PredictedCollision& msg, const CollisionsShapes::AbstractShape* const shape) const
 {
     msg.obstacle_type = msg.TYPE_CIRCLE;
     auto* circle = dynamic_cast<const CollisionsShapes::Circle* const>(shape);
-    msg.obstacle_radius = circle->getRadius();
+    msg.obstacle_radius = static_cast<float>(circle->getRadius());
 }

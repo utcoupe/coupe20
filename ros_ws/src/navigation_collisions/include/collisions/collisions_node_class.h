@@ -21,7 +21,7 @@ public:
     using RobotPtr = std::shared_ptr<Robot>;
     using ObstaclesStackPtr = std::shared_ptr<ObstaclesStack>;
     CollisionsNode(ros::NodeHandle& nhandle);
-    ~CollisionsNode();
+    ~CollisionsNode() = default;
 
 private:
     std::atomic_bool stopRunThread_ { false };

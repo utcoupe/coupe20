@@ -3,7 +3,7 @@
 #include "collisions/engine/constants.h"
 #include "collisions/shapes/rectangle.h"
 
-ObstacleVelocity::ObstacleVelocity(double width, double height, double velLinear, double velAngular, Position objectPos):
+ObstacleVelocity::ObstacleVelocity(double width, double height, double velLinear, double velAngular, Position objectPos) noexcept:
     width_(width), height_(height), velLinear_(velLinear), velAngular_(velAngular),
     objectPos_(objectPos)
 {
@@ -17,12 +17,6 @@ std::vector<ObstacleVelocity::ShapePtr> ObstacleVelocity::getShapes(double maxDi
         needUpdate_ = false;
     }
     return velShapes_;
-}
-
-void ObstacleVelocity::setObjectPos(Position pos)
-{
-    objectPos_ = pos;
-    needUpdate_ = true;
 }
 
 void ObstacleVelocity::generateVelShapes(double maxDist)

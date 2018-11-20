@@ -3,7 +3,7 @@
 #include <cmath>
 
 using namespace CollisionsShapes;
-Segment::Segment(Point firstPoint, Point lastPoint):
+Segment::Segment(Point firstPoint, Point lastPoint) noexcept:
     firstPoint_(firstPoint), lastPoint_(lastPoint)
 {
     length_ = firstPoint_.norm2Dist(lastPoint_);

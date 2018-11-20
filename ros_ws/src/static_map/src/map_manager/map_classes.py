@@ -2,12 +2,11 @@
 import copy, json
 import rospy
 from map_loader import LoadingHelpers
-from map_bases import DictManager
 from map_attributes import Position2D, Shape2D, Color, MarkerRViz
 import map
 
 
-class Terrain():
+class Terrain(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "type")
         self.Shape = Shape2D(xml)
@@ -15,7 +14,7 @@ class Terrain():
         # TODO marker
 
 
-class Layer():
+class Layer(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "name")
         self.Name = xml.get("name")
@@ -23,36 +22,51 @@ class Layer():
         self.Walls = [Wall(w) for w in xml.findall("wall")]
 
 
-class Wall():
+class Wall(object):
     def __init__(self, xml):
         LoadingHelpers.checkChildExist(xml, "position", "shape")
         self.Position = Position2D(xml.find("position"))
         self.Shape    = Shape2D(xml.find("shape"))
 
 
-class Waypoint():
+class Waypoint(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "name")
         self.Name = xml.get("name")
         self.Position = Position2D(xml)
 
 
-class Container():
+class Container(object):
     def __init__(self, xml, xml_classes):
+        LoadingHelpers.checkAttribExist(xml, "name")
+        self.Name = xml.get("name")
         self.Elements =  [Container(c, xml_classes) for c in xml.findall("container")]
         self.Elements += [Object(o, xml_classes)    for o in xml.findall("object")]
 
-    def get_objects(self, collisions_only = False): #TODO
-        objects = []
-        for o in self.Dict:
-            if isinstance(self.Dict[o], Container):
-                objects += self.Dict[o].get_objects(collisions_only)
-            elif isinstance(self.Dict[o], Object):
-                if self.Dict[o].Dict["collision"] == collisions_only or collisions_only is False:
-                    objects.append(json.dumps(self.Dict[o].get("*")))
-            else:
-                rospy.logwarn("Not recognized DictManager type found while retrieving map objects, passing.")
-        return objects
+    def get_container(self, nameslist):
+        if not nameslist:
+            return self
+        elif self.Name == nameslist[0]:
+            return self
+        else:
+            for e in self.Elements:
+                if isinstance(e, Container):
+                    if e.Name == nameslist[0]:
+                        return e.get_container(nameslist[1:])
+        rospy.logerr("    GET Request failed : couldn't find any container named '{}'.".format(nameslist[0]))
+        return None
+
+    # def get_objects(self, collisions_only = False): #TODO
+    #     objects = []
+    #     for o in self.Dict:
+    #         if isinstance(self.Dict[o], Container):
+    #             objects += self.Dict[o].get_objects(collisions_only)
+    #         elif isinstance(self.Dict[o], Object):
+    #             if self.Dict[o].Dict["collision"] == collisions_only or collisions_only is False:
+    #                 objects.append(json.dumps(self.Dict[o].get("*")))
+    #         else:
+    #             rospy.logwarn("Not recognized DictManager type found while retrieving map objects, passing.")
+    #     return objects
 
 
 class Object(object):
@@ -87,7 +101,10 @@ class Object(object):
     
     def check_valid(self): # Checks if all values are not None (in case of class merges)
         if None in [self.Position, self.Shape]:
-            print "nogood"
+            raise ValueError("ERROR : Even after merge an object still has no position or shape.")
+    
+    def transform(codes):
+        pass #TODO
 
 class Class(Object):
     def __init__(self, xml, obj_classes):

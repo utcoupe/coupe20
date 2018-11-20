@@ -1,5 +1,4 @@
 import rospy
-from map_bases import DictManager
 import map
 
 

@@ -2,10 +2,9 @@
 import math
 import map
 from map_loader import LoadingHelpers
-from map_bases import DictManager
 
 
-class Color(DictManager):
+class Color():
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "name", "r", "g", "b")
         self.Name = xml.get("name")
@@ -14,7 +13,7 @@ class Color(DictManager):
         self.B = float(xml.get("b"))
         self.A = float(xml.get("a"))
 
-class Position2D():
+class Position2D(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "x", "y")
         self.X = float(xml.get("x"))
@@ -29,7 +28,7 @@ class Position2D():
             self.A = math.pi - self.A
         return True
 
-class Shape2D():
+class Shape2D(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "type")
         
@@ -45,7 +44,7 @@ class Shape2D():
             self.Radius = xml.get("r")
 
 
-class MarkerRViz(DictManager):
+class MarkerRViz(object):
     def __init__(self, xml, shape = None, color = None):
         LoadingHelpers.checkKeysExist(xml, "ns", "orientation")
 

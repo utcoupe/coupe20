@@ -2,7 +2,7 @@
 import time
 import rospy
 from map_loader import MapLoader, LoadingHelpers
-from map_bases import DictManager, RequestPath
+from map_bases import RequestPath
 from map_attributes import Color
 from map_classes import Terrain, Waypoint, Container, Object, Class
 from map_teams import Team
@@ -54,6 +54,7 @@ class MapManager():
 
         # Instantiate objects and create the map dict
         MapDict.Terrain = Terrain(xml_terrain)
+        xml_objects.attrib["name"] = "map"
         MapDict.Objects = Container(xml_objects, obj_classes)
         MapDict.Waypoints = [Waypoint(w) for w in xml_waypoints.findall("waypoint")]
 
@@ -73,17 +74,39 @@ class MapManager():
         dirty = MapManager.Dirty
         MapManager.Dirty = False
         return dirty
+    
+    @staticmethod
+    def get_waypoint(name, position):
+        if name is not None:
+            for w in MapDict.Waypoints:
+                if w.Name == name:
+                    return w
+        elif position is not None:
+            for w in MapDict.Waypoints:
+                if w.Position.X == position.X and w.Position.Y == position.Y:
+                    return w
+        else:
+            rospy.logerr("    GET Request failed : incomplete waypoint must have a name or position already.")
+        return None
+    
+    @staticmethod
+    def get_container(nameslist):
+        return MapDict.Objects.get_container(nameslist)
 
     @staticmethod
-    def get(requestpath):
-        if requestpath[0] != "/":
-            rospy.logerr("    GET Request failed : global search needs to start with '/'.")
-            return None
-        return MapDict.get(requestpath)
+    def get_terrain():
+        return MapDict.Terrain
 
-    @staticmethod
-    def get_objects(collisions_only = False):
-        return MapManager.MAP_DICT.Dict["objects"].get_objects(collisions_only)
+    # @staticmethod
+    # def get(requestpath):
+    #     if requestpath[0] != "/":
+    #         rospy.logerr("    GET Request failed : global search needs to start with '/'.")
+    #         return None
+    #     return MapDict.get(requestpath)
+
+    # @staticmethod
+    # def get_objects(collisions_only = False):
+    #     return MapManager.MAP_DICT.Dict["objects"].get_objects(collisions_only)
 
     @staticmethod
     def set(requestpath, mode, instance = None):
@@ -94,4 +117,4 @@ class MapManager():
 
     @staticmethod
     def transform(codes):
-        return MapManager.MAP_DICT.transform(codes)
+        return MapManager.MapDict.transform(codes)

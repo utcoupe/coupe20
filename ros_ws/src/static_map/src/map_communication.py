@@ -5,7 +5,7 @@ import time
 import rospy
 import static_map.msg
 import static_map.srv
-from map_manager import SetMode, MapManager, DictManager
+from map_manager import SetMode, MapManager
 from occupancy import OccupancyGenerator
 
 

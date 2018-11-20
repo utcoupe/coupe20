@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import math, time
 import rospy
-from map_manager import map_attributes, DictManager
+from map_manager import map_attributes
 from visualization_msgs.msg import Marker
 
 

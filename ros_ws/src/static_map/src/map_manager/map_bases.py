@@ -20,8 +20,8 @@ class ListManager(MapElement):
         for k in xml:
             self.Elements.append(classdef(xml[k]))
 
-
-class DictManager(MapElement):
+'''
+class DictManagerDEPRECATED(MapElement):
     def __init__(self, elemdict):
         self.Dict = elemdict if elemdict is not None else {}
         if self.Dict:
@@ -181,7 +181,7 @@ class DictManager(MapElement):
             if isinstance(self.Dict[elem], DictManager):
                 success = min(success, self.Dict[elem].transform(codes))
         return success
-
+'''
 
 
 class RequestPath():
@@ -189,7 +189,7 @@ class RequestPath():
         self.pathstring = pathstring
 
         self.Valid = True
-        if not len(pathstring):
+        if not len(pathstring): 
             rospy.logerr("Invalid path : empty path.")
             self.Valid = False
         if pathstring[-1] == '/':

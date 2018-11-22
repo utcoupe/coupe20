@@ -1,0 +1,35 @@
+<launch>
+	<arg name="robot" default="GR" />
+
+    <param name="robot"  value="$(arg robot)" />
+
+	<group ns="memory">
+		<node pkg="definitions" name="definitions" type="definitions_node.py" />
+		<node pkg="static_map" name="map" type="map_node.py" output="screen"/>
+	</group>
+    <group ns="ai">
+         <node pkg="game_manager" name="game_status" type="game_status_node.py" />
+         <node pkg="scheduler" name="scheduler" type="scheduler_node.py" output="screen" />
+         <node pkg="game_manager" name="timer" type="timer_node.py" />
+    </group>
+    <group ns="recognition">
+		<node pkg="localizer" name="localizer" type="localizer_node.py" />
+		<node pkg="recognition_enemy_tracker" name="enemy_tracker" type="enemy_tracker_node.py" output="screen"/>
+	</group>
+
+    <group ns="drivers">
+		<node pkg="ard_asserv" name="ard_asserv" type="ard_asserv_node.py" output="screen" />
+		<node pkg="port_finder"   name="port_finder" type="port_finder_node.py" output="screen"/>
+		<!-- node pkg="driver_teraranger"    name="teraranger"  type="teraranger_node.py" output="screen"/-->
+	</group>
+
+    <group ns="processing">
+		<node pkg="belt_interpreter" name="belt_interpreter" type="belt_interpreter_node.py" output="screen" />
+	</group>
+
+	<group ns="navigation">
+		<node pkg="collisions" name="collisions" type="collisions_node.py" />
+		<node pkg="navigator" name="navigator" type="navigator_node.py" output="screen" />
+		<node pkg="pathfinder" name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
+	</group>
+</launch>

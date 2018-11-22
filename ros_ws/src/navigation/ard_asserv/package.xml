@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>ard_asserv</name>
+    <version>0.0.1</version>
+    <description>
+        The package that manages a serial communication between the arduino in charge of the asserv and the ros system. It provides services that redirects commands to the arduino, and topics that convey information from it.
+    </description>
+    <license>GPLv3</license>
+    <author email="tomesman@gmail.com">Thomas Fuhrmann</author>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>message_generation</build_depend>
+    <depend>rospy</depend>
+    <depend>std_msgs</depend>
+    <depend>geometry_msgs</depend>
+    <depend>actionlib</depend>
+    <depend>actionlib_msgs</depend>
+    <depend>port_finder</depend>
+    <depend>game_manager</depend>
+    <depend>static_map</depend>
+    <depend>tf</depend>
+    <depend>tf2_ros</depend>
+    <exec_depend>message_runtime</exec_depend>
+    <export>
+    </export>
+</package>

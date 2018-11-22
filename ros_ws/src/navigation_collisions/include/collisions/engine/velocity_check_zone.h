@@ -5,7 +5,7 @@
 
 class VelocityCheckZone: public CheckZone {
 public:
-    constexpr VelocityCheckZone(double width, double height, CollisionLevel level) noexcept:
+    VelocityCheckZone(double width, double height, CollisionLevel level) noexcept:
         CheckZone(width, height, level)
     {}
     ~VelocityCheckZone() override = default;

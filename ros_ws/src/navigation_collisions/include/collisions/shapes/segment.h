@@ -14,9 +14,9 @@ public:
     bool isCollidingWith(const AbstractShape* otherShape) const override;
     ShapeType getShapeType() const override { return ShapeType::SEGMENT; }
     
-    constexpr Point  getFirstPoint() const noexcept { return firstPoint_; }
-    constexpr Point  getLastPoint()  const noexcept { return lastPoint_; }
-    constexpr double getLength()    const noexcept { return length_; }
+    Point  getFirstPoint() const noexcept { return firstPoint_; }
+    Point  getLastPoint()  const noexcept { return lastPoint_; }
+    double getLength()    const noexcept { return length_; }
     
 protected:
     Point firstPoint_, lastPoint_;

@@ -16,7 +16,7 @@ public:
     using ObstaclePtr = std::shared_ptr<Obstacle>;
     using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
     
-    constexpr CheckZone(double width, double height, CollisionLevel level) noexcept:
+    CheckZone(double width, double height, CollisionLevel level) noexcept:
         width_(width), height_(height), level_(level)
     {}
     virtual ~CheckZone() = default;
@@ -24,9 +24,9 @@ public:
     virtual std::vector<ShapePtr> getShapes(Position robotPos) = 0;
     virtual std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) = 0;
     
-    constexpr CollisionLevel  getLevel()  const noexcept { return level_; }
-    constexpr double          getHeight() const noexcept { return height_; }
-    constexpr double          getWidth()  const noexcept { return width_; }
+    CollisionLevel  getLevel()  const noexcept { return level_; }
+    double          getHeight() const noexcept { return height_; }
+    double          getWidth()  const noexcept { return width_; }
     
 protected:
     double width_, height_;

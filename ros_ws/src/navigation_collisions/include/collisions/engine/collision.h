@@ -12,9 +12,9 @@ public:
     
     Collision(CollisionLevel level, PtrObstacle obstacle, double approxDistance);
     
-    constexpr CollisionLevel  getLevel()      const noexcept { return level_; }
+    CollisionLevel  getLevel()      const noexcept { return level_; }
               PtrObstacle     getObstacle()   const noexcept { return obstacle_; }
-    constexpr double          getDistance()   const noexcept { return approxDistance_; }
+    double          getDistance()   const noexcept { return approxDistance_; }
     
 private:
     CollisionLevel level_;

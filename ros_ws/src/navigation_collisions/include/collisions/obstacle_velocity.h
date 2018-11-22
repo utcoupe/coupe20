@@ -14,7 +14,7 @@ public:
     
     std::vector<ShapePtr> getShapes(double maxDist = -1.0);
     
-    constexpr void setObjectPos(Position pos) noexcept {
+    void setObjectPos(Position pos) noexcept {
         objectPos_ = pos;
         needUpdate_ = true;
     }

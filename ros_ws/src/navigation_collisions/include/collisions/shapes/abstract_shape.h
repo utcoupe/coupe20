@@ -9,13 +9,13 @@ enum class ShapeType { UNDEFINED, SEGMENT, RECTANGLE, CIRCLE };
 
 class AbstractShape {
 public:
-    constexpr AbstractShape(Position pos = {}) noexcept: pos_(pos) {}
+    AbstractShape(Position pos = {}) noexcept: pos_(pos) {}
     virtual ~AbstractShape() = default;
     
     virtual bool isCollidingWith(const AbstractShape* otherShape) const = 0;
     virtual ShapeType getShapeType() const = 0;
     
-    constexpr Position getPos() const noexcept { return pos_; };
+    Position getPos() const noexcept { return pos_; };
     
 protected:
     Position pos_;

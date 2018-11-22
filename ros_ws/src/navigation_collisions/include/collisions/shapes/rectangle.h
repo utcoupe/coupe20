@@ -10,7 +10,7 @@ namespace CollisionsShapes {
     
 class Rectangle: public AbstractShape {
 public:
-    constexpr Rectangle(Position pos, double width, double height) noexcept:
+    Rectangle(Position pos, double width, double height) noexcept:
         AbstractShape(pos), width_(width), height_(height)
     {}
     ~Rectangle() override = default;
@@ -21,8 +21,8 @@ public:
     std::vector<Segment> toSegments() const;
     bool isInRect(Position pos) const;
     
-    constexpr double getWidth()  const noexcept { return width_; }
-    constexpr double getHeight() const noexcept { return height_; }
+    double getWidth()  const noexcept { return width_; }
+    double getHeight() const noexcept { return height_; }
     
 private:
     double width_, height_;

@@ -21,15 +21,15 @@ public:
     
     Robot(double width, double height);
     
-    constexpr void setPos(Position pos) noexcept { pos_ = pos; }
-    constexpr Position getPos() const   noexcept { return pos_; }
+    void setPos(Position pos) noexcept { pos_ = pos; }
+    Position getPos() const   noexcept { return pos_; }
     
-    constexpr void updateVelocity(double velLinear, double velAngular) noexcept {
+    void updateVelocity(double velLinear, double velAngular) noexcept {
         velocity_.setVelLinear(velLinear);
         velocity_.setVelAngular(velAngular);
     }
     
-    constexpr void updateStatus(NavStatus status) noexcept { navStatus_ = status; }
+    void updateStatus(NavStatus status) noexcept { navStatus_ = status; }
     void updateWaypoints(const std::vector<Position>& newWaypoints) { pathCheckZone_.updateWaypoints(newWaypoints); }
     
     std::vector<ShapePtr> getMainShapes();

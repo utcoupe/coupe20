@@ -1,6 +1,6 @@
 string name
 
-std_msgs/Pose2D pose
+geometry_msgs/Pose2D pose
 
 # Shape
 uint8 SHAPE_RECT   = 0
@@ -15,3 +15,4 @@ float32 radius
 
 # Metadata
 string[] labels
+string color

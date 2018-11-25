@@ -56,18 +56,6 @@ class Container(object):
         rospy.logerr("    GET Request failed : couldn't find any container named '{}'.".format(nameslist[0]))
         return None
 
-    # def get_objects(self, collisions_only = False): #TODO
-    #     objects = []
-    #     for o in self.Dict:
-    #         if isinstance(self.Dict[o], Container):
-    #             objects += self.Dict[o].get_objects(collisions_only)
-    #         elif isinstance(self.Dict[o], Object):
-    #             if self.Dict[o].Dict["collision"] == collisions_only or collisions_only is False:
-    #                 objects.append(json.dumps(self.Dict[o].get("*")))
-    #         else:
-    #             rospy.logwarn("Not recognized DictManager type found while retrieving map objects, passing.")
-    #     return objects
-
 
 class Object(object):
     def __init__(self, xml, obj_classes, check_valid = True):

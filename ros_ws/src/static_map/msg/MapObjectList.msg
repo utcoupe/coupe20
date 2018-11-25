@@ -1,0 +1,1 @@
+MapObject[] objects

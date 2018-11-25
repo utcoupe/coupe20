@@ -5,44 +5,100 @@ import time
 import rospy
 import static_map.msg
 import static_map.srv
-from map_manager import SetMode, MapManager
+from map_manager import SetMode, MapManager, Object, Container, Waypoint, Terrain
 from occupancy import OccupancyGenerator
 
 
 class Servers():
-    GET_SERV        = "memory/map/get"
-    SET_SERV        = "memory/map/set"
-    TRANSFER_SERV   = "memory/map/transfer"
-    OCCUPANCY_SERV  = "memory/map/get_occupancy"
-    OBJECTS_SERV    = "memory/map/get_objects"
-    FILLWP_SERV     = "memory/map/fill_waypoint"
+    GET_CONTAINER_SERV        = "static_map/get_container"
+    GET_WAYPOINT_SERV         = "static_map/get_waypoint"
+    GET_TERRAIN_SERV          = "static_map/get_terrain"
+
+    SET_SERV        = "static_map/set"
+    TRANSFER_SERV   = "static_map/transfer"
+    OCCUPANCY_SERV  = "static_map/get_occupancy"
+    OBJECTS_SERV    = "static_map/get_objects"
+    FILLWP_SERV     = "static_map/fill_waypoint"
 
 class MapServices():
     def __init__(self, occupancy_generator):
-        self.GetSERV       = rospy.Service(Servers.GET_SERV, static_map.srv.MapGet,                self.on_get)
-        self.SetSERV       = rospy.Service(Servers.SET_SERV, static_map.srv.MapSet,                self.on_set)
-        self.TransferSERV  = rospy.Service(Servers.TRANSFER_SERV, static_map.srv.MapTransfer,      self.on_transfer)
-        self.OccupancySERV = rospy.Service(Servers.OCCUPANCY_SERV, static_map.srv.MapGetOccupancy, self.on_get_occupancy)
-        self.ObjectsSERV   = rospy.Service(Servers.OBJECTS_SERV, static_map.srv.MapGetObjects,     self.on_get_objects)
-        self.FillWPSERV    = rospy.Service(Servers.FILLWP_SERV, static_map.srv.FillWaypoint,       self.on_fill_waypoint)
-        self.occupancy_generator = occupancy_generator
+        self._get_container_srv = rospy.Service(Servers.GET_CONTAINER_SERV, static_map.srv.MapGetContainer, self.on_get_container)
 
-    def on_get(self, req):
-        s = time.time() * 1000
-        rospy.loginfo("GET:" + str(req.request_path))
+        # self.GetSERV       = rospy.Service(Servers.GET_SERV, static_map.srv.MapGet,                self.on_get)
+        # self.SetSERV       = rospy.Service(Servers.SET_SERV, static_map.srv.MapSet,                self.on_set) #TODO
+        # self.TransferSERV  = rospy.Service(Servers.TRANSFER_SERV, static_map.srv.MapTransfer,      self.on_transfer)
+        # self.OccupancySERV = rospy.Service(Servers.OCCUPANCY_SERV, static_map.srv.MapGetOccupancy, self.on_get_occupancy)
+        # self.ObjectsSERV   = rospy.Service(Servers.OBJECTS_SERV, static_map.srv.MapGetObjects,     self.on_get_objects)
+        # self.FillWPSERV    = rospy.Service(Servers.FILLWP_SERV, static_map.srv.FillWaypoint,       self.on_fill_waypoint)
+        # self.occupancy_generator = occupancy_generator
 
-        success = False
-        response = MapManager.get(req.request_path)
-        if isinstance(response, DictManager):
-            rospy.logerr("    GET Request failed : '^' dict operator not allowed in services.")
-            response = None
+    def on_get_container(self, req):
+        # Fetch it from the map
+        ct = MapManager.get_container([s for s in req.path.split('/') if s])
 
-        if response != None:
-            success = True
+        if ct is None:
+            return static_map.srv.MapGetContainerResponse(False, None)
 
-        rospy.logdebug("    Responding: " + str(response))
-        rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return static_map.srv.MapGetResponse(success, json.dumps(response))
+        # Construct the message reply
+        msg = static_map.srv.MapGetContainerResponse()
+        msg.success = True
+        msg.container = self._create_container_msg(ct, req.include_subcontainers)
+        rospy.loginfo("GET Container (path={}): {} object(s) returned.".format(req.path, len(msg.container.objects)))
+        return msg
+    
+    def _create_container_msg(self, ct, include_subcontainers):
+        msg = static_map.msg.MapContainer()
+        msg.name = ct.Name
+
+        for e in ct.Elements:
+            if isinstance(e, Container) and include_subcontainers is True:
+                c = self._create_container_msg(e, include_subcontainers)
+                msg.objects += c.objects
+            elif isinstance(e, Object):
+                msg.objects.append(self._create_object_msg(e))
+
+        return msg
+
+    def _create_object_msg(self, obj):
+        msg = static_map.msg.MapObject()
+        msg.name = ""
+        
+        if obj.Shape.Type == "rect":
+            msg.shape_type = msg.SHAPE_RECT
+            msg.width  = obj.Shape.Width
+            msg.height = obj.Shape.Height
+        elif obj.Shape.Type == "circle":
+            msg.shape_type = msg.SHAPE_CIRCLE
+            msg.radius = obj.Shape.Radius
+        elif obj.Shape.Type == "point":
+            msg.shape_type = msg.SHAPE_POINT
+        
+        msg.labels = obj.Labels
+        msg.color  = obj.Color.Name if obj.Color is not None else ""
+        return msg
+    
+    def on_get_waypoint(self, req):
+        pass
+    
+    def on_get_terrain(self, req):
+        pass
+
+    # def on_get(self, req):
+    #     s = time.time() * 1000
+    #     rospy.loginfo("GET:" + str(req.request_path))
+
+    #     success = False
+    #     response = MapManager.get(req.request_path)
+    #     if isinstance(response, DictManager):
+    #         rospy.logerr("    GET Request failed : '^' dict operator not allowed in services.")
+    #         response = None
+
+    #     if response != None:
+    #         success = True
+
+    #     rospy.logdebug("    Responding: " + str(response))
+    #     rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
+    #     return static_map.srv.MapGetResponse(success, json.dumps(response))
 
     def on_get_objects(self, req):
         s = time.time() * 1000

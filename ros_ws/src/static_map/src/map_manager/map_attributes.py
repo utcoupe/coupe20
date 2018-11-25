@@ -37,11 +37,14 @@ class Shape2D(object):
 
         if self.Type == "rect":
             LoadingHelpers.checkAttribExist(xml, "w", "h")
-            self.Width = xml.get("w")
-            self.Height = xml.get("h")
+            self.Width = float(xml.get("w"))
+            self.Height = float(xml.get("h"))
         elif self.Type == "circle":
             LoadingHelpers.checkAttribExist(xml, "r")
-            self.Radius = xml.get("r")
+            self.Radius = float(xml.get("r"))
+            print "radius " + str(self.Radius)
+        else:
+            raise ValueError("ERROR: Shape type '{}' not supported.".format(self.Type))
 
 
 class MarkerRViz(object):

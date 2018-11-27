@@ -29,7 +29,7 @@ add_service_files(
     MapTransfer.srv
     MapGetOccupancy.srv
     MapGetObjects.srv
-    FillWaypoint.srv
+    MapGetWaypoint.srv
 )
 
 # Generate added messages and services with any dependencies listed here

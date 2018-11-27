@@ -13,6 +13,14 @@ class Terrain(object):
         self.Layers = [Layer(l) for l in xml.findall("layer")]
         # TODO marker
 
+        # Copy walls from other layers (includes)
+        for layer in self.Layers:
+            for include in layer.Includes:
+                for l in self.Layers:
+                    if l.Name == include:
+                        for w in l.Walls:
+                            layer.Walls.append(copy.deepcopy(w))
+        
 
 class Layer(object):
     def __init__(self, xml):
@@ -30,10 +38,13 @@ class Wall(object):
 
 
 class Waypoint(object):
-    def __init__(self, xml):
-        LoadingHelpers.checkAttribExist(xml, "name")
-        self.Name = xml.get("name")
-        self.Position = Position2D(xml)
+    def __init__(self, xml, validate = True):
+        self.Name = ""
+        self.Position = Position2D(None, validate = False)
+        if validate:
+            LoadingHelpers.checkAttribExist(xml, "name")
+            self.Name = xml.get("name")
+            self.Position = Position2D(xml, validate)
 
 
 class Container(object):
@@ -59,6 +70,8 @@ class Container(object):
 
 class Object(object):
     def __init__(self, xml, obj_classes, check_valid = True):
+        LoadingHelpers.checkAttribExist(xml, "name")
+        self.Name = xml.get("name")
         self.Position = Position2D(xml.find("position")) if xml.find("position") is not None else None
         self.Shape    = Shape2D(xml.find("shape"))       if xml.find("shape")    is not None else None
         self.Labels   = [l.get("name") for l in xml.find("labels").findall("label")] if xml.find("labels") else []

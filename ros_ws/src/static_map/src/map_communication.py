@@ -5,7 +5,7 @@ import time
 import rospy
 import static_map.msg
 import static_map.srv
-from map_manager import SetMode, MapManager, Object, Container, Waypoint, Terrain
+from map_manager import SetMode, MapManager, Object, Container, Waypoint, Terrain, Position2D
 from occupancy import OccupancyGenerator
 
 
@@ -18,7 +18,6 @@ class Servers():
     TRANSFER_SERV   = "static_map/transfer"
     OCCUPANCY_SERV  = "static_map/get_occupancy"
     OBJECTS_SERV    = "static_map/get_objects"
-    FILLWP_SERV     = "static_map/fill_waypoint"
 
 class MapServices():
     def __init__(self, occupancy_generator):
@@ -29,7 +28,7 @@ class MapServices():
         # self.TransferSERV  = rospy.Service(Servers.TRANSFER_SERV, static_map.srv.MapTransfer,      self.on_transfer)
         # self.OccupancySERV = rospy.Service(Servers.OCCUPANCY_SERV, static_map.srv.MapGetOccupancy, self.on_get_occupancy)
         # self.ObjectsSERV   = rospy.Service(Servers.OBJECTS_SERV, static_map.srv.MapGetObjects,     self.on_get_objects)
-        # self.FillWPSERV    = rospy.Service(Servers.FILLWP_SERV, static_map.srv.FillWaypoint,       self.on_fill_waypoint)
+        self.FillWPSERV    = rospy.Service(Servers.GET_WAYPOINT_SERV, static_map.srv.MapGetWaypoint,       self.on_get_waypoint)
         # self.occupancy_generator = occupancy_generator
 
     def on_get_container(self, req):
@@ -56,7 +55,6 @@ class MapServices():
                 msg.objects += c.objects
             elif isinstance(e, Object):
                 msg.objects.append(self._create_object_msg(e))
-
         return msg
 
     def _create_object_msg(self, obj):
@@ -77,8 +75,34 @@ class MapServices():
         msg.color  = obj.Color.Name if obj.Color is not None else ""
         return msg
     
+    def _create_waypoint_msg(self, way):
+        msg = static_map.msg.Waypoint()
+        if way is not None:
+            msg.name = way.Name
+            msg.pose.x = way.Position.X
+            msg.pose.y = way.Position.Y
+            msg.pose.theta = way.Position.A
+            msg.has_angle = way.Position.HasAngle
+            msg.frame_id = way.Position.Frame
+        return msg
+    
     def on_get_waypoint(self, req):
-        pass
+        pos = Position2D(None, validate=False)
+        pos.X = req.waypoint.pose.x
+        pos.Y = req.waypoint.pose.y
+        pos.A = req.waypoint.pose.theta
+        pos.HasAngle = req.waypoint.has_angle
+        print "hasangle = " + str(pos.HasAngle)
+
+        w = MapManager.get_waypoint(req.waypoint.name, pos)
+        success = False
+        if w is not None:
+            success = True
+
+        rospy.loginfo("GET Waypoint (name='{}' x={} y={} a={}): returning {}".format(
+            req.waypoint.name, req.waypoint.pose.x, req.waypoint.pose.y, req.waypoint.pose.theta,
+            "None" if success is False else "name='{}' x={} y={} a={}".format(w.Name, w.Position.X, w.Position.Y, w.Position.A)))
+        return static_map.srv.MapGetWaypointResponse(success, self._create_waypoint_msg(w))
     
     def on_get_terrain(self, req):
         pass
@@ -100,19 +124,19 @@ class MapServices():
     #     rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
     #     return static_map.srv.MapGetResponse(success, json.dumps(response))
 
-    def on_get_objects(self, req):
-        s = time.time() * 1000
-        rospy.loginfo("GET_OBJECTS:collisions_only=" + str(req.collisions_only))
+    # def on_get_objects(self, req):
+    #     s = time.time() * 1000
+    #     rospy.loginfo("GET_OBJECTS:collisions_only=" + str(req.collisions_only))
 
-        success = False
-        objects = MapManager.get_objects(collisions_only=req.collisions_only)
+    #     success = False
+    #     objects = MapManager.get_objects(collisions_only=req.collisions_only)
 
-        if objects != None:
-            success = True
+    #     if objects != None:
+    #         success = True
 
-        rospy.logdebug("    Responding: {} object(s) found.".format(len(objects)))
-        rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return static_map.srv.MapGetObjectsResponse(success, objects)
+    #     rospy.logdebug("    Responding: {} object(s) found.".format(len(objects)))
+    #     rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
+    #     return static_map.srv.MapGetObjectsResponse(success, objects)
 
     def on_set(self, req):
         s = time.time() * 1000
@@ -202,4 +226,4 @@ class MapServices():
                                                                   ", {}".format(w.pose.theta) if w.has_angle else ""))
 
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-        return static_map.srv.FillWaypointResponse(success, w)
+        return static_map.srv.MapGetWaypointResponse(success, w)

@@ -77,14 +77,19 @@ class MapManager():
     
     @staticmethod
     def get_waypoint(name, position):
-        if name is not None:
+        print name, position
+        if name is not None and name is not '':
             for w in MapDict.Waypoints:
                 if w.Name == name:
                     return w
         elif position is not None:
             for w in MapDict.Waypoints:
                 if w.Position.X == position.X and w.Position.Y == position.Y:
-                    return w
+                    if position.HasAngle is True:
+                        if w.Position.A == position.A:
+                            return w
+                    else:
+                        return w
         else:
             rospy.logerr("    GET Request failed : incomplete waypoint must have a name or position already.")
         return None

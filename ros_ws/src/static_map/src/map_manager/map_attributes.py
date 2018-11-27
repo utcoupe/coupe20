@@ -14,12 +14,17 @@ class Color():
         self.A = float(xml.get("a"))
 
 class Position2D(object):
-    def __init__(self, xml):
-        LoadingHelpers.checkAttribExist(xml, "x", "y")
-        self.X = float(xml.get("x"))
-        self.Y = float(xml.get("y"))
-        self.A = float(xml.get("a")) if "a" in xml.attrib else 0.0
-        self.Frame = xml.get("frame_id") if "frame_id" in xml.attrib else "map"
+    def __init__(self, xml, validate=True):
+        self.X = self.Y = self.A = 0.0
+        self.HasAngle = False
+        self.Frame = "map"
+        if validate:
+            LoadingHelpers.checkAttribExist(xml, "x", "y")
+            self.X = float(xml.get("x"))
+            self.Y = float(xml.get("y"))
+            self.A = float(xml.get("a")) if "a" in xml.attrib else 0.0
+            self.Frame = xml.get("frame_id") if "frame_id" in xml.attrib else "map"
+            self.HasAngle = "a" in xml.attrib
 
     def transform(self, codes):
         if "x_mirror" in codes: # supposes the terrain is a rect
@@ -42,7 +47,6 @@ class Shape2D(object):
         elif self.Type == "circle":
             LoadingHelpers.checkAttribExist(xml, "r")
             self.Radius = float(xml.get("r"))
-            print "radius " + str(self.Radius)
         else:
             raise ValueError("ERROR: Shape type '{}' not supported.".format(self.Type))
 

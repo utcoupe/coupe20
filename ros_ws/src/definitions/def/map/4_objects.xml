@@ -19,19 +19,19 @@
     
     <container name="spawn_atoms">
         <container name="spawn_atoms_rd">
-            <object class="atom-horizontal">
+            <object name="atom1" class="atom-horizontal">
                 <position x="42" y="1" a="1"/>
             </object>
         </container>
         
         <container name="spawn_atoms_gd">
-            <object class="atom-horizontal">
+            <object name="atom2" class="atom-horizontal">
                 <position x="1" y="1" a="1"/>
             </object>
         </container>
 
         <container name="spawn_atoms_bd">
-            <object class="atom-horizontal">
+            <object name="atom3" class="atom-horizontal">
                 <position x="1" y="1" a="1"/>
             </object>
         </container>
@@ -40,7 +40,7 @@
     <!-- Accelerator -->
     <container name="accelerator_station"/>
     <container name="accelerator">
-        <object class="atom-vertical">
+        <object name="atom4" class="atom-vertical">
             <position x="1" y="1" a="1"/>
             <color name="blue"/>
         </object>
@@ -51,19 +51,19 @@
         <position x="1" y="1"/>
         <shape type="circle" r="0.15"/>
 
-        <object class="atom-horizontal">
+        <object name="atom5" class="atom-horizontal">
             <position x="1" y="1"/>
             <color name="blue"/>
         </object>
-        <object class="atom-horizontal">
+        <object name="atom6" class="atom-horizontal">
             <color name="green"/>
             <position x="1" y="1"/>
         </object>
-        <object class="atom-horizontal">
+        <object name="atom7" class="atom-horizontal">
             <color name="red"/>
             <position x="1" y="1"/>
         </object>
-        <object class="atom-horizontal">
+        <object name="atom8" class="atom-horizontal">
             <color name="red"/>
             <position x="1" y="1"/> 
         </object>

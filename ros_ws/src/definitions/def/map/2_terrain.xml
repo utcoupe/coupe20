@@ -1,10 +1,12 @@
 <terrain type="rect" w="3" h="2">
+    <position x="0.022" y="0.022"/>
+
     <layer name="ground">
         <wall name="wall_top">
             <position x="1" y="1" a="1"/> 
             <shape type="rect" w="1" h="1" a="1"/>
         </wall>
-        
+         
         <wall name="wall_bottom">
             <position x="1" y="1" a="1"/>
             <shape type="rect" w="1" h="1" a="1"/>
@@ -21,7 +23,12 @@
         </wall> 
     </layer>
 
-    <layer name="belt"/>
+    <layer name="belt">
+        <wall name="test">
+            <position x="333" y="444" a="555"/>
+            <shape type="circle" r="666"/>
+        </wall>
+    </layer>
 
     <layer name="pathfinder">
         <include name="ground"/>

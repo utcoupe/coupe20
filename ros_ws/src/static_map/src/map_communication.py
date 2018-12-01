@@ -50,7 +50,6 @@ class MapServices():
         pos.Y = req.waypoint.pose.y
         pos.A = req.waypoint.pose.theta
         pos.HasAngle = req.waypoint.has_angle
-        print "hasangle = " + str(pos.HasAngle)
 
         w = MapManager.get_waypoint(req.waypoint.name, pos)
         success = False
@@ -67,16 +66,14 @@ class MapServices():
 
         msg = static_map.srv.MapGetTerrainResponse()
         msg.success = True
-        msg.shape = self._create_object_msg(terrain.Shape)
+        msg.shape = self._create_object_msg(terrain)
         msg.layers = []
 
         for l in terrain.Layers:
-            msg.layers.append(static_map.msg.MapLayer)
-            msg.layers[-1].name = l.Name
-            msg.layers[-1].walls = []
-
-            for w in l.Walls:
-                msg.layers[-1].walls.append(self._create_object_msg(w))
+            msg_layer = static_map.msg.MapLayer()
+            msg_layer.name  = l.Name
+            msg_layer.walls = [self._create_object_msg(w) for w in l.Walls]
+            msg.layers.append(msg_layer)
         return msg
 
     # def on_get(self, req):
@@ -157,7 +154,6 @@ class MapServices():
         rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
         return static_map.srv.MapGetOccupancyResponse(path)
 
-
     def _create_container_msg(self, ct, include_subcontainers):
         msg = static_map.msg.MapContainer()
         msg.name = ct.Name
@@ -172,7 +168,11 @@ class MapServices():
 
     def _create_object_msg(self, obj):
         msg = static_map.msg.MapObject()
-        msg.name = ""
+        msg.name = obj.Name
+
+        msg.pose.x     = obj.Position.X
+        msg.pose.y     = obj.Position.Y
+        msg.pose.theta = obj.Position.A        
         
         if obj.Shape.Type == "rect":
             msg.shape_type = msg.SHAPE_RECT
@@ -184,8 +184,8 @@ class MapServices():
         elif obj.Shape.Type == "point":
             msg.shape_type = msg.SHAPE_POINT
         
-        msg.labels = obj.Labels
-        msg.color  = obj.Color.Name if obj.Color is not None else ""
+        #msg.labels = obj.Labels
+        #msg.color  = obj.Color.Name if obj.Color is not None else ""
         return msg
     
     def _create_waypoint_msg(self, way):

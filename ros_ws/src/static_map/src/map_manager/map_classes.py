@@ -9,9 +9,11 @@ import map
 class Terrain(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "type")
+        LoadingHelpers.checkChildExist(xml, "position")
+        self.Name = "terrain"
+        self.Position = Position2D(xml.find("position"))
         self.Shape = Shape2D(xml)
         self.Layers = [Layer(l) for l in xml.findall("layer")]
-        # TODO marker
 
         # Copy walls from other layers (includes)
         for layer in self.Layers:
@@ -32,7 +34,9 @@ class Layer(object):
 
 class Wall(object):
     def __init__(self, xml):
+        LoadingHelpers.checkAttribExist(xml, "name")
         LoadingHelpers.checkChildExist(xml, "position", "shape")
+        self.Name = xml.get("name")
         self.Position = Position2D(xml.find("position"))
         self.Shape    = Shape2D(xml.find("shape"))
 

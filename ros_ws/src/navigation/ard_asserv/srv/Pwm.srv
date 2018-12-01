@@ -2,5 +2,6 @@
 int16 left
 int16 right
 uint16 duration
+bool autoStop #Stops when blocked
 ---
 bool response

@@ -147,10 +147,10 @@ void parseAndExecuteOrder(const String& order) {
         }
         case PWM:
         {
-            int l, r, t;
-            sscanf(receivedOrderPtr, "%i;%i;%i", &l, &r, &t);
+            int l, r, t, s; //s = autoStop
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &l, &r, &t, &s);
             goal_data_t goal;
-            goal.pwm_data = {(float)t, l, r};
+            goal.pwm_data = {(float)t, l, r, s};
             FifoPushGoal(order_id, TYPE_PWM, goal);
             break;
         }

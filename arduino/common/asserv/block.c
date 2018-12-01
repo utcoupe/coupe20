@@ -11,24 +11,28 @@ void ComputeIsBlocked(void) {
 	static pos_t last_pos = {0, 0, 0, 0};
 	long now;
 	float dist;
+	int block_time = BLOCK_TIME; 
 	goal_t *current_goal;
 
+	if(current_goal->type == TYPE_PWM && current_goal->data.pwm_data.autoStop)
+			block_time = 1000; //time in ms for PWM to stop
+
 	now = timeMillis();
-	if (now - last_time < BLOCK_TIME)
+	if (now - last_time < block_time)
 		return;
 	last_time = now;
 
 	current_goal = FifoCurrentGoal();
 	if (current_goal->type == NO_GOAL || 
-		current_goal->type == TYPE_PWM ||
 		current_goal->type == TYPE_SPD)
 		goto end;
+
 	if (fifo.current_goal != last_goal_nr) {
 		last_goal_nr = fifo.current_goal;
 		goto end;
 	}
 
-	// goals type is pos or angle, goal didn't change and 
+	// goals type is pos, pwm or angle, goal didn't change and 
 	// last calculation was at least BLOCK_TIME ms ago
 
 	dist = sqrt(pow(current_pos.x - last_pos.x, 2) + pow(current_pos.y - last_pos.y, 2));
@@ -38,6 +42,7 @@ void ComputeIsBlocked(void) {
 		// consider the goal reached
 		current_goal->is_reached = 1;
 	}
+	
 end:
 	last_pos = current_pos;
 #endif

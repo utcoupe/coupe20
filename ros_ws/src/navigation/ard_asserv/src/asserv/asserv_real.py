@@ -19,7 +19,7 @@ ASSERV_ERROR_POSITION = 0.01  # in meters
 ASSERV_ERROR_ANGLE = 0.15  # in radians
 POSITION_REACHED_CHECK_DELAY = 0.25  # in seconds
 GOTOA_POS_ERROR_MULTIPLIER = 5
-
+SPD_MAX = 1.0 # m/s, no difference betwenn pr and gr
 
 class AsservReal(AsservAbstract):
     def __init__(self, asserv_node, port):
@@ -68,30 +68,32 @@ class AsservReal(AsservAbstract):
         # Force the arduino to halt
         self._halt()
 
-    def goto(self, goal_id, x, y, direction):
+    def goto(self, goal_id, x, y, direction, spd_max):
         if self._check_reached_position(x, y, False):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)
             return True
-
+        if spd_max == 0: #default value
+            spd_max = SPD_MAX 
         if direction == 0: # bugfix: -1 = BACKWARD, 0 = ANY
             direction = -1
-        self._send_serial_data(self._orders_dictionary['GOTO'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(direction)])
+        self._send_serial_data(self._orders_dictionary['GOTO'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(direction), str(int(round(spd_max * 1000)))])
         # TODO make it proper
         self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y]
         return True
 
-    def gotoa(self, goal_id, x, y, a, direction):
+    def gotoa(self, goal_id, x, y, a, direction, spd_max):
         if self._check_reached_angle(a, False) and self._check_reached_position(x, y, GOTOA_POS_ERROR_MULTIPLIER, False):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)
             return True
-
+        if spd_max == 0: #default value
+            spd_max = SPD_MAX 
         if direction == 0: # bugfix: -1 = BACKWARD, 0 = ANY
             direction = -1
-        self._send_serial_data(self._orders_dictionary['GOTOA'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000))), str(direction)])
+        self._send_serial_data(self._orders_dictionary['GOTOA'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000))), str(direction), str(int(round(spd_max * 1000)))])
         # TODO make it proper
         self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y, a]
         return True
-
+    
     def rot(self, goal_id, a, no_modulo):
         if self._check_reached_angle(a, False):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)

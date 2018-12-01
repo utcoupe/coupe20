@@ -101,9 +101,11 @@ void parseAndExecuteOrder(const String& order) {
             break;
         case GOTO:
         {
-            int x, y, direction;
+            int x, y, direction, spd_max;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i", &x, &y, &direction);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &direction, &spd_max);
+            control.max_spd = (float)spd_max;
+            SerialSender::SerialSend(SERIAL_DEBUG, "max_spd = %d, x = %d, test", (int)control.max_spd, x);
             goal_data_t goal;
             goal.pos_data = {x, y, direction};
             FifoPushGoal(order_id, TYPE_POS, goal);
@@ -111,10 +113,11 @@ void parseAndExecuteOrder(const String& order) {
         }
         case GOTOA:
         {
-            int x, y, a_int, direction;
+            int x, y, a_int, direction, spd_max;
             float a;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction, &spd_max);
+            control.max_spd = spd_max;
             a = a_int / (float)FLOAT_PRECISION;
             goal_data_t goal;
             goal.pos_data = {x, y, direction};

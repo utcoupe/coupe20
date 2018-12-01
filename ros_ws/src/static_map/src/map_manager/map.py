@@ -11,6 +11,7 @@ class MapDict():
     Terrain   = None # future Terrain instance
     Objects   = None # future Container instance
     Waypoints = []   # List of Waypoint instances
+    Robot     = None # future Container instance
 
 class MapManager():
     Dirty = True # Whether a service changed the dict since the last RViz Marker publish.
@@ -53,10 +54,12 @@ class MapManager():
             obj_classes.append(Class(c, obj_classes))
 
         # Instantiate objects and create the map dict
-        MapDict.Terrain = Terrain(xml_terrain)
+        MapDict.Terrain   = Terrain(xml_terrain)
         xml_objects.attrib["name"] = "map"
-        MapDict.Objects = Container(xml_objects, obj_classes)
+        MapDict.Objects   = Container(xml_objects, obj_classes)
         MapDict.Waypoints = [Waypoint(w) for w in xml_waypoints.findall("waypoint")]
+        xml_robot.attrib["name"] = "robot"
+        MapDict.Robot     = Container(xml_robot, obj_classes)
 
         rospy.loginfo("Loaded map in {0:.2f}ms.".format(time.time() * 1000 - starttime))
 
@@ -96,7 +99,12 @@ class MapManager():
     
     @staticmethod
     def get_container(nameslist):
-        return MapDict.Objects.get_container(nameslist)
+        if nameslist[0] == "map":
+            return MapDict.Objects.get_container(nameslist)
+        elif nameslist[0] == "robot":
+            return MapDict.Robot.get_container(nameslist)
+        else:
+            rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
 
     @staticmethod
     def get_terrain():

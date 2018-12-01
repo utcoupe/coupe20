@@ -1,3 +1,5 @@
+# Works only for object and robot containers
+
 string old_path # e.g. /objects/container_grape1
 string new_path # e.g. /entities/robot/containers/container_tower1
 ---

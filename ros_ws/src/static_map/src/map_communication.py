@@ -76,37 +76,8 @@ class MapServices():
             msg.layers.append(msg_layer)
         return msg
 
-    # def on_get(self, req):
-    #     s = time.time() * 1000
-    #     rospy.loginfo("GET:" + str(req.request_path))
-
-    #     success = False
-    #     response = MapManager.get(req.request_path)
-    #     if isinstance(response, DictManager):
-    #         rospy.logerr("    GET Request failed : '^' dict operator not allowed in services.")
-    #         response = None
-
-    #     if response != None:
-    #         success = True
-
-    #     rospy.logdebug("    Responding: " + str(response))
-    #     rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-    #     return static_map.srv.MapGetResponse(success, json.dumps(response))
-
-    # def on_get_objects(self, req):
-    #     s = time.time() * 1000
-    #     rospy.loginfo("GET_OBJECTS:collisions_only=" + str(req.collisions_only))
-
-    #     success = False
-    #     objects = MapManager.get_objects(collisions_only=req.collisions_only)
-
-    #     if objects != None:
-    #         success = True
-
-    #     rospy.logdebug("    Responding: {} object(s) found.".format(len(objects)))
-    #     rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
-    #     return static_map.srv.MapGetObjectsResponse(success, objects)
-
+    
+    
     def on_set(self, req):
         s = time.time() * 1000
         rospy.loginfo("SET:" + str(req.request_path))

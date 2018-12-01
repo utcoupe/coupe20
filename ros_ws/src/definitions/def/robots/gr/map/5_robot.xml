@@ -1,3 +1,7 @@
 <robot>
-    <container name="tower"/>
+    <container name="tower">
+        <object name="atom42" class="atom-horizontal">
+            <position x="1" y="1"/>
+        </object>
+    </container>
 </robot>

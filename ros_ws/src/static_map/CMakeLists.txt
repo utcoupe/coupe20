@@ -17,6 +17,7 @@ add_message_files(
     FILES
     MapObject.msg
     MapContainer.msg
+    MapLayer.msg
     Waypoint.msg
 )
 
@@ -24,12 +25,12 @@ add_message_files(
 add_service_files(
     FILES
     MapGetContainer.srv
-    MapGet.srv
+    MapGetWaypoint.srv
+    MapGetTerrain.srv
+
     MapSet.srv
     MapTransfer.srv
     MapGetOccupancy.srv
-    MapGetObjects.srv
-    MapGetWaypoint.srv
 )
 
 # Generate added messages and services with any dependencies listed here

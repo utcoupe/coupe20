@@ -200,11 +200,19 @@ void parseAndExecuteOrder(const String& order) {
             break;
         case SET_POS:
         {
-            int x, y, a_int;
-            float angle;
-            sscanf(receivedOrderPtr, "%i;%i;%i;", &x, &y, &a_int);
-            angle = a_int / (float)FLOAT_PRECISION;
-            RobotStateSetPos(x, y, angle);
+            int x, y, a_int, mode;
+            float a;
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &mode);
+            a = a_int / (float)FLOAT_PRECISION;
+            if(mode){
+                if(!(mode & BIT_MODE_A))
+                    a = current_pos.angle;
+                if(!(mode & BIT_MODE_X))
+                    x = round(current_pos.x); 
+                if(!(mode & BIT_MODE_Y))
+                    y = round(current_pos.y);
+            }
+            RobotStateSetPos(x, y, a);
             SerialSender::SerialSend(SERIAL_INFO, "%d;%i;", order_id, a_int);
             break;
         }

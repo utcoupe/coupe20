@@ -1,4 +1,14 @@
 # SetPos service sets the position of the robot
+uint8 MODE_AXY = 0
+uint8 MODE_A   = 1
+uint8 MODE_Y   = 2
+uint8 MODE_AY  = 3
+uint8 MODE_X   = 4
+uint8 MODE_AX  = 5
+uint8 MODE_XY  = 6
+
+uint8 mode 
+
 geometry_msgs/Pose2D position
 string position_waypoint
 ---

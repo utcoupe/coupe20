@@ -161,7 +161,7 @@ class Asserv:
             else:
                 rospy.logwarn("[ASSERV] Received a waypoint request but static_map seems not to be launched...")
         if self._asserv_instance:
-            ret_value = self._asserv_instance.set_pos(set_position.x, set_position.y, set_position.theta)
+            ret_value = self._asserv_instance.set_pos(set_position.x, set_position.y, set_position.theta, request.mode)
         else:
             ret_value = False
         return SetPosResponse(ret_value)

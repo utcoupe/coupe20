@@ -150,8 +150,8 @@ class AsservReal(AsservAbstract):
         # rospy.loginfo("Set pid sending : P = {}, I = {}, D = {}.".format(str(int(round(p * 1000))), str(int(round(i * 1000))), str(int(round(d * 1000)))))
         return True
 
-    def set_pos(self, x, y, a):
-        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000.0)))])
+    def set_pos(self, x, y, a, mode):
+        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000.0))), str(mode)])
         return True
 
     def _start_serial_com_line(self, port):

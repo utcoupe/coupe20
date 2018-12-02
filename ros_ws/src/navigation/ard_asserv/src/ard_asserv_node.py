@@ -132,7 +132,11 @@ class Asserv:
         """
         rospy.logdebug("[ASSERV] Received a request (goto service).")
         # TODO manage the direction
+<<<<<<< HEAD
         response = self._process_goto_order(self._goal_id_counter, request.mode, request.position.x, request.position.y, request.position.theta, 1, int(request.slowGo))
+=======
+        response = self._process_goto_order(self._goal_id_counter, request.mode, request.position.x, request.position.y, request.position.theta, 1, request.spd_max)
+>>>>>>> bfbfff83fec3322975e45aaba1b0f3c030f60f97
         if response:
             self._goto_srv_dictionary[self._goal_id_counter] = ""
             self._goal_id_counter += 1
@@ -297,7 +301,11 @@ class Asserv:
 
             if self._process_goto_order(self._goal_id_counter, goal_handled.get_goal().mode,
                                         pos.x, pos.y, pos.theta,
+<<<<<<< HEAD
                                         goal_handled.get_goal().direction, goal_handled.get_goal().slowGo):
+=======
+                                        goal_handled.get_goal().direction, goal_handled.get_goal().spd_max):
+>>>>>>> bfbfff83fec3322975e45aaba1b0f3c030f60f97
                 goal_handled.set_accepted()
                 self._goals_dictionary[self._goal_id_counter] = goal_handled
                 self._goal_id_counter += 1
@@ -307,7 +315,11 @@ class Asserv:
             goal_handled.set_rejected()
             rospy.logwarn("[ASSERV] Action GOTO can not be accepted, asserv has been halted.")
 
+<<<<<<< HEAD
     def _process_goto_order(self, goal_id, mode, x, y, a, direction, slowGo):
+=======
+    def _process_goto_order(self, goal_id, mode, x, y, a, direction, spd_max):
+>>>>>>> bfbfff83fec3322975e45aaba1b0f3c030f60f97
         """
         Processes the goto order, coming from service or action.
         @param mode:    Mode of the Goto order (see Goto.srv or DoGoto.action files)
@@ -318,8 +330,13 @@ class Asserv:
         @type y:        float64
         @param a:       Angle (in radians)
         @type a:        float64
+<<<<<<< HEAD
         @param slowGo:  true to set SLOW_GO_BIT (control.max_spd *= EMERGENCY_SLOW_GO_RATIO)
         @type slowGo:   bool 
+=======
+        @param spd_max: Speed for the current Goto order (in meters/second)
+        @type spd_max:  float64 
+>>>>>>> bfbfff83fec3322975e45aaba1b0f3c030f60f97
         @return:        True if order sent, false otherwise
         @rtype:         bool
         """
@@ -327,10 +344,17 @@ class Asserv:
         if self._asserv_instance:
             if mode == GotoRequest.GOTO:
                 rospy.loginfo("[ASSERV] Accepting goal GOTO (id = {}, x = {}, y = {}).".format(goal_id, x, y))
+<<<<<<< HEAD
                 to_return = self._asserv_instance.goto(goal_id, x, y, direction, slowGo)
             elif mode == GotoRequest.GOTOA:
                 rospy.loginfo("[ASSERV] Accepting goal GOTOA (id = {}, x = {}, y = {}, a = {}).".format(goal_id, x, y, a))
                 to_return = self._asserv_instance.gotoa(goal_id, x, y, a, direction, slowGo)
+=======
+                to_return = self._asserv_instance.goto(goal_id, x, y, direction, spd_max)
+            elif mode == GotoRequest.GOTOA:
+                rospy.loginfo("[ASSERV] Accepting goal GOTOA (id = {}, x = {}, y = {}, a = {}).".format(goal_id, x, y, a))
+                to_return = self._asserv_instance.gotoa(goal_id, x, y, a, direction, spd_max)
+>>>>>>> bfbfff83fec3322975e45aaba1b0f3c030f60f97
             elif mode == GotoRequest.ROT:
                 rospy.loginfo("[ASSERV] Accepting goal ROT (id = {}, a = {}).".format(goal_id, a))
                 to_return = self._asserv_instance.rot(goal_id, a, False)

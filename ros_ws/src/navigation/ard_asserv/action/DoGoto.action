@@ -6,6 +6,7 @@ uint8 GOTOA       = 1
 uint8 ROT         = 2
 uint8 ROTNOMODULO = 3
 uint8 mode
+bool slowGo
 
 uint8 DIRECTION_BACKWARD = 0
 uint8 DIRECTION_FORWARD  = 1

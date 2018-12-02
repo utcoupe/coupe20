@@ -47,12 +47,12 @@ class NavigatorStatuses(object):
 class NavigatorNode(object):
     """
     The NavigatorNode class is the link between the AI, the Pathfinder and the Asserv.
-    This node gets a movement order on ROS service. It can accept many at a time but is not design to.
+    This node gets a movement order on ROS service. It can accept many at a time but is not designed to.
     The node will wait for the Pathfinder and the Asserv to advertize their services and actions before starting itself.
     """
     def __init__ (self):
         """
-        Initialize the node. Does not start it.
+        Initializes the node. Does not start it.
         """
 
         self._actionSrv_Dogoto = ""

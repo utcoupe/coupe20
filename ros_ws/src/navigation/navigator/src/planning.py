@@ -43,11 +43,12 @@ class Plan(object):
         self._direction = Directions.AUTOMATIC
         self.invalidStartOrEndPos = False
     
-    def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder):
+    def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder, slowGo):
         self._endPos = endPos
         self._hasAngle = hasAngle
         self._direction = direction
         self._disablePathfinder = disablePathfinder
+        self._slowGo = slowGo
         self.replan(startPos)
         self.invalidStartOrEndPos = False
     
@@ -76,11 +77,11 @@ class Plan(object):
             lastPoint = startPos
 
             for point in path:
-                idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), False, self._asservGotoCallback)
+                idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), self._slowGo, False, self._asservGotoCallback)
                 self._currentPath[idOrder] = point
                 lastPoint = point
             
-            idOrder = self._asservClient.doGoto(self._endPos, self._getDirection(self._direction, self._endPos, lastPoint), self._hasAngle, self._asservGotoCallback)
+            idOrder = self._asservClient.doGoto(self._endPos, self._getDirection(self._direction, self._endPos, lastPoint), self._slowGo, self._hasAngle, self._asservGotoCallback)
             self._currentPath[idOrder] = self._endPos
             self._status = PlanStatuses.NAVIGATING
             rospy.logdebug("Our path has " + str(len(self._currentPath)) + " points:")

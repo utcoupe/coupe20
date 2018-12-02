@@ -49,6 +49,7 @@
 #define K_DISTANCE_REDUCTION 10 // réduction de la vitesse linéaire quand on tourne
 
 #define BLOCK_TIME 5000 // ms - time between each block check
+#define BLOCK_TIME_AUTO_STOP 500 //time in ms for PWM to stop
 #define BLOCK_MIN_DIST 5 // mm - distance to move to consider we moved
 
 #define ENC_RESOLUTION 1024 //resolution du codeur

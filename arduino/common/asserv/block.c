@@ -4,6 +4,7 @@
 #include "goals.h"
 #include "compat.h"
 
+
 void ComputeIsBlocked(void) {
 #if BLOCK_TIME
 	static int last_goal_nr = -1;
@@ -14,23 +15,27 @@ void ComputeIsBlocked(void) {
 	int block_time = BLOCK_TIME; 
 	goal_t *current_goal;
 
+	
+	current_goal = FifoCurrentGoal();
+
 	if(current_goal->type == TYPE_PWM && current_goal->data.pwm_data.autoStop)
-			block_time = 1000; //time in ms for PWM to stop
+			block_time = BLOCK_TIME_AUTO_STOP; 
 
 	now = timeMillis();
 	if (now - last_time < block_time)
 		return;
 	last_time = now;
-
-	current_goal = FifoCurrentGoal();
-	if (current_goal->type == NO_GOAL || 
-		current_goal->type == TYPE_SPD)
+	
+	if (current_goal->type == NO_GOAL  || 
+		current_goal->type == TYPE_SPD ||
+	   (current_goal->type == TYPE_PWM && !current_goal->data.pwm_data.autoStop))
 		goto end;
 
 	if (fifo.current_goal != last_goal_nr) {
 		last_goal_nr = fifo.current_goal;
 		goto end;
 	}
+	
 
 	// goals type is pos, pwm or angle, goal didn't change and 
 	// last calculation was at least BLOCK_TIME ms ago

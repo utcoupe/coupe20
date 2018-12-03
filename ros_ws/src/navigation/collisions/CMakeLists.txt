@@ -114,19 +114,16 @@ add_dependencies(collisions_node
 ## Install ##
 #############
 
-catkin_install_python(
-    PROGRAMS
-        src/collisions_node.py
-        src/collisions_robot.py
-        src/collisions_subscriptions.py
-        src/obstacles_stack.py
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+install(
+    TARGETS collisions_node
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 install(
-    DIRECTORY src/collisions_engine src/markers_publisher
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-    PATTERN "*.pyc" EXCLUDE
+    DIRECTORY include/
+    DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
 )
 
 #############

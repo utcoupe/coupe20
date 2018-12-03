@@ -1,1 +1,0 @@
-from markers_publisher import MarkersPublisher

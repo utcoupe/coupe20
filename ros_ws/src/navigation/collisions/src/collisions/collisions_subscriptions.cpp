@@ -15,23 +15,23 @@
 
 using namespace nlohmann;
 
-const double CACHE_TIME_TF2_BUFFER = 5.0;
-const std::size_t SIZE_MAX_QUEUE = 10;
+const double      CACHE_TIME_TF2_BUFFER  = 5.0;
+const std::size_t SIZE_MAX_QUEUE         = 10;
 
 const std::string NAVIGATOR_STATUS_TOPIC = "navigation/navigator/status";
 const std::string OBJECTS_TOPIC          = "recognition/objects_classifier/objects";
 const std::string ASSERV_SPEED_TOPIC     = "drivers/ard_asserv/speed";
 const std::string MAP_GET_SERVER         = "memory/map/get";
 
-const std::string NODE_NAME      = "collisions";
-const std::string NAMESPACE_NAME = "navigation";
+const std::string NODE_NAME              = "collisions";
+const std::string NAMESPACE_NAME         = "navigation";
 
-const std::string MAP_TF_FRAME          = "map";
-const std::string ROBOT_TF_FRAME        = "robot";
-const std::string PARAM_ROBOT_TYPE      = "/robot";
-const std::string DEFAULT_ROBOT_NAME    = "gr";
-const double      DEFAULT_ROBOT_WIDTH   = 0.4;
-const double      DEFAULT_ROBOT_HEIGHT  = 0.25;
+const std::string MAP_TF_FRAME           = "map";
+const std::string ROBOT_TF_FRAME         = "robot";
+const std::string PARAM_ROBOT_TYPE       = "/robot";
+const std::string DEFAULT_ROBOT_NAME     = "gr";
+const double      DEFAULT_ROBOT_WIDTH    = 0.4;
+const double      DEFAULT_ROBOT_HEIGHT   = 0.25;
 
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion) noexcept;
 

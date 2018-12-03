@@ -33,8 +33,6 @@ const std::string DEFAULT_ROBOT_NAME    = "gr";
 const double      DEFAULT_ROBOT_WIDTH   = 0.4;
 const double      DEFAULT_ROBOT_HEIGHT  = 0.25;
 
-#include <iostream>
-
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion) noexcept;
 
 inline constexpr double radToDegrees(double angle) noexcept {
@@ -46,7 +44,6 @@ CollisionsSubscriptions::CollisionsSubscriptions(ros::NodeHandle& nhandle):
     tf2PosBuffer_(ros::Duration(CACHE_TIME_TF2_BUFFER)),
     tf2PosListener_(tf2PosBuffer_)
 {
-    std::cerr << "Subscribing to " << ASSERV_SPEED_TOPIC << std::endl;
     asservSpeedSubscriber_ = nhandle.subscribe(
         ASSERV_SPEED_TOPIC,
         SIZE_MAX_QUEUE,

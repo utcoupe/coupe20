@@ -21,7 +21,7 @@ public:
     }
     
     constexpr double norm2Dist (const Point& other) const noexcept {
-        return std::hypot(other.getX(), other.getY());
+        return std::hypot(_x - other.getX(), _y - other.getY());
     }
     
     // Operators

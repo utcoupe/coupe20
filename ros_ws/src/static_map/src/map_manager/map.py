@@ -99,9 +99,9 @@ class MapManager():
     @staticmethod
     def get_container(path):
         if path[0] == "map":
-            return MapDict.Objects.get_container(path)
+            return MapDict.Objects.get_container(path[1:])
         elif path[0] == "robot":
-            return MapDict.Robot.get_container(path)
+            return MapDict.Robot.get_container(path[1:])
         else:
             rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
 

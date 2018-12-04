@@ -15,13 +15,14 @@ class Servers():
     GET_WAYPOINT_SRV  = "static_map/get_waypoint"
     GET_TERRAIN_SRV   = "static_map/get_terrain"
     SET_SRV           = "static_map/set"
+    TRANSFER_SRV      = "static_map/transfer"
 
 class MapServices():
     def __init__(self, occupancy_generator):
         self._get_container_srv = rospy.Service(Servers.GET_CONTAINER_SRV, static_map.srv.MapGetContainer, self.on_get_container)
         self._get_waypoint_srv  = rospy.Service(Servers.GET_WAYPOINT_SRV,  static_map.srv.MapGetWaypoint,  self.on_get_waypoint)
         self._get_terrain_srv   = rospy.Service(Servers.GET_TERRAIN_SRV,   static_map.srv.MapGetTerrain,   self.on_get_terrain)
-        self._set_srv           = rospy.Service(Servers.SET_SRV,           static_map.srv.MapSetObject,    self.on_set)
+        self._transfer_srv      = rospy.Service(Servers.TRANSFER_SRV,      static_map.srv.MapTransfer,    self.on_transfer)
 
     def on_get_container(self, req):
         # Fetch it from the map
@@ -87,19 +88,28 @@ class MapServices():
         return static_map.srv.MapSetObjectResponse(success, self._create_object_msg(res_obj))
 
     def on_transfer(self, req):
-        s = time.time() * 1000
-        rospy.loginfo("TRANSFER:{} to {}".format(req.old_path, req.new_path))
-        elem, elem_name = MapManager.get(req.old_path + "/^"), req.old_path.split('/')[-1]
-        if elem:
-            success = MapManager.set(req.old_path, SetMode.MODE_DELETE) and \
-                      MapManager.set(req.new_path + "/{}".format(elem_name), SetMode.MODE_ADD, instance = elem)
-            MapManager.Dirty = True
-        else:
-            rospy.logerr("    TRANSFER Request failed : could not find the object at old_path '{}'.".format(req.old_path))
-            success = False
+        old_path = path = [s for s in req.old_path.split('/') if s]
+        new_path = path = [s for s in req.new_path.split('/') if s]
 
-        rospy.logdebug("    Responding: " + str(success))
-        rospy.logdebug("    Process took {0:.2f}ms".format(time.time() * 1000 - s))
+        success = False
+        if req.mode == req.MODE_OBJECT:
+            moved_obj = MapManager.remove_object(old_path)
+            if moved_obj is not None:
+                success = MapManager.add_object(new_path, moved_obj)
+            else:
+                success = False
+        elif req.mode == req.MODE_CONTAINER:
+            rospy.logerr("container transfer not implemented")
+        elif req.mode == req.MODE_CONTAINER_OBJECTS:
+            old_ct = MapManager.get_container(old_path)
+            new_ct = MapManager.get_container(new_path)
+
+            if old_ct and new_ct:
+                new_ct.Elements += old_ct.Elements
+                old_ct.Elements = []
+                success = True
+        
+        rospy.loginfo("TRANSFER (from={} to={}): {}".format(req.old_path, req.new_path, success))
         return static_map.srv.MapTransferResponse(success)
 
     def on_get_occupancy(self, req):

@@ -18,7 +18,7 @@ class MapManager():
 
     # Internal global variables
     Colors = []
-    Teams = [] #TODO handle teams huh?
+    Teams = []
     CurrentTeam = ''
 
     @staticmethod
@@ -80,7 +80,6 @@ class MapManager():
     
     @staticmethod
     def get_waypoint(name, position):
-        print name, position
         if name is not None and name is not '':
             for w in MapDict.Waypoints:
                 if w.Name == name:
@@ -98,11 +97,11 @@ class MapManager():
         return None
     
     @staticmethod
-    def get_container(nameslist):
-        if nameslist[0] == "map":
-            return MapDict.Objects.get_container(nameslist)
-        elif nameslist[0] == "robot":
-            return MapDict.Robot.get_container(nameslist)
+    def get_container(path):
+        if path[0] == "map":
+            return MapDict.Objects.get_container(path)
+        elif path[0] == "robot":
+            return MapDict.Robot.get_container(path)
         else:
             rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
 
@@ -110,23 +109,28 @@ class MapManager():
     def get_terrain():
         return MapDict.Terrain
 
-    # @staticmethod
-    # def get(requestpath):
-    #     if requestpath[0] != "/":
-    #         rospy.logerr("    GET Request failed : global search needs to start with '/'.")
-    #         return None
-    #     return MapDict.get(requestpath)
-
-    # @staticmethod
-    # def get_objects(collisions_only = False):
-    #     return MapManager.MAP_DICT.Dict["objects"].get_objects(collisions_only)
-
     @staticmethod
-    def set(requestpath, mode, instance = None):
-        if requestpath[0] != "/":
-            rospy.logerr("    SET Request failed : global search needs to start with '/'.")
-            return None
-        return MapManager.MAP_DICT.set(requestpath, mode, instance)
+    def add_object(path, obj):
+        if path[0] == "map":
+            return MapDict.Objects.add_object(path, obj)
+        elif path[0] == "robot":
+            return MapDict.Robot.add_object(path, obj)
+        else:
+            rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
+    
+    @staticmethod
+    def remove_object(path):
+        if path[0] == "map":
+            return MapDict.Objects.remove_object(path)
+        elif path[0] == "robot":
+            return MapDict.Robot.remove_object(path)
+        else:
+            rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
+    
+    @staticmethod
+    def merge_object(path, obj):
+        pass
+        
 
     @staticmethod
     def transform(codes):

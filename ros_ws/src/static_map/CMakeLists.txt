@@ -28,7 +28,7 @@ add_service_files(
     MapGetWaypoint.srv
     MapGetTerrain.srv
 
-    MapSet.srv
+    MapSetObject.srv
     MapTransfer.srv
     MapGetOccupancy.srv
 )

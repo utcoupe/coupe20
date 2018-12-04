@@ -189,7 +189,7 @@ class RequestPath():
         self.pathstring = pathstring
 
         self.Valid = True
-        if not len(pathstring): 
+        if not len(pathstring):
             rospy.logerr("Invalid path : empty path.")
             self.Valid = False
         if pathstring[-1] == '/':

@@ -58,17 +58,50 @@ class Container(object):
         self.Elements =  [Container(c, xml_classes) for c in xml.findall("container")]
         self.Elements += [Object(o, xml_classes)    for o in xml.findall("object")]
 
-    def get_container(self, nameslist):
-        if not nameslist:
+    def get_container(self, path):
+        if not path:
             return self
-        elif self.Name == nameslist[0]:
+        elif self.Name == path[0]:
             return self
         else:
             for e in self.Elements:
                 if isinstance(e, Container):
-                    if e.Name == nameslist[0]:
-                        return e.get_container(nameslist[1:])
-        rospy.logerr("    GET Request failed : couldn't find any container named '{}'.".format(nameslist[0]))
+                    if e.Name == path[0]:
+                        return e.get_container(path[1:])
+        rospy.logerr("    GET Request failed : couldn't find any container named '{}'.".format(path[0]))
+        return None
+    
+    def add_object(self, path, obj):
+        if path[0] == self.Name:
+            if len([e for e in self.Elements if (isinstance(e, Object) and e.Name == obj.Name)]):
+                rospy.logerr("    ADD Request failed : an object with name '{}' already exists in container '{}'.".format(obj.Name, self.Name))
+                return False
+            self.Elements.append(obj)
+            return True
+        elif len(path) == 1:
+            rospy.logerr("    ADD Request failed : couldn't find any container named '{}'.".format(path[0]))
+            return False
+        else:
+            for e in self.Elements:
+                if isinstance(e, Container) and e.Name == path[1]:
+                    return e.add_object(path[1:], obj)
+        return False
+    
+    def remove_object(self, path):
+        if len(path) > 2:
+            for e in self.Elements:
+                if isinstance(e, Container) and e.Name == path[1]:
+                    return e.remove_object(path[1:])
+        elif len(path) == 2:
+            if not self.Name == path[0]:
+                rospy.logerr("    RMV Request failed : ended up in wrong path.")
+                return None
+            for e in self.Elements:
+                if isinstance(e, Object) and e.Name == path[1]:
+                    res_obj = e
+                    self.Elements.remove(e)
+                    return res_obj
+            rospy.logerr("    RMV Request failed : no object with name '{}' found in container '{}'.".format(path[1], self.Name))
         return None
 
 

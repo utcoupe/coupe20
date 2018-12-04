@@ -87,11 +87,11 @@ class AsservClient(object):
         str_id = clientDoGotoHandle.comm_state_machine.action_goal.goal_id.id
         return str_id
     
-    def doGoto (self, pos, direction, hasAngle=False, callback=None):
+    def doGoto (self, pos, direction, slowGo, hasAngle=False, callback=None):
         mode = DoGotoGoal.GOTO
         if hasAngle:
             mode = DoGotoGoal.GOTOA
-        goal = DoGotoGoal(mode=mode, position=pos, direction=direction)
+        goal = DoGotoGoal(mode=mode, position=pos, direction=direction, slow_go=slowGo)
         goalHandle = self._asservGotoActionClient.send_goal(goal, transition_cb=self._handleDoGotoResult)
         idAct = self._getGoalId(goalHandle)
 

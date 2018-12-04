@@ -101,9 +101,14 @@ void parseAndExecuteOrder(const String& order) {
             break;
         case GOTO:
         {
-            int x, y, direction;
+            int x, y, direction, slow_go;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i", &x, &y, &direction);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &direction, &slow_go);
+            if(slow_go) 
+                ControlSetStop(SLOWGO_BIT);    
+            else
+                ControlUnsetStop(SLOWGO_BIT);    
+
             goal_data_t goal;
             goal.pos_data = {x, y, direction};
             FifoPushGoal(order_id, TYPE_POS, goal);
@@ -111,10 +116,15 @@ void parseAndExecuteOrder(const String& order) {
         }
         case GOTOA:
         {
-            int x, y, a_int, direction;
+            int x, y, a_int, direction, slow_go;
             float a;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction, &slow_go);
+            if(slow_go) 
+                ControlSetStop(SLOWGO_BIT);    
+            else
+                ControlUnsetStop(SLOWGO_BIT);   
+
             a = a_int / (float)FLOAT_PRECISION;
             goal_data_t goal;
             goal.pos_data = {x, y, direction};

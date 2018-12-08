@@ -49,6 +49,7 @@
 #define EMERGENCY_SLOW_GO_RATIO 0.3 // spd = 0.3*max_spd in slow_go mode
 
 #define BLOCK_TIME 5000 // ms - time between each block check
+#define BLOCK_TIME_AUTO_STOP 500 //time in ms for PWM to stop
 #define BLOCK_MIN_DIST 5 // mm - distance to move to consider we moved
 
 #define ENC_RESOLUTION 1024 //resolution du codeur

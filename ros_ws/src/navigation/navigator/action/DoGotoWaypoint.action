@@ -1,0 +1,16 @@
+# Takes a waypoint name and returns status
+uint8 GOTO = 0
+uint8 GOTOA = 1
+uint8 mode
+uint8 BACKWARD = 0
+uint8 FORWARD = 1
+uint8 AUTOMATIC = 2
+uint8 direction
+bool slow_go
+string waypoint_name
+bool disable_collisions
+bool disable_pathfinder
+---
+bool success
+---
+# No feedback

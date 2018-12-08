@@ -1,0 +1,21 @@
+# Goto action is to tell the asserv to move to some place. The result will be sent when the robot is arrived or if there is a problem.
+# Define the goal
+# GOTO command, x and y in m, a in radians
+uint8 GOTO        = 0
+uint8 GOTOA       = 1
+uint8 ROT         = 2
+uint8 ROTNOMODULO = 3
+uint8 mode
+bool slow_go
+
+uint8 DIRECTION_BACKWARD = 0
+uint8 DIRECTION_FORWARD  = 1
+uint8 direction
+
+geometry_msgs/Pose2D position
+string position_waypoint
+---
+# Result : true if arrived, false if not
+bool result
+---
+# Feedback message : nothing (robot pose is obtained via topics)

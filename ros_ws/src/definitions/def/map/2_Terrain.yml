@@ -1,0 +1,143 @@
+terrain:
+    shape:
+        type: rect
+        width: 3.0
+        height: 2.0
+    _marker:
+        ns: table
+        id: 0
+        type: mesh
+        scale: [0.001, 0.001, 0.001]
+        z: 0.0
+        orientation: [1.57079632679, 0, 0]
+        color: light_gray
+        mesh_path: "package://definitions/def/map/robotcities2018_map.stl"
+    walls:
+        layer_ground:
+            wall_top:
+                position:
+                    frame_id: /map
+                    x: 1.5
+                    y: 2.011
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 3.044
+                    height: 0.022
+            wall_bottom:
+                position:
+                    frame_id: /map
+                    x: 1.5
+                    y: -0.011
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 3.044
+                    height: 0.022
+            wall_left:
+                position:
+                    frame_id: /map
+                    x: -0.011
+                    y: 1
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.022
+                    height: 2.0
+            wall_right:
+                position:
+                    frame_id: /map
+                    x: 3.011
+                    y: 1
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.022
+                    height: 2.0
+            stations:
+                position:
+                    frame_id: /map
+                    x: 1.5
+                    y: 0.125
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 1.212
+                    height: 0.250
+
+        layer_belt:
+            castle_green:
+                position:
+                    frame_id: /map
+                    x: 0.180
+                    y: 2.180
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.360
+                    height: 0.360
+            castle_orange:
+                position:
+                    frame_id: /map
+                    x: 2.820
+                    y: 2.180
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.360
+                    height: 0.360
+            uni_distrib_green:
+                position:
+                    frame_id: /map
+                    x: 0.05
+                    y: 1.160
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.1
+                    height: 0.08
+            multi_distrib_green:
+                position:
+                    frame_id: /map
+                    x: 2.390
+                    y: 0.05
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.08
+                    height: 0.1
+            uni_distrib_orange:
+                position:
+                    frame_id: /map
+                    x: 2.95
+                    y: 1.160
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.1
+                    height: 0.08
+            multi_distrib_orange:
+                position:
+                    frame_id: /map
+                    x: 0.610
+                    y: 0.05
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 0.08
+                    height: 0.1
+            stations:
+                position:
+                    frame_id: /map
+                    x: 1.5
+                    y: 0.125
+                    type: fixed
+                shape:
+                    type: rect
+                    width: 1.212
+                    height: 0.250
+
+        layer_pathfinder:
+            _include: 
+                - layer_ground
+                - layer_belt

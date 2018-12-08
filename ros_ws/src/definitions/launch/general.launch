@@ -1,0 +1,35 @@
+<launch>
+	<arg name="robot" default="gr"/>
+
+    <param name="robot"  value="$(arg robot)"/>
+
+        <node pkg="game_manager" name="game_manager" type="game_manager_node.py" output="screen"/>
+        <node pkg="scheduler"   name="scheduler"   type="scheduler_node.py"   output="screen"/>
+
+		<node pkg="definitions"    name="definitions" type="definitions_node.py" output="screen" />
+		<node pkg="static_map"            name="map"         type="map_node.py"         output="screen" />
+
+		<node pkg="localizer"     name="localizer"     type="localizer_node.py"     output="screen"/>
+		<node pkg="recognition_enemy_tracker" name="enemy_tracker" type="enemy_tracker_node.py" output="screen"/>
+		<node pkg="objects_classifier" name="object_classifier" type="objects_classifier_node" output="screen"/>
+
+		<node pkg="ard_asserv"    name="ard_asserv"  type="ard_asserv_node.py" output="screen"/>
+		<node pkg="port_finder"   name="port_finder" type="port_finder_node.py" output="screen"/>
+		<node pkg="driver_teraranger"    name="teraranger"  type="teraranger_node.py" output="screen"/>
+		<node pkg="driver_ax12"          name="ax12"        type="ax12_node" output="screen"/>
+
+		<node pkg="belt_interpreter" name="belt_interpreter" type="belt_interpreter_node.py" output="screen" />
+
+		<node pkg="collisions"       name="collisions" type="collisions_node"         output="screen" />
+		<node pkg="navigator"        name="navigator"  type="navigator_node.py"          output="screen" />
+		<node pkg="pathfinder"       name="pathfinder" type="pathfinder_node" args="-- " output="screen" />
+
+		<node pkg="dispatcher"          name="actuators"  type="actuators_node.py"          output="screen" />
+
+      <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+
+			<node pkg="ard_asserv"    name="asserv_marker_server"  type="marker_server_node.py" />
+      <node pkg="navigator"    name="navigator_marker_server"  type="marker_server_node.py" />
+
+	<include file="$(find definitions)/def/robots/$(arg robot)/specific.launch"/>
+</launch>

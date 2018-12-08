@@ -20,11 +20,11 @@ void on_set_strategies(const drivers_ard_hmi::SetStrategies& msg){
 }
 
 // Subscriber example
-ros::Subscriber<drivers_ard_hmi::SetStrategies> sub_strats("/feedback/ard_hmi/set_strategies", &on_set_strategies);
+ros::Subscriber<drivers_ard_hmi::SetStrategies> sub_strats("feedback/ard_hmi/set_strategies", &on_set_strategies);
 
 // Publisher example
 drivers_ard_hmi::HMIEvent hmi_event_msg;
-ros::Publisher hmi_event_pub("/feedback/ard_hmi/hmi_event", &hmi_event_msg);
+ros::Publisher hmi_event_pub("feedback/ard_hmi/hmi_event", &hmi_event_msg);
 
 
 void setup() {

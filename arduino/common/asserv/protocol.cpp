@@ -101,9 +101,14 @@ void parseAndExecuteOrder(const String& order) {
             break;
         case GOTO:
         {
-            int x, y, direction;
+            int x, y, direction, slow_go;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i", &x, &y, &direction);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &direction, &slow_go);
+            if(slow_go) 
+                ControlSetStop(SLOWGO_BIT);    
+            else
+                ControlUnsetStop(SLOWGO_BIT);    
+
             goal_data_t goal;
             goal.pos_data = {x, y, direction};
             FifoPushGoal(order_id, TYPE_POS, goal);
@@ -111,10 +116,15 @@ void parseAndExecuteOrder(const String& order) {
         }
         case GOTOA:
         {
-            int x, y, a_int, direction;
+            int x, y, a_int, direction, slow_go;
             float a;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction, &slow_go);
+            if(slow_go) 
+                ControlSetStop(SLOWGO_BIT);    
+            else
+                ControlUnsetStop(SLOWGO_BIT);   
+
             a = a_int / (float)FLOAT_PRECISION;
             goal_data_t goal;
             goal.pos_data = {x, y, direction};
@@ -147,10 +157,10 @@ void parseAndExecuteOrder(const String& order) {
         }
         case PWM:
         {
-            int l, r, t;
-            sscanf(receivedOrderPtr, "%i;%i;%i", &l, &r, &t);
+            int l, r, t, s; //s = autoStop
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &l, &r, &t, &s);
             goal_data_t goal;
-            goal.pwm_data = {(float)t, l, r};
+            goal.pwm_data = {(float)t, l, r, s};
             FifoPushGoal(order_id, TYPE_PWM, goal);
             break;
         }
@@ -200,11 +210,19 @@ void parseAndExecuteOrder(const String& order) {
             break;
         case SET_POS:
         {
-            int x, y, a_int;
-            float angle;
-            sscanf(receivedOrderPtr, "%i;%i;%i;", &x, &y, &a_int);
-            angle = a_int / (float)FLOAT_PRECISION;
-            RobotStateSetPos(x, y, angle);
+            int x, y, a_int, mode;
+            float a;
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &mode);
+            a = a_int / (float)FLOAT_PRECISION;
+            if(mode){
+                if(!(mode & BIT_MODE_A))
+                    a = current_pos.angle;
+                if(!(mode & BIT_MODE_X))
+                    x = round(current_pos.x); 
+                if(!(mode & BIT_MODE_Y))
+                    y = round(current_pos.y);
+            }
+            RobotStateSetPos(x, y, a);
             SerialSender::SerialSend(SERIAL_INFO, "%d;%i;", order_id, a_int);
             break;
         }

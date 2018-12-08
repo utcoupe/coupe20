@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>collisions</name>
+    <version>1.1.0</version>
+    <description>The collisions package</description>
+    <license>GLPv3</license>
+    <author email="pielaclau@gmail.com">MadeInPierre</author>
+    <author email="mindstan@hotmail.fr">Mindstan</author>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>rospy</depend>
+    <depend>roscpp</depend>
+    <depend>roslib</depend>
+    <depend>static_map</depend>
+    <depend>std_msgs</depend>
+    <depend>message_generation</depend>
+    <depend>geometry_msgs</depend>
+    <depend>game_manager</depend>
+    <depend>navigator</depend>
+    <depend>ard_asserv</depend>
+    <depend>objects_classifier</depend>
+    <depend>tf2</depend>
+    <depend>tf2_ros</depend>
+    <depend>tf</depend>
+    <depend>visualization_msgs</depend>
+    <exec_depend>message_runtime</exec_depend>
+    <export>
+    </export>
+</package>

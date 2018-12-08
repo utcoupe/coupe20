@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>driver_teraranger</name>
+    <version>0.0.1</version>
+    <description>
+        Teraranger driver interface.
+    </description>
+    <license>GPLv3</license>
+    <author email="tomesman@gmail.com">Thomas Fuhrmann</author>
+    <maintainer email="utcoupe@assos.utc.fr">UTCoupe</maintainer>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>rospy</depend>
+    <depend>sensor_msgs</depend>>
+    <depend>port_finder</depend>>
+    <depend>ard_others</depend>>
+    <depend>game_manager</depend>>
+    <export>
+    </export>
+</package>

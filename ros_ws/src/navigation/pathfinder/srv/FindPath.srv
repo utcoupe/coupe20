@@ -1,0 +1,10 @@
+# Takes 2 points and returns a status and a vector of points
+geometry_msgs/Pose2D posStart
+geometry_msgs/Pose2D posEnd
+---
+uint8 PATH_FOUND = 0
+uint8 NO_PATH_FOUND = 1
+uint8 START_END_POS_NOT_VALID = 2
+uint8 return_code
+
+geometry_msgs/Pose2D[] path

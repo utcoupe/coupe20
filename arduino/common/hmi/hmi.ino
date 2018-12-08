@@ -69,12 +69,15 @@ float elapsed_time = -1;
 bool _is_arming = false;
 bool _is_launching = false;
 
+bool _is_emergency = true  ; 
+
 //Input
 #define PIN_BTN_VCC_1 BTN_L2
 #define PIN_BTN_VCC_2 BTN_L1
 #define PIN_BTN_IN_1  BTN_R1
 #define PIN_BTN_IN_2  BTN_R2
 #define PIN_JACK      JACK
+#define PIN_EMERGENCY PIN_EMERGENCY 
 
 bool _prev_up_state    = false;
 bool _prev_down_state  = false;
@@ -109,7 +112,7 @@ void check_input() {
     digitalWrite(PIN_BTN_VCC_1, LOW);
     digitalWrite(PIN_BTN_VCC_2, HIGH);
     delay(2);
-    left_pressed = digitalRead(PIN_BTN_IN_1) && !_prev_left_state;
+    left_pressed = digitalRead(PIN_BTN_IN_1) && !_prev_left_state;   //compare the one now and the one before 
     _prev_left_state = digitalRead(PIN_BTN_IN_1);
     right_pressed = digitalRead(PIN_BTN_IN_2) && !_prev_right_state;
     _prev_right_state = digitalRead(PIN_BTN_IN_2);
@@ -240,14 +243,42 @@ void drawHelloFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, 
     if(init_status == -1) drawBigCentralMessageComponent(display, state, x, y, "WAIT");
     else drawBigCentralMessageComponent(display, state, x, y, "READY");
 
-    if(game_status == 0 && init_status != 0 && strats_count && teams_count)
-        ui.nextFrame();
-    if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
-        ui.nextFrame();
+    if (digitalread(PIN_EMERGENCY) == 0 ){  
+        _is_emergency = true ; 
+        ui.nextFrame() ; 
+    }
+    else {   //if emergency off skip the frame of check_emergency 
+        _is_emergency = false ; 
+        if(game_status == 0 && init_status != 0 && strats_count && teams_count)
+            ui.switchToFrame(uint8_t 2);
+            //ui.nextFrame();
+        if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
+            ui.switchToFrame(uint8_t 2);
+            //ui.nextFrame();
+    }
+
+}
+
+void check_emergency (OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y){ // make sure the emergency bottom isn't put on 
+    current_frame = 1 ; 
+    drawFrameTitleComponent(display, state, x, y, "Emergency check ");
+
+    if ( _is_emergency ){  // pass the frame only if emergency off 
+        if (digitalread(PIN_EMERGENCY) == 1 ){  // 1 if their is 5V or 0 if not 
+            _is_emergency = false ; 
+            if(game_status == 0 && init_status != 0 && strats_count && teams_count)
+                ui.nextFrame();
+            if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
+                ui.nextFrame();
+        }
+        else {
+           drawStringMaxWidth(int16_t x, int16_t y, int16_t 20 , "Untrigger the emergency");
+        }
+    }
 }
 
 void drawTeamFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 1;
+    current_frame = 2;
     drawFrameTitleComponent(display, state, x, y, "Team select");
     drawMCQComponent(display, state, x, y, teams, teams_count);
 
@@ -270,7 +301,7 @@ void drawTeamFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, i
 }
 
 void drawStrategyFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 2;
+    current_frame = 3;
     drawFrameTitleComponent(display, state, x, y, "Strat select");
     drawMCQComponent(display, state, x, y, strats, strats_count);
 
@@ -293,7 +324,7 @@ void drawStrategyFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t 
 }
 
 void drawArmFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 3;
+    current_frame = 4;
     drawFrameTitleComponent(display, state, x, y, "Calibration");
     if(!_is_arming) drawBigCentralMessageComponent(display, state, x, y, "ARM?");
     else drawBigCentralMessageComponent(display, state, x, y, "ARMING...");
@@ -314,7 +345,7 @@ void drawArmFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, in
 }
 
 void drawJackFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 4;
+    current_frame = 5;
     drawFrameTitleComponent(display, state, x, y, "Jack");
     if(!_is_launching) {
         if(_prev_jack_state) drawBigCentralMessageComponent(display, state, x, y, "JACK?");
@@ -338,7 +369,7 @@ void drawJackFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, i
 }
 
 void drawInGameFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 5;
+    current_frame = 6;
     ui.disableIndicator();
     drawFrameTitleComponent(display, state, x, y, "In Game...");
     
@@ -356,8 +387,8 @@ void drawInGameFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x,
 }
 
 // frames are the single views that slide in
-FrameCallback frames[] = {drawHelloFrame, drawTeamFrame, drawStrategyFrame, drawArmFrame, drawJackFrame, drawInGameFrame};
-int frameCount = 6;
+FrameCallback frames[] = {drawHelloFrame, check_emergency , drawTeamFrame, drawStrategyFrame, drawArmFrame, drawJackFrame, drawInGameFrame};
+int frameCount = 7;
 
 void setup() {
     pinMode(PIN_BTN_VCC_1, OUTPUT); // init input buttons

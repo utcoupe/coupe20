@@ -1,3 +1,6 @@
 [submodule "libs/json"]
 	path = libs/json
 	url = https://github.com/nlohmann/json.git
+[submodule "libs/stm32-cmake"]
+	path = libs/stm32-cmake
+	url = https://github.com/ObKo/stm32-cmake

@@ -28,6 +28,24 @@ function install_default_dep () {
     fi
 }
 
+function install_stlink_utils () {
+    green_echo "Installing stlink v2.1..."
+    rm -rf $TMP_INSTALL
+    mkdir -p $TMP_INSTALL
+    cd $TMP_INSTALL
+    git clone https://github.com/texane/stlink
+    cd stlink
+    make realease && cd build/Release && sudo make install
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    
+    # Specific to Ubuntu
+    green_echo "Updating ld path..."
+    echo "/usr/local/lib" > libstlink.conf
+    sudo mv libstlink.conf /etc/ld.so.conf.d/
+    sudo ldconfig
+}
+
 install_default_dep
 # TODO install stm32f3xx lib
-# TODO update usb rules
+install_stlink_utils

@@ -13,11 +13,11 @@ function compile_program() {
 	if [ ! "${PWD##*/}" = "build" ]; then
 		printf "Not in the right place for build..."
 	fi
-	make
+	make && make "${PROJECT_NAME}.hex"
 }
 
 function upload_program() {
-    echo "Upload not implemented yet..."
+    st-flash --format ihex write "${PROJECT_NAME}.hex"
 }
 
 generate_cmake

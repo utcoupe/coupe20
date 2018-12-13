@@ -9,7 +9,7 @@ set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.10.0/")
 SET(CMAKE_TOOLCHAIN_FILE "$ENV{UTCOUPE_WORKSPACE}/libs/stm32-cmake/cmake/gcc_stm32.cmake")
 
 
-project(stm32_minimum_project)
+project(stm32_min_project)
 cmake_minimum_required(VERSION 2.8)
 
 enable_language(ASM)

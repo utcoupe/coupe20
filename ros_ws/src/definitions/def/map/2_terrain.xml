@@ -1,5 +1,11 @@
 <terrain type="rect" w="3" h="2">
     <position x="0.022" y="0.022"/>
+    <marker type="mesh" ns="table" z="0">
+        <scale x="0.001" y="0.001" z="0.001"/>
+        <orientation x="1.57079632679" y="0" z="0"/>
+        <color r="0.8" g="0.8" b="0.8" a="1"/>
+        <mesh_path>package://definitions/def/map/robotcities2018_map.stl</mesh_path>
+    </marker>
 
     <layer name="ground">
         <wall name="wall_top">

@@ -13,6 +13,7 @@ class Color():
         self.B = float(xml.get("b"))
         self.A = float(xml.get("a"))
 
+
 class Position2D(object):
     def __init__(self, xml, validate=True):
         self.X = self.Y = self.A = 0.0
@@ -33,6 +34,7 @@ class Position2D(object):
             self.A = math.pi - self.A
         return True
 
+
 class Shape2D(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "type")
@@ -51,31 +53,15 @@ class Shape2D(object):
             raise ValueError("ERROR: Shape type '{}' not supported.".format(self.Type))
 
 
-class MarkerRViz(object):
-    def __init__(self, xml, shape = None, color = None):
-        LoadingHelpers.checkKeysExist(xml, "ns", "orientation")
+class Marker(object):
+    def __init__(self, xml, shape, color=None):
+        LoadingHelpers.checkAttribExist(xml, "type", "ns", "z")
+        LoadingHelpers.checkChildExist(xml, "scale", "orientation")
 
-        # Autofill based on other info
-        if shape is not None:
-            LoadingHelpers.checkKeysExist(xml, "z_scale")
-            if shape.Dict["type"] == "circle":
-                LoadingHelpers.checkKeysExist(xml, "type")
-                xml["scale"] = (float(shape.Dict["radius"]) * 2.0, float(shape.Dict["radius"]) * 2.0, xml["z_scale"])
-            elif shape.Dict["type"] == "rect":
-                xml["type"] = "cube"
-                xml["scale"] = (float(shape.Dict["width"]), float(shape.Dict["height"]), xml["z_scale"])
-            else:
-                raise KeyError("Marker could not be autofilled with shape '{}', not implemented.".format(shape.Dict["type"]))
-        else:
-            LoadingHelpers.checkKeysExist(xml, "scale")
+        self.Type      = xml.get("type")
+        self.Namespace = xml.get("ns")
+        self.Z         = float(xml.get("z"))
 
-        if color is not None:
-            xml["color"] = color
-        else:
-            LoadingHelpers.checkKeysExist(xml, "color")
-            xml["color"] = [c for c in map.Map.Colors if c.Dict["name"] == xml["color"]][0]
-
-        super(MarkerRViz, self).__init__(xml)
-
-    def merge(self, other):
-        pass
+        LoadingHelpers.checkAttribExist(xml.find("scale"), "x", "y", "z")
+        self.Scale = (xml.find("scale").get("x"), xml.find("scale").get("z"), xml.find("scale").get("z"))
+        self.Color = color

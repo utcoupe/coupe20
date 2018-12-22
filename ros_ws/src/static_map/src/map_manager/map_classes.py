@@ -2,17 +2,19 @@
 import copy, json
 import rospy
 from map_loader import LoadingHelpers
-from map_attributes import Position2D, Shape2D, Color, MarkerRViz
+from map_attributes import Position2D, Shape2D, Color, Marker
 import map
 
 
 class Terrain(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "type")
-        LoadingHelpers.checkChildExist(xml, "position")
+        LoadingHelpers.checkChildExist(xml, "position", "marker")
         self.Name = "terrain"
         self.Position = Position2D(xml.find("position"))
         self.Shape = Shape2D(xml)
+        self.Marker = Marker(xml.find("marker"), self.Shape)
+        
         self.Layers = [Layer(l) for l in xml.findall("layer")]
 
         # Copy walls from other layers (includes)
@@ -36,7 +38,7 @@ class Wall(object):
     def __init__(self, xml):
         LoadingHelpers.checkAttribExist(xml, "name")
         LoadingHelpers.checkChildExist(xml, "position", "shape")
-        self.Name = xml.get("name")
+        self.Name     = xml.get("name")
         self.Position = Position2D(xml.find("position"))
         self.Shape    = Shape2D(xml.find("shape"))
 
@@ -112,7 +114,6 @@ class Object(object):
         self.Position = Position2D(xml.find("position")) if xml.find("position") is not None else None
         self.Shape    = Shape2D(xml.find("shape"))       if xml.find("shape")    is not None else None
         self.Labels   = [l.get("name") for l in xml.find("labels").findall("label")] if xml.find("labels") else []
-        self.Marker   = None #TODO Markers Position2D(xml.find("position")) if xml.find("position") else None
 
         self.Color = None
         if xml.find("color") is not None:
@@ -123,19 +124,20 @@ class Object(object):
             else:
                 self.Color = Color(xml.find("color"))
 
+        self.Marker = Marker(xml.find("marker"), self.Shape, self.Color) if xml.find("marker") is not None else None
+
         if xml.get("class"):
             self.merge(copy.deepcopy([c for c in obj_classes if c.Name == xml.get("class")][0]))
         
-        if check_valid is True: # disabled when creating a class
-            self.check_valid()
+        if check_valid is True:
+            self.check_valid() # disabled when manually creating a class through code
 
     def merge(self, other): #self is prioritary
         self.Position = self.Position if self.Position is not None else other.Position
         self.Shape    = self.Shape    if self.Shape    is not None else other.Shape
         self.Color    = self.Color    if self.Color    is not None else other.Color
         self.Labels += other.Labels
-        
-        #self.Marker.merge(other.Marker) #TODO Markers
+        self.Marker    = self.Marker  if self.Marker   is not None else other.Marker
     
     def check_valid(self): # Checks if all values are not None (in case of class merges)
         if None in [self.Position, self.Shape]:

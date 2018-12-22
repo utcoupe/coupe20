@@ -6,10 +6,11 @@ from visualization_msgs.msg import Marker
 
 
 class MarkersPublisher():
+    MARKERS_TOPIC = "/visualization_markers/world"
+
     def __init__(self):
         self._prev_num_connections = 0
-        self.MARKERS_TOPIC = "/visualization_markers/world"
-        self._pub = rospy.Publisher(self.MARKERS_TOPIC, Marker, queue_size=10)
+        self._pub = rospy.Publisher(MarkersPublisher.MARKERS_TOPIC, Marker, queue_size=10)
 
     def _is_connected(self):
         return bool(self._pub.get_num_connections())
@@ -25,7 +26,6 @@ class MarkersPublisher():
         if (self._is_connected() and self._connections_has_changed()) or world.is_dirty(): # Draw if new connection or new content
             self._publish_table(world)                      # Table STL without colors
             self._publish_robot_stl(world)                  # Simple rectangle representing the robot shape.
-            self._publish_zones(world)                      # Departure areas
             self._publish_waypoints(world)                  # Navigation positions
             self._publish_objects(world.get("/objects/^"))  # game elements (balls, cubes...)
 
@@ -48,10 +48,6 @@ class MarkersPublisher():
             "type": "fixed"
         })
         self._publish_marker(0, pos, world.get("/entities/{}/_marker/^".format(rospy.get_param("/robot"))))
-
-    def _publish_zones(self, world):
-        for i, z in enumerate(world.get("/zones/^").toList()):
-            self._publish_marker(i, z.get("position/^"), z.get("_marker/^"))
 
     def _publish_waypoints(self, world):
         i = 0

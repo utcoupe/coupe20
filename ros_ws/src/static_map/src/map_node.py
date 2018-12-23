@@ -15,7 +15,7 @@ class MapNode():
         map_manager.MapManager.load()
 
         # Starting and publishing the table STL to RViz
-        # self.markers = MarkersPublisher()
+        self.markers = MarkersPublisher()
 
         # Generate static occupancy images for pathfinder, etc.
         occupancy = OccupancyGenerator()
@@ -34,7 +34,7 @@ class MapNode():
         while not rospy.is_shutdown():
             if rospy.has_param("/current_team"):
                 map_manager.MapManager.swap_team(rospy.get_param("/current_team"))
-            # self.markers.updateMarkers(map_manager.Map)
+            self.markers.updateMarkers(map_manager.MapDict)
             r.sleep()
 
 

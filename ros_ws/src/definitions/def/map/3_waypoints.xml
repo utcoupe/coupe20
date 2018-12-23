@@ -1,3 +1,7 @@
 <waypoints>
-    <waypoint name="spawn" x="0.5" y="0.5" a="0" frame_id="map"/>
+    <waypoint name="spawn" x="0.25" y="1.55" a="0"/>
+
+    <waypoint name="small_distrib" x="0.3" y="0.3" a="3.141592"/>
+
+    <waypoint name="big_distrib_1" x="1" y="0.7"/>
 </waypoints>

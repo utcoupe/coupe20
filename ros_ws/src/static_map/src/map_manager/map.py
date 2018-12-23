@@ -4,18 +4,18 @@ import rospy
 from map_loader import MapLoader, LoadingHelpers
 from map_bases import RequestPath
 from map_attributes import Color
-from map_classes import Terrain, Waypoint, Container, Object, Class
+from map_classes import Robot, Terrain, Waypoint, Container, Object, Class
 from map_teams import Team
 
 class MapDict():
+    Dirty = True # Whether a service changed the dict since the last RViz Marker publish.
+
     Terrain   = None # future Terrain instance
     Objects   = None # future Container instance
     Waypoints = []   # List of Waypoint instances
     Robot     = None # future Container instance
 
 class MapManager():
-    Dirty = True # Whether a service changed the dict since the last RViz Marker publish.
-
     # Internal global variables
     Colors = []
     Teams = []
@@ -58,8 +58,7 @@ class MapManager():
         xml_objects.attrib["name"] = "map"
         MapDict.Objects   = Container(xml_objects, obj_classes)
         MapDict.Waypoints = [Waypoint(w) for w in xml_waypoints.findall("waypoint")]
-        xml_robot.attrib["name"] = "robot"
-        MapDict.Robot     = Container(xml_robot, obj_classes)
+        MapDict.Robot     = Robot(xml_robot, obj_classes)
 
         rospy.loginfo("Loaded map in {0:.2f}ms.".format(time.time() * 1000 - starttime))
 

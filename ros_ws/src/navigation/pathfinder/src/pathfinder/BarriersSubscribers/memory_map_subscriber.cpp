@@ -1,12 +1,11 @@
 #include "pathfinder/BarriersSubscribers/static_map_subscriber.h"
 
-#include "static_map/MapGetObjects.h"
+#include "static_map/MapGetContainer.h"
 
 #include <cmath>
 
 using namespace Memory;
 using namespace std;
-using json = nlohmann::json;
 
 inline double getNorme2Distance(const double& x1, const double& y1, const double& x2, const double& y2)
 {
@@ -27,7 +26,7 @@ bool MapSubscriber::hasBarrier(const geometry_msgs::Pose2D& pos)
 
 void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic)
 {
-    _srvGetMapObjects = nodeHandle.serviceClient<static_map::MapGetObjects>(topic);
+    _srvGetMapObjects = nodeHandle.serviceClient<static_map::MapGetContainer>(topic);
 }
 
 void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& heightGrid)
@@ -42,34 +41,43 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
             for (unsigned column = 0; column < _occupancyGrid.front().size(); column++)
                 _occupancyGrid[row][column] = false;
 
-    static_map::MapGetObjects srv;
-    srv.request.collisions_only = true;
+    static_map::MapGetContainer srv;
+    srv.request.path = "map";
+    srv.request.include_subcontainers = true;
     if (!_srvGetMapObjects.call(srv) || !srv.response.success)
     {
-        ROS_ERROR("Error when trying to call static_map/MapGetObjects");
+        ROS_ERROR("Error when trying to call static_map/MapGetContainer");
         return;
     }
-    _lastReceivedJsons.clear();
+    _lastReceivedContainer = srv.response.container;
     
-    for (auto&& object : srv.response.objects)
+    for (auto&& mapObject : _lastReceivedContainer.objects)
     {
-        _lastReceivedJsons.push_back(json::parse(object));
-//         ROS_DEBUG_STREAM("Received from map: " << _lastReceivedJsons.back().dump(4));
-        string shapeType = _lastReceivedJsons.back()["shape"]["type"];
-        if (shapeType == "rect")
-            drawRectangle(_lastReceivedJsons.back());
-        else if (shapeType == "circle")
-            drawCircle(_lastReceivedJsons.back());
+        switch (mapObject.shape_type) {
+            case static_map::MapObject::SHAPE_RECT:
+                drawRectangle(mapObject);
+                break;
+            case static_map::MapObject::SHAPE_CIRCLE:
+                drawCircle(mapObject);
+                break;
+            
+            case static_map::MapObject::SHAPE_POINT:
+                ROS_WARN_ONCE("[MapSubscriber::fetchOccupancyData] Point shape not supported!");
+                break;
+            
+            default:
+                ROS_ERROR("[MapSubscriber::fetchOccupancyData] Unknown shape!");
+        }
     }
 }
 
-void Memory::MapSubscriber::drawRectangle(const nlohmann::json& jsonRect)
+void Memory::MapSubscriber::drawRectangle(const static_map::MapObject& objectRect)
 {
     double x, y, w, h;
-    x = jsonRect["position"]["x"];
-    y = jsonRect["position"]["y"];
-    w = jsonRect["shape"]["width"];
-    h = jsonRect["shape"]["height"];
+    x = objectRect.pose.x;
+    y = objectRect.pose.y;
+    w = objectRect.width;
+    h = objectRect.height;
     
     auto pos = _convertor->fromRosToMapPos(make_pair(x, y));
     w = _convertor->fromRosToMapDistance(w);
@@ -87,12 +95,12 @@ void Memory::MapSubscriber::drawRectangle(const nlohmann::json& jsonRect)
             _occupancyGrid[row][column] = true;
 }
 
-void Memory::MapSubscriber::drawCircle(const nlohmann::json& jsonCircle)
+void Memory::MapSubscriber::drawCircle(const static_map::MapObject& objectCircle)
 {
     double x, y, r;
-    x = jsonCircle["position"]["x"];
-    y = jsonCircle["position"]["y"];
-    r = jsonCircle["shape"]["radius"];
+    x = objectCircle.pose.x;
+    y = objectCircle.pose.y;
+    r = objectCircle.radius;
     
     auto pos = _convertor->fromRosToMapPos(make_pair(x, y));
     r = _convertor->fromRosToMapDistance(r);

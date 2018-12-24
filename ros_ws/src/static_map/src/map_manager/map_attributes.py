@@ -11,6 +11,7 @@ class Color():
         base = [c for c in map.MapManager.Colors if c.Name == xml.get("name")]
         if base:
             color = copy.deepcopy(base[0])
+            self.Name = color.Name
             self.R = color.R
             self.G = color.G
             self.B = color.B

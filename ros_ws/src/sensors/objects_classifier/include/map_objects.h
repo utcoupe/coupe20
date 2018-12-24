@@ -9,10 +9,6 @@
 
 #include "shapes.h"
 
-
-const std::string MAP_GET_SERVICE = "static_map/get";
-const std::string MAP_OBJECTS = "/terrain/walls/layer_belt/*";
-
 class MapObjects {
 protected:
     std::vector<std::shared_ptr<const Shape>> map_shapes_;

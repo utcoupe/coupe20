@@ -10,7 +10,7 @@ from game_manager import StatusServices
 class MapNode():
     def __init__(self):
         rospy.init_node("map", log_level=rospy.INFO)
-        rospy.logdebug("Started memory/map node.")
+        rospy.logdebug("Started static_map node.")
 
         map_manager.MapManager.load()
 
@@ -22,7 +22,7 @@ class MapNode():
 
         # Starting service handlers (Get, Set, Transfer, GetOccupancy)
         map_communication.MapServices(occupancy)
-        rospy.logdebug("[memory/map] Map request servers ready.")
+        rospy.logdebug("[static_map] Map request servers ready.")
 
         # Tell ai/game_manager the node initialized successfuly.
         StatusServices("memory", "map").ready(True)

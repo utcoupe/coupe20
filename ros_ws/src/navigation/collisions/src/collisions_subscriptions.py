@@ -39,7 +39,7 @@ class CollisionsSubscriptions(object):
     def create_robot(self):
         try: # Getting the robot shape and creating the robot instance
             robot_type = rospy.get_param("/robot").lower()
-            map_get_client = rospy.ServiceProxy("memory/map/get", MapGet)
+            map_get_client = rospy.ServiceProxy("static_map/get", MapGet)
             map_get_client.wait_for_service(2.0)
             shape = json.loads(map_get_client("/entities/" + robot_type + "/shape/*").response)
             if not shape["type"] == "rect":

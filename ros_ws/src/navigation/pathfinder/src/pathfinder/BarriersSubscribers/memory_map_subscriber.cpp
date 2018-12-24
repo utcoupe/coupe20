@@ -46,7 +46,7 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
     srv.request.include_subcontainers = true;
     if (!_srvGetMapObjects.call(srv) || !srv.response.success)
     {
-        ROS_ERROR("Error when trying to call static_map/MapGetContainer");
+        ROS_ERROR("Error when trying to call static_map/get_container");
         return;
     }
     _lastReceivedContainer = srv.response.container;

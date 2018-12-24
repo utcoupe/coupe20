@@ -6,7 +6,7 @@
 #include "map_objects.h"
 
 
-const std::string MAP_GET_SERVICE = "memory/map/get";
+const std::string MAP_GET_SERVICE = "static_map/get_container";
 const std::string MAP_OBJECTS = "map";
 
 void MapObjects::fetch_map_objects() {

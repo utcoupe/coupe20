@@ -17,6 +17,7 @@ void MapObjects::fetch_map_objects() {
     static_map::MapGetContainer srv;
 
     srv.request.path = MAP_OBJECTS;
+    srv.request.include_subcontainers = true;
 
     if (client.call(srv) && srv.response.success) {
         const auto& mapObjects = srv.response.container.objects;

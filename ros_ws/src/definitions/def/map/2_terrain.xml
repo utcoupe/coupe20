@@ -9,31 +9,28 @@
 
     <layer name="ground">
         <wall name="wall_top">
-            <position x="1" y="1" a="1"/> 
-            <shape type="rect" w="1" h="1" a="1"/>
+            <position x="1.5" y="2.011"/> 
+            <shape type="rect" w="3.044" h="0.022"/>
         </wall>
          
         <wall name="wall_bottom">
-            <position x="1" y="1" a="1"/>
-            <shape type="rect" w="1" h="1" a="1"/>
+            <position x="1.5" y="-0.011"/> 
+            <shape type="rect" w="3.044" h="0.022"/>
         </wall>
         
         <wall name="wall_left">
-            <position x="1" y="1" a="1"/> 
-            <shape type="rect" w="1" h="1"/> 
+            <position x="-0.011" y="1"/> 
+            <shape type="rect" w="0.022" h="2"/>
         </wall> 
         
         <wall name="wall_right">
-            <position x="1" y="1" a="1"/>
-            <shape type="rect" w="1" h="1" a="1"/>
+            <position x="3.011" y="1"/> 
+            <shape type="rect" w="0.022" h="2"/>
         </wall> 
     </layer>
 
     <layer name="belt">
-        <wall name="test">
-            <position x="333" y="444" a="555"/>
-            <shape type="circle" r="666"/>
-        </wall>
+        
     </layer>
 
     <layer name="pathfinder">

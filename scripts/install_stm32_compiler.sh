@@ -7,12 +7,12 @@ function green_echo() {
 }
 
 function update_dependancies () {
-    green_echo "Manualy updating dependancies since apt version is wrong"
+    green_echo "Manualy updating dependencies since apt version is wrong"
     mkdir -p $TMP_INSTALL
     cd $TMP_INSTALL
     wget "http://fr.archive.ubuntu.com/ubuntu/pool/universe/n/newlib/libnewlib-arm-none-eabi_3.0.0.20180802-2_all.deb"
     wget "http://fr.archive.ubuntu.com/ubuntu/pool/universe/n/newlib/libnewlib-dev_3.0.0.20180802-2_all.deb"
-    wget "http://fr.archive.ubuntu.com/ubuntu/pool/universe/libs/libstdc++-arm-none-eabi/libstdc++-arm-none-eabi-newlib_7-2018-q2-3+11_all.deb"
+    wget "http://archive.ubuntu.com/ubuntu/pool/universe/libs/libstdc++-arm-none-eabi/libstdc++-arm-none-eabi-newlib_6.3.1+svn253039-1+10_all.deb"
     sudo dpkg -i *.deb
 }
 

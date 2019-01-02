@@ -16,7 +16,7 @@ enable_language(ASM)
 
 FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
-FIND_PACKAGE(STM32HAL COMPONENTS gpio uart dma rcc flash pwr cortex i2c REQUIRED)
+FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc flash pwr cortex i2c can REQUIRED)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}

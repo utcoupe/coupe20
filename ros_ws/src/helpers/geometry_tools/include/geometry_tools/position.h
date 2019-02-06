@@ -16,20 +16,24 @@ public:
         _a(angle)
     {}
     
+    constexpr Position(const Position& other) noexcept:
+        Position(other.toPoint(), other.getAngle())
+    {}
+    
     constexpr Point toPoint() const noexcept {
         return {_x, _y};
     }
     
     // Operators
-    constexpr bool operator== (const Position& other) const noexcept {
+    constexpr bool operator== (Position other) const noexcept {
         return this->toPoint() == other.toPoint() && _a == other.getAngle();
     }
     
-    constexpr bool operator!= (const Position& other) const noexcept{
+    constexpr bool operator!= (Position other) const noexcept{
         return !this->operator==(other);
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Position& pos);
+    friend std::ostream& operator<<(std::ostream& os, Position pos);
     
     // Getters & setters
     constexpr double getAngle() const           noexcept { return _a; }

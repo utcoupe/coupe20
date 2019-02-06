@@ -47,12 +47,12 @@ class NavigatorStatuses(object):
 class NavigatorNode(object):
     """
     The NavigatorNode class is the link between the AI, the Pathfinder and the Asserv.
-    This node gets a movement order on ROS service. It can accept many at a time but is not design to.
+    This node gets a movement order on ROS service. It can accept many at a time but is not designed to.
     The node will wait for the Pathfinder and the Asserv to advertize their services and actions before starting itself.
     """
     def __init__ (self):
         """
-        Initialize the node. Does not start it.
+        Initializes the node. Does not start it.
         """
 
         self._actionSrv_Dogoto = ""
@@ -108,7 +108,8 @@ class NavigatorNode(object):
             rospy.loginfo("Collisions disabled")
         
         disablePathfinder = handledGoal.get_goal().disable_pathfinder
-        self._executeGoto(posStart, posEnd, hasAngle, handledGoal, disablePathfinder)
+        slowGo = handledGoal.get_goal().slow_go
+        self._executeGoto(posStart, posEnd, hasAngle, handledGoal, disablePathfinder, slowGo)
 
     def _handleDoGotoWaypointRequest(self, handledGoal):
         rospy.logdebug("request waypoint")
@@ -118,10 +119,11 @@ class NavigatorNode(object):
         if handledGoal.get_goal().mode == handledGoal.get_goal().GOTOA:
             hasAngle = True
         disablePathfinder = handledGoal.get_goal().disable_pathfinder
-        self._executeGoto(startPos, endPos, hasAngle, handledGoal, disablePathfinder)
+        slowGo = handledGoal.get_goal().slow_go
+        self._executeGoto(startPos, endPos, hasAngle, handledGoal, disablePathfinder, slowGo)
 
 
-    def _executeGoto (self, startPos, endPos, hasAngle, handledGoal, disablePathfinder):
+    def _executeGoto (self, startPos, endPos, hasAngle, handledGoal, disablePathfinder, slowGo):
         self._currentStatus = NavigatorStatuses.NAV_NAVIGATING
         self._collisionsClient.setEnabled(not handledGoal.get_goal().disable_collisions)
         handledGoal.set_accepted()
@@ -133,11 +135,13 @@ class NavigatorNode(object):
         
         if disablePathfinder:
             rospy.loginfo("Pathfinder will NOT be used.")
+        if slowGo:
+            rospy.loginfo("SlowGo activated.")
 
         self._currentGoal = handledGoal
         self._idCurrentTry = 1
         rospy.loginfo("Try 1")
-        self._currentPlan.newPlan(startPos, endPos, hasAngle, handledGoal.get_goal().direction, disablePathfinder)
+        self._currentPlan.newPlan(startPos, endPos, hasAngle, handledGoal.get_goal().direction, disablePathfinder, slowGo)
 
     def _callbackEmergencyStop (self):
         """

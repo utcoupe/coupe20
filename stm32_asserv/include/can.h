@@ -4,7 +4,7 @@
 /** Includes **/
 /**************/
 #include "stm32f3xx_hal.h"
-#include "stm32f3xx_hal_can.h"
+#include "Legacy/stm32f3xx_hal_can.h"
 #include "QueueList.h"
 /** Defines **/
 /*************/

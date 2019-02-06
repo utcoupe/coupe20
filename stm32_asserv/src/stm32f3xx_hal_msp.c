@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * File Name          : stm32f3xx_hal_msp.c
@@ -37,44 +36,10 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-/* USER CODE BEGIN Includes */
+#include "stm32f3xx_hal.h"
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
-
-/* USER CODE END TD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN Define */
- 
-/* USER CODE END Define */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN Macro */
-
-/* USER CODE END Macro */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* External functions --------------------------------------------------------*/
-/* USER CODE BEGIN ExternalFunctions */
 extern void _Error_Handler(char *, int);
-/* USER CODE END ExternalFunctions */
-
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
@@ -425,5 +390,13 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

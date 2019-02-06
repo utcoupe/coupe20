@@ -26,11 +26,9 @@ add_compile_options(
     
 )
 
-## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     roslib
-    geometry_msgs
 )
 
 ################################################

@@ -62,17 +62,26 @@ class AsservSimu(AsservAbstract):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
         rospy.spin()
 
-    def goto(self, goal_id, x, y, direction):
+    def apply_slow_go(self, slow_go=False):
+        if slow_go : 
+            self.set_max_speed(0.25, 2)
+        else :
+            self.set_max_speed(0.5, 2)
+
+    def goto(self, goal_id, x, y, direction, slow_go):
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ").")
+        self.apply_slow_go(slow_go)
         self._start_trajectory(goal_id, x, y, 0, direction)
         return True
 
-    def gotoa(self, goal_id, x, y, a, direction):
+    def gotoa(self, goal_id, x, y, a, direction, slow_go):
+        self.apply_slow_go(slow_go)
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ", a = " + str(a) + ").")
         self._start_trajectory(goal_id, x, y, a, direction, has_angle=True)
         return True
 
-    def rot(self, goal_id, a, no_modulo):
+    def rot(self, goal_id, a, no_modulo, slow_go):
+        self.apply_slow_go(slow_go)
         #rospy.loginfo("[ASSERV] Accepting goal (a = " + str(a) + ").")
         self._current_pose.theta = a
         self._node.goal_reached(goal_id, True)

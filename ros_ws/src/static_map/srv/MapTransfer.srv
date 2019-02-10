@@ -1,4 +1,11 @@
-string old_path # e.g. /objects/container_grape1
-string new_path # e.g. /entities/robot/containers/container_tower1
+# Works only for object and robot containers
+
+uint8 MODE_OBJECT            = 0 # Move an object in the specified container
+uint8 MODE_CONTAINER         = 1 # Move the entire container inside the new one
+uint8 MODE_CONTAINER_OBJECTS = 2 # Move all objects from a container in the new one (container will not move)
+uint8 mode
+
+string old_path # e.g. /map/container_grape1/object1
+string new_path # e.g. /robot/containers/container_tower1
 ---
 bool success # e.g. result: /entities/robot/containers/container_tower1/container_grape_1/...

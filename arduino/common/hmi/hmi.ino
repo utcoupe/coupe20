@@ -8,13 +8,13 @@ Author: Pierre LACLAU, December 2017, UTCoupe.
 
 // Including rosserial
 #include <ros.h>
-#include <drivers_ard_hmi/SetStrategies.h>  // ROS sets strategy names for displaying on hmi.
-#include <drivers_ard_hmi/SetTeams.h>       // ROS sets teams names for displaying on hmi.
-#include <drivers_ard_hmi/HMIEvent.h>       // HMI sends events : JACK, GAME_STOP
-#include <drivers_ard_hmi/ROSEvent.h>       // ROS sends events : ASK_JACK, GAME_STOP
-#include <ai_game_manager/GameStatus.h>      // ROS sends game and init status (to  determine when RPi ready).
-#include <ai_game_manager/GameTime.h>              // ROS sends the timer status (for the ingame progress bar).
-#include <ai_scheduler/AIScore.h>           // ROS sends the timer status (for the ingame progress bar).
+#include <ard_hmi/SetStrategies.h>  // ROS sets strategy names for displaying on hmi.
+#include <ard_hmi/SetTeams.h>       // ROS sets teams names for displaying on hmi.
+#include <ard_hmi/HMIEvent.h>       // HMI sends events : JACK, GAME_STOP
+#include <ard_hmi/ROSEvent.h>       // ROS sends events : ASK_JACK, GAME_STOP
+#include <game_manager/GameStatus.h>      // ROS sends game and init status (to  determine when RPi ready).
+#include <game_manager/GameTime.h>              // ROS sends the timer status (for the ingame progress bar).
+#include <scheduler/AIScore.h>           // ROS sends the timer status (for the ingame progress bar).
 ros::NodeHandle nh;
 
 //Creating OLED display instances
@@ -77,7 +77,7 @@ bool _is_emergency = true  ;
 #define PIN_BTN_IN_1  BTN_R1
 #define PIN_BTN_IN_2  BTN_R2
 #define PIN_JACK      JACK
-#define PIN_EMERGENCY PIN_EMERGENCY 
+#define PIN_EMERGENCY EMERGENCY 
 
 bool _prev_up_state    = false;
 bool _prev_down_state  = false;
@@ -138,21 +138,21 @@ void update_leds() {
 
 
 //ROS methods
-void on_set_strategies(const drivers_ard_hmi::SetStrategies& msg){
+void on_set_strategies(const ard_hmi::SetStrategies& msg){
   strats_count = msg.strategies_names_length;
   for(int i=0; i < msg.strategies_names_length; i++) {
     strats[i] = msg.strategies_names[i];
   }
 }
 
-void on_set_teams(const drivers_ard_hmi::SetTeams& msg){
+void on_set_teams(const ard_hmi::SetTeams& msg){
   teams_count = msg.teams_names_length;
   for(int i=0; i < msg.teams_names_length; i++) {
     teams[i] = msg.teams_names[i];
   }
 }
 
-void on_game_status(const ai_game_manager::GameStatus& msg){
+void on_game_status(const game_manager::GameStatus& msg){
     game_status = msg.game_status;
     init_status = msg.init_status;
 
@@ -160,30 +160,30 @@ void on_game_status(const ai_game_manager::GameStatus& msg){
         ui.switchToFrame(5);
 }
 
-void on_game_timer(const ai_game_manager::GameTime& msg){
+void on_game_timer(const game_manager::GameTime& msg){
     if(msg.is_active) {
         game_duration = msg.game_time_duration;
         elapsed_time = msg.game_elapsed_time;
     }
 }
 
-void on_score(const ai_scheduler::AIScore& msg){
+void on_score(const scheduler::AIScore& msg){
     current_score = msg.score;
 }
 
-void on_ros_event(const drivers_ard_hmi::ROSEvent& msg){
+void on_ros_event(const ard_hmi::ROSEvent& msg){
     if(msg.event == 0) //asked to respond for JACK
         ui.switchToFrame(4);
 }
 
-ros::Subscriber<drivers_ard_hmi::SetStrategies> sub_strats     ("feedback/ard_hmi/set_strategies", &on_set_strategies);
-ros::Subscriber<drivers_ard_hmi::SetTeams>      sub_teams      ("feedback/ard_hmi/set_teams", &on_set_teams);
-ros::Subscriber<drivers_ard_hmi::ROSEvent>      sub_ros_events ("feedback/ard_hmi/ros_event", &on_ros_event);
-ros::Subscriber<ai_game_manager::GameStatus>    sub_game_status("ai/game_manager/status",     &on_game_status);
-ros::Subscriber<ai_game_manager::GameTime>             sub_game_timer ("ai/game_manager/time",       &on_game_timer);
-ros::Subscriber<ai_scheduler::AIScore>          sub_score      ("ai/scheduler/score",         &on_score);
+ros::Subscriber<ard_hmi::SetStrategies> sub_strats     ("feedback/ard_hmi/set_strategies", &on_set_strategies);
+ros::Subscriber<ard_hmi::SetTeams>      sub_teams      ("feedback/ard_hmi/set_teams", &on_set_teams);
+ros::Subscriber<ard_hmi::ROSEvent>      sub_ros_events ("feedback/ard_hmi/ros_event", &on_ros_event);
+ros::Subscriber<game_manager::GameStatus>    sub_game_status("ai/game_manager/status",     &on_game_status);
+ros::Subscriber<game_manager::GameTime>             sub_game_timer ("ai/game_manager/time",       &on_game_timer);
+ros::Subscriber<scheduler::AIScore>          sub_score      ("ai/scheduler/score",         &on_score);
 
-drivers_ard_hmi::HMIEvent hmi_event_msg;
+ard_hmi::HMIEvent hmi_event_msg;
 ros::Publisher hmi_event_pub("feedback/ard_hmi/hmi_event", &hmi_event_msg);
 
 

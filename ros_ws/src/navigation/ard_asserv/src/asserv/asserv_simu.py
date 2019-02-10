@@ -127,12 +127,19 @@ class AsservSimu(AsservAbstract):
     def set_pid(self, p, i, d):
         return True
 
-    def set_pos(self, x, y, a):
+    def set_pos(self, x, y, a, mode):
         return_value = True
         if self._current_linear_speed > 0 or self._current_angular_speed > 0:
             rospy.logwarn("Setting pose wile moving is not a good idea...")
             return_value = False
         else:
+            if mode == 1 or mode == 2 or mode == 3: #x not used (see SetPos.srv)
+                x = self._current_pose.x
+            if mode == 1 or mode == 4 or mode == 5: #y not used
+                y = self._current_pose.y
+            if mode == 2 or mode == 4 or mode == 6: #a not used
+                a = self._current_pose.theta
+                
             self._current_pose = Pose2D(x, y, a)
         return return_value
 

@@ -1,21 +1,29 @@
 <strategies>
 	<teams>
-		<team name="green"/>
-		<team name="orange"/>
+		<team name="left"/>
+		<team name="right"/>
 	</teams>
 
 	<!-- Real Game strategies -->
-	<strategy name="load_fire_bin_then_load_fire">
+	<strategy name="main_pr">
 		<actionref ref="game_start"/>
 		<tasklist name="Main actions">
-			<tasklist name="Do unicolor distributor">
-				<actionref ref="load_unicolor_distributor"/>
-				<actionref ref="fire_unicolor_balls" needsprevious="true"/>
+			<tasklist name="Load 3 side atoms">
+				
 			</tasklist>
-			<tasklist name="Do multicolor distributor">
-				<actionref ref="load_multicolor_distributor"/>
-				<actionref ref="unload_multicolor_distributor" needsprevious="true"/>
+			<tasklist name="Load chaos atoms">
+				
 			</tasklist>
+			<tasklist name="Unload 1">
+				
+			</tasklist>
+			<tasklist name="Load gr tower">
+				
+			</tasklist>
+			<tasklist name="Unload 2">
+				
+			</tasklist>
+
 			<orderref ref="delay" name="10 points no game over" reward="10"/>
 			<actionref ref="goto_spawn"/>
 		</tasklist>
@@ -23,31 +31,12 @@
 
 
 	<!-- Test strategies -->
-	<strategy name="canon_tests">
+	<strategy name="test_load_simple">
 		<actionref ref="game_start"/>
 
 		<tasklist name="Main actions">
-			<tasklist name="Do unicolor distributor">
-				<!--actionref ref="load_unicolor_distributor"/-->
-				<actionref ref="fire_full_clean_balls"/>
-			</tasklist>
-		</tasklist>
-	</strategy>
-
-	<strategy name="Load unidistrib =)">
-		<actionref ref="game_start"/>
-		<tasklist name="Main actions">
-			<tasklist name="Do unicolor distributor">
-				<actionref ref="load_unicolor_distributor"/>
-			</tasklist>
-		</tasklist>
-	</strategy>
-
-	<strategy name="bin_test">
-		<actionref ref="game_start"/>
-		<tasklist name="Main actions">
-			<tasklist name="Do unload a ball in bin">
-				<actionref ref="unload_ball_in_station"/>
+			<tasklist name="load_simple_atom">
+				
 			</tasklist>
 		</tasklist>
 	</strategy>

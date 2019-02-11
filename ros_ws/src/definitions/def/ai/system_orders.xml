@@ -115,6 +115,7 @@
 			<param name="left" type="int"/>
 			<param name="right" type="int"/>
 			<param name="duration" type="int"/>
+			<param name="auto_stop" type="int"/>
 		</message>
 		<response>
 			<param name="response" type="bool" condition="==">1</param>

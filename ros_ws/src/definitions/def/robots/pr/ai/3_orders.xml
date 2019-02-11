@@ -12,17 +12,30 @@
 		</response>
 	</order>
 
-	<order ref="do_barrel_action" duration="3">
-		<message dest="movement/actuators/barrel">
-			<param name="sort" type="bool"/>
-			<param name="timeout" type="float" preset="true">1.2</param>
-			<param name="pause" type="float" preset="true">1</param>
+	<order ref="tower_load_atom" duration="3">
+		<message dest="actuators/ard_tower/action" timeout="8">
+			<action>0</action>
 		</message>
+		<response>
+			<param name="success" type="bool" condition="==">1</param>
+		</response>
 	</order>
 
-	<order ref="do_canon_action" duration="2">
-		<message dest="movement/actuators/activate_canon">
-			<param name="fire_distance" type="float" optional="true"/>
+	<order ref="tower_load_tower" duration="3">
+		<message dest="actuators/ard_tower/action" timeout="8">
+			<action>1</action>
 		</message>
+		<response>
+			<param name="success" type="bool" condition="==">1</param>
+		</response>
+	</order>
+
+	<order ref="tower_unload_tower" duration="3">
+		<message dest="actuators/ard_tower/action" timeout="8">
+			<action>2</action>
+		</message>
+		<response>
+			<param name="success" type="bool" condition="==">1</param>
+		</response>
 	</order>
 </orders>

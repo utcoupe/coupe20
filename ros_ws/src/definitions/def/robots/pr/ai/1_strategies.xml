@@ -8,20 +8,16 @@
 	<strategy name="main_pr">
 		<actionref ref="game_start"/>
 		<tasklist name="Main actions">
-			<tasklist name="Load 3 side atoms">
-				
+			<!-- Load the 3 side atoms and chaos atoms, and unload them in the accelerator -->
+			<tasklist name="First Cycle">
+				<actionref ref="load_side_atoms"/>
+				<actionref ref="load_chaos_atoms"/>
+				<actionref ref="unload_tower" name="Unload1"/>
 			</tasklist>
-			<tasklist name="Load chaos atoms">
-				
-			</tasklist>
-			<tasklist name="Unload 1">
-				
-			</tasklist>
-			<tasklist name="Load gr tower">
-				
-			</tasklist>
-			<tasklist name="Unload 2">
-				
+			
+			<tasklist name="Second cycle">
+				<actionref ref="load_gr_tower"/>
+				<actionref ref="unload_tower" name="Unload2"/>
 			</tasklist>
 
 			<orderref ref="delay" name="10 points no game over" reward="10"/>
@@ -36,7 +32,7 @@
 
 		<tasklist name="Main actions">
 			<tasklist name="load_simple_atom">
-				
+				<actionref ref="load_side_atoms"/>
 			</tasklist>
 		</tasklist>
 	</strategy>

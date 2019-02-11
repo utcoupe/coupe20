@@ -5,6 +5,7 @@ import rospy
 from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
+from time import sleep
 
 __author__ = "Thomas Fuhrmann & milesial"
 __date__ = 19/04/2018
@@ -49,6 +50,8 @@ class AsservSimu(AsservAbstract):
         self._max_acceleration = 0.1
         # The speed is in m/s
         self._max_linear_speed = 0.5
+        # The angular speed ratio
+        self._angular_speed_ratio = 2
         # The angular speed is in rad/s
         self._max_angular_speed = 1.0
         # ROS stuff
@@ -62,34 +65,48 @@ class AsservSimu(AsservAbstract):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
         rospy.spin()
 
-    def apply_slow_go(self, slow_go=False):
-        if slow_go : 
-            self.set_max_speed(0.25, 2)
-        else :
-            self.set_max_speed(0.5, 2)
-
     def goto(self, goal_id, x, y, direction, slow_go):
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ").")
-        self.apply_slow_go(slow_go)
+        self._apply_slow_go(slow_go)
         self._start_trajectory(goal_id, x, y, 0, direction)
         return True
 
     def gotoa(self, goal_id, x, y, a, direction, slow_go):
-        self.apply_slow_go(slow_go)
+        self._apply_slow_go(slow_go)
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ", a = " + str(a) + ").")
         self._start_trajectory(goal_id, x, y, a, direction, has_angle=True)
         return True
 
     def rot(self, goal_id, a, no_modulo, slow_go):
-        self.apply_slow_go(slow_go)
+        self._apply_slow_go(slow_go)
         #rospy.loginfo("[ASSERV] Accepting goal (a = " + str(a) + ").")
         self._current_pose.theta = a
         self._node.goal_reached(goal_id, True)
         return True
 
-    def pwm(self, left, right, duration):
-        rospy.logwarn("Pwm is not implemented in simu yet...")
-        return False
+    def pwm(self, left, right, duration, autoStop):
+
+        #Accelerate until run into wall then come to a complete stop
+        #Only checks if pwm is backwards or forward, always goes top speed
+        if not autoStop:
+            rospy.logwarn("PWM without autoStop has not been implemented yet...")
+            return False
+        
+        if left>0 and right>0 :
+            direction = 1
+        else :
+            direction = -1
+
+        self._accelerate(direction)
+
+        while (self._current_pose.x<2.87 and self._current_pose.x>0.13 \
+            and self._current_pose.y<1.87 and self._current_pose.y>0.13) :
+            self._update_current_pose_pos()
+            sleep(0.005)
+
+        self._wallhit_stop(direction)
+
+        return True
 
     def speed(self, linear, angular, duration):
         rospy.logerr("This function has not been implemented yet...")
@@ -218,6 +235,38 @@ class AsservSimu(AsservAbstract):
             direction=self._current_goal.direction
         )
         self._rotate(rot_mult)
+
+    def _apply_slow_go(self, slow_go=False):
+        if slow_go : 
+            self.set_max_speed(self._max_linear_speed/2, self._angular_speed_ratio)
+        else :
+            self.set_max_speed(self._max_linear_speed, self._angular_speed_ratio)
+
+    def _wallhit_stop(self, direction):
+        self._states.stop_movement()
+        self._current_linear_speed = 0
+        self._current_angular_speed = 0
+        if self._current_pose.x>= 2.87:
+            self._current_pose.theta = 0
+            return True
+
+        if self._current_pose.x <= 0.13 :
+            self._current_pose.theta = -math.pi
+            return True
+
+        if self._current_pose.y >= 1.87 :
+            self._current_pose.theta = math.pi/2
+            return True
+
+        if self._current_pose.y <= 0.13 :
+            self._current_pose.theta = -math.pi/2
+            return True
+
+        if direction == -1:
+            self._current_pose.theta += math.pi
+            return True
+
+        return False
 
     def _accelerate(self, acc_mult=1):
         self._current_linear_speed += acc_mult * self._max_acceleration * ASSERV_RATE

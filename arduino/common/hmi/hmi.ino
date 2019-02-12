@@ -4,6 +4,7 @@ This code was developed with a Wemos D1 Mini (ESP8266) and a 128x64 i2c OLED.
 Author: Pierre LACLAU, December 2017, UTCoupe.
 */
 
+//Set pins 
 #include "pins.h"
 
 // Including rosserial
@@ -410,8 +411,9 @@ void setup() {
 
     pinMode(PIN_LED_ALIVE, OUTPUT);
     pinMode(PIN_LED_INIT, OUTPUT);
-
-    
+     
+    //nh.getHardware()->setBaud(57600); //test : set baud rate 
+  
     nh.initNode();
     nh.subscribe(sub_strats);
     nh.subscribe(sub_teams);
@@ -423,7 +425,7 @@ void setup() {
     
     ui.setTargetFPS(30);
     
-    ui.setActiveSymbol(activeSymbol);
+    ui.setActiveSymbol(activeSymbol); 
     ui.setInactiveSymbol(inactiveSymbol);
     ui.setFrameAnimation(SLIDE_LEFT);
     ui.setFrames(frames, frameCount);

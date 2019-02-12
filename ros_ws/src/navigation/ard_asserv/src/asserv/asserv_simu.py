@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-
 import math
 import rospy
 from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
 from time import sleep
+from static_map.srv import MapGetTerrain
 
 __author__ = "Thomas Fuhrmann & milesial"
 __date__ = 19/04/2018
@@ -29,6 +29,7 @@ class AsservGoal():
 
 class AsservSimu(AsservAbstract):
     def __init__(self, asserv_node):
+        
         AsservAbstract.__init__(self, asserv_node)
         rospy.loginfo("AsservSimu")
         # Asserv management stuff
@@ -61,6 +62,34 @@ class AsservSimu(AsservAbstract):
         self._tmr_asserv_computation = rospy.Timer(rospy.Duration(ASSERV_RATE), self._callback_timer_asserv_computation)
 
         self._states = StatesManager()
+        # Get map size 
+        self._map_x, self._map_y = getTerrain() # Height is y, width is X
+
+        # Robot size
+        self._robot_width = 0.26 ## TODO TODO TODO get robot width from map
+
+    def getTerrain():
+        dest = "/static_map/get_terrain"
+        try: # Handle a timeout in case one node doesn't respond
+            
+            server_wait_timeout = 2
+            rospy.logdebug("Waiting for service %s for %d seconds" % (dest, server_wait_timeout))
+            rospy.wait_for_service(dest, timeout=server_wait_timeout)
+
+        except rospy.ROSException:
+
+            return False
+
+        rospy.loginfo("Sending service request to '{}'...".format(dest))
+        service = rospy.ServiceProxy(dest, MapGetTerrain)
+
+        response = service(MapGetTerrain()) #TODO rospy can't handle timeout, solution?
+
+        if response is not None:
+            return response.shape.width, response.shape.height
+        else:
+            rospy.logerr("Service call response from '{}' is null.".format(dest))
+        return False
 
     def start(self):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
@@ -102,8 +131,12 @@ class AsservSimu(AsservAbstract):
 
         self._accelerate(1, direction)
 
-        while (self._current_pose.x<2.87 and self._current_pose.x>0.13 \
-            and self._current_pose.y<1.87 and self._current_pose.y>0.13) :
+        x_high_edge = self._map_x - self._robot_width/2
+        y_high_edge = self._map_y - self._robot_width/2
+        low_edge = self._robot_width/2
+        
+        while (self._current_pose.x<x_high_edge and self._current_pose.x>low_edge \
+            and self._current_pose.y<y_high_edge and self._current_pose.y>low_edge) :
             self._update_current_pose_pos()
             sleep(0.005)
 
@@ -246,26 +279,31 @@ class AsservSimu(AsservAbstract):
             self.set_max_speed(self._max_linear_speed, self._angular_speed_ratio)
 
     def _wallhit_stop(self, direction):
+
+        x_high_edge = self._map_x - self._robot_width/2
+        y_high_edge = self._map_y - self._robot_width/2
+        low_edge = self._robot_width/2
+
         self._states.stop_movement()
         self._current_linear_speed = 0
         self._current_angular_speed = 0
-        if self._current_pose.x>= 2.87:
+        if self._current_pose.x>= x_high_edge :
             self._current_pose.theta = 0
             return True
 
-        if self._current_pose.x <= 0.13 :
+        if self._current_pose.x <= low_edge :
             self._current_pose.theta = -math.pi
             return True
 
-        if self._current_pose.y >= 1.87 :
+        if self._current_pose.y >= y_high_edge :
             self._current_pose.theta = math.pi/2
             return True
 
-        if self._current_pose.y <= 0.13 :
+        if self._current_pose.y <= low_edge :
             self._current_pose.theta = -math.pi/2
             return True
 
-        if direction == -1:
+        if direction == -1 :
             self._current_pose.theta += math.pi
             return True
 

@@ -33,9 +33,9 @@ class RequestTypes(object):
             "ai/game_manager/set_timer":               (RequestTypes.SERVICE, game_manager.srv.SetTimer),
             "ai/game_manager/delay":                   (RequestTypes.SERVICE, game_manager.srv.Delay),
 
-            "memory/map/get":                   (RequestTypes.SERVICE, static_map.srv.MapGet),
-            "memory/map/set":                   (RequestTypes.SERVICE, static_map.srv.MapSet),
-            "memory/map/transfer":              (RequestTypes.SERVICE, static_map.srv.MapTransfer),
+            "static_map/get":                   (RequestTypes.SERVICE, static_map.srv.MapGet),
+            "static_map/set":                   (RequestTypes.SERVICE, static_map.srv.MapSet),
+            "static_map/transfer":              (RequestTypes.SERVICE, static_map.srv.MapTransfer),
 
             "navigation/navigator/goto_action": (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
             "navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),

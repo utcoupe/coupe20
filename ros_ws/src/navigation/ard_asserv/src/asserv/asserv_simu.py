@@ -6,7 +6,7 @@ from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
 from time import sleep
-from static_map.srv import MapGetTerrain
+from static_map.srv import MapGetTerrain, MapGetTerrainRequest
 
 __author__ = "Thomas Fuhrmann & milesial"
 __date__ = 19/04/2018
@@ -63,12 +63,12 @@ class AsservSimu(AsservAbstract):
 
         self._states = StatesManager()
         # Get map size 
-        self._map_x, self._map_y = getTerrain() # Height is y, width is X
+        self._map_x, self._map_y = self.getTerrain() # Height is y, width is X
 
         # Robot size
-        self._robot_width = 0.26 ## TODO TODO TODO get robot width from map
+        self._robot_height = 0.18 ## TODO TODO TODO get robot width from map
 
-    def getTerrain():
+    def getTerrain(self):
         dest = "/static_map/get_terrain"
         try: # Handle a timeout in case one node doesn't respond
             
@@ -83,7 +83,7 @@ class AsservSimu(AsservAbstract):
         rospy.loginfo("Sending service request to '{}'...".format(dest))
         service = rospy.ServiceProxy(dest, MapGetTerrain)
 
-        response = service(MapGetTerrain()) #TODO rospy can't handle timeout, solution?
+        response = service(MapGetTerrainRequest()) #TODO rospy can't handle timeout, solution?
 
         if response is not None:
             return response.shape.width, response.shape.height
@@ -131,9 +131,9 @@ class AsservSimu(AsservAbstract):
 
         self._accelerate(1, direction)
 
-        x_high_edge = self._map_x - self._robot_width/2
-        y_high_edge = self._map_y - self._robot_width/2
-        low_edge = self._robot_width/2
+        x_high_edge = self._map_x - self._robot_height/2
+        y_high_edge = self._map_y - self._robot_height/2
+        low_edge = self._robot_height/2
         
         while (self._current_pose.x<x_high_edge and self._current_pose.x>low_edge \
             and self._current_pose.y<y_high_edge and self._current_pose.y>low_edge) :
@@ -280,9 +280,9 @@ class AsservSimu(AsservAbstract):
 
     def _wallhit_stop(self, direction):
 
-        x_high_edge = self._map_x - self._robot_width/2
-        y_high_edge = self._map_y - self._robot_width/2
-        low_edge = self._robot_width/2
+        x_high_edge = self._map_x - self._robot_height/2
+        y_high_edge = self._map_y - self._robot_height/2
+        low_edge = self._robot_height/2
 
         self._states.stop_movement()
         self._current_linear_speed = 0
@@ -317,6 +317,7 @@ class AsservSimu(AsservAbstract):
 
         elif self._current_linear_speed > self._max_linear_speed:
             self._current_linear_speed = self._max_linear_speed
+            
         if not direction :
             self._current_linear_speed = -self._current_linear_speed
 

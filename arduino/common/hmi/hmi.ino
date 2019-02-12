@@ -69,7 +69,7 @@ float elapsed_time = -1;
 bool _is_arming = false;
 bool _is_launching = false;
 
-bool _is_emergency = true  ; 
+bool _is_emergency = true  ; // not use while no pin for emergency
 
 //Input
 #define PIN_BTN_VCC_1 BTN_L2
@@ -77,7 +77,7 @@ bool _is_emergency = true  ;
 #define PIN_BTN_IN_1  BTN_R1
 #define PIN_BTN_IN_2  BTN_R2
 #define PIN_JACK      JACK
-#define PIN_EMERGENCY EMERGENCY 
+//#define PIN_EMERGENCY EMERGENCY  not enough pin on the arduino
 
 bool _prev_up_state    = false;
 bool _prev_down_state  = false;
@@ -243,6 +243,12 @@ void drawHelloFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, 
     if(init_status == -1) drawBigCentralMessageComponent(display, state, x, y, "WAIT");
     else drawBigCentralMessageComponent(display, state, x, y, "READY");
 
+     if(game_status == 0 && init_status != 0 && strats_count && teams_count)
+            ui.nextFrame();
+     if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
+            ui.nextFrame();
+    
+    /*  not use while no pin for emergency
     if (digitalread(PIN_EMERGENCY) == 0 ){  
         _is_emergency = true ; 
         ui.nextFrame() ; 
@@ -256,13 +262,17 @@ void drawHelloFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, 
             ui.switchToFrame(uint8_t 2);
             //ui.nextFrame();
     }
-
+    */
+    
 }
 
 void check_emergency (OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y){ // make sure the emergency bottom isn't put on 
     current_frame = 1 ; 
     drawFrameTitleComponent(display, state, x, y, "Emergency check ");
 
+    drawBigCentralMessageComponent(display, state, x, y, " Untrigger the emergency "); 
+    
+    /* not use while no pin for emergency
     if ( _is_emergency ){  // pass the frame only if emergency off 
         if (digitalread(PIN_EMERGENCY) == 1 ){  // 1 if their is 5V or 0 if not 
             _is_emergency = false ; 
@@ -275,6 +285,7 @@ void check_emergency (OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x
            drawStringMaxWidth(int16_t x, int16_t y, int16_t 20 , "Untrigger the emergency");
         }
     }
+    */
 }
 
 void drawTeamFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
@@ -400,6 +411,7 @@ void setup() {
     pinMode(PIN_LED_ALIVE, OUTPUT);
     pinMode(PIN_LED_INIT, OUTPUT);
 
+    
     nh.initNode();
     nh.subscribe(sub_strats);
     nh.subscribe(sub_teams);

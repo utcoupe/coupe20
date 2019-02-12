@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import math
 import rospy
 from asserv_abstract import *
@@ -87,17 +88,19 @@ class AsservSimu(AsservAbstract):
     def pwm(self, left, right, duration, autoStop):
 
         #Accelerate until run into wall then come to a complete stop
-        #Only checks if pwm is backwards or forward, always goes top speed
+        #Only checks if pwm is backwards or forward, always goes top speed and does not turn
+        if left != right :
+            rospy.logwarn("remember, PWM does not turn !")
         if not autoStop:
             rospy.logwarn("PWM without autoStop has not been implemented yet...")
             return False
         
-        if left>0 and right>0 :
+        if left>=0 and right>=0 :
             direction = 1
         else :
-            direction = -1
+            direction = 0
 
-        self._accelerate(direction)
+        self._accelerate(1, direction)
 
         while (self._current_pose.x<2.87 and self._current_pose.x>0.13 \
             and self._current_pose.y<1.87 and self._current_pose.y>0.13) :
@@ -268,7 +271,7 @@ class AsservSimu(AsservAbstract):
 
         return False
 
-    def _accelerate(self, acc_mult=1):
+    def _accelerate(self, acc_mult=1, direction=1):
         self._current_linear_speed += acc_mult * self._max_acceleration * ASSERV_RATE
 
         if self._current_linear_speed < ASSERV_MINIMAL_SPEED:
@@ -276,6 +279,10 @@ class AsservSimu(AsservAbstract):
 
         elif self._current_linear_speed > self._max_linear_speed:
             self._current_linear_speed = self._max_linear_speed
+        if not direction :
+            self._current_linear_speed = -self._current_linear_speed
+
+
 
     def _update_current_pose_pos(self):
         current_x = self._current_pose.x + self._current_linear_speed * ASSERV_RATE * math.cos(

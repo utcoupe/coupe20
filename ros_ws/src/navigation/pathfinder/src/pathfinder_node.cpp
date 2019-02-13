@@ -8,7 +8,6 @@
 #include "game_manager/init_service.h"
 
 #include "pathfinder/pathfinder_ros_interface.h"
-#include "pathfinder/point.h"
 #include "pathfinder/BarriersSubscribers/static_map_subscriber.h"
 #include "pathfinder/BarriersSubscribers/objects_classifier_subscriber.h"
 #include "pathfinder/pos_convertor.h"

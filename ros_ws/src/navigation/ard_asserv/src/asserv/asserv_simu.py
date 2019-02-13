@@ -8,7 +8,7 @@ from ard_asserv.msg import RobotSpeed
 from time import sleep
 from static_map.srv import MapGetTerrain, MapGetTerrainRequest
 
-__author__ = "Thomas Fuhrmann & milesial"
+__author__ = "Thomas Fuhrmann & milesial & Mindstan"
 __date__ = 19/04/2018
 
 # TODO adapt to have realistic behaviour of the robot
@@ -19,6 +19,15 @@ ASSERV_RATE = 0.05  # in ms
 ASSERV_ERROR_POSITION = 0.005  # in meters
 ASSERV_ERROR_ANGLE = 0.05  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
+
+class AsservSetPosModes():
+    AXY = 0
+    A = 1
+    Y = 2
+    AY = 3
+    X = 4
+    AX = 5
+    XY = 6
 
 class AsservGoal():
     def __init__(self, goal_id, pose, has_angle=False, direction=1):
@@ -195,13 +204,21 @@ class AsservSimu(AsservAbstract):
             rospy.logwarn("Setting pose wile moving is not a good idea...")
             return_value = False
         else:
-            if mode == 1 or mode == 2 or mode == 3: #x not used (see SetPos.srv)
+            if mode == AsservSetPosModes.A:
                 x = self._current_pose.x
-            if mode == 1 or mode == 4 or mode == 5: #y not used
                 y = self._current_pose.y
-            if mode == 2 or mode == 4 or mode == 6: #a not used
+            elif mode == AsservSetPosModes.Y:
+                x = self._current_pose.x
                 a = self._current_pose.theta
-                
+            elif mode == AsservSetPosModes.AY:
+                x = self._current_pose.x
+            elif mode == AsservSetPosModes.X:
+                a = self._current_pose.theta
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.AX:
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.XY:
+                a = self._current_pose.theta
             self._current_pose = Pose2D(x, y, a)
         return return_value
 

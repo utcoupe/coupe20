@@ -1,7 +1,7 @@
 #ifndef COLLISIONS_POSITION_H
 #define COLLISIONS_POSITION_H
 
-#include "collisions/point.h"
+#include "geometry_tools/point.h"
 
 #include <ostream>
 
@@ -16,23 +16,24 @@ public:
         _a(angle)
     {}
     
+    constexpr Position(const Position& other) noexcept:
+        Position(other.toPoint(), other.getAngle())
+    {}
+    
     constexpr Point toPoint() const noexcept {
         return {_x, _y};
     }
     
     // Operators
-    constexpr bool operator== (const Position& other) const noexcept {
+    constexpr bool operator== (Position other) const noexcept {
         return this->toPoint() == other.toPoint() && _a == other.getAngle();
     }
     
-    constexpr bool operator!= (const Position& other) const noexcept{
+    constexpr bool operator!= (Position other) const noexcept{
         return !this->operator==(other);
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Position& pos) {
-        os << "(" << pos._x << "," << pos._y << ", " << pos._a <<  ")";
-        return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, Position pos);
     
     // Getters & setters
     constexpr double getAngle() const           noexcept { return _a; }

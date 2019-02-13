@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
     game_manager
     static_map
     objects_classifier
+    geometry_tools
 )
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH}) # Please note the use of CMAKE_CURRENT_SOURCE_DIR

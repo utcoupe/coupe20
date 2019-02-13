@@ -1,0 +1,13 @@
+<robot>
+    <shape type="rect" w="0.22" h="0.18"/>
+    <color name="purple"/>
+    
+    <!-- Objects can inherit from classes defined in 4_objects.xml -->
+    <containers>
+        <container name="tower">
+            <object name="atom42" class="atom-horizontal">
+                <position x="1" y="1"/>
+            </object>
+        </container>
+    </containers>
+</robot>

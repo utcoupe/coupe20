@@ -76,7 +76,7 @@
 				<left>-150</left>
 				<right>-150</right>
 				<duration>2</duration>
-				<auto_stop>1</auto_stop>
+				<!-- <auto_stop>1</auto_stop> -->
 			</orderref>
 
 			<orderref ref="tower_unload_tower"/>
@@ -92,7 +92,7 @@
 			</orderref-->
 
 			<orderref ref="navigator_goto_waypoint" name="goto spawn" timeout="40">
-				<waypoint_name>way_spawn</waypoint_name>
+				<waypoint_name>way_spawn_pr</waypoint_name>
 			</orderref>
 		</actions>
 	</action>

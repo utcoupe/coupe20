@@ -7,13 +7,10 @@
 
 #include "static_map/MapGetContainer.h"
 
-#include <nlohmann/json.hpp>
 #include <ros/duration.h>
 
 #include <cmath>
 #include <string>
-
-using namespace nlohmann;
 
 const double CACHE_TIME_TF2_BUFFER = 5.0;
 const std::size_t SIZE_MAX_QUEUE = 10;

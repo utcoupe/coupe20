@@ -6,7 +6,7 @@ from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
 
-__author__ = "Thomas Fuhrmann & milesial"
+__author__ = "Thomas Fuhrmann & milesial & Mindstan"
 __date__ = 19/04/2018
 
 # TODO adapt to have realistic behaviour of the robot
@@ -17,6 +17,15 @@ ASSERV_RATE = 0.05  # in ms
 ASSERV_ERROR_POSITION = 0.005  # in meters
 ASSERV_ERROR_ANGLE = 0.05  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
+
+class AsservSetPosModes():
+    AXY = 0
+    A = 1
+    Y = 2
+    AY = 3
+    X = 4
+    AX = 5
+    XY = 6
 
 class AsservGoal():
     def __init__(self, goal_id, pose, has_angle=False, direction=1):
@@ -62,12 +71,12 @@ class AsservSimu(AsservAbstract):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
         rospy.spin()
 
-    def goto(self, goal_id, x, y, direction):
+    def goto(self, goal_id, x, y, direction, slow_go):
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ").")
         self._start_trajectory(goal_id, x, y, 0, direction)
         return True
 
-    def gotoa(self, goal_id, x, y, a, direction):
+    def gotoa(self, goal_id, x, y, a, direction, slow_go):
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ", a = " + str(a) + ").")
         self._start_trajectory(goal_id, x, y, a, direction, has_angle=True)
         return True
@@ -78,7 +87,7 @@ class AsservSimu(AsservAbstract):
         self._node.goal_reached(goal_id, True)
         return True
 
-    def pwm(self, left, right, duration):
+    def pwm(self, left, right, duration, autostop):
         rospy.logwarn("Pwm is not implemented in simu yet...")
         return False
 
@@ -127,12 +136,27 @@ class AsservSimu(AsservAbstract):
     def set_pid(self, p, i, d):
         return True
 
-    def set_pos(self, x, y, a):
+    def set_pos(self, x, y, a, mode):
         return_value = True
         if self._current_linear_speed > 0 or self._current_angular_speed > 0:
             rospy.logwarn("Setting pose wile moving is not a good idea...")
             return_value = False
         else:
+            if mode == AsservSetPosModes.A:
+                x = self._current_pose.x
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.Y:
+                x = self._current_pose.x
+                a = self._current_pose.theta
+            elif mode == AsservSetPosModes.AY:
+                x = self._current_pose.x
+            elif mode == AsservSetPosModes.X:
+                a = self._current_pose.theta
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.AX:
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.XY:
+                a = self._current_pose.theta
             self._current_pose = Pose2D(x, y, a)
         return return_value
 

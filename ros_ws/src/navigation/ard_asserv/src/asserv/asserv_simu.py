@@ -317,7 +317,7 @@ class AsservSimu(AsservAbstract):
 
         elif self._current_linear_speed > self._max_linear_speed:
             self._current_linear_speed = self._max_linear_speed
-            
+
         if not direction :
             self._current_linear_speed = -self._current_linear_speed
 

@@ -5,7 +5,7 @@
 #include "collisions/shapes/segment.h"
 #include "collisions/obstacle_velocity.h"
 
-#include "static_map/MapGet.h"
+#include "static_map/MapGetContainer.h"
 
 #include <nlohmann/json.hpp>
 #include <ros/duration.h>
@@ -79,19 +79,22 @@ CollisionsSubscriptions::RobotPtr CollisionsSubscriptions::createRobot(ros::Node
     double width, height;
     std::string robotName = fetchRobotName(nhandle);
     try {
-        auto mapGetClient = nhandle.serviceClient<static_map::MapGet>(MAP_GET_SERVER);
-        static_map::MapGet msg;
-        msg.request.request_path = "/entities/" + robotName + "/shape/*";
-        ROS_INFO_STREAM("Waiting for service \"" << MAP_GET_SERVER << "\"");
-        mapGetClient.waitForExistence();
-        ROS_INFO_STREAM("Service found or timed out");
-        if (!mapGetClient.call(msg) || !msg.response.success)
-            throw ros::Exception("Call failed.");
-        json shape = json::parse(msg.response.response);
-        if (shape["type"] != "rect")
-            throw ros::Exception("Shape '" + shape.at("type").get<std::string>() + "' not allowed.");
-        width = shape["width"];
-        height = shape["height"];
+        // TODO
+//         auto mapGetClient = nhandle.serviceClient<static_map::MapGetContainer>(MAP_GET_SERVER);
+//         static_map::MapGetContainer msg;
+//         msg.request.path = "/entities/" + robotName + "/shape/*";
+//         ROS_INFO_STREAM("Waiting for service \"" << MAP_GET_SERVER << "\"");
+//         mapGetClient.waitForExistence();
+//         ROS_INFO_STREAM("Service found or timed out");
+//         if (!mapGetClient.call(msg) || !msg.response.success)
+//             throw ros::Exception("Call failed.");
+//         json shape = json::parse(msg.response.response);
+//         if (shape["type"] != "rect")
+//             throw ros::Exception("Shape '" + shape.at("type").get<std::string>() + "' not allowed.");
+//         width = shape["width"];
+//         height = shape["height"];
+        width = DEFAULT_ROBOT_WIDTH;
+        height = DEFAULT_ROBOT_HEIGHT;
     } catch(const ros::Exception& e) {
         ROS_WARN_STREAM(
             "Error when trying to contact '" << MAP_GET_SERVER << "' : " << e.what() 

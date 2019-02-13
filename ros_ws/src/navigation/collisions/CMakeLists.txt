@@ -45,8 +45,6 @@ find_package(catkin REQUIRED COMPONENTS
     static_map
 )
 
-set(NLOHMANN_JSON_HEADER_LOCATION "$ENV{UTCOUPE_WORKSPACE}/libs/json/single_include/")
-
 ##############
 ## Messages ##
 ##############
@@ -89,7 +87,6 @@ catkin_package(
 
 include_directories(
     include
-    ${NLOHMANN_JSON_HEADER_LOCATION}
     ${catkin_INCLUDE_DIRS}
 )
 

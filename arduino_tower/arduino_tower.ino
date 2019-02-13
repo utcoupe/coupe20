@@ -45,13 +45,25 @@ float nb_atom_out = 0 ; //number of atom unloaded
 
 int load_content   = -1 ; // actions given to stepper 
 int unload_content = -1 ; 
-int load_stauts    = -1 ; 
-int unload_status  = -1 ; nh
+int load_stauts    = -1 ; // info on stepper 
+int unload_status  = -1 ; 
 
+
+//----- ROS methods ------ 
+void on_tower_load  (const ard_tower::TowerLoad& msg){
+  load_content = msg.load_content ; 
+}
+
+void on_tower_unload (const ard_tower::TowerUnload& msg){
+  unload_content = msg.unload_content ; 
+}
+
+ros::Subscribe<ard_tower::TowerLoad>   sub_tower_load   ("actuators/ard_tower/load", &on_tower_load);
+ros::Subscribe<ard_tower::TowerUnload> sub_tower_unload ("actuators/ard_tower/unload", &on_tower_unload);
 
 // ---- Function -----
 
-void unload_atom() {nh
+void unload_atom() {
   servo_unload.write(pos_unload_init); 
   delay(700) ; 
   servo_unload.write(pos_unload); 
@@ -75,8 +87,10 @@ void setup() {
   // ROS init 
   nh.initNode(); 
 
-  nh.subscribe(TowerLoad); 
-  nh.subscribe(TowerUnload); 
+  nh.subscribe(sub_tower_load); 
+  nh.subscribe(sub_tower_unload); 
+  nh.advertise(TowerLoadResponse) ; 
+  nh.advertise(TowerUnloadResponse); 
 
 
   //nh.subscribe(<name>) 

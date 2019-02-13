@@ -1,24 +1,30 @@
+//-----------------------------------------------
 // Arduino : PR tower 
+// Author : Floriane ALLAIRE Feb 2019 , UTCoupe 
+// Need AFMotor. h and AFMotor.cpp in folder 
+//------------------------------------------------
 
 // ----- Includes --------
 
 //ROS includes
 #include <ros.h> 
+#include <ard_tower/TowerUnloadResponse.h>
+#include <ard_tower/TowerLoadResponse.h> 
+#include <ard_tower/TowerLoad.h> 
+ros :: NodeHandle nh ; 
 
 // Actuators includes 
 #include <Servo.h>
 //#include <Stepper.h>
 #include "AFMotor.h"
-//#include <ard_tower/tower_unload.msg>
+
 
 
 // Servo motor 
 Servo servo_unload ; // create servo object to control a servo
 
-
 // Stepper motor 
 //#define STEPS 200 //number of steps on your motor  ?????
-//const int stepsPerRevolution = 200 ; // change this to fit the number of steps per revolution
 //Stepper stepper_load (STEPS, 8, 10, 9, 11) ; // specify the pins 
 extern int16_t stepper_actuators_states[];
 AF_Stepper stepper_load;
@@ -34,12 +40,18 @@ int pos_unload = 0 ;
 int pos_load_init = 0 ; // ??? 
 int pos_load = 100 ;  // ???? 
 
-int nb_atom_in = 0 ; //number of atom loaded 
-int nb_atom_out = 0 ; //number of atom unloaded 
+float nb_atom_in = 0 ; //number of atom loaded 
+float nb_atom_out = 0 ; //number of atom unloaded 
+
+int load_content   = -1 ; // actions given to stepper 
+int unload_content = -1 ; 
+int load_stauts    = -1 ; 
+int unload_status  = -1 ; nh
+
 
 // ---- Function -----
 
-void unload_atom() {
+void unload_atom() {nh
   servo_unload.write(pos_unload_init); 
   delay(700) ; 
   servo_unload.write(pos_unload); 
@@ -51,23 +63,7 @@ void unload_atom() {
 }
 
 void load_atom() {
-//  // read the sensor value:
-//  int sensorReading = analogRead(A0);
-//  // map it to a range from 0 to 100:
-//  int motorSpeed = map(sensorReading, 0, 1023, 0, 100);
-//  // set the motor speed:
-//  if (motorSpeed > 0) {
-//    stepper_load.setSpeed(motorSpeed);
-//    // step 1/100 of a revolution:
-//    stepper_load.step(stepsPerRevolution / 100);
-//  }
-//
- // stepper_load.step(pos_load_init) ; 
- // delay(500); 
- // stepper_load.step(pos_load) ; 
- // nb_atom_in = nb_atom_in + 1 ; 
 stepper_load.step(100, FORWARD, SINGLE);
-
 }
 
 
@@ -77,7 +73,11 @@ stepper_load.step(100, FORWARD, SINGLE);
 
 void setup() {
   // ROS init 
-  //nh.initNode(); 
+  nh.initNode(); 
+
+  nh.subscribe(TowerLoad); 
+  nh.subscribe(TowerUnload); 
+
 
   //nh.subscribe(<name>) 
   //nh.advertise(<name>)

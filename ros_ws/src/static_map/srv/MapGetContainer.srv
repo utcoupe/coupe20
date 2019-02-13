@@ -1,0 +1,5 @@
+string path
+bool include_subcontainers
+---
+bool success
+MapContainer container

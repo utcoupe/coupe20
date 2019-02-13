@@ -1,10 +1,10 @@
-#ifndef static_map_SUBSCRIBER_H
-#define static_map_SUBSCRIBER_H
+#ifndef STATIC_MAP_SUBSCRIBER_H
+#define STATIC_MAP_SUBSCRIBER_H
 
 #include "pathfinder/BarriersSubscribers/abstract_barriers_subscriber.h"
 #include "pathfinder/pos_convertor.h"
 
-#include "nlohmann/json.hpp"
+#include "static_map/MapContainer.h"
 
 #include <vector>
 
@@ -23,15 +23,15 @@ namespace Memory {
         void setConvertor(std::shared_ptr<PosConvertor> convertor) { _convertor = convertor; };
         
     private:
-        std::vector<nlohmann::json> _lastReceivedJsons;
+        static_map::MapContainer _lastReceivedContainer;
         ros::ServiceClient _srvGetMapObjects;
         std::vector< std::vector<bool> > _occupancyGrid;
         
         std::shared_ptr<PosConvertor> _convertor;
         
-        void drawRectangle(const nlohmann::json& jsonRect);
-        void drawCircle(const nlohmann::json& jsonCircle);
+        void drawRectangle(const static_map::MapObject& objectRect);
+        void drawCircle(const static_map::MapObject& objectCircle);
     };
 }
 
-#endif // static_map_SUBSCRIBER_H
+#endif // STATIC_MAP_SUBSCRIBER_H

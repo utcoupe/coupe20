@@ -1,0 +1,13 @@
+string path
+
+uint8 MODE_ADD        = 0 # specify a container in path
+uint8 MODE_REMOVE     = 1 # specify an object in path, the object will be deleted
+# To modify an object, do a remove request, modify the object returned from the service and add again.
+uint8 mode
+
+MapObject object
+
+---
+
+bool success
+MapObject object

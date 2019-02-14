@@ -1,7 +1,11 @@
 <waypoints>
-    <waypoint name="spawn" x="0.25" y="1.55" a="0"/>
+    <!-- Robot waypoints -->
+    <waypoint name="way_spawn_pr"     x="0.225" y="1.55"  a="1.5707963267948966"/>
 
-    <waypoint name="small_distrib" x="0.3" y="0.3" a="3.141592"/>
-
-    <waypoint name="big_distrib_1" x="1" y="0.7"/>
+    <!-- General game waypoints -->
+    <waypoint name="way_first_turn"   x="0.225" y="1.8"   a="0.0"/>
+    <waypoint name="way_atom1"        x="0.5"   y="1.55"  a="-1.5707963267948966"/>
+    <waypoint name="way_atom2"        x="0.5"   y="1.25"  a="-1.5707963267948966"/>
+    <waypoint name="way_atom3"        x="0.5"   y="0.95"  a="-1.5707963267948966"/>
+    <waypoint name="way_approach_acc" x="1.7"   y="1.7"   a="-1.5707963267948966"/>
 </waypoints>

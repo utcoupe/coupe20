@@ -47,7 +47,7 @@ class MapServices():
 
         w = MapManager.get_waypoint(req.waypoint.name, pos)
         success = False
-        if w is not None:
+        if w:
             success = True
 
         rospy.loginfo("GET Waypoint (name='{}' x={} y={} a={}): returning {}".format(

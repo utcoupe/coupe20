@@ -8,9 +8,19 @@
     <maintainer email="utcoupe@assos.utc.fr">UTCoupe Association</maintainer>
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>message_generation</build_depend>
+    <exec_depend>message_runtime</exec_depend>
     <depend>rospy</depend>
     <depend>std_msgs</depend>
-    <exec_depend>message_runtime</exec_depend>
+    
+    <!-- Strategy-specific package dependencies -->
+    <depend>ard_hmi</depend>
+    <!-- <depend>game_manager</depend>
+    <depend>static_map</depend>
+    <depend>navigator</depend>
+    <depend>ard_tower</depend>
+    <depend>ard_asserv</depend>
+    <depend>ax12</depend> -->
+
     <export>
     </export>
 </package>

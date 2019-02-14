@@ -7,7 +7,7 @@
 
 #include "parameters.h"
 #include <stdint.h>
-#include "canSender.h"
+// #include "canSender.h"
 #include "serial.h"
 
 #define ALL_CAN_ADDR		0

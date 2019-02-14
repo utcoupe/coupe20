@@ -34,7 +34,7 @@
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx.h"
 #include "stm32f3xx_it.h"
-#include "can.h"
+//#include "can.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -197,30 +197,30 @@ void SysTick_Handler(void)
 /**
 * @brief This function handles CAN RX0 interrupt.
 */
-void CAN_RX0_IRQHandler(void)
-{
-  /* USER CODE BEGIN CAN_RX0_IRQn 0 */
-
-  /* USER CODE END CAN_RX0_IRQn 0 */
-  HAL_CAN_IRQHandler(&hcan);
-  /* USER CODE BEGIN CAN_RX0_IRQn 1 */
-
-  /* USER CODE END CAN_RX0_IRQn 1 */
-}
+// void CAN_RX0_IRQHandler(void)
+// {
+//   /* USER CODE BEGIN CAN_RX0_IRQn 0 */
+// 
+//   /* USER CODE END CAN_RX0_IRQn 0 */
+//   HAL_CAN_IRQHandler(&hcan);
+//   /* USER CODE BEGIN CAN_RX0_IRQn 1 */
+// 
+//   /* USER CODE END CAN_RX0_IRQn 1 */
+// }
 
 /**
 * @brief This function handles CAN RX1 interrupt.
 */
-void CAN_RX1_IRQHandler(void)
-{
-  /* USER CODE BEGIN CAN_RX1_IRQn 0 */
-
-  /* USER CODE END CAN_RX1_IRQn 0 */
-  HAL_CAN_IRQHandler(&hcan);
-  /* USER CODE BEGIN CAN_RX1_IRQn 1 */
-
-  /* USER CODE END CAN_RX1_IRQn 1 */
-}
+// void CAN_RX1_IRQHandler(void)
+// {
+//   /* USER CODE BEGIN CAN_RX1_IRQn 0 */
+// 
+//   /* USER CODE END CAN_RX1_IRQn 0 */
+//   HAL_CAN_IRQHandler(&hcan);
+//   /* USER CODE BEGIN CAN_RX1_IRQn 1 */
+// 
+//   /* USER CODE END CAN_RX1_IRQn 1 */
+// }
 
 /**
 * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXT line 26.
@@ -238,16 +238,16 @@ void USART2_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan)
-{
-  g_nb_msg_received ++;
-  //HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
-  // if (HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
-  // {
-    // __HAL_CAN_ENABLE_IT(hcan, CAN_IT_FOV0 | CAN_IT_FMP0);  // set interrupt flag for RX FIFO0 if CAN locked
-    // hcan->State = HAL_CAN_STATE_READY;
-  // }
-}
+// void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef *hcan)
+// {
+//   g_nb_msg_received ++;
+//   //HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
+//   // if (HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
+//   // {
+//     // __HAL_CAN_ENABLE_IT(hcan, CAN_IT_FOV0 | CAN_IT_FMP0);  // set interrupt flag for RX FIFO0 if CAN locked
+//     // hcan->State = HAL_CAN_STATE_READY;
+//   // }
+// }
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

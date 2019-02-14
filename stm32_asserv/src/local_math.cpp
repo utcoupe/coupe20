@@ -5,7 +5,7 @@
  ****************************************/
 
 #include "local_math.h"
-#include <math.h>
+#include <cmath>
 
 float moduloTwoPI(float angle){
 		while(angle > M_PI)

@@ -7,6 +7,10 @@
 #ifndef LOCAL_MATH_H
 #define LOCAL_MATH_H
 
+#ifndef M_PI
+#   define M_PI (3.14159265358979323846)
+#endif
+
 #define MAX(a,b) a > b ? a : b
 #define sign(x) ((x)>=0?1:-1)
 #define ABS(x)   ((x) > 0 ? (x) : -(x))

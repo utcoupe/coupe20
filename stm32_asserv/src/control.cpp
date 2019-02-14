@@ -13,7 +13,7 @@
 // #include "local_math.h"
 #include "emergency.h"
 #include "protocol.h"
-#include "canSender.h"
+// #include "canSender.h"
 
 #define min(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -152,7 +152,7 @@ void ControlCompute(void) {
         if ( FifoRemainingGoals() == 1)
 #endif
         {
-			CanSender::canSend(ORDER_COMPLETED);
+			// CanSender::canSend(ORDER_COMPLETED);
         }
 
 		FifoNextGoal();

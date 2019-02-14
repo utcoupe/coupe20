@@ -3,17 +3,17 @@
 //
 
 #include "sender_wrapper.h"
-#include "sender.h"
+//#include "sender.h"
 #include <stdarg.h>
 
 //static void SerialSendWrapVariadic(SerialSendEnum level, const char* data, va_list args);
 
 static void SerialSendWrapVariadic(SerialSendEnum level, const char* data, va_list args) {
-    SerialSender::SerialSend(level, data, args);
+    //SerialSender::SerialSend(level, data, args);
 }
 
 void SerialSendWrap(SerialSendEnum level, String data) {
-    SerialSender::SerialSend(level, data);
+    //SerialSender::SerialSend(level, data);
 }
 
 void SerialSendWrapVar(SerialSendEnum level, const char* data, ...) {

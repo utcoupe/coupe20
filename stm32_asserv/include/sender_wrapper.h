@@ -5,7 +5,9 @@
 #ifndef ARDUINO_SENDER_WRAPPER_H
 #define ARDUINO_SENDER_WRAPPER_H
 
-#include <Arduino.h>
+// #include <Arduino.h>
+#include <string>
+using String = std::string;
 
 #ifndef SENDER_ENUM
 #define SENDER_ENUM

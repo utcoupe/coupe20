@@ -3,7 +3,7 @@
 #include "robotstate.h"
 #include "goals.h"
 #include "compat.h"
-#include "canSender.h"
+// #include "canSender.h"
 #include "control.h"
 #include "protocol.h"
 
@@ -51,7 +51,7 @@ void ComputeIsBlocked(void) {
 		// we did not move enough, we are probably blocked, 
 		// consider the goal reached
 		current_goal->is_reached = 1;
-		CanSender::canSend(ROBOT_BLOCKED);
+		// CanSender::canSend(ROBOT_BLOCKED);
 		//FifoClearGoals();
 	}
 end:

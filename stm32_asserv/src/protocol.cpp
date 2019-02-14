@@ -7,7 +7,7 @@
 #include <math.h>
 #include "protocol.h"
 #include <stdlib.h>
-#include "canSender.h"
+//#include "canSender.h"
 //get from old protocol file
 // extern "C" {
 #include "compat.h"
@@ -20,7 +20,7 @@
 
 void autoSendStatus() {
     //todo auto_send ?
-    CanSender::canSend(CURRENT_POS, 
+    /*CanSender::canSend(CURRENT_POS, 
         (int)current_pos.x, 
         (int)current_pos.y,
         (int)(current_pos.angle*FLOAT_PRECISION));
@@ -32,7 +32,7 @@ void autoSendStatus() {
     CanSender::canSend(CURRENT_SPD,
         (int)(control.speeds.linear_speed), 
         (int)wheels_spd.left, 
-        (int)wheels_spd.right);
+        (int)wheels_spd.right);*/
 
 #ifdef SERIAL_DEBUG
     g_serial.print("x ");
@@ -87,7 +87,7 @@ void parseAndExecuteOrder(uint8_t* message) {
             g_serial.print("HANDSHAKE");
             g_serial.print("\n");
 #endif
-            CanSender::canSend(WHOAMI,STM_CAN_ADDR);
+            //CanSender::canSend(WHOAMI,STM_CAN_ADDR);
             break;
         }
 

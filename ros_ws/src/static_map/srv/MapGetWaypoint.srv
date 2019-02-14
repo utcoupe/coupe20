@@ -6,4 +6,4 @@
 static_map/Waypoint waypoint
 ---
 bool success
-static_map/Waypoint filled_waypoint # WARNING frame_id is NOT FILLED for now, assuming it is /map.
+static_map/Waypoint filled_waypoint

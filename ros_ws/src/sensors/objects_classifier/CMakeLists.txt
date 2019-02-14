@@ -49,11 +49,8 @@ catkin_package(
     #LIBRARIES ${PROJECT_NAME}
 )
 
-set(NLOHMANN_JSON_HEADER_LOCATION "$ENV{UTCOUPE_WORKSPACE}/libs/json/single_include/")
-
 include_directories(
     include
-    ${NLOHMANN_JSON_HEADER_LOCATION}
     ${catkin_INCLUDE_DIRS}
 )
 

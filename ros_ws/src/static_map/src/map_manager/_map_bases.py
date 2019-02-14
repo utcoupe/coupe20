@@ -14,14 +14,14 @@ class MapElement(object):
         raise NotImplementedError("This is the super class. Needs to be overwritten from the child class.")
 
 
-# class ListManager(MapElement): # Not used for now
-#     def __init__(self, classdef, initdict):
-#         self.Elements = []
-#         for k in initdict.keys():
-#             self.Elements.append(classdef(initdict[k]))
+class ListManager(MapElement):
+    def __init__(self, classdef, xml):
+        self.Elements = []
+        for k in xml:
+            self.Elements.append(classdef(xml[k]))
 
-
-class DictManager(MapElement):
+'''
+class DictManagerDEPRECATED(MapElement):
     def __init__(self, elemdict):
         self.Dict = elemdict if elemdict is not None else {}
         if self.Dict:
@@ -181,7 +181,7 @@ class DictManager(MapElement):
             if isinstance(self.Dict[elem], DictManager):
                 success = min(success, self.Dict[elem].transform(codes))
         return success
-
+'''
 
 
 class RequestPath():

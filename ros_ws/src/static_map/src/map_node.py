@@ -10,9 +10,9 @@ from game_manager import StatusServices
 class MapNode():
     def __init__(self):
         rospy.init_node("map", log_level=rospy.INFO)
-        rospy.logdebug("Started memory/map node.")
+        rospy.logdebug("Started static_map node.")
 
-        map_manager.Map.load()
+        map_manager.MapManager.load()
 
         # Starting and publishing the table STL to RViz
         self.markers = MarkersPublisher()
@@ -22,7 +22,7 @@ class MapNode():
 
         # Starting service handlers (Get, Set, Transfer, GetOccupancy)
         map_communication.MapServices(occupancy)
-        rospy.logdebug("[memory/map] Map request servers ready.")
+        rospy.logdebug("[static_map] Map request servers ready.")
 
         # Tell ai/game_manager the node initialized successfuly.
         StatusServices("memory", "map").ready(True)
@@ -33,8 +33,8 @@ class MapNode():
         r = rospy.Rate(5)
         while not rospy.is_shutdown():
             if rospy.has_param("/current_team"):
-                map_manager.Map.swap_team(rospy.get_param("/current_team"))
-            self.markers.updateMarkers(map_manager.Map)
+                map_manager.MapManager.swap_team(rospy.get_param("/current_team"))
+            self.markers.updateMarkers(map_manager.MapDict)
             r.sleep()
 
 

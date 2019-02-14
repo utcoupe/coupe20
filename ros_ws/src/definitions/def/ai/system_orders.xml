@@ -43,7 +43,7 @@
 
 	<!-- Map -->
 	<order ref="map_transfer" duration="0" name="Map object or entity transfer">
-		<message dest="memory/map/transfer">
+		<message dest="static_map/transfer">
 			<param name="old_path" type="string" preset="true">/objects/cube_1</param>
 			<param name="new_path" type="string" preset="true">/objects/cube_2</param>
 		</message>
@@ -53,7 +53,7 @@
 	</order>
 
 	<order ref="map_set" duration="0" name="Map element set">
-		<message dest="memory/map/set">
+		<message dest="static_map/set">
 			<param name="mode" type="int" optional="true">1</param> <!-- default to REPLACE mode -->
 			<param name="request_path" type="string"/>
 		</message>
@@ -115,6 +115,7 @@
 			<param name="left" type="int"/>
 			<param name="right" type="int"/>
 			<param name="duration" type="int"/>
+			<!-- <param name="auto_stop" type="int"/> -->
 		</message>
 		<response>
 			<param name="response" type="bool" condition="==">1</param>

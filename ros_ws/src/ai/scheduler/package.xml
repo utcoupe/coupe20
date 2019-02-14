@@ -14,12 +14,12 @@
     
     <!-- Strategy-specific package dependencies -->
     <depend>ard_hmi</depend>
-    <depend>game_manager</depend>
+    <!-- <depend>game_manager</depend>
     <depend>static_map</depend>
     <depend>navigator</depend>
     <depend>ard_tower</depend>
     <depend>ard_asserv</depend>
-    <depend>ax12</depend>
+    <depend>ax12</depend> -->
 
     <export>
     </export>

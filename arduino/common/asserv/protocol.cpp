@@ -119,7 +119,7 @@ void parseAndExecuteOrder(const String& order) {
             int x, y, a_int, direction, slow_go;
             float a;
             direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &direction, &slow_go);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i;%i", &x, &y, &a_int, &direction, &slow_go);
             if(slow_go) 
                 ControlSetStop(SLOWGO_BIT);    
             else

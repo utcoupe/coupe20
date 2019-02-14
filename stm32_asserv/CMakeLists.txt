@@ -8,6 +8,8 @@ set(STM32_CHIP STM32F303K8)
 set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.10.0/")
 SET(CMAKE_TOOLCHAIN_FILE "$ENV{UTCOUPE_WORKSPACE}/libs/stm32-cmake/cmake/gcc_stm32.cmake")
 
+SET(STM32_LINKER_SCRIPT "STM32F303K8Tx_FLASH.ld")
+
 project(stm32_asserv)
 cmake_minimum_required(VERSION 2.8)
 
@@ -30,7 +32,6 @@ file(
     source_files
     src/*
     include/*
-    asm/*
 )
 
 set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")

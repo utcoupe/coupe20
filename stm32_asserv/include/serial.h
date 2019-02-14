@@ -1,55 +1,30 @@
-#ifndef __SERIAL_H__
-#define __SERIAL_H__
-
-
-/** Includes **/
-/**************/
+#ifndef STM32_SERIAL_H
+#define STM32_SERIAL_H
 
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx_hal_dma.h"
 #include "stm32f3xx_hal_uart.h"
 
-// #include "stm32f3xx_hal_tim.h"
+#include <cstdint>
+#include <string>
 
-
-/** Defines **/
-/*************/
-
-#define MAX_CMD_SIZE 30
-class Serial
-{
-	private:
-		UART_HandleTypeDef* m_serial_interface_ptr;
-		char m_cmd[MAX_CMD_SIZE];
-		uint8_t m_cmd_cursor;
-		bool m_cmd_ready;
-
-	public:
-		Serial(UART_HandleTypeDef* serial);
-		~Serial();
-		void write(uint32_t value);
-		void write(uint16_t value);
-		void write(uint8_t value);
-		void write(uint8_t* msg,uint16_t len);
-
-		void print(char* msg);
-		void print(uint32_t value);
-		void print(uint16_t value);
-		void print(uint8_t value);
-		void print(int32_t value);
-		void print(int16_t value);
-		void print(int8_t value);
-
-		void read();
-
-		bool cmd_is_ready();
-		char* get_cmd();
-
-		uint16_t available();
-
+class Serial {
+public:
+    Serial (UART_HandleTypeDef* serial);
+    ~Serial ();
+    
+    std::uint16_t available();
+    HAL_StatusTypeDef getLastStatus();
+    void print(std::string data);
+    void println(std::string data);
+    std::uint8_t read();
+    std::string readStringUntil(char ch);
+    void setTimeout(std::uint16_t timeout);
+    
+private:
+    UART_HandleTypeDef* _serialInterfacePtr;
+    std::uint16_t _timeout = 1;
+    HAL_StatusTypeDef _lastStatus;
 };
 
-
-
-
-#endif //SERIAL_H
+#endif // STM32_SERIAL_H

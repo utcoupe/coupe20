@@ -9,6 +9,12 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
 
     ard_hmi
+    game_manager
+    static_map
+    navigator
+    ard_tower
+    ard_asserv
+    ax12
 )
 
 ################################################

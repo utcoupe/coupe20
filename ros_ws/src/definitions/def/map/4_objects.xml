@@ -1,0 +1,126 @@
+<objects>
+    <classes>
+        <class name="atom">
+            <color name="red"/>
+            <marker type="cylinder" ns="atoms" z="0.0125">
+                <scale x="0.07" y="0.07" z="0.025"/>
+                <orientation x="0" y="0" z="0"/>
+            </marker>
+        </class>
+
+        <class name="atom-vertical" class="atom">
+            <shape type="rect" w="0.076" h="0.025"/>
+            <marker z="0.1285">
+                <orientation x="1.570796" y="0" z="0"/>
+            </marker>
+        </class>
+
+        <class name="atom-horizontal" class="atom">
+            <shape type="circle" r="0.038"/>
+        </class>
+    </classes>
+
+
+    <!-- Spawn zone -->
+    <container name="spawn_rd"/>
+    <container name="spawn_gd"/>
+    <container name="spawn_bd"/>
+    
+    <container name="spawn_atoms">
+        <container name="spawn_atoms_rd">
+            <object name="atom1" class="atom-horizontal">
+                <position x="0.5" y="1.55"/>
+            </object>
+        </container>
+        
+        <container name="spawn_atoms_gd">
+            <object name="atom2" class="atom-horizontal">
+                <position x="0.5" y="1.25"/>
+            </object>
+        </container>
+
+        <container name="spawn_atoms_bd">
+            <object name="atom3" class="atom-horizontal">
+                <position x="0.5" y="0.95"/>
+                <color name="green"/>
+            </object>
+        </container>
+    </container>
+
+    <!-- Accelerator -->
+    <container name="accelerator_station"/>
+    <container name="accelerator">
+        <object name="atom4" class="atom-vertical">
+            <position x="1.29" y="2.0" a="0.0"/>
+            <color name="blue"/>
+            <marker z="0.182"/>
+        </object>
+    </container>
+    
+    <!-- Chaos -->
+    <container name="chaos">
+        <position x="1" y="0.95"/>
+        <shape type="circle" r="0.15"/>
+
+        <object name="atom5" class="atom-horizontal">
+            <position x="1" y="1.05"/>
+            <color name="blue"/>
+        </object>
+        <object name="atom6" class="atom-horizontal">
+            <color name="green"/>
+            <position x="1" y="0.85"/>
+        </object>
+        <object name="atom7" class="atom-horizontal">
+            <color name="red"/>
+            <position x="1.1" y="0.95"/>
+        </object>
+        <object name="atom8" class="atom-horizontal">
+            <color name="red"/>
+            <position x="0.9" y="0.95"/> 
+        </object>
+    </container>
+    
+    <!-- Distributors -->
+    <container name="small_distrib">
+        <object name="atom5" class="atom-vertical">
+            <position x="0.123" y="-0.0175"/>
+            <color name="blue"/>
+        </object>
+        <object name="atom6" class="atom-vertical">
+            <color name="green"/>
+            <position x="0.223" y="-0.0175"/>
+        </object>
+        <object name="atom7" class="atom-vertical">
+            <color name="red"/>
+            <position x="0.323" y="-0.0175"/>
+        </object>
+    </container>
+
+    <container name="big_distrib">
+        <object name="atom5" class="atom-vertical">
+            <position x="0.5" y="0.4395"/>
+            <color name="red"/>
+        </object>
+        <object name="atom5" class="atom-vertical">
+            <position x="0.6" y="0.4395"/>
+            <color name="green"/>
+        </object>
+        <object name="atom5" class="atom-vertical">
+            <position x="0.7" y="0.4395"/>
+            <color name="red"/>
+        </object>
+
+        <object name="atom5" class="atom-vertical">
+            <position x="0.8" y="0.4395"/>
+            <color name="blue"/>
+        </object>
+        <object name="atom5" class="atom-vertical">
+            <position x="0.9" y="0.4395"/>
+            <color name="red"/>
+        </object>
+        <object name="atom5" class="atom-vertical">
+            <position x="1.0" y="0.4395"/>
+            <color name="green"/>
+        </object>
+    </container>
+</objects>

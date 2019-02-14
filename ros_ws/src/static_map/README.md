@@ -8,7 +8,7 @@ This package temporarily holds the RViz config file. In order to use it, open th
 
 # Services
 
-The package is aimed to offer three services called `memory/map/get`, `memory/map/set` and `memory/map/conditions`:
+The package is aimed to offer three services called `static_map/get`, `static_map/set` and `static_map/conditions`:
 - The `get` service will let other packages retrieve the statuses of all elements in the database. This includes position, number of sub-elements
 in a container, current speed of the enemy and so on.
 - The `set` service is the way to update the database. For instance, a recognizer from the `Perception` Namespace will repeatedly

@@ -8,7 +8,6 @@
 #include "game_manager/init_service.h"
 
 #include "pathfinder/pathfinder_ros_interface.h"
-#include "pathfinder/point.h"
 #include "pathfinder/BarriersSubscribers/static_map_subscriber.h"
 #include "pathfinder/BarriersSubscribers/objects_classifier_subscriber.h"
 #include "pathfinder/pos_convertor.h"
@@ -30,7 +29,7 @@ const string                DEFAULT_ROBOT_NAME          = "gr";
 
 const size_t                SIZE_MAX_QUEUE              = 10;
 const double                SAFETY_MARGIN               = 0.15;
-const string                MAP_GET_OBJECTS_SERVER      = "memory/map/get_objects";
+const string                MAP_GET_OBJECTS_SERVER      = "static_map/get_container";
 const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_classifier/objects";
 
 /**

@@ -1,7 +1,7 @@
 #ifndef COLLISIONS_SHAPES_ABSTRACT_SHAPE_H
 #define COLLISIONS_SHAPES_ABSTRACT_SHAPE_H
 
-#include "collisions/position.h"
+#include "geometry_tools/position.h"
 
 namespace CollisionsShapes {
     

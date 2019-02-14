@@ -2,7 +2,7 @@
 #define COLLISIONS_COLLISIONS_SUBSCRIPTIONS
 
 #include "collisions/robot.h"
-#include "collisions/position.h"
+#include "geometry_tools/position.h"
 #include "collisions/obstacles_stack.h"
 
 

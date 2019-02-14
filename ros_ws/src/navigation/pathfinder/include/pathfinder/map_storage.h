@@ -3,7 +3,7 @@
 
 #include <ros/console.h>
 
-#include "pathfinder/point.h"
+#include "geometry_tools/point.h"
 #include "pathfinder/dynamic_barriers_manager.h"
 
 #include <memory>

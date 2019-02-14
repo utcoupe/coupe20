@@ -1,7 +1,7 @@
 #ifndef DYNAMIC_BARRIERS_MANAGER_H
 #define DYNAMIC_BARRIERS_MANAGER_H
 
-#include "pathfinder/point.h"
+#include "geometry_tools/point.h"
 #include "pathfinder/BarriersSubscribers/abstract_barriers_subscriber.h"
 #include "pathfinder/pos_convertor.h"
 

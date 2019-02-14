@@ -1,0 +1,62 @@
+<terrain type="rect" w="3" h="2">
+    <position x="0" y="2"/> <!-- map tf at the bottom left corner -->
+    <marker type="mesh" ns="table" z="-0.022">
+        <scale x="0.001" y="0.001" z="0.001"/>
+        <orientation x="1.57079632679" y="0" z="0"/>
+        <mesh_path>package://definitions/def/map/table2019.stl</mesh_path>
+    </marker>
+    <color name="light_gray"/>
+
+    <layer name="chaos">
+        <wall name="chaos_left">
+            <position x="1" y="0.995"/> 
+            <shape type="circle" r="0.15"/>
+        </wall> 
+        <wall name="chaos_right">
+            <position x="2" y="0.995"/> 
+            <shape type="circle" r="0.15"/>
+        </wall> 
+    </layer>
+
+    <layer name="ground">
+        <!-- Main walls -->
+        <wall name="wall_top">
+            <position x="1.5" y="2.011"/> 
+            <shape type="rect" w="3.044" h="0.022"/>
+        </wall>
+         
+        <wall name="wall_bottom">
+            <position x="1.5" y="-0.011"/> 
+            <shape type="rect" w="3.044" h="0.022"/>
+        </wall>
+        
+        <wall name="wall_left">
+            <position x="-0.011" y="1"/> 
+            <shape type="rect" w="0.022" h="2"/>
+        </wall> 
+        
+        <wall name="wall_right">
+            <position x="3.011" y="1"/> 
+            <shape type="rect" w="0.022" h="2"/>
+        </wall>
+
+        <!-- 2019 Walls-->
+        <wall name="weight_and_sliders">
+            <position x="1.5" y="0.211"/> 
+            <shape type="rect" w="2.1" h="0.422"/>
+        </wall> 
+        <wall name="weight_divider">
+            <position x="1.5" y="0.3"/> 
+            <shape type="rect" w="0.04" h="0.6"/>
+        </wall> 
+    </layer>
+
+    <layer name="belt">
+        
+    </layer>
+
+    <layer name="pathfinder">
+        <include name="ground"/>
+        <include name="belt"/>
+    </layer>
+</terrain>

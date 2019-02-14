@@ -9,7 +9,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2019 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -44,8 +44,8 @@
 
 #include "serial.h"
 #include "pwm.h"
-#include "can.h"
-#include "canSender.h"
+// #include "can.h"
+// #include "canSender.h"
 #include "protocol.h"
 #include "control.h"
 #include "emergency.h"
@@ -57,7 +57,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-CAN_HandleTypeDef hcan;
+// CAN_HandleTypeDef hcan;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -71,7 +71,7 @@ UART_HandleTypeDef huart2;
 Serial g_serial(&huart2);
 Pwm g_right_pwm(&htim16);
 Pwm g_left_pwm(&htim17);
-Can g_can(&hcan,BBB_CAN_ADDR);
+// Can g_can(&hcan,BBB_CAN_ADDR);
 
 
 
@@ -81,14 +81,14 @@ Can g_can(&hcan,BBB_CAN_ADDR);
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_CAN_Init(void);
+// static void MX_CAN_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_TIM17_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_NVIC_Init(void);
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+extern "C" { void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim); };
                                 
                                 
 
@@ -140,7 +140,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_CAN_Init();
+  //MX_CAN_Init();
   MX_TIM2_Init();
   MX_TIM16_Init();
   MX_TIM17_Init();
@@ -149,7 +149,7 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  MX_CAN_FilterConfig();
+  // MX_CAN_FilterConfig();
   
   DWT_CounterEnable(); 
 #ifdef SERIAL_DEBUG
@@ -162,7 +162,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   init_encoders();
-  g_can.init();
+  // g_can.init();
   g_right_pwm.set_timer_freq(32000);
   g_left_pwm.set_timer_freq(32000);
 
@@ -181,7 +181,7 @@ int main(void)
         asservStatusTimer.Update();
     }
     readOrder();
-    CanSender::canSendTask();
+    // CanSender::canSendTask();
     
   /* USER CODE END WHILE */
 
@@ -260,7 +260,7 @@ static void MX_NVIC_Init(void)
 }
 
 /* CAN init function */
-static void MX_CAN_Init(void)
+/*static void MX_CAN_Init(void)
 {
 
   hcan.Instance = CAN;
@@ -292,7 +292,7 @@ static void MX_CAN_Init(void)
 
 
 
-}
+}*/
 
 /* TIM2 init function */
 static void MX_TIM2_Init(void)
@@ -519,7 +519,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -541,15 +540,15 @@ void readOrder()
 {
   // g_serial.print(g_can.available());
   // g_serial.print("\n");
-  if (g_can.available() > 0 ) 
+  /*if (g_can.available() > 0 ) 
   {
     if ( g_can.getFrameAddress() == ALL_CAN_ADDR ||
           g_can.getFrameAddress() == STM_CAN_ADDR)
     parseAndExecuteOrder(g_can.read());
-  }
+  }*/
 }
 
-static void MX_CAN_FilterConfig()
+/*static void MX_CAN_FilterConfig()
 {
   CAN_FilterConfTypeDef CAN_Filter;
   CAN_Filter.FilterIdHigh = 0xFFFF;
@@ -563,7 +562,7 @@ static void MX_CAN_FilterConfig()
   CAN_Filter.FilterActivation = ENABLE;
   CAN_Filter.BankNumber = 0;
   HAL_CAN_ConfigFilter(&hcan, &CAN_Filter);
-}
+}*/
 
 void DWT_CounterEnable()
 {

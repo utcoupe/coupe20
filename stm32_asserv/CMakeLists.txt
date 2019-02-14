@@ -8,11 +8,10 @@ set(STM32_CHIP STM32F303K8)
 set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.10.0/")
 SET(CMAKE_TOOLCHAIN_FILE "$ENV{UTCOUPE_WORKSPACE}/libs/stm32-cmake/cmake/gcc_stm32.cmake")
 
-
 project(stm32_asserv)
 cmake_minimum_required(VERSION 2.8)
 
-enable_language(ASM)
+enable_language(C CXX ASM)
 
 FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
@@ -34,11 +33,14 @@ file(
     asm/*
 )
 
+set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+
 add_executable(${CMAKE_PROJECT_NAME}
     ${source_files}
-    ${CMSIS_SOURCES}
     ${STM32HAL_SOURCES}
+    startup_stm32f303x8.s
 )
 
 STM32_SET_TARGET_PROPERTIES(${CMAKE_PROJECT_NAME})
 STM32_ADD_HEX_BIN_TARGETS(${CMAKE_PROJECT_NAME})
+

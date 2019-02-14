@@ -13,29 +13,19 @@
 	</order>
 
 	<order ref="tower_load_atom" duration="3">
-		<message dest="actuators/ard_tower/action" timeout="8">
-			<action>0</action>
+		<message dest="actuators/ard_tower/load" timeout="8">
+			<param name="mode" type="int" preset="true">0</param>
 		</message>
-		<response>
-			<param name="success" type="bool" condition="==">1</param>
-		</response>
 	</order>
 
 	<order ref="tower_load_tower" duration="3">
-		<message dest="actuators/ard_tower/action" timeout="8">
-			<action>1</action>
+		<message dest="actuators/ard_tower/load" timeout="8">
+			<param name="mode" type="int" preset="true">1</param>
 		</message>
-		<response>
-			<param name="success" type="bool" condition="==">1</param>
-		</response>
 	</order>
 
 	<order ref="tower_unload_tower" duration="3">
-		<message dest="actuators/ard_tower/action" timeout="8">
-			<action>2</action>
+		<message dest="actuators/ard_tower/unload" timeout="8">
 		</message>
-		<response>
-			<param name="success" type="bool" condition="==">1</param>
-		</response>
 	</order>
 </orders>

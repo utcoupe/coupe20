@@ -42,51 +42,60 @@ int pos_unload      = 0 ;
 int pos_load_init = 0 ; // ??? 
 int pos_load      = 100 ;  // ???? 
 
-float nb_atom_in  = 0 ; //number of atom loaded 
-float nb_atom_out = 0 ; //number of atom unloaded 
+float nb_atom_in_sas  = 0 ; //number of atom loaded in the sas (for slide)
+float nb_atom_in = 0 ; //number of atom loaded in total 
 
-int load_content   = -1 ; // actions given to stepper 
-int unload_content = -1 ; // actions given to stepper 
-int load_stauts    = -1 ; // info on stepper status 
-int unload_status  = -1 ; // info on stepper status 
-int game_status    = -1 ; // info on game status 
+int load_content    = -1 ; // actions given to stepper  => 0 for nothing // 1 for load ONE atom // 2 for load tower of atoms 
+int load_content_nb = -1 ; // number of atoms to load if load_content = 2 
+int unload_content  = -1 ; // actions given to stepper  => 0 for nothing // 1 for unoload 
+int load_stauts     = -1 ; // info on stepper status 
+int unload_status   = -1 ; // info on stepper status 
+int game_status     = -1 ; // info on game status  // 1 ingame 
 
 //----- ROS methods ------ 
 void on_game_status(const game_manager::GameStatus& msg){
   game_status = msg.game_status;
-  //init_status = msg.init_status;
 }
 
 void on_tower_load  (const ard_tower::TowerLoad& msg){
   load_content = msg.load_content ; 
+  load_content_nb = msg.load_content_nb ; 
 }
 
 void on_tower_unload (const ard_tower::TowerUnload& msg){
   unload_content = 1 ; 
 }
 
+// ~ Subscriber ~ 
 ros::Subscriber<game_manager::GameStatus> sub_game_status  ("ai/game_manager/status",     &on_game_status); 
 ros::Subscriber<ard_tower::TowerLoad>     sub_tower_load   ("actuators/ard_tower/load",   &on_tower_load);
 ros::Subscriber<ard_tower::TowerUnload>   sub_tower_unload ("actuators/ard_tower/unload", &on_tower_unload);
 
-//ros::Publisher pub_tower_load   ("actuators/ard_tower/load_event",   &load_event_msg); 
-//ros::Publisher pub_tower_unload ("actuators/ard_tower/unload_event", &unload_event_msg); 
+// ~ Publisher ~ 
+ard_tower::TowerLoadResponse load_event_msg ; 
+ard_tower::TowerUnloadResponse unload_event_msg ; 
+ros::Publisher pub_tower_load   ("actuators/ard_tower/load_event",   &load_event_msg); 
+ros::Publisher pub_tower_unload ("actuators/ard_tower/unload_event", &unload_event_msg); 
 
 
 // ---- Function -----
 
-void unload_atom() {
+void unload_atom() { // TODO take in account nb of atom loaded 
   if ( unload_content == 1 &&  game_status == 1 ) { //nedd to unload atom  and ingame 
     servo_unload.write(pos_unload); 
     delay(500); 
     servo_unload.write(pos_unload_init); 
-    nb_atom_out = nb_atom_out + 1 ; 
     nb_atom_in = nb_atom_in - 1 ; 
     unload_content = 0 ; 
   }
   else { // wait for message 
     servo_unload.write(pos_unload_init); 
   }
+
+  unload_event_msg.unload_status = 0 ; // in progress 
+  unload_event_msg.unload_status = 1 ; // finish 
+  pub_tower_unload.publish(&unload_event_msg); 
+
 }
 
 void load_atom() {
@@ -102,6 +111,11 @@ void load_atom() {
   else { // not ingame 
     //do nothing 
   }
+
+  load_event_msg.load_status = 0 ; // in progress 
+  load_event_msg.load_status = 1 ;// finish 
+  load_event_msg.nb_atom_in  = 0 ; // number of atom loaded (float32) 
+  pub_tower_load.publish(&load_event_msg); 
 }
 
 // ------ MAIN FUNCTIONS ----- 
@@ -114,8 +128,9 @@ void setup() {
   nh.subscribe(sub_tower_load); 
   nh.subscribe(sub_tower_unload); 
 
- // nh.advertise(pub_tower_load) ; 
- // nh.advertise(pub_tower_unload); 
+  
+  nh.advertise(pub_tower_load) ; 
+  nh.advertise(pub_tower_unload); 
   
   // Servo Actuator init 
   servo_unload.attach(22) ;  // attaches the servo on pin 22 to the servo object

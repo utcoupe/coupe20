@@ -54,6 +54,7 @@ find_package(catkin REQUIRED COMPONENTS
    TowerLoad.msg
    TowerUnload.msg
    TowerInit.msg
+   TowerInitResponse.msg
  )
 
 ## Generate services in the 'srv' folder

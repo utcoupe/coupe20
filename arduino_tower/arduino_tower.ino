@@ -16,8 +16,8 @@
 ros :: NodeHandle nh ; 
 
 // Actuators includes 
-#include <Servo.h>
-#include "AFMotor.h"
+#include <Servo.h> 
+#include "PololuA4983.h"
 
 // Variables includes 
 #include "tower_variables.h"
@@ -27,8 +27,7 @@ ros :: NodeHandle nh ;
 Servo servo_unload ; // create servo object to control a servo
 
 // Stepper motor 
-extern int16_t stepper_actuators_states[];
-AF_Stepper stepper_load;
+PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay); 
 
 //----- ROS methods ------ 
 void on_tower_init(const ard_tower::TowerLoad& msg) { //change TowerLoad to TowerInit
@@ -40,8 +39,9 @@ void on_game_status(const game_manager::GameStatus& msg){
 }
 
 void on_tower_load  (const ard_tower::TowerLoad& msg){
-  load_content = msg.load_content ; 
-  load_content_nb = msg.load_content_nb ; 
+  load_content          = msg.load_content ; 
+  load_content_nb       = msg.load_content_nb ; 
+  load_content_position = msg.load_content_nb ; 
 }
 
 void on_tower_unload (const ard_tower::TowerUnload& msg){
@@ -79,7 +79,6 @@ void unload_atom() {
   if ( unload_content == 2 && game_status == 1 ) { //unload atom with pliers 
     unload_atom_pliers(); 
   }
-  pub_tower_unload.publish(&unload_event_msg); 
 }
 
 void unload_atom_slider() {
@@ -89,6 +88,7 @@ void unload_atom_slider() {
     servo_unload.write(POS_UNLOAD_INIT); 
     nb_atom_in     = nb_atom_in - 1 ; 
     nb_atom_in_sas = nb_atom_in_sas -  1 ; 
+    nb_atom_out    = nb_atom_out + 1 ; 
   }
 
   if ( nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
@@ -108,11 +108,12 @@ void unload_atom_slider() {
   }
   
   if (nb_atom_in_sas == 0 && nb_atom_in == 0 && game_status == 1) {
-    unload_content = 0 ; 
     unload_event_msg.unload_success = 1 ;
+    unload_event_msg.nb_atom_out    = nb_atom_out ; 
+    pub_tower_unload.publish(&unload_event_msg) ; 
+    unload_content = 0 ; 
+    nb_atom_out    = 0 ; 
   }
-
-  unload_event_msg.unload_success = 0 ; // in proogress     
 
 }
 
@@ -120,31 +121,73 @@ void unload_atom_pliers() {
   if ( nb_atom_in - nb_atom_in_sas != 0 ) {
     // send message to AX12 and open gates 
     // TODO 
-    nb_atom_in = nb_atom_in_sas ; 
+    nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
+    nb_atom_in  = nb_atom_in_sas ; 
   }
   else {
     // nothing to unload 
-    unload_content = 0 ; 
     unload_event_msg.unload_success = 1 ; 
+    unload_event_msg.nb_atom_out    = nb_atom_out ; 
+    pub_tower_unload.publish(&unload_event_msg); 
+    unload_content = 0 ; 
+    nb_atom_out = 0 ; 
   }
-  
 }
 
 
 void load_atom() {
-  if (load_content == 1 && game_status == 1 ) { //load one atom and ingame 
-    stepper_load.step(100, FORWARD, SINGLE);
+  if (load_content == 1 && game_status == 1 ) {
+    load_atom_single() ;  //load one atom and ingame 
+  }  
+  if (load_content == 2 && game_status == 1) {  
+    load_atom_tower() ;   //load tower of atoms and ingame
   }
-  if (load_content == 2 && game_status == 1 ) { //load tower of atoms and ingame 
-    stepper_load.step(100, FORWARD, SINGLE);
-  }
-  if (load_content == 0 && game_status == 1 ) { //load nothing (go back down)
-    stepper_load.step(100,BACKWARD,SINGLE); 
-  }
-  else { // not ingame 
-    //do nothing 
+}
+
+void load_atom_single() {
+  stepper_load.moveStep(positions-H_GROUND, true) ; 
+  positions = H_GROUND ; 
+  //TODO send message to AX12 (close)
+
+  if (nb_atom_in_sas < MAX_ATOM_SAS){  //put atom in sas 
+    stepper_load.moveStep(H_SAS_LOW-positions,false); 
+    positions = H_SAS_LOW ; 
+    //TODO open AX12
+    nb_atom_in     += 1 ; 
+    nb_atom_in_sas += 1 ;  
   }
 
+  if (nb_atom_in_sas >= MAX_ATOM_SAS){  // sas is full keep atom on pliers 
+      stepper_load.moveStep(H_FLOOR_1-positions,true); 
+      positions = H_SAS_LOW ; 
+      nb_atom_in     += 1 ;
+  }
+
+  load_content = 0 ; 
+  load_event_msg.load_success     = 1 ;// finish 
+  load_event_msg.nb_atom_in       = nb_atom_in ; // number of atom loaded (float32) 
+  load_event_msg.nb_atom_in_sas   = nb_atom_in_sas ; 
+  pub_tower_load.publish(&load_event_msg); 
+}
+
+
+void load_atom_tower() {
+  // number of atom to take 
+  // the position where you take them (floor ) 
+  switch (load_content_position) {
+    case 2 : 
+      break ; 
+    case 3 : 
+      break ; 
+    case 4 : 
+      break ; 
+    case 5 : 
+      break ; 
+    case 6 : 
+      break ; 
+  }
+  
+  load_content = 0 ; 
   load_event_msg.load_success = 0 ; // in progress 
   load_event_msg.load_success = 1 ;// finish 
   load_event_msg.nb_atom_in  = 0 ; // number of atom loaded (float32) 
@@ -167,16 +210,14 @@ void setup() {
   nh.advertise(pub_tower_unload); 
   
   // Servo Actuator init 
-  servo_unload.attach(22) ;  // attaches the servo on pin 22 to the servo object
+  servo_unload.attach(servo_unload_pin) ;  // attaches the servo on pin 22 to the servo object
 
-  // Stepper Actuator init 
-  stepper_load.init(200,1) ; 
-  stepper_load.setSpeed(120) ; // set the speed of the motor to 30 RPMs
 }
 
 void loop() {
   unload_atom() ; 
   load_atom(); 
+  stepper_load.update() ; 
   
   //ROS loop 
   nh.spinOnce() ; 

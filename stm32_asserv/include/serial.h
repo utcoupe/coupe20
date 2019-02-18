@@ -15,8 +15,8 @@ public:
     
     std::uint16_t available();
     HAL_StatusTypeDef getLastStatus();
-    void print(std::string data);
-    void println(std::string data);
+    void print(const std::string& data);
+    void println(const std::string& data);
     std::uint8_t read();
     std::string readStringUntil(char ch);
     void setTimeout(std::uint16_t timeout);
@@ -26,5 +26,7 @@ private:
     std::uint16_t _timeout = 1;
     HAL_StatusTypeDef _lastStatus;
 };
+
+extern Serial g_serial;
 
 #endif // STM32_SERIAL_H

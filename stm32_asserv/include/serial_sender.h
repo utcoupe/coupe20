@@ -1,6 +1,6 @@
 /**
  * \file	serial_sender.h
- * \author	Thomas Fuhrmann, Gaëtan Blond <tomesman@gmail.com>
+ * \author	Thomas Fuhrmann <tomesman@gmail.com>, Gaëtan Blond
  * \brief   Functions to send data accross the serial communication line
  * \date	06/12/2016, 14/02/2019
  * \copyright Copyright (c) 2019 UTCoupe All rights reserved.
@@ -12,14 +12,22 @@
 #include "serial.h"
 
 #include <cstdarg>
-#include <queue>
+#include <QueueList.h>
 #include <string>
+
+#ifndef SENDER_ENUM
+#define SENDER_ENUM
+typedef enum
+{
+    SERIAL_ERROR = 0,
+    SERIAL_INFO,
+    SERIAL_DEBUG
+} SerialSendEnum;
+#endif
 
 class SerialSender
 {
 public:
-    enum SerialSendEnum { SERIAL_ERROR = 0, SERIAL_INFO, SERIAL_DEBUG };
-    
     SerialSender(Serial* serialPtr);
     ~SerialSender() = default;
     
@@ -30,12 +38,12 @@ public:
         
 private:
     Serial* _serialInterfacePtr;
-    std::queue<std::string> _dataToSend;
+    QueueList<std::string> _dataToSend;
     
     std::string charArrayToString(const char * str, uint8_t size);
 };
 
-
+extern SerialSender g_serialSender;
 
 
 #endif // STM32_SERIAL_H

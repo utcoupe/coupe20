@@ -15,7 +15,7 @@ std::uint16_t Serial::available() {
     return _serialInterfacePtr->RxXferSize;
 }
 
-void Serial::print(string data) {
+void Serial::print(const string& data) {
     _lastStatus = HAL_UART_Transmit(
         _serialInterfacePtr,
         (uint8_t*)data.c_str(),
@@ -24,7 +24,7 @@ void Serial::print(string data) {
     );
 }
 
-void Serial::println(string data) {
+void Serial::println(const string& data) {
     print(data + string("\n"));
 }
 

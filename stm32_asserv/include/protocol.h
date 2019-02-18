@@ -6,55 +6,58 @@
 #define ASSERV_PROTOCOL_H
 
 #include "parameters.h"
+
 #include <stdint.h>
-// #include "canSender.h"
-#include "serial.h"
 
-#define ALL_CAN_ADDR		0
-#define BBB_CAN_ADDR		1
-#define STM_CAN_ADDR		2
-#define ARDUINO_CAN_ADDR	3
-#define ZIGBEE_CAN_ADDR		4
+// 	COMMANDS :
+// 'ordre;id;arg1;arg2;argn'
+//  For example :
+// 'c;3;120;1789;31400'
+// 'j;0;'
+// issues the order GOTOA with
+// ID 3 to X=120, Y=1789 and angle = 3.14
+//
+// WARNING : order should be
+//  ONE ascii char long
+//
+//  float are transmitted as integer
+//  therefore any number refered as 
+//  "decimal" is actually an int
+//  multiplied by FLOAT_PRECISION
 
-#define STOP 				0
-#define START 				1
-#define PAUSE 				2
-#define RESUME 				3
-#define RESET_ID 			4
-#define SETEMERGENCYSTOP 	5
-#define NEXT_ORDER			6
-#define RESET_ORDERS		7
-#define UNSETEMERGENCYSTOP	8
+// BEGIN_ORDERS - Do not remove this comment
+#define START       'S'     //no args, start the program
+#define HALT        'H'     //no args, halt the program
+#define	GOTOA 		'c' 	// x(int);y(int);a(decimal);direction(int) - (mm and radian), direction is optionnal : 1 is forward, -1 is backward, 0 is any; slow_go(bool)
+#define	GOTO 		'd' 	// x(int);y(int);direction(int) - (mm), direction is optionnal : 1 is forward, -1 is backward, 0 is any; slow_go(bool)
+#define	ROT 		'e' 	// a(decimal) - (radian), can't turn more than 1 turn
+#define ROTNOMODULO	'a' 	// a(decimal) - radian, can turn more than 1 turn
+#define	KILLG 		'f' 	// no args, go to next order
+#define	CLEANG 		'g' 	// no args, cancel all orders
+#define	PIDLEFT		'p' 	// p(decimal);i(decimal);d(decimal) - set left PID
+#define	PIDRIGHT	'i' 	// p(decimal);i(decimal);d(decimal) - set right PID
+#define PIDALL 		'u' 	// p(decimal);i(decimal);d(decimal) - set both PID
+#define	GET_CODER 	'j' 	// no args, response : l(long);r(long)
+#define	PWM 		'k' 	// l(int);r(int);duration(int) - set left and right pwm for duration ms
+#define	SPD 		'b' 	// l(int);a(int);duration(int) - set linear and angular spd for duration ms
+#define	ACCMAX 		'l' 	// a(int) - set max acceleration (mm/s-2)
+#define	SPDMAX 		'x' 	// v(int),r(decimal) - set max spd (mm/s) and rotation ratio
+#define	SET_POS		'm' 	// x(int);y(int);a(decimal);mode(int) - set pos (mm / radians)
+#define	GET_POS		'n' 	// no args, response : x(int);y(int);a(decimal) - get current pos (mm and radians)
+#define GET_SPD 	'y' 	// no args, respond : l(int);r(int) - get wheels speed (mm/s)
+#define GET_TARGET_SPD 	'v'	// no args, respond : l(int);r(int) - get target wheels speed (mm/s)
+#define	GET_POS_ID 	'o'		// no args, response : x(int);y(int);a(decimal);id(int) - get current pos and last id (mm and radians)
+#define GET_LAST_ID	't' 	// no args, response : id(int)
+#define	PAUSE 		'q' 	// no args, pauses control
+#define	RESUME 		'r'		// no args, resumes control
+#define RESET_ID 	's' 	// no args, reset last finished id to 0
+#define PINGPING 	'z'		// no args, switch led state
+#define WHOAMI 		'w' 	// no args, answers 'ASSERV' or 'PAP'
+#define SETEMERGENCYSTOP 'A'	// enable(int)
+// END_ORDERS - Do not remove this comment
 
-#define HANDSHAKE			0
-#define WHOAMI				1
-#define SET_MODE			3
-#define SPEED 				4
-#define GET_CODER			5
-#define MANAGEMENT			7
-#define GOTOA				8
-#define GOTO 				9
-#define ROT 				10
-#define ROTNOMODULO 		11
-#define PIDLEFT				12
-#define PIDRIGHT			13
-#define PIDALL				14
-#define PWM 				15
-#define SET_POS				16
-#define SET_PARAM			17
-#define CURRENT_POS 		18
-#define CURRENT_PWM			19
-#define CURRENT_SPD			20
-#define MOVE_PLIERS 		21
-#define CLOSE_OPEN_PLIERS	22
-#define SONAR_DISTANCE		23
-#define THROW_BALLS			24
-#define OBJECT_ON_MAP		25
-#define ORDER_COMPLETED		26
-#define SET_SERVO			27
-#define ROBOT_BLOCKED		28
 
-// END CAN ORDERS
+
 #define AUTO_SEND	'~'		// x(int);y(int);a(decimal)
 #define JACK 	'J'
 
@@ -78,10 +81,15 @@
 #define MAX_AUTOSEND_SIZE (24)
 #endif
 
-extern bool flagConnected;
-extern Serial g_serial;
-void parseAndExecuteOrder(uint8_t* message);
+//SET_POS mode bits - similar to status bits in control.h
+#define BIT_MODE_A   (1<<0)
+#define BIT_MODE_Y   (1<<1)
+#define BIT_MODE_X   (1<<2)
+
+extern uint8_t flagSTM32Connected;
 uint8_t getLog10(const uint16_t number);
 void ProtocolAutoSendStatus();
+void emergencyStop(const uint8_t enable);
 
 #endif //ASSERV_PROTOCOL_H
+

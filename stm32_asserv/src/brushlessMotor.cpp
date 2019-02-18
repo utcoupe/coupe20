@@ -4,6 +4,8 @@
 
 #include "brushlessMotor.h"
 
+#include "pwm.h"
+
 #define NO_PWM 0
 extern Pwm g_right_pwm;
 extern Pwm g_left_pwm;

@@ -6,6 +6,7 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
+#define STM32_ID "ard_asserv"
 #define DEBUG_TARGET_SPEED 0
 #define DEBUG_MAINLOOP 0
 #define DEBUG_LEVEL 2
@@ -48,6 +49,11 @@
 #define PID_I 11.0 //130
 #define PID_D 0 // 0.5
 #define PID_BIAS 130
+#define PID_I_MAX 150
+#define PID_OUT_MAX 255
+
+#define BRK_COEFF 3.0
+
 
 // Control feed-forward, pwm = a*spd + b
 #define SPD_TO_PWM_A 0.15

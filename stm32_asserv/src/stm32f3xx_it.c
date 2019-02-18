@@ -41,7 +41,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern CAN_HandleTypeDef hcan;
 extern UART_HandleTypeDef huart2;
 extern uint16_t g_nb_msg_received;
 /******************************************************************************/

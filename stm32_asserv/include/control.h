@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include "PID.h"
 #include "parameters.h"
-#include "motor.h"
+// #include "motor.h"
 
 #define PAUSE_BIT (1<<0)
 #define EMERGENCY_BIT (1<<1)
@@ -40,22 +40,11 @@ void ControlReset(void);
 void ControlSetStop(int mask);
 void ControlUnsetStop(int mask);
 
-// #define min(a,b) \
-//    ({ __typeof__ (a) _a = (a); \
-//        __typeof__ (b) _b = (b); \
-//      _a < _b ? _a : _b; })
-
-#ifdef __cplusplus
-extern "C" void ControlInit(void);
-extern "C" void ControlCompute(void);
-#else
-void ControlInit(void);
-void ControlCompute(void);
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+void ControlInit(void);
+void ControlCompute(void);
 extern uint16_t lastReachedID;
 #ifdef __cplusplus
 }

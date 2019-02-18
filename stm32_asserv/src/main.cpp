@@ -43,18 +43,22 @@
 /* USER CODE BEGIN Includes */
 
 #include "serial.h"
+#include "serial_sender.h"
 #include "pwm.h"
 // #include "can.h"
 // #include "canSender.h"
-#include "protocol.h"
+#include "protocol.hpp"
 #include "control.h"
-#include "emergency.h"
 #include "block.h"
 #include "parameters.h"
 #include "Timer.h"
 #include "compat.h"
 #include "encoder.h"
+
+#include <string>
 /* USER CODE END Includes */
+
+using namespace std;
 
 /* Private variables ---------------------------------------------------------*/
 // CAN_HandleTypeDef hcan;
@@ -69,9 +73,9 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 Serial g_serial(&huart2);
+SerialSender g_serialSender(&g_serial);
 Pwm g_right_pwm(&htim16);
 Pwm g_left_pwm(&htim17);
-// Can g_can(&hcan,BBB_CAN_ADDR);
 
 
 
@@ -88,7 +92,7 @@ static void MX_TIM17_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_NVIC_Init(void);
 
-extern "C" { void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim); };
+extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
                                 
 
@@ -97,8 +101,8 @@ extern "C" { void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim); };
 /* Private function prototypes -----------------------------------------------*/
 void asservLoop(void);
 void asservStatus(void);
+void serialRead();
 void readOrder(void);
-static void MX_CAN_FilterConfig(void);
 void DWT_CounterEnable(void);
 void blink(void);
 
@@ -140,7 +144,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  //MX_CAN_Init();
   MX_TIM2_Init();
   MX_TIM16_Init();
   MX_TIM17_Init();
@@ -162,7 +165,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   init_encoders();
-  // g_can.init();
   g_right_pwm.set_timer_freq(32000);
   g_left_pwm.set_timer_freq(32000);
 
@@ -174,14 +176,12 @@ int main(void)
   while (1)
   {
     blinkTimer.Update();
-    if (!flagConnected) {
+    if (!flagSTM32Connected) {
         
     } else {
         asservLoopTimer.Update();
         asservStatusTimer.Update();
     }
-    readOrder();
-    // CanSender::canSendTask();
     
   /* USER CODE END WHILE */
 
@@ -258,41 +258,6 @@ static void MX_NVIC_Init(void)
   HAL_NVIC_SetPriority(CAN_RX0_IRQn, 15, 0);
   HAL_NVIC_EnableIRQ(CAN_RX0_IRQn);
 }
-
-/* CAN init function */
-/*static void MX_CAN_Init(void)
-{
-
-  hcan.Instance = CAN;
-  // config 1Mb/s
-  // hcan.Init.Prescaler = 2;
-  // hcan.Init.Mode = CAN_MODE_NORMAL;
-  // hcan.Init.SJW = CAN_SJW_1TQ;
-  // hcan.Init.BS1 = CAN_BS1_12TQ;
-  // hcan.Init.BS2 = CAN_BS2_3TQ;
-  // config 500kb/s
-  hcan.Init.Prescaler = 4;
-  hcan.Init.Mode = CAN_MODE_NORMAL;
-  hcan.Init.SJW = CAN_SJW_1TQ;
-  hcan.Init.BS1 = CAN_BS1_12TQ;
-  hcan.Init.BS2 = CAN_BS2_3TQ;
-
-  hcan.Init.TTCM = DISABLE;
-  hcan.Init.ABOM = ENABLE;
-  hcan.Init.AWUM = DISABLE;
-  hcan.Init.NART = DISABLE;
-  hcan.Init.RFLM = DISABLE;
-  hcan.Init.TXFP = DISABLE;
-  if (HAL_CAN_Init(&hcan) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-
-
-
-
-}*/
 
 /* TIM2 init function */
 static void MX_TIM2_Init(void)
@@ -536,33 +501,24 @@ void asservStatus() {
     ProtocolAutoSendStatus();
 }
 
-void readOrder()
-{
-  // g_serial.print(g_can.available());
-  // g_serial.print("\n");
-  /*if (g_can.available() > 0 ) 
-  {
-    if ( g_can.getFrameAddress() == ALL_CAN_ADDR ||
-          g_can.getFrameAddress() == STM_CAN_ADDR)
-    parseAndExecuteOrder(g_can.read());
-  }*/
+/**
+ * Read a \n ending string from serial port.
+ * The timeout is 50ms.
+ * When a string is received, execute the corresponding order.
+ */
+void serialRead() {
+    string receivedString;
+    if (g_serial.available() > 0) {
+        receivedString = g_serial.readStringUntil('\n');
+        // SerialSender::SerialSend(SERIAL_INFO, receivedString);
+        if (receivedString.length() > 0 && receivedString.back() == '\n') {
+            receivedString.pop_back();
+        }
+        if (receivedString != "") {
+            parseAndExecuteOrder(receivedString);
+        }
+    }
 }
-
-/*static void MX_CAN_FilterConfig()
-{
-  CAN_FilterConfTypeDef CAN_Filter;
-  CAN_Filter.FilterIdHigh = 0xFFFF;
-  CAN_Filter.FilterIdLow = 0;
-  CAN_Filter.FilterMaskIdHigh = 0xFFFF;
-  CAN_Filter.FilterMaskIdLow = 0;
-  CAN_Filter.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-  CAN_Filter.FilterNumber = 0;
-  CAN_Filter.FilterMode = CAN_FILTERMODE_IDMASK;
-  CAN_Filter.FilterScale = CAN_FILTERSCALE_16BIT;
-  CAN_Filter.FilterActivation = ENABLE;
-  CAN_Filter.BankNumber = 0;
-  HAL_CAN_ConfigFilter(&hcan, &CAN_Filter);
-}*/
 
 void DWT_CounterEnable()
 {

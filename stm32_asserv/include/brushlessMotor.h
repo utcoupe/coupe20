@@ -8,8 +8,6 @@
 #include "parameters.h"
 #include "pins.h"
 #include "stm32f3xx_hal.h"
-#include "pwm.h"
-// #include <math.h>
 #include "local_math.h"
 
 // #define my_abs(x)   ((x) > 0 ? (x) : -(x))
@@ -26,11 +24,16 @@
 //#define abs(x)   ((x) > 0 ? (x) : -(x))
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void BrushlessMotorsInit();
 int BrushlessMotorsReady();
 void BrushlessMotorSetPwm(int motor_side, int pwm);
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif

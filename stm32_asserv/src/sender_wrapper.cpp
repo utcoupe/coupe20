@@ -3,17 +3,21 @@
 //
 
 #include "sender_wrapper.h"
-//#include "sender.h"
-#include <stdarg.h>
+#include "serial_sender.h"
+
+#include <cstdarg>
+#include <string>
+
+using namespace std;
 
 //static void SerialSendWrapVariadic(SerialSendEnum level, const char* data, va_list args);
 
 static void SerialSendWrapVariadic(SerialSendEnum level, const char* data, va_list args) {
-    //SerialSender::SerialSend(level, data, args);
+    g_serialSender.serialSend(level, data, args);
 }
 
-void SerialSendWrap(SerialSendEnum level, String data) {
-    //SerialSender::SerialSend(level, data);
+void SerialSendWrap(SerialSendEnum level, const string& data) {
+    g_serialSender.serialSend(level, data);
 }
 
 void SerialSendWrapVar(SerialSendEnum level, const char* data, ...) {

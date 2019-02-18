@@ -17,7 +17,7 @@ enable_language(C CXX ASM)
 
 FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
-FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc flash pwr cortex i2c can REQUIRED)
+FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc flash pwr cortex i2c REQUIRED)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -31,12 +31,13 @@ file(
     GLOB_RECURSE
     source_files
     src/*
-    include/*
+    #include/*
 )
 
 set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
 
 add_executable(${CMAKE_PROJECT_NAME}
+    src/main.cpp
     ${source_files}
     ${STM32HAL_SOURCES}
     startup_stm32f303x8.s

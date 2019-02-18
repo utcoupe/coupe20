@@ -3,28 +3,22 @@
  * Mail : quentin.chateau@gmail.com	*
  * Date : 29/11/13			*
  ****************************************/
-//#include <math.h>
+
 #include "encoder.h"
 #include "robotstate.h"
 #include "goals.h"
 #include "control.h" 
 #include "compat.h"
 #include "motor.h"
-// #include "local_math.h"
-#include "emergency.h"
-#include "protocol.h"
-// #include "canSender.h"
+#include "local_math.h"
 
-#define min(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-     _a < _b ? _a : _b; })
-
+#include <math.h>
 
 #define ANG_REACHED (0x1)
 #define POS_REACHED (0x2)
 #define REACHED (ANG_REACHED | POS_REACHED)
 
+#define sign(x) ((x)>=0?1:-1)
 
 uint16_t lastReachedID = 0;
 
@@ -93,31 +87,11 @@ void ControlCompute(void) {
 	goal_t* current_goal = FifoCurrentGoal();
 	RobotStateUpdate();
 
-	// clear emergency everytime, it will be reset if necessary
-	ControlUnsetStop(EMERGENCY_BIT);
-	ControlUnsetStop(SLOWGO_BIT);
-	
-	//if (ABS(control.speeds.linear_speed) > 1) {
-		// int direction;
-		// if (control.speeds.linear_speed >= 0) {
-		// 	direction = EM_FORWARD;
-		// } else {
-		// 	direction = EM_BACKWARD;
-		// }
-
-	if (emergency_status[EM_FORWARD].phase == FIRST_STOP ||
-		emergency_status[EM_BACKWARD].phase == FIRST_STOP) {
-		ControlSetStop(EMERGENCY_BIT);
-	} else if (emergency_status[EM_FORWARD].phase == SLOW_GO ||
-			   emergency_status[EM_BACKWARD].phase == SLOW_GO) {
-		ControlSetStop(SLOWGO_BIT);
-	}
-	//}
-
-
-	if (control.status_bits & EMERGENCY_BIT  || 
-		control.status_bits & PAUSE_BIT      ||
-		control.status_bits & TIME_ORDER_BIT ) {
+	if (
+        control.status_bits & EMERGENCY_BIT
+        || control.status_bits & PAUSE_BIT
+        || control.status_bits & TIME_ORDER_BIT
+    ) {
 		stopRobot();
 	} else {
 		switch (current_goal->type) {
@@ -146,17 +120,9 @@ void ControlCompute(void) {
         // Instead of calling SerialSend directly (does not work), we use a global variable to send the id from main
 //        SerialSendWrapVar(SERIAL_INFO, "%d;", (int)control.last_finished_id);
         lastReachedID = control.last_finished_id;
-#if KEEP_LAST_GOAL
-        if ( FifoRemainingGoals() == 2)
-#else
-        if ( FifoRemainingGoals() == 1)
-#endif
-        {
-			// CanSender::canSend(ORDER_COMPLETED);
-        }
-
 		FifoNextGoal();
 		ControlPrepareNewGoal();
+
 #if TIME_BETWEEN_ORDERS
 		time_reached = now;
 	}
@@ -205,11 +171,11 @@ void goalSpd(goal_t *goal) {
 		time_left = (goal->data.spd_data.time - ((now - start_time)/1000.0)) / 1000.0;
 		v_dec = time_left * control.max_acc;
 
-		control.speeds.linear_speed = min(min(
+		control.speeds.linear_speed = fmin(fmin(
 			control.speeds.linear_speed+DT*control.max_acc,
 			goal->data.spd_data.lin),
 			v_dec);
-		control.speeds.angular_speed = min(min(
+		control.speeds.angular_speed = fmin(fmin(
 			control.speeds.angular_speed+DT*control.max_acc,
 			goal->data.spd_data.ang),
 			v_dec);
@@ -307,32 +273,38 @@ float calcSpeed(float init_spd, float dd, float max_spd, float final_speed) {
 	init_spd *= d_sign;
 	acc_spd = init_spd + (control.max_acc*DT);
 	dec_spd = sqrt(pow(final_speed, 2) + 2*control.max_acc*dd_abs);
-	target_spd = min(max_spd, min(acc_spd, dec_spd))*d_sign;
+	target_spd = fmin(max_spd, fmin(acc_spd, dec_spd))*d_sign;
 	return target_spd;
 }
 
 void stopRobot(void) {
-	// int sign;
-	// float speed;
+	int sign;
+	float speed;
 
-//	sign = sign(control.speeds.angular_speed);
-//	speed = abs(control.speeds.angular_speed);
-//	speed -= control.max_acc * DT;
-//	speed = max(0, speed);
-//	control.speeds.angular_speed = speed;
-//
-//	sign = sign(control.speeds.linear_speed);
-//	speed = abs(control.speeds.linear_speed);
-//	speed -= control.max_acc * DT;
-//	speed = max(0, speed);
-//	control.speeds.linear_speed = sign*speed;
-//
-//	if (abs(wheels_spd.left) + abs(wheels_spd.right) < SPD_TO_STOP) {
-//		allStop();
-//	} else {
-//		applyPID();
-//	}
-    allStop();
+    speed = ABS(control.speeds.angular_speed);
+    if (BRK_COEFF != 0.0) {
+        speed -= control.max_acc * DT * BRK_COEFF;
+    } else {
+        speed = 0.0;
+    }
+    speed = fmax(0.0f, speed);
+    control.speeds.angular_speed = speed;
+
+    sign = sign(control.speeds.linear_speed);
+    speed = ABS(control.speeds.linear_speed);
+    if (BRK_COEFF != 0.0) {
+        speed -= control.max_acc * DT * BRK_COEFF;
+    } else {
+        speed = 0.0;
+    }
+    speed = fmax(0.0f, speed);
+    control.speeds.linear_speed = sign*speed;
+
+	if (ABS(wheels_spd.left) + ABS(wheels_spd.right) < SPD_TO_STOP) {
+		allStop();
+	} else {
+		applyPID();
+	}
 }
 
 void allStop(void) {

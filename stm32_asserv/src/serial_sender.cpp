@@ -77,11 +77,9 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
 }
 
 void SerialSender::serialSendTask() {
-    std::string dataToPrint;
-    while (!_dataToSend.empty()) {
-        dataToPrint = _dataToSend.front();
-        _dataToSend.pop();
-        _serialInterfacePtr->println(dataToPrint);
+    while (!_dataToSend.isEmpty()) {
+        ;
+        _serialInterfacePtr->println(_dataToSend.pop());
     }
 }
 

@@ -17,6 +17,10 @@
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void init_encoders(void);
 
 void left_encoder_reset(void);
@@ -25,12 +29,14 @@ void right_encoder_reset(void);
 int16_t get_left_encoder(void);
 int16_t get_right_encoder(void);
 
-extern inline void encoders_reset(void) {
+inline void encoders_reset(void) {
 	left_encoder_reset();
 	right_encoder_reset();
 }
 
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif

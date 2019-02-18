@@ -5,10 +5,6 @@
 #ifndef ARDUINO_SENDER_WRAPPER_H
 #define ARDUINO_SENDER_WRAPPER_H
 
-// #include <Arduino.h>
-#include <string>
-using String = std::string;
-
 #ifndef SENDER_ENUM
 #define SENDER_ENUM
 typedef enum
@@ -20,7 +16,8 @@ typedef enum
 #endif
 
 #ifdef __cplusplus
-extern "C" void SerialSendWrap(SerialSendEnum level, String data);
+#include <string>
+extern "C" void SerialSendWrap(SerialSendEnum level, const std::string& data);
 extern "C" void SerialSendWrapVar(SerialSendEnum level, const char* data, ...);
 #else
 //void SerialSendWrap(SerialSendEnum level, String data);

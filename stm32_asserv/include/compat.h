@@ -13,27 +13,27 @@
 
 
 
-extern inline unsigned long timeMillis(){
+inline unsigned long timeMillis(){
 	return HAL_GetTick();
 }
-extern inline unsigned long timeMicros(){
+inline unsigned long timeMicros(){
 	// TODO: check eventual buffer overflow issue
 	uint32_t freq = HAL_RCC_GetHCLKFreq();
 	return DWT->CYCCNT/(freq/1000000L);
 }
 
 #ifdef __cplusplus
-extern "C" void serial_print_int(int i);
-extern "C" char generic_serial_read();
-extern "C" void serial_send(char data);
-extern "C" void serial_print(const char *str);
-extern "C" void serial_print_float(float f);
-#else
+extern "C" {
+#endif
+    
 void serial_print_int(int i);
 char generic_serial_read();
 void serial_send(char data);
 void serial_print(const char *str);
 void serial_print_float(float f);
+
+#ifdef __cplusplus
+}
 #endif
 
 // extern inline void initPins(){

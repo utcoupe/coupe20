@@ -28,6 +28,7 @@ typedef struct ang_data {
 typedef struct pwm_data {
 	float time;
 	int pwm_l, pwm_r;
+	int autoStop;
 } pwm_data_t;
 
 typedef struct spd_data {
@@ -63,6 +64,6 @@ int FifoPushGoal(int ID, int type, goal_data_t data);
 goal_t* FifoCurrentGoal();
 goal_t* FifoNextGoal();
 uint8_t FifoRemainingGoals();
-extern inline void FifoClearGoals() { FifoInit(); }
+inline void FifoClearGoals() { FifoInit(); }
 
 #endif

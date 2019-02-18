@@ -6,6 +6,9 @@
                 <scale x="0.07" y="0.07" z="0.025"/>
                 <orientation x="0" y="0" z="0"/>
             </marker>
+            <tags>
+                <tag>atom</tag>
+            </tags>
         </class>
 
         <class name="atom-vertical" class="atom">
@@ -13,10 +16,16 @@
             <marker z="0.1285">
                 <orientation x="1.570796" y="0" z="0"/>
             </marker>
+            <tags inherit="true">
+                <tag>atom-vertical</tag>
+            </tags>
         </class>
 
         <class name="atom-horizontal" class="atom">
             <shape type="circle" r="0.038"/>
+            <tags inherit="true">
+                <tag>atom-horizontal</tag>
+            </tags>
         </class>
     </classes>
 
@@ -30,12 +39,14 @@
         <container name="spawn_atoms_rd">
             <object name="atom1" class="atom-horizontal">
                 <position x="0.5" y="1.55"/>
+                <tags><tag>atom-spawn</tag></tags>
             </object>
         </container>
         
         <container name="spawn_atoms_gd">
             <object name="atom2" class="atom-horizontal">
                 <position x="0.5" y="1.25"/>
+                <tags><tag>atom-spawn</tag></tags>
             </object>
         </container>
 
@@ -43,6 +54,7 @@
             <object name="atom3" class="atom-horizontal">
                 <position x="0.5" y="0.95"/>
                 <color name="green"/>
+                <tags><tag>atom-spawn</tag></tags>
             </object>
         </container>
     </container>
@@ -65,18 +77,22 @@
         <object name="atom5" class="atom-horizontal">
             <position x="1" y="1.05"/>
             <color name="blue"/>
+            <tags><tag>atom-chaos</tag></tags>
         </object>
         <object name="atom6" class="atom-horizontal">
             <color name="green"/>
             <position x="1" y="0.85"/>
+            <tags><tag>atom-chaos</tag></tags>
         </object>
         <object name="atom7" class="atom-horizontal">
             <color name="red"/>
             <position x="1.1" y="0.95"/>
+            <tags><tag>atom-chaos</tag></tags>
         </object>
         <object name="atom8" class="atom-horizontal">
             <color name="red"/>
-            <position x="0.9" y="0.95"/> 
+            <position x="0.9" y="0.95"/>
+            <tags><tag>atom-chaos</tag></tags>
         </object>
     </container>
     

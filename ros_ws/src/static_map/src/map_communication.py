@@ -158,7 +158,7 @@ class MapServices():
                 msg.shape_type = msg.SHAPE_POINT
             
             if isinstance(obj, Object):
-                #msg.labels = obj.Labels
+                msg.tags   = obj.Tags
                 msg.color  = obj.Color.Name if obj.Color is not None else ""
         return msg
     
@@ -188,7 +188,14 @@ class MapServices():
             shape.attrib["h"] = float(msg.height)
         elif msg.shape_type == msg.SHAPE_CIRCLE:
             shape.attrib["r"] = float(msg.radius)
-        #TODO labels + marker
+        
+        tags = ET.SubElement(xml, "tags")
+        for tag_name in msg.tags:
+            tag = ET.SubElement(tags, "tag")
+            tag.text = tag_name
+        
+        #TODO marker, needed ? 
+        
         if msg.color:
             color = ET.SubElement(xml, "color")
             color.attrib["name"] = msg.color

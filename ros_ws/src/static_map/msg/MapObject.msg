@@ -14,5 +14,5 @@ float32 height
 float32 radius
 
 # Metadata
-string[] labels
+string[] tags
 string color

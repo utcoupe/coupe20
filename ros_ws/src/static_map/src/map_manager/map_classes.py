@@ -140,7 +140,7 @@ class Object(object):
         self.Name = xml.get("name")
         self.Position = Position2D(xml.find("position")) if xml.find("position") is not None else None
         self.Shape    = Shape2D(xml.find("shape"))       if xml.find("shape")    is not None else None
-        self.Labels   = [l.get("name") for l in xml.find("labels").findall("label")] if xml.find("labels") else []
+        self.Tags   = [l.text for l in xml.find("tags").findall("tag")] if xml.find("tags") else []
 
         self.Color = Color(xml.find("color")) if xml.find("color") is not None else None
 
@@ -150,7 +150,7 @@ class Object(object):
             self.Position = self.Position if self.Position is not None else other.Position
             self.Shape    = self.Shape    if self.Shape    is not None else other.Shape
             self.Color    = self.Color    if self.Color    is not None else other.Color
-            self.Labels += other.Labels
+            self.Tags += other.Tags
             
             self.Marker = copy.deepcopy(other.Marker)
             if xml.find("marker") is not None:
@@ -160,6 +160,7 @@ class Object(object):
         
         if check_valid is True:
             self.check_valid() # disabled when manually creating a class through code
+        print self.Tags #TODO remove
 
     def check_valid(self): # Checks if all values are not None (in case of class merges)
         if None in [self.Position, self.Shape]:
@@ -167,7 +168,7 @@ class Object(object):
         if self.Marker is not None and self.Color is None:
             raise ValueError("ERROR : Even after merge object '{}' still has a marker but no color.".format(self.Name))
     
-    def transform(codes):
+    def transform(self, codes):
         pass #TODO
 
 class Class(Object):

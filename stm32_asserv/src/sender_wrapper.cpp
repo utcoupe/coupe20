@@ -5,10 +5,7 @@
 #include "sender_wrapper.h"
 #include "serial_sender.h"
 
-#include <cstdarg>
-#include <string>
-
-using namespace std;
+#include <stdarg.h>
 
 //static void SerialSendWrapVariadic(SerialSendEnum level, const char* data, va_list args);
 
@@ -16,7 +13,7 @@ static void SerialSendWrapVariadic(SerialSendEnum level, const char* data, va_li
     g_serialSender.serialSend(level, data, args);
 }
 
-void SerialSendWrap(SerialSendEnum level, const string& data) {
+void SerialSendWrap(SerialSendEnum level, const String& data) {
     g_serialSender.serialSend(level, data);
 }
 

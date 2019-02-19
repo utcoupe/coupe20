@@ -3,8 +3,8 @@
 
 #include "protocol.h"
 
-#include <string>
+#include "String.h"
 
-void parseAndExecuteOrder(const std::string& order);
+void parseAndExecuteOrder(const String& order);
 
 #endif // ASSERV_PROTOCOL_HPP

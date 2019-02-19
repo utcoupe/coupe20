@@ -55,7 +55,7 @@
 #include "compat.h"
 #include "encoder.h"
 
-#include <string>
+#include "String.h"
 /* USER CODE END Includes */
 
 using namespace std;
@@ -213,7 +213,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
     /**Initializes the CPU, AHB and APB busses clocks 
@@ -227,7 +227,7 @@ void SystemClock_Config(void)
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
     /**Configure the Systick interrupt time 
@@ -283,14 +283,14 @@ static void MX_TIM2_Init(void)
   sConfig.IC2Filter = 0;
   if (HAL_TIM_Encoder_Init(&htim2, &sConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
 }
@@ -319,14 +319,14 @@ static void MX_TIM3_Init(void)
   sConfig.IC2Filter = 0;
   if (HAL_TIM_Encoder_Init(&htim3, &sConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
 }
@@ -347,12 +347,12 @@ static void MX_TIM16_Init(void)
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   if (HAL_TIM_PWM_Init(&htim16) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
@@ -364,7 +364,7 @@ static void MX_TIM16_Init(void)
   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
   if (HAL_TIM_PWM_ConfigChannel(&htim16, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
@@ -377,7 +377,7 @@ static void MX_TIM16_Init(void)
   sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
   if (HAL_TIMEx_ConfigBreakDeadTime(&htim16, &sBreakDeadTimeConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   HAL_TIM_MspPostInit(&htim16);
@@ -400,12 +400,12 @@ static void MX_TIM17_Init(void)
   htim17.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim17) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   if (HAL_TIM_PWM_Init(&htim17) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
@@ -417,7 +417,7 @@ static void MX_TIM17_Init(void)
   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
   if (HAL_TIM_PWM_ConfigChannel(&htim17, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
@@ -430,7 +430,7 @@ static void MX_TIM17_Init(void)
   sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
   if (HAL_TIMEx_ConfigBreakDeadTime(&htim17, &sBreakDeadTimeConfig) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
   HAL_TIM_MspPostInit(&htim17);
@@ -454,7 +454,7 @@ static void MX_USART2_UART_Init(void)
   huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
 }
@@ -507,7 +507,7 @@ void asservStatus() {
  * When a string is received, execute the corresponding order.
  */
 void serialRead() {
-    string receivedString;
+    String receivedString;
     if (g_serial.available() > 0) {
         receivedString = g_serial.readStringUntil('\n');
         // SerialSender::SerialSend(SERIAL_INFO, receivedString);
@@ -540,7 +540,7 @@ void blink()
   * @param  line: The line in file as a number.
   * @retval None
   */
-void _Error_Handler(char *file, int line)
+void _Error_Handler(/*char *file, int line*/)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   HAL_GPIO_WritePin(GPIOB,TEST_LED_Pin,GPIO_PIN_RESET);

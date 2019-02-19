@@ -1,5 +1,6 @@
-#include "parameters.h"
 #include "block.h"
+
+#include "parameters.h"
 #include "robotstate.h"
 #include "goals.h"
 #include "compat.h"

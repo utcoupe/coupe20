@@ -44,11 +44,13 @@
 // header defining the interface of the source.
 // #include "stm32f3xx_hal.h"
 //#include "main.h"
- #include <cstddef>
 #ifndef _QUEUELIST_H
 #define _QUEUELIST_H
 
 // include Arduino basic header.
+
+#include <stddef.h>
+#include <stdlib.h>
 
 // the definition of the queue class.
 template<typename T>
@@ -108,7 +110,7 @@ template<typename T>
 QueueList<T>::~QueueList () {
   // deallocate memory space of each node in the list.
   for (link t = head; t != NULL; head = t) {
-    t = head->next; delete head;
+    t = head->next; free(head);
   }
 
   size = 0;       // set the size of queue to zero.
@@ -122,7 +124,7 @@ void QueueList<T>::push (const T i) {
   link t = tail;
 
   // create a new node for the tail.
-  tail = (link) new node;
+  tail = (link) malloc(sizeof(node));
 
   // if there is a memory allocation error.
   if (tail == NULL)
@@ -163,7 +165,7 @@ T QueueList<T>::pop () {
   T item = head->item;
 
   // remove only the head node.
-  link t = head->next; delete head; head = t;
+  link t = head->next; free(head); head = t;
 
   // decrease the items.
   size--;

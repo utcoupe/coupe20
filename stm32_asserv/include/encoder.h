@@ -29,10 +29,7 @@ void right_encoder_reset(void);
 int16_t get_left_encoder(void);
 int16_t get_right_encoder(void);
 
-inline void encoders_reset(void) {
-	left_encoder_reset();
-	right_encoder_reset();
-}
+void encoders_reset(void);
 
 
 #ifdef __cplusplus

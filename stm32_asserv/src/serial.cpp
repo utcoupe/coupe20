@@ -1,6 +1,7 @@
 #include "serial.h"
 
-using namespace std;
+#include <stdlib.h>
+
 
 Serial::Serial(UART_HandleTypeDef* serial):
     _serialInterfacePtr(serial) {
@@ -8,14 +9,15 @@ Serial::Serial(UART_HandleTypeDef* serial):
 }
 
 Serial::~Serial() {
-    delete _serialInterfacePtr;
+    free(_serialInterfacePtr);
 }
 
-std::uint16_t Serial::available() {
+short unsigned int Serial::available()
+{
     return _serialInterfacePtr->RxXferSize;
 }
 
-void Serial::print(const string& data) {
+void Serial::print(const String& data) {
     _lastStatus = HAL_UART_Transmit(
         _serialInterfacePtr,
         (uint8_t*)data.c_str(),
@@ -24,11 +26,11 @@ void Serial::print(const string& data) {
     );
 }
 
-void Serial::println(const string& data) {
-    print(data + string("\n"));
+void Serial::println(const String& data) {
+    print(data + "\n");
 }
 
-std::uint8_t Serial::read() {
+uint8_t Serial::read() {
     uint8_t rx_char;
     _lastStatus = HAL_UART_Receive(
         _serialInterfacePtr,
@@ -36,10 +38,11 @@ std::uint8_t Serial::read() {
         1,
         _timeout
     );
+    return rx_char;
 }
 
-string Serial::readStringUntil(char ch) {
-    string result = "";
+String Serial::readStringUntil(char ch) {
+    String result = "";
     char readChar;
     do {
         readChar = static_cast<char>(read());
@@ -48,6 +51,6 @@ string Serial::readStringUntil(char ch) {
     return result;
 }
 
-void Serial::setTimeout(std::uint16_t timeout) {
+void Serial::setTimeout(uint16_t timeout) {
     _timeout = timeout;
 }

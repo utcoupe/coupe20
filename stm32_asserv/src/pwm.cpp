@@ -1,5 +1,7 @@
 #include "pwm.h"
 
+#include <stdlib.h>
+
 Pwm::Pwm(TIM_HandleTypeDef* timer)
 {
   m_timer_ptr = timer;
@@ -7,7 +9,7 @@ Pwm::Pwm(TIM_HandleTypeDef* timer)
 
 Pwm::~Pwm()
 {
-  delete m_timer_ptr;
+  free(m_timer_ptr);
 }
 
 void Pwm::set_timer_freq(uint32_t freq)
@@ -21,7 +23,7 @@ void Pwm::set_timer_freq(uint32_t freq)
   m_timer_ptr->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(m_timer_ptr) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 }
 
@@ -38,7 +40,7 @@ void Pwm::set_channel_duty_cycle(uint32_t Channel,
   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
 	if (HAL_TIM_PWM_ConfigChannel(m_timer_ptr, &sConfigOC, Channel) != HAL_OK)
 	{
-	  _Error_Handler(__FILE__, __LINE__);
+	  Error_Handler();
 	}
   start(Channel);
 }

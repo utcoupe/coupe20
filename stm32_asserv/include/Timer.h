@@ -40,7 +40,7 @@ public:
 	Timer(unsigned long int ms);
 	Timer(unsigned long int ms, CallBackType callback);
 	Timer(unsigned long int ms, CallBackType callback, bool isSingle);
-	~Timer() {}
+// 	~Timer() {}
 
 	void setInterval(unsigned long int ms);
 	void setEnabled(bool Enabled);

@@ -10,10 +10,10 @@
 #define STM32_SENDER_H
 
 #include "serial.h"
+#include "String.h"
 
-#include <cstdarg>
+#include <stdarg.h>
 #include <QueueList.h>
-#include <string>
 
 #ifndef SENDER_ENUM
 #define SENDER_ENUM
@@ -31,16 +31,16 @@ public:
     SerialSender(Serial* serialPtr);
     ~SerialSender() = default;
     
-    void serialSend(SerialSendEnum level, std::string data);
+    void serialSend(SerialSendEnum level, String data);
     void serialSend(SerialSendEnum level, const char* str, ...);
     
     void serialSendTask();
         
 private:
     Serial* _serialInterfacePtr;
-    QueueList<std::string> _dataToSend;
+    QueueList<String> _dataToSend;
     
-    std::string charArrayToString(const char * str, uint8_t size);
+    String charArrayToString(const char * str, uint8_t size);
 };
 
 extern SerialSender g_serialSender;

@@ -10,10 +10,9 @@
 
 #include "parameters.h"
 
-#include <cstdint>
-#include <cstring>
+#include <stdint.h>
+#include <string.h>
 
-using namespace std;
 
 const unsigned BUFFER_SIZE = 70;
 
@@ -21,7 +20,7 @@ SerialSender::SerialSender(Serial* serial):
     _serialInterfacePtr(serial) {
 }
 
-void SerialSender::serialSend(SerialSendEnum level, string data) {
+void SerialSender::serialSend(SerialSendEnum level, String data) {
     if (level <= DEBUG_LEVEL && data != "") {
         _dataToSend.push(data);
     }
@@ -29,7 +28,7 @@ void SerialSender::serialSend(SerialSendEnum level, string data) {
 
 void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
     uint8_t i, j, count = 0;
-    string serialData, tmpString = "";
+    String serialData, tmpString = "";
     if (level <= DEBUG_LEVEL) {
         va_list argv;
         va_start(argv, str);
@@ -43,10 +42,10 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
                 switch (str[++i]) {
                     case 'i':
                     case 'd':
-                        tmpString = std::to_string(va_arg(argv, int));
+                        tmpString = va_arg(argv, int);
                         break;
                     case 'l':
-                        tmpString = std::to_string(va_arg(argv, long));
+                        tmpString = va_arg(argv, long);
                         break;
                     case 'f': //tmpString = String(va_arg(argv, float), 4);
                         break;
@@ -54,7 +53,7 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
                         tmpString = static_cast<char>(va_arg(argv, int));
                         break;
                     case 's':
-                        tmpString = std::string(va_arg(argv, char *));
+                        tmpString = va_arg(argv, char *);
                         break;
 //                    case '%':
 //                        Serial.print("%");
@@ -83,14 +82,14 @@ void SerialSender::serialSendTask() {
     }
 }
 
-string SerialSender::charArrayToString(const char * str, uint8_t size) {
-    string returnedString = "";
+String SerialSender::charArrayToString(const char * str, uint8_t size) {
+    String returnedString = "";
     //todo size as define
     if ((str != nullptr) && (size > 0) && (size < BUFFER_SIZE + 1)) {
         static char tmpBuffer[BUFFER_SIZE];
         memcpy(tmpBuffer, str, size);
         tmpBuffer[size] = '\0';
-        returnedString = string(tmpBuffer);
+        returnedString = tmpBuffer;
     }
     return returnedString;
 }

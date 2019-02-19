@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace std;
 
 uint8_t flagSTM32Connected = 0;
 
@@ -88,7 +87,7 @@ void emergencyStop(const uint8_t enable) {
     }
 }
 
-void parseAndExecuteOrder(const string& order) {
+void parseAndExecuteOrder(const String& order) {
     static char receivedOrder[25];
     char* receivedOrderPtr = receivedOrder;
     strcpy(receivedOrder, order.c_str());

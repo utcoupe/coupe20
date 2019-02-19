@@ -38,3 +38,8 @@ int16_t get_right_encoder(void)
 {
 	return (int16_t)R_ENC_TIM->CNT;
 }
+
+void encoders_reset(void) {
+	left_encoder_reset();
+	right_encoder_reset();
+}

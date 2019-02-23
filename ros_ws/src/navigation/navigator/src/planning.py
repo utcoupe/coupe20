@@ -40,15 +40,18 @@ class Plan(object):
         self._endPos = ""
         self._hasAngle = False
         self._disablePathfinder = False
+        self._slowGo = False
+        self._ignoreTags = []
         self._direction = Directions.AUTOMATIC
         self.invalidStartOrEndPos = False
     
-    def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder, slowGo):
+    def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder, slowGo, ignoreTags):
         self._endPos = endPos
         self._hasAngle = hasAngle
         self._direction = direction
         self._disablePathfinder = disablePathfinder
         self._slowGo = slowGo
+        self._ignoreTags = ignoreTags
         self.replan(startPos)
         self.invalidStartOrEndPos = False
     
@@ -63,7 +66,7 @@ class Plan(object):
         try:
             if not self._disablePathfinder:
                 # sends a request to the pathfinder
-                (path, invalidPos) = self._pathfinderClient.FindPath(startPos, self._endPos)
+                (path, invalidPos) = self._pathfinderClient.FindPath(startPos, self._endPos, self._ignoreTags)
 
                 if invalidPos:
                     self.invalidStartOrEndPos = True

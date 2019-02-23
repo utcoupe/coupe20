@@ -52,5 +52,5 @@ class CollisionsClient(object):
                 self._collision_active = False
             self._last_collision = False
     
-    def setEnabled(self, isEnabled):
-        self._activateCollisionsSrv.call(active=isEnabled)
+    def setEnabled(self, isEnabled, ignoreTags):
+        self._activateCollisionsSrv.call(active=isEnabled, ignore_tags=ignoreTags)

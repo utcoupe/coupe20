@@ -6,6 +6,8 @@
 #include "geometry_msgs/Pose2D.h"
 
 #include <mutex>
+#include <string>
+#include <vector>
 
 /**
  * Class defining an abstract subscriber.
@@ -44,8 +46,13 @@ public:
      * For example, storing them into an array to have a constant access cost O(1).
      * @param widthGrid The width of pathfinder internal map.
      * @param heightGrid The height of pathfinder internal map.
+     * @param ignoredTags Vector of tag names to ignore.
      */
-    virtual void fetchOccupancyData(const uint& widthGrid, const uint& heightGrid) {};
+    virtual void fetchOccupancyData(
+        const uint& widthGrid,
+        const uint& heightGrid,
+        const std::vector<std::string>& ignoredTags
+    ) {};
     
     /**
      * Indicate if the base coordinates used in the subscriber are different from the pathfinder.

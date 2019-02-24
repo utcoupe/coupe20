@@ -19,7 +19,7 @@ PathfinderROSInterface::PathfinderROSInterface(const std::string& mapFileName, s
 
         convertor_->setMapSize(make_pair<double,double>(mapSize.first, mapSize.second));
         dynBarriersMng_->setConvertor(convertor_);
-        dynBarriersMng_->fetchOccupancyDatas(mapSize.first, mapSize.second);
+        dynBarriersMng_->fetchOccupancyDatas(mapSize.first, mapSize.second, {});
     }
 }
 
@@ -33,7 +33,7 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
     auto startPos = pose2DToPoint_(req.posStart);
     auto endPos = pose2DToPoint_(req.posEnd);
     
-    auto statusCode = pathfinderPtr_->findPath(startPos, endPos, path);
+    auto statusCode = pathfinderPtr_->findPath(startPos, endPos, req.ignore_tags, path);
     switch (statusCode) {
         case Pathfinder::FindPathStatus::MAP_NOT_LOADED: // [[fallthrough]] to be uncommented if annoying warnings
         case Pathfinder::FindPathStatus::START_END_POS_NOT_VALID:

@@ -29,8 +29,9 @@ void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQu
     _srvGetMapObjects = nodeHandle.serviceClient<static_map::MapGetContainer>(topic);
 }
 
-void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& heightGrid)
+void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& heightGrid, const std::vector<std::string>& ignoredTags)
 {
+    ROS_DEBUG("Starting to import data from static_map");
     if (_occupancyGrid.size() != heightGrid || (heightGrid != 0 && _occupancyGrid.front().size() != widthGrid))
         _occupancyGrid = vector< vector<bool> > (
             heightGrid,
@@ -51,27 +52,33 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
     }
     _lastReceivedContainer = srv.response.container;
     
+    TagsSet tagsToIgnore;
+    tagsToIgnore.insert(ignoredTags.begin(), ignoredTags.end());
+    
     for (auto&& mapObject : _lastReceivedContainer.objects)
     {
-        switch (mapObject.shape_type) {
-            case static_map::MapObject::SHAPE_RECT:
-                drawRectangle(mapObject);
-                break;
-            case static_map::MapObject::SHAPE_CIRCLE:
-                drawCircle(mapObject);
-                break;
-            
-            case static_map::MapObject::SHAPE_POINT:
-                ROS_WARN_ONCE("[MapSubscriber::fetchOccupancyData] Point shape not supported!");
-                break;
-            
-            default:
-                ROS_ERROR("[MapSubscriber::fetchOccupancyData] Unknown shape!");
+        if (! objectIgnored(mapObject.tags, tagsToIgnore)) {
+            switch (mapObject.shape_type) {
+                case static_map::MapObject::SHAPE_RECT:
+                    drawRectangle(mapObject);
+                    break;
+                case static_map::MapObject::SHAPE_CIRCLE:
+                    drawCircle(mapObject);
+                    break;
+                
+                case static_map::MapObject::SHAPE_POINT:
+                    ROS_WARN_ONCE("[MapSubscriber::fetchOccupancyData] Point shape not supported!");
+                    break;
+                
+                default:
+                    ROS_ERROR("[MapSubscriber::fetchOccupancyData] Unknown shape!");
+            }
         }
     }
+    ROS_DEBUG("Done importing data from static_map");
 }
 
-void Memory::MapSubscriber::drawRectangle(const static_map::MapObject& objectRect)
+void MapSubscriber::drawRectangle(const static_map::MapObject& objectRect)
 {
     double x, y, w, h;
     x = objectRect.pose.x;
@@ -95,7 +102,7 @@ void Memory::MapSubscriber::drawRectangle(const static_map::MapObject& objectRec
             _occupancyGrid[row][column] = true;
 }
 
-void Memory::MapSubscriber::drawCircle(const static_map::MapObject& objectCircle)
+void MapSubscriber::drawCircle(const static_map::MapObject& objectCircle)
 {
     double x, y, r;
     x = objectCircle.pose.x;
@@ -117,4 +124,14 @@ void Memory::MapSubscriber::drawCircle(const static_map::MapObject& objectCircle
             if (getNorme2Distance(column, row, pos.first, pos.second) <= r)
                 _occupancyGrid[row][column] = true;
 }
+
+bool MapSubscriber::objectIgnored(const TagsList& objectTags, const TagsSet& tagsToIgnore)
+{
+    for (const auto& tag: objectTags) {
+        if (tagsToIgnore.find(tag) != tagsToIgnore.end())
+            return true;
+    }
+    return false;
+}
+
 

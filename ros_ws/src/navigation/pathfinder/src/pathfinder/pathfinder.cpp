@@ -17,8 +17,12 @@ Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<DynamicBarriersMana
 }
 
 
-Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Point& endPos, Path& path)
-{
+Pathfinder::FindPathStatus Pathfinder::findPath(
+    const Point& startPos,
+    const Point& endPos,
+    const std::vector<std::string>& ignoredTags,
+    Path& path
+) {
     ROS_DEBUG_STREAM("START: " << startPos);
     ROS_DEBUG_STREAM("END: " << endPos);
 
@@ -28,13 +32,14 @@ Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Poi
         return FindPathStatus::MAP_NOT_LOADED;
     }
 
-    _dynBarriersMng->fetchOccupancyDatas(_allowedPositions.front().size(), _allowedPositions.size());
+    _dynBarriersMng->fetchOccupancyDatas(_allowedPositions.front().size(), _allowedPositions.size(), ignoredTags);
     
     auto startTime = chrono::high_resolution_clock::now();
     
     if (!isValid(startPos) || !isValid(endPos))
     {
-        ROS_ERROR("Start or end position is not valid!");if (_renderAfterComputing)
+        ROS_ERROR("Start or end position is not valid!");
+        if (_renderAfterComputing)
             _mapStorage.saveMapToFile(_renderFile, _allowedPositions, _dynBarriersMng, Path(), Path());
         return FindPathStatus::START_END_POS_NOT_VALID;
     }

@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-
 const size_t SIZE_LONG32_STR = 11;
 const size_t SIZE_INT16_STR = 6;
 
@@ -13,7 +12,7 @@ String::String() {
 }
 
 String::String(const char* str) {
-    free(_str);
+    _str = nullptr;
     if (str != nullptr) {
         // +1 for the null terminator
         _str = (char*) malloc( sizeof(char) * (strlen(str) + 1) );
@@ -42,7 +41,9 @@ String::String(long nb) {
 }
 
 String::~String() {
-    free(_str);
+    if (_str != nullptr) {
+        free(_str);
+    }
 }
 
 char String::back() const {

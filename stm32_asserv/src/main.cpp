@@ -177,10 +177,16 @@ int main(void)
   {
     blinkTimer.Update();
     if (!flagSTM32Connected) {
-        
+        g_serialSender.serialSend(SERIAL_INFO, "%s", "ard_asserv");
     } else {
         asservLoopTimer.Update();
         asservStatusTimer.Update();
+    }
+    
+    g_serialSender.serialSendTask();
+    
+    if (!flagSTM32Connected) {
+        HAL_Delay(1000);
     }
     
   /* USER CODE END WHILE */
@@ -442,7 +448,7 @@ static void MX_USART2_UART_Init(void)
 {
 
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 230400;//57600;
+  huart2.Init.BaudRate = /*230400;*/57600;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
   huart2.Init.Mode = UART_MODE_TX_RX;

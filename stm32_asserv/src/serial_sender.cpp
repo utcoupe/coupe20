@@ -53,7 +53,7 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
                         tmpString = static_cast<char>(va_arg(argv, int));
                         break;
                     case 's':
-                        tmpString = va_arg(argv, char *);
+                        tmpString = (char *)va_arg(argv, char *);
                         break;
 //                    case '%':
 //                        Serial.print("%");

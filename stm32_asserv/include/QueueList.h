@@ -110,7 +110,7 @@ template<typename T>
 QueueList<T>::~QueueList () {
   // deallocate memory space of each node in the list.
   for (link t = head; t != NULL; head = t) {
-    t = head->next; free(head);
+    t = head->next; delete head;
   }
 
   size = 0;       // set the size of queue to zero.
@@ -165,7 +165,7 @@ T QueueList<T>::pop () {
   T item = head->item;
 
   // remove only the head node.
-  link t = head->next; free(head); head = t;
+  link t = head->next; delete head; head = t;
 
   // decrease the items.
   size--;

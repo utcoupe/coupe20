@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 
+extern Serial g_serial;
 
 const unsigned BUFFER_SIZE = 70;
 
@@ -28,7 +29,7 @@ void SerialSender::serialSend(SerialSendEnum level, String data) {
 
 void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
     uint8_t i, j, count = 0;
-    String serialData, tmpString = "";
+    String serialData, tmpString;
     if (level <= DEBUG_LEVEL) {
         va_list argv;
         va_start(argv, str);
@@ -61,6 +62,7 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
                     default:;
                 }
                 serialData += tmpString;
+                g_serial.print(serialData);
                 j = i + 1;
             }
         }

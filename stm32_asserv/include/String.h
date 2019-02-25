@@ -16,7 +16,7 @@ public:
     
     char back() const;
     const char* c_str() const { return _str; };
-    size_t length() const { return strlen(_str); }
+    size_t length() const;
     void pop_back();
     
     String& operator+= (const char* str);

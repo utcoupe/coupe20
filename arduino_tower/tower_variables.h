@@ -15,7 +15,7 @@ int servo_unload_pin = 22 ;
 
 
 // ~ Stepper ~ Load Atom 
-int positions = -1 ; // no postion for now 
+int lift_position = -1 ; // no postion for now 
 #define H_SAS_LOW  100  // ? 
 #define H_FLOOR_5  85   // ? 
 #define H_FLOOR_4  75   // ? 
@@ -37,7 +37,7 @@ float nb_atom_out     = 0 ;
 // ~ Status ~ 
 int load_content          = -1 ; // actions given to stepper  => 0 for nothing // 1 for load ONE atom // 2 for load tower of atoms 
 int load_content_nb       = -1 ; // number of atoms to load if load_content = 2 
-int load_content_position = - 1 ; 
+int load_content_position = -1 ; 
 int unload_content        = -1 ; // actions given to stepper  => 0 for nothing // 1 for unoload 
 int load_success          = -1 ; // info on stepper status 
 int unload_success        = -1 ; // info on stepper status 

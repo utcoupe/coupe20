@@ -12,6 +12,8 @@
 #include <ard_tower/TowerLoadResponse.h> 
 #include <ard_tower/TowerLoad.h> 
 #include <ard_tower/TowerUnload.h>
+#include <ard_tower/TowerInit.h> 
+#include <ard_tower/TowerInitResponse.h>
 #include <game_manager/GameStatus.h>
 ros :: NodeHandle nh ; 
 
@@ -19,8 +21,8 @@ ros :: NodeHandle nh ;
 #include <Servo.h> 
 #include "PololuA4983.h"
 
-// Variables includes 
-#include "tower_variables.h"
+// Code includes 
+#include "tower_variables.h" 
 
 
 // Servo motor 
@@ -50,7 +52,7 @@ void on_tower_unload (const ard_tower::TowerUnload& msg){
 
 // ~ Subscriber ~ 
 
-ros::Subscriber<ard_tower::TowerLoad>     sub_tower_init   ("actuators/ard_tower/init",   &on_tower_init)   ; //change TowerLoad to TowerInit
+ros::Subscriber<ard_tower::TowerInit>     sub_tower_init   ("actuators/ard_tower/init",   &on_tower_init)   ; 
 ros::Subscriber<game_manager::GameStatus> sub_game_status  ("ai/game_manager/status",     &on_game_status)  ; 
 ros::Subscriber<ard_tower::TowerLoad>     sub_tower_load   ("actuators/ard_tower/load",   &on_tower_load)   ;
 ros::Subscriber<ard_tower::TowerUnload>   sub_tower_unload ("actuators/ard_tower/unload", &on_tower_unload) ;
@@ -58,7 +60,7 @@ ros::Subscriber<ard_tower::TowerUnload>   sub_tower_unload ("actuators/ard_tower
 // ~ Publisher ~ 
 ard_tower::TowerLoadResponse load_event_msg ; 
 ard_tower::TowerUnloadResponse unload_event_msg ; 
-ard_tower::TowerUnloadResponse  init_event_msg ; //change TowerUnloadResponse to TowerInitResponse
+ard_tower::TowerInitResponse  init_event_msg ; 
 ros::Publisher pub_tower_load   ("actuators/ard_tower/load_event",   &load_event_msg); 
 ros::Publisher pub_tower_unload ("actuators/ard_tower/unload_event", &unload_event_msg); 
 ros::Publisher pub_tower_init   ("actuators/ard_tower/init_event",   &init_event_msg); 
@@ -69,64 +71,64 @@ ros::Publisher pub_tower_init   ("actuators/ard_tower/init_event",   &init_event
 void tower_initialize() { 
   // initialize stepper 
   servo_unload.write(POS_UNLOAD_INIT) ; 
-
 }
 
-void unload_atom() { 
-  if ( unload_content == 1 &&  game_status == 1 ) { //unload atom with slider 
-    unload_atom_slider() ; 
+int move_lift(int wanted_position) {  // move lift to the correct floor 
+  if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
+    stepper_load.moveStep(wanted_position,true) ; 
+    lift_position = wanted_position ; 
+    return 1 ; 
   }
-  if ( unload_content == 2 && game_status == 1 ) { //unload atom with pliers 
-    unload_atom_pliers(); 
+
+  if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
+    stepper_load.moveStep(wanted_position,false) ; 
+    lift_position = wanted_position ; 
+    return 1 ; 
   }
+
+  if (lift_position == wanted_position && game_status == 1) { //nothing 
+    return 1 ; 
+  }
+
+  //TODO => sucess of the move before closing or opening AX12 
+  return 0 ; 
 }
 
-void unload_atom_slider() {
-  if ( nb_atom_in_sas > 0 && game_status == 1 ){
-    servo_unload.write(POS_UNLOAD); 
-    delay(500); 
-    servo_unload.write(POS_UNLOAD_INIT); 
-    nb_atom_in     = nb_atom_in - 1 ; 
-    nb_atom_in_sas = nb_atom_in_sas -  1 ; 
-    nb_atom_out    = nb_atom_out + 1 ; 
-  }
-
-  if ( nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
-    //bring up the rest of atoms to the sas 
-    int y ; //number of atom not being brought up
-    if (nb_atom_in > MAX_ATOM_SAS ) {
-      y = nb_atom_in - MAX_ATOM_SAS ; 
-      nb_atom_in_sas = MAX_ATOM_SAS ; 
-    }
-    else {
-      y = 0 ; 
-      nb_atom_in_sas = nb_atom_in ; 
-    }
-    int h = (H_SAS_LOW-positions)-y*H_ATOM ; // or (y-1/2)
-    // the high that need to be brought up 
-    // TODO 
-  }
-  
-  if (nb_atom_in_sas == 0 && nb_atom_in == 0 && game_status == 1) {
-    unload_event_msg.unload_success = 1 ;
-    unload_event_msg.nb_atom_out    = nb_atom_out ; 
-    pub_tower_unload.publish(&unload_event_msg) ; 
-    unload_content = 0 ; 
-    nb_atom_out    = 0 ; 
-  }
-
-}
-
-void unload_atom_pliers() {
-  if ( nb_atom_in - nb_atom_in_sas != 0 ) {
-    // send message to AX12 and open gates 
-    // TODO 
-    nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
-    nb_atom_in  = nb_atom_in_sas ; 
+int lift_atoms_to_sas() { //bring up the rest of atoms to the sas 
+  int y ; //number of atom not being brought up to the sas 
+  if (nb_atom_in > MAX_ATOM_SAS ) {
+    y = nb_atom_in - MAX_ATOM_SAS ; 
+    nb_atom_in_sas = MAX_ATOM_SAS ; 
   }
   else {
-    // nothing to unload 
-    unload_event_msg.unload_success = 1 ; 
+    y = 0 ; 
+    nb_atom_in_sas = nb_atom_in ; 
+  }
+  int h = (H_SAS_LOW-lift_position)-y*H_ATOM ; // or (y-1/2)  // h the  high that need to be brought up 
+  int wanted_position = lift_position + h ; 
+  int success = move_lift(wanted_position) ; 
+  //TODO open AX12 
+  return success ; 
+}
+
+
+// ~ Unload ~ 
+
+void unload_atom() { 
+  int success ; 
+  if ( unload_content == 1 &&  game_status == 1 ) { //unload atom with slider 
+    success = unload_atom_slider() ; 
+    if (( (nb_atom_in_sas == 0 && nb_atom_in == 0) || success==0 ) && game_status == 1) {
+      //TODO clarify message if no success 
+      unload_event_msg.unload_success = success ;
+      unload_event_msg.nb_atom_out    = nb_atom_out ; 
+      pub_tower_unload.publish(&unload_event_msg) ; 
+      unload_content = 0 ; 
+      nb_atom_out    = 0 ; 
+    }
+  }
+  if ( unload_content == 2 && game_status == 1 ) { //unload atom with pliers  
+    unload_event_msg.unload_success = unload_atom_pliers() ; 
     unload_event_msg.nb_atom_out    = nb_atom_out ; 
     pub_tower_unload.publish(&unload_event_msg); 
     unload_content = 0 ; 
@@ -134,7 +136,38 @@ void unload_atom_pliers() {
   }
 }
 
+int  unload_atom_slider() {
+  int success ; 
+  if ( nb_atom_in_sas > 0 && game_status == 1 ){
+    servo_unload.write(POS_UNLOAD); 
+    delay(500); 
+    servo_unload.write(POS_UNLOAD_INIT); 
+    nb_atom_in     = nb_atom_in - 1 ; 
+    nb_atom_in_sas = nb_atom_in_sas - 1 ; 
+    nb_atom_out    = nb_atom_out + 1 ; 
+  }
 
+  if (nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
+    success = lift_atoms_to_sas() ; // 1 good, 0 bad wasn't able to reload sas 
+  }
+  
+  return success ; 
+}
+
+int unload_atom_pliers() {
+  if ( nb_atom_in - nb_atom_in_sas != 0 ) {
+    // send message to AX12 and open gates 
+    // TODO 
+    nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
+    nb_atom_in  = nb_atom_in_sas ; 
+    return 1 ; 
+  }
+  else { // nothing to unload 
+    return 1 ; 
+  }
+}
+
+// ~ Load ~ 
 void load_atom() {
   if (load_content == 1 && game_status == 1 ) {
     load_atom_single() ;  //load one atom and ingame 
@@ -144,31 +177,76 @@ void load_atom() {
   }
 }
 
-void load_atom_single() {
-  stepper_load.moveStep(positions-H_GROUND, true) ; 
-  positions = H_GROUND ; 
-  //TODO send message to AX12 (close)
-
-  if (nb_atom_in_sas < MAX_ATOM_SAS){  //put atom in sas 
-    stepper_load.moveStep(H_SAS_LOW-positions,false); 
-    positions = H_SAS_LOW ; 
-    //TODO open AX12
-    nb_atom_in     += 1 ; 
-    nb_atom_in_sas += 1 ;  
+void load_atom_single() {  //load only one atom 
+  int success ; 
+  if ( nb_atom_in_sas == nb_atom_in && nb_atom_in_sas < MAX_ATOM_SAS )  { // can still load in sas 
+    //TODO send message to AX12 (open)
+    success = move_lift(H_GROUND) ; 
+    //TODO send message to AX12 (close)
+    // TODO make it while moving ??? 
+    if (success==1) {
+      success = lift_atoms_to_sas() ; 
+      nb_atom_in     += 1 ; 
+      nb_atom_in_sas += 1 ; 
+    }
+    else 
+      success = 0 ;  
   }
 
-  if (nb_atom_in_sas >= MAX_ATOM_SAS){  // sas is full keep atom on pliers 
-      stepper_load.moveStep(H_FLOOR_1-positions,true); 
-      positions = H_SAS_LOW ; 
-      nb_atom_in     += 1 ;
+  if ( nb_atom_in_sas == nb_atom_in && nb_atom_in_sas == MAX_ATOM_SAS ) { // pliers empty but sas full 
+    //TODO send message to AX12 (open)
+    success = move_lift(H_GROUND) ; 
+    //TODO send message to AX12 (close)
+    if (success==1) {
+      success = move_lift(H_FLOOR_1) ; 
+      nb_atom_in += 1 ; 
+    }
+    else 
+      success = 0 ;  
   }
 
-  load_content = 0 ; 
-  load_event_msg.load_success     = 1 ;// finish 
-  load_event_msg.nb_atom_in       = nb_atom_in ; // number of atom loaded (float32) 
-  load_event_msg.nb_atom_in_sas   = nb_atom_in_sas ; 
-  pub_tower_load.publish(&load_event_msg); 
+  if ( nb_atom_in_sas - nb_atom_in < 0 ) { // pliers not empty and sas full 
+    success = unload_atom_pliers() ; 
+    nb_atom_out = 0 ; //take them back after 
+    success = move_lift(H_GROUND) ; 
+    //TODO send message to AX12 (close)
+    if (success==1) {
+      success = move_lift(H_FLOOR_1) ; 
+      nb_atom_in += 1 ; 
+    }
+    else 
+      success = 0 ;  
+    
+  }
+
+  return success ; 
 }
+
+//void load_atom_single() {
+//  stepper_load.moveStep(lift_position-H_GROUND, true) ; 
+//  lift_position = H_GROUND ; 
+//  //TODO send message to AX12 (close)
+//
+//  if (nb_atom_in_sas < MAX_ATOM_SAS){  //put atom in sas 
+//    stepper_load.moveStep(H_SAS_LOW-lift_position,false); 
+//    lift_position = H_SAS_LOW ; 
+//    //TODO open AX12
+//    nb_atom_in     += 1 ; 
+//    nb_atom_in_sas += 1 ;  
+//  }
+//
+//  if (nb_atom_in_sas >= MAX_ATOM_SAS){  // sas is full keep atom on pliers 
+//      stepper_load.moveStep(H_FLOOR_1-lift_position,true); 
+//      lift_position = H_SAS_LOW ; 
+//      nb_atom_in     += 1 ;
+//  }
+//
+//  load_content = 0 ; 
+//  load_event_msg.load_success     = 1 ;// finish 
+//  load_event_msg.nb_atom_in       = nb_atom_in ; // number of atom loaded (float32) 
+//  load_event_msg.nb_atom_in_sas   = nb_atom_in_sas ; 
+//  pub_tower_load.publish(&load_event_msg); 
+//}
 
 
 void load_atom_tower() {

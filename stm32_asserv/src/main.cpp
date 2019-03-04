@@ -105,6 +105,7 @@ void serialRead();
 void readOrder(void);
 void DWT_CounterEnable(void);
 void blink(void);
+void pingSerial();
 
 /* USER CODE END PFP */
 
@@ -112,6 +113,7 @@ void blink(void);
 Timer asservLoopTimer = Timer((int) 1000.0*DT, &asservLoop);
 Timer asservStatusTimer = Timer(AUTO_STATUS_DT, &asservStatus);
 Timer blinkTimer = Timer(100, &blink);
+Timer pingSerialTimer {1000, &pingSerial};
 /* USER CODE END 0 */
 
 /**
@@ -172,22 +174,19 @@ int main(void)
   asservLoopTimer.Start();
   asservStatusTimer.Start();  
   blinkTimer.Start();
+  pingSerialTimer.Start();
   ControlInit();
   while (1)
   {
     blinkTimer.Update();
     if (!flagSTM32Connected) {
-        g_serialSender.serialSend(SERIAL_INFO, "%s", STM32_ID);
+        pingSerialTimer.Update();
     } else {
         asservLoopTimer.Update();
         asservStatusTimer.Update();
     }
     
     g_serialSender.serialSendTask();
-    
-    if (!flagSTM32Connected) {
-        HAL_Delay(1000);
-    }
     
   /* USER CODE END WHILE */
 
@@ -536,6 +535,11 @@ void DWT_CounterEnable()
 void blink()
 {
   HAL_GPIO_TogglePin(GPIOB, TEST_LED_Pin);
+}
+
+void pingSerial()
+{
+    g_serialSender.serialSend(SERIAL_INFO, "%s", STM32_ID);
 }
 
 /* USER CODE END 4 */

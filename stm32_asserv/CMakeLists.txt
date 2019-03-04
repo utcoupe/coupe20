@@ -17,11 +17,11 @@ cmake_minimum_required(VERSION 2.8)
 
 enable_language(C CXX ASM)
 
-add_compile_options(-fno-exceptions)
-
 FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
 FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc pwr cortex flash REQUIRED)
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-exceptions")
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}

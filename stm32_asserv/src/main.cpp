@@ -177,7 +177,7 @@ int main(void)
   {
     blinkTimer.Update();
     if (!flagSTM32Connected) {
-        g_serialSender.serialSend(SERIAL_INFO, "%s", "ard_asserv");
+        g_serialSender.serialSend(SERIAL_INFO, "%s", STM32_ID);
     } else {
         asservLoopTimer.Update();
         asservStatusTimer.Update();

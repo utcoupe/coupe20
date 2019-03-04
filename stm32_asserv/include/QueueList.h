@@ -47,13 +47,10 @@
 #ifndef _QUEUELIST_H
 #define _QUEUELIST_H
 
-// include Arduino basic header.
-
-#include "serial.h"
-extern Serial g_serial;
-
 #include <stddef.h>
 #include <stdlib.h>
+
+#include <new> // required for placement new
 
 // the definition of the queue class.
 template<typename T>
@@ -137,7 +134,7 @@ void QueueList<T>::push (const T i) {
     exit ();
   }
   
-  *tail = node();
+  new (tail) node;
 
   // set the next of the new node.
   tail->next = NULL;
@@ -170,8 +167,10 @@ T QueueList<T>::pop () {
   T item = head->item;
   
   // remove only the head node.
+  
   link t = head->next;
-  delete head;
+  head->~node();
+  free(head);
   head = t;
 
   // decrease the items.

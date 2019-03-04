@@ -18,6 +18,7 @@ short unsigned int Serial::available()
 }
 
 void Serial::print(const char* data) {
+    //while (UART_CheckIdleState(_serialInterfacePtr) != HAL_OK);
     _lastStatus = HAL_UART_Transmit(
         _serialInterfacePtr,
         (uint8_t*)data,

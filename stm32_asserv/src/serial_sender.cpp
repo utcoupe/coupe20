@@ -35,11 +35,12 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
         va_start(argv, str);
         
         auto result = vsnprintf(tmpBuff, SS_BUFFER_SIZE - 1, str, argv);
+        va_end(argv);
         if (result >= 0) {
+            g_serial.println(tmpBuff);
             _dataToSend.push(tmpBuff);
         }
         // TODO error handling
-        va_end(argv);
     }
 }
 

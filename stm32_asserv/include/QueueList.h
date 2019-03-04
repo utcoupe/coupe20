@@ -167,20 +167,13 @@ T QueueList<T>::pop () {
     exit ();
   }
   // get the item of the head node.
-  g_serial.println("poop1");
   T item = head->item;
-
-  g_serial.println("poop2");
+  
   // remove only the head node.
   link t = head->next;
-  g_serial.println("poop2.1");
-  head->~node();
-  g_serial.println("poop2.1.1");
-  free(head);
-  g_serial.println("poop2.2");
+  delete head;
   head = t;
 
-  g_serial.println("poop3");
   // decrease the items.
   size--;
 

@@ -24,8 +24,6 @@ SerialSender::SerialSender(Serial* serial):
 void SerialSender::serialSend(SerialSendEnum level, String data) {
     if (level <= DEBUG_LEVEL && data != "") {
         _dataToSend.push(data);
-        g_serial.print("plop :");
-        g_serial.print(data);
     }
 }
 
@@ -37,8 +35,9 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
         va_start(argv, str);
         
         auto result = vsnprintf(tmpBuff, SS_BUFFER_SIZE - 1, str, argv);
-        if (result >= 0)
+        if (result >= 0) {
             _dataToSend.push(tmpBuff);
+        }
         // TODO error handling
         va_end(argv);
     }
@@ -46,9 +45,7 @@ void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
 
 void SerialSender::serialSendTask() {
     while (!_dataToSend.isEmpty()) {
-        g_serial.println("plop2");
         _serialInterfacePtr->println(_dataToSend.pop());
-        g_serial.println("plop3");
     }
 }
 

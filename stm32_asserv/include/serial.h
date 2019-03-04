@@ -26,7 +26,7 @@ public:
     
 private:
     UART_HandleTypeDef* _serialInterfacePtr;
-    uint16_t _timeout = 1;
+    uint16_t _timeout = 10; // TODO maybe higher value + define
     HAL_StatusTypeDef _lastStatus;
 };
 

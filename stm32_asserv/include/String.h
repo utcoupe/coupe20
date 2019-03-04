@@ -28,6 +28,9 @@ public:
     String operator+ (const String& str) const;
     String operator+ (char ch) const;
     
+    String& operator= (const char* str);
+    String& operator= (const String& str) { return this->operator=(str.c_str()); }
+    
     friend void move(String& dest, String& src);
     
 private:

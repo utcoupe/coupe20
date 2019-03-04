@@ -19,8 +19,9 @@ String::String(const char* str) {
     _str = nullptr;
     if (str != nullptr) {
         // +1 for the null terminator
-        _str = (char*) malloc( sizeof(char) * (strlen(str) + 1) );
-        strcpy(_str, str);
+        size_t len = strlen(str) + 1;
+        _str = (char*) malloc( sizeof(char) * len );
+        strncpy(_str, str, len);
     }
 }
 
@@ -46,7 +47,6 @@ String::String(long nb) {
 
 String::~String() {
     if (_str != nullptr) {
-        g_serial.print("lol");
         free(_str);
         _str = nullptr;
     }
@@ -77,12 +77,6 @@ void String::pop_back() {
 
 String& String::operator+=(const char* str) {
     if (str != nullptr && strlen(str) > 0) {
-//         g_serial.print("\"");
-//         if (length() > 0)
-//             g_serial.print(_str);
-//         g_serial.print("\" + \"");
-//         g_serial.print(str);
-//         g_serial.print("\": ");
         size_t newLen = length() + strlen(str);
         size_t oldLen = length();
         char* newStr = (char*) malloc ((newLen + 1) * sizeof(char));
@@ -93,8 +87,6 @@ String& String::operator+=(const char* str) {
         }
         strcpy(newStr + oldLen, str);
         _str = newStr;
-//         g_serial.print(newStr);
-//         g_serial.print("\r\n");
     }
     return *this;
 }
@@ -132,6 +124,21 @@ String String::operator+ (char ch) const {
     String newStr(*this);
     return (newStr += ch);
 }
+
+String & String::operator=(const char* str)
+{
+    if (_str != nullptr) {
+        free(_str);
+        _str = nullptr;
+    }
+    if (str != nullptr) {
+        auto len = strlen(str) + 1;
+        _str = (char*) malloc( len * sizeof(char));
+        strncpy(_str, str, len);
+    }
+    return *this;
+}
+
 
 void move(String& dest, String& src) {
     if (dest._str != nullptr) {

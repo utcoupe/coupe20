@@ -15,7 +15,7 @@
 
 extern Serial g_serial;
 
-const unsigned BUFFER_SIZE = 70;
+const unsigned SS_BUFFER_SIZE = 70;
 
 SerialSender::SerialSender(Serial* serial):
     _serialInterfacePtr(serial) {
@@ -24,71 +24,38 @@ SerialSender::SerialSender(Serial* serial):
 void SerialSender::serialSend(SerialSendEnum level, String data) {
     if (level <= DEBUG_LEVEL && data != "") {
         _dataToSend.push(data);
+        g_serial.print("plop :");
+        g_serial.print(data);
     }
 }
 
 void SerialSender::serialSend(SerialSendEnum level, const char* str, ...) {
-    uint8_t i, j, count = 0;
-    String serialData, tmpString;
+    static char tmpBuff[SS_BUFFER_SIZE]; // TODO Maybe dynamic allocation ?
+        
     if (level <= DEBUG_LEVEL) {
         va_list argv;
         va_start(argv, str);
-        for (i = 0, j = 0; str[i] != '\0'; i++) {
-            if (str[i] == '%') {
-                count++;
-
-                tmpString = charArrayToString((str + j), i - j);
-                serialData += tmpString;
-
-                switch (str[++i]) {
-                    case 'i':
-                    case 'd':
-                        tmpString = va_arg(argv, int);
-                        break;
-                    case 'l':
-                        tmpString = va_arg(argv, long);
-                        break;
-                    case 'f': //tmpString = String(va_arg(argv, float), 4);
-                        break;
-                    case 'c':
-                        tmpString = static_cast<char>(va_arg(argv, int));
-                        break;
-                    case 's':
-                        tmpString = (char *)va_arg(argv, char *);
-                        break;
-//                    case '%':
-//                        Serial.print("%");
-//                        break;
-                    default:;
-                }
-                serialData += tmpString;
-                g_serial.print(serialData);
-                j = i + 1;
-            }
-        }
+        
+        auto result = vsnprintf(tmpBuff, SS_BUFFER_SIZE - 1, str, argv);
+        if (result >= 0)
+            _dataToSend.push(tmpBuff);
+        // TODO error handling
         va_end(argv);
-
-        if (i > j) {
-            tmpString = charArrayToString((str + j), i - j);
-            serialData += tmpString;
-        }
-
-        _dataToSend.push(serialData);
     }
 }
 
 void SerialSender::serialSendTask() {
     while (!_dataToSend.isEmpty()) {
-        ;
+        g_serial.println("plop2");
         _serialInterfacePtr->println(_dataToSend.pop());
+        g_serial.println("plop3");
     }
 }
 
 String SerialSender::charArrayToString(const char * str, uint8_t size) {
     String returnedString = "";
-    //todo size as define
-    if ((str != nullptr) && (size > 0) && (size < BUFFER_SIZE + 1)) {
-        static char tmpBuffer[BUFFER_SIZE];
+    if ((str != nullptr) && (size > 0) && (size < SS_BUFFER_SIZE + 1)) {
+        static char tmpBuffer[SS_BUFFER_SIZE];
         memcpy(tmpBuffer, str, size);
         tmpBuffer[size] = '\0';
         returnedString = tmpBuffer;

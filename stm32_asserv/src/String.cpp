@@ -46,12 +46,14 @@ String::String(long nb) {
 
 String::~String() {
     if (_str != nullptr) {
+        g_serial.print("lol");
         free(_str);
+        _str = nullptr;
     }
 }
 
 char String::back() const {
-    if (_str == nullptr || length() == 0) {
+    if (length() == 0) {
         return '\0';
     } else {
         return _str[length() - 1];
@@ -74,22 +76,25 @@ void String::pop_back() {
 }
 
 String& String::operator+=(const char* str) {
-    if (str != nullptr) {
-        // g_serial.print(_str);
-        //g_serial.print(" ");
-        g_serial.print("\":");
-        g_serial.print(str);
-        g_serial.print("\";");
+    if (str != nullptr && strlen(str) > 0) {
+//         g_serial.print("\"");
+//         if (length() > 0)
+//             g_serial.print(_str);
+//         g_serial.print("\" + \"");
+//         g_serial.print(str);
+//         g_serial.print("\": ");
         size_t newLen = length() + strlen(str);
+        size_t oldLen = length();
         char* newStr = (char*) malloc ((newLen + 1) * sizeof(char));
-        if (_str != nullptr) {
+        if (oldLen > 0) {
             strcpy(newStr, _str);
-        }
-        strcat(newStr, str);
-        if (_str != nullptr) {
             free(_str);
+            _str = nullptr;
         }
+        strcpy(newStr + oldLen, str);
         _str = newStr;
+//         g_serial.print(newStr);
+//         g_serial.print("\r\n");
     }
     return *this;
 }
@@ -103,6 +108,7 @@ String& String::operator+= (char ch) {
     newStr[length() + 1] = '\0';
     if (_str != nullptr) {
         free(_str);
+        _str = nullptr;
     }
     _str = newStr;
     return *this;
@@ -128,7 +134,10 @@ String String::operator+ (char ch) const {
 }
 
 void move(String& dest, String& src) {
-    free(dest._str);
+    if (dest._str != nullptr) {
+        free(dest._str);
+        dest._str = nullptr;
+    }
     dest._str = src._str;
     src._str = nullptr;
 }

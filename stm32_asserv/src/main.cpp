@@ -173,11 +173,16 @@ int main(void)
   asservStatusTimer.Start();  
   blinkTimer.Start();
   ControlInit();
+  char tmpBuf[100];
   while (1)
   {
     blinkTimer.Update();
     if (!flagSTM32Connected) {
-        g_serialSender.serialSend(SERIAL_INFO, "%s", "ard_asserv");
+        g_serial.println("coucou!");
+//         g_serialSender.serialSend(SERIAL_INFO, "%s", "ard_asserv");
+        snprintf(tmpBuf, 99, "%s", STM32_ID);
+        g_serialSender.serialSend(SERIAL_INFO, String(tmpBuf));
+        //g_serial.println(STM32_ID);
     } else {
         asservLoopTimer.Update();
         asservStatusTimer.Update();

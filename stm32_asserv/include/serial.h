@@ -16,8 +16,10 @@ public:
     
     uint16_t available();
     HAL_StatusTypeDef getLastStatus();
-    void print(const String& data);
-    void println(const String& data);
+    void print(const String& data) { print(data.c_str()); }
+    void print(const char* data);
+    void println(const String& data) { println(data.c_str()); }
+    void println(const char* data);
     uint8_t read();
     String readStringUntil(char ch);
     void setTimeout(uint16_t timeout);

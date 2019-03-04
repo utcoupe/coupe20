@@ -49,6 +49,9 @@
 
 // include Arduino basic header.
 
+#include "serial.h"
+extern Serial g_serial;
+
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -133,6 +136,8 @@ void QueueList<T>::push (const T i) {
   // "QUEUE: insufficient memory to create a new node."
     exit ();
   }
+  
+  *tail = node();
 
   // set the next of the new node.
   tail->next = NULL;
@@ -156,17 +161,26 @@ void QueueList<T>::push (const T i) {
 template<typename T>
 T QueueList<T>::pop () {
   // check if the queue is empty.
-  if (isEmpty ())
+  if (isEmpty () || head == nullptr)
   {
     // "QUEUE: can't pop item from queue: queue is empty."
     exit ();
   }
   // get the item of the head node.
+  g_serial.println("poop1");
   T item = head->item;
 
+  g_serial.println("poop2");
   // remove only the head node.
-  link t = head->next; delete head; head = t;
+  link t = head->next;
+  g_serial.println("poop2.1");
+  head->~node();
+  g_serial.println("poop2.1.1");
+  free(head);
+  g_serial.println("poop2.2");
+  head = t;
 
+  g_serial.println("poop3");
   // decrease the items.
   size--;
 
@@ -206,8 +220,8 @@ template<typename T>
 void QueueList<T>::exit () const {
   while(1)
   {
-    // HAL_GPIO_TogglePin(GPIOB, TEST_LED_Pin);
-    // HAL_Delay(2000);
+//     HAL_GPIO_TogglePin(GPIOB, TEST_LED_Pin);
+//     HAL_Delay(2000);
   }
 }
 

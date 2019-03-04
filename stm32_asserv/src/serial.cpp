@@ -17,17 +17,18 @@ short unsigned int Serial::available()
     return _serialInterfacePtr->RxXferSize;
 }
 
-void Serial::print(const String& data) {
+void Serial::print(const char* data) {
     _lastStatus = HAL_UART_Transmit(
         _serialInterfacePtr,
-        (uint8_t*)data.c_str(),
-        data.length(),
+        (uint8_t*)data,
+        strlen(data),
         _timeout
     );
 }
 
-void Serial::println(const String& data) {
-    print(data + "\n");
+void Serial::println(const char* data) {
+    print(data);
+    print("\r\n");
 }
 
 uint8_t Serial::read() {

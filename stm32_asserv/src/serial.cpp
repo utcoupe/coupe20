@@ -14,6 +14,28 @@ Serial::~Serial() {
     free(_serialInterfacePtr);
 }
 
+int Serial::available()
+{
+    uint8_t rx_char;
+    HAL_StatusTypeDef status = HAL_UART_Receive(
+        _serialInterfacePtr,
+        &rx_char,
+        1,
+        _timeout
+    );;
+    while (status == HAL_OK) {
+        _lastReceivedChars.push(rx_char);
+        status = HAL_UART_Receive(
+            _serialInterfacePtr,
+            &rx_char,
+            1,
+            _timeout
+        );
+    }
+    return _lastReceivedChars.count();
+}
+
+
 void Serial::print(const char* data) {
     _lastStatus = HAL_UART_Transmit(
         _serialInterfacePtr,
@@ -41,13 +63,13 @@ uint8_t Serial::read() {
 
 String Serial::readStringUntil(char ch) {
     static char result[BUFFER_READ];
-    char readChar;
+    char readChar = 0;
     unsigned pos = 0;
-    do {
-        readChar = static_cast<char>(read());
+    while (pos + 1 < BUFFER_READ && readChar != ch && _lastReceivedChars.count() > 0) {
+        readChar = static_cast<char>(_lastReceivedChars.pop());
         result[pos] = readChar;
         pos++;
-    } while (_lastStatus == HAL_OK && readChar != ch && pos + 1 < BUFFER_READ);
+    }
     result[pos] = '\0';
     return result;
 }

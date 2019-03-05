@@ -1,10 +1,9 @@
 #ifndef STM32_SERIAL_H
 #define STM32_SERIAL_H
 
-#include "stm32f3xx_hal.h"
-#include "stm32f3xx_hal_dma.h"
-#include "stm32f3xx_hal_uart.h"
+#include "stm32f3xx_hal_conf.h"
 
+#include "QueueList.h"
 #include "String.h"
 
 #include <stdint.h>
@@ -14,7 +13,7 @@ public:
     Serial (UART_HandleTypeDef* serial);
     ~Serial ();
     
-    uint16_t available() { return _serialInterfacePtr->RxXferSize; }
+    int available();
     HAL_StatusTypeDef getLastStatus();
     void print(const String& data) { print(data.c_str()); }
     void print(const char* data);
@@ -28,6 +27,8 @@ private:
     UART_HandleTypeDef* _serialInterfacePtr;
     uint16_t _timeout = 10; // TODO maybe higher value + define
     HAL_StatusTypeDef _lastStatus;
+    
+    QueueList<uint8_t> _lastReceivedChars;
 };
 
 extern Serial g_serial;

@@ -178,11 +178,11 @@ int main(void)
   ControlInit();
   while (1)
   {
-    blinkTimer.Update();
     if (!flagSTM32Connected) {
         pingSerialTimer.Update();
         serialRead();
     } else {
+        blinkTimer.Update();
         asservLoopTimer.Update();
         asservStatusTimer.Update();
     }
@@ -450,20 +450,20 @@ static void MX_USART2_UART_Init(void)
 
   huart2.Instance = USART2;
   huart2.Init.BaudRate = /*230400;*/57600;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
   huart2.Init.Mode = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  huart2.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
-  huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
+//   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+//   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+//   huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+//   huart2.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
+//   huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();
   }
-
 }
 
 /** Configure pins as 
@@ -542,6 +542,7 @@ void blink()
 void pingSerial()
 {
     g_serialSender.serialSend(SERIAL_INFO, "%s", STM32_ID);
+    blink();
 }
 
 /* USER CODE END 4 */

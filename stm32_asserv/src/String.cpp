@@ -25,26 +25,6 @@ String::String(const char* str) {
     }
 }
 
-String::String(const String& str):
-    String( str.c_str() ) {
-}
-
-String::String(char ch) {
-    _str = (char*) malloc( 2 * sizeof(char) );
-    _str[0] = ch;
-    _str[1] = '\0';
-}
-
-String::String(int nb) {
-    _str = (char*) malloc( (SIZE_INT16_STR + 1) * sizeof(char) );
-    sprintf(_str, "%d", nb);
-}
-
-String::String(long nb) {
-    _str = (char*) malloc( (SIZE_LONG32_STR + 1) * sizeof(char) );
-    sprintf(_str, "%ld", nb);
-}
-
 String::~String() {
     if (_str != nullptr) {
         free(_str);
@@ -91,21 +71,6 @@ String& String::operator+=(const char* str) {
     return *this;
 }
 
-String& String::operator+= (char ch) {
-    char* newStr = (char*) malloc ((length() + 2) * sizeof(char));
-    if (_str != nullptr) {
-        strcpy(newStr, _str);
-    }
-    newStr[length()] = ch;
-    newStr[length() + 1] = '\0';
-    if (_str != nullptr) {
-        free(_str);
-        _str = nullptr;
-    }
-    _str = newStr;
-    return *this;
-}
-
 bool String::operator== (const String& other) const {
     return ( strcmp(c_str(), other.c_str()) == 0 );
 }
@@ -120,11 +85,6 @@ String String::operator+ (const String& str) const {
     return (newStr += str);
 }
 
-String String::operator+ (char ch) const {
-    String newStr(*this);
-    return (newStr += ch);
-}
-
 String & String::operator=(const char* str)
 {
     if (_str != nullptr) {
@@ -137,14 +97,4 @@ String & String::operator=(const char* str)
         strncpy(_str, str, len);
     }
     return *this;
-}
-
-
-void move(String& dest, String& src) {
-    if (dest._str != nullptr) {
-        free(dest._str);
-        dest._str = nullptr;
-    }
-    dest._str = src._str;
-    src._str = nullptr;
 }

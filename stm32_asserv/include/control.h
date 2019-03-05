@@ -35,14 +35,15 @@ typedef struct control {
 extern control_t control;
 extern PID_t PID_left, PID_right;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void ControlPrepareNewGoal(void);
 void ControlReset(void);
 void ControlSetStop(int mask);
 void ControlUnsetStop(int mask);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 void ControlInit(void);
 void ControlCompute(void);
 extern uint16_t lastReachedID;

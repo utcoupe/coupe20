@@ -6,7 +6,7 @@ function generate_cmake() {
     rm -rf build
     mkdir -p build
     cd build
-    cmake ..
+    cmake .. -DCMAKE_BUILD_TYPE="RELEASE"
 }
 
 function compile_program() {

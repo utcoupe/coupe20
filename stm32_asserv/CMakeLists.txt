@@ -1,9 +1,4 @@
-# To run this cmake, you need the packages :
-# - gcc-arm-none-eabi (tested with ver 6.3.1)
-# - libnewlib-arm-none-eabi (warning: check version compatibility, version in apt is obsolete in Ubuntu 18.04.1)
-# - libstdc++-arm-none-eabi-newlib (warning: check version compatibility, version in apt is obsolete in Ubuntu 18.04.1)
-
-# set(CMAKE_BUILD_TYPE RELEASE)
+set(TOOLCHAIN_PREFIX "$ENV{UTCOUPE_WORKSPACE}/libs/gcc-arm-none-eabi-6-2017-q2-update/")
 
 set(STM32_CHIP STM32F303K8)
 # TODO copy or symlink in $UTCOUPE_WORKSPACE OR regex
@@ -21,7 +16,7 @@ FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
 FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc pwr cortex flash REQUIRED)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-exceptions")
+add_compile_options(-fno-exceptions) # prevents huge overflow
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -35,7 +30,6 @@ file(
     GLOB_RECURSE
     source_files
     src/*
-    #include/*
 )
 
 set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")

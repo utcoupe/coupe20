@@ -181,12 +181,14 @@ int main(void)
     blinkTimer.Update();
     if (!flagSTM32Connected) {
         pingSerialTimer.Update();
+        serialRead();
     } else {
         asservLoopTimer.Update();
         asservStatusTimer.Update();
     }
     
     g_serialSender.serialSendTask();
+    
     
   /* USER CODE END WHILE */
 

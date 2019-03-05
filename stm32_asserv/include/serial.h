@@ -14,7 +14,7 @@ public:
     Serial (UART_HandleTypeDef* serial);
     ~Serial ();
     
-    uint16_t available();
+    uint16_t available() { return _serialInterfacePtr->RxXferSize; }
     HAL_StatusTypeDef getLastStatus();
     void print(const String& data) { print(data.c_str()); }
     void print(const char* data);

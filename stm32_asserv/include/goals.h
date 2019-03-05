@@ -59,11 +59,20 @@ typedef struct fifo {
 } fifo_t;
 
 extern fifo_t fifo;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void FifoInit();
 int FifoPushGoal(int ID, int type, goal_data_t data);
 goal_t* FifoCurrentGoal();
 goal_t* FifoNextGoal();
 uint8_t FifoRemainingGoals();
 inline void FifoClearGoals() { FifoInit(); }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

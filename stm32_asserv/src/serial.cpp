@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 
+const size_t BUFFER_READ = 100;
+
 Serial::Serial(UART_HandleTypeDef* serial):
     _serialInterfacePtr(serial) {
     _lastStatus = HAL_OK;
@@ -12,13 +14,7 @@ Serial::~Serial() {
     free(_serialInterfacePtr);
 }
 
-short unsigned int Serial::available()
-{
-    return _serialInterfacePtr->RxXferSize;
-}
-
 void Serial::print(const char* data) {
-    //while (UART_CheckIdleState(_serialInterfacePtr) != HAL_OK);
     _lastStatus = HAL_UART_Transmit(
         _serialInterfacePtr,
         (uint8_t*)data,
@@ -44,12 +40,15 @@ uint8_t Serial::read() {
 }
 
 String Serial::readStringUntil(char ch) {
-    String result = "";
+    static char result[BUFFER_READ];
     char readChar;
+    unsigned pos = 0;
     do {
         readChar = static_cast<char>(read());
-        result += readChar;
-    } while (_lastStatus == HAL_OK && readChar != ch);
+        result[pos] = readChar;
+        pos++;
+    } while (_lastStatus == HAL_OK && readChar != ch && pos + 1 < BUFFER_READ);
+    result[pos] = '\0';
     return result;
 }
 

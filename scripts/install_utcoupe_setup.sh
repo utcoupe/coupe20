@@ -98,7 +98,9 @@ function env_setup() {
 	# Untar all libraries (the copy is done in install_ros function)
 	for f in $PWD/libs/*; do
 		if [ ! -d $f ]; then
-			tar -C $PWD/libs -xzf $f
+            if [[ "$f" == "*.tgz" ]]; then
+                tar -C $PWD/libs -xzf $f
+            fi
 		fi
 	done
 	# Add the Ethernet IP address of raspberry pi to have a shortcut

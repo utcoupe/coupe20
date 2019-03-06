@@ -187,6 +187,8 @@ int main(void)
         asservStatusTimer.Update();
     }
     
+    serialRead();
+    
     g_serialSender.serialSendTask();
     
     

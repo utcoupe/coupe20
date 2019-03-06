@@ -219,7 +219,8 @@ Position CollisionsSubscriptions::updateRobotPos()
         ty = transform.transform.translation.y;
         rz = quaternionToEuler(transform.transform.rotation).getAngle();
     } catch (tf2::TransformException &ex) {
-        ROS_WARN_STREAM(
+        ROS_WARN_STREAM_THROTTLE(
+                1,
                 "Error when trying to get " << ROBOT_TF_FRAME << " tf from "
                 << MAP_TF_FRAME << " tf: " << ex.what()
         );

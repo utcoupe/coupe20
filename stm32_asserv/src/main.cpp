@@ -176,6 +176,7 @@ int main(void)
   blinkTimer.Start();
   pingSerialTimer.Start();
   ControlInit();
+  flagSTM32Connected = 0;
   while (1)
   {
     if (!flagSTM32Connected) {

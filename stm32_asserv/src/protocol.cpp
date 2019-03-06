@@ -254,7 +254,7 @@ void parseAndExecuteOrder(const String& order) {
         {
             int x, y, a_int, mode;
             float a;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &mode);
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i;", &x, &y, &a_int, &mode);
             a = a_int / (float)FLOAT_PRECISION;
             if(mode){
                 if(!(mode & BIT_MODE_A))

@@ -42,3 +42,15 @@ int unload_content        = -1 ; // actions given to stepper  => 0 for nothing /
 int load_success          = -1 ; // info on stepper status 
 int unload_success        = -1 ; // info on stepper status 
 int game_status           = -1 ; // info on game status  // 1 ingame 
+
+
+// ------ Functions --------- 
+void tower_initialize() ; 
+int move_lift(int wanted_position) ; 
+int lift_atoms_to_sas() ; 
+void unload_atom() ; 
+int unload_atom_slider() ; 
+int unload_atom_pliers() ; 
+void load_atom() ; 
+void load_atom_single() ; 
+void load_atom_tower() ; 

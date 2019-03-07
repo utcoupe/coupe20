@@ -34,20 +34,24 @@ PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay);
 //----- ROS methods ------ 
 void on_tower_init(const ard_tower::TowerLoad& msg) { //change TowerLoad to TowerInit
   tower_initialize(); 
+  Serial.println("tower_initialize_msg");
 }
 
 void on_game_status(const game_manager::GameStatus& msg){
   game_status = msg.game_status;
+  Serial.println("game_status_msg");
 }
 
 void on_tower_load  (const ard_tower::TowerLoad& msg){
   load_content          = msg.load_content ; 
   load_content_nb       = msg.load_content_nb ; 
   load_content_position = msg.load_content_nb ; 
+  Serial.println("on_tower_load_msg");
 }
 
 void on_tower_unload (const ard_tower::TowerUnload& msg){
   unload_content = msg.unload_content ; 
+  Serial.println("on_tower_unload_msg");
 }
 
 // ~ Subscriber ~ 
@@ -71,6 +75,7 @@ ros::Publisher pub_tower_init   ("actuators/ard_tower/init_event",   &init_event
 void tower_initialize() { 
   // initialize stepper 
   servo_unload.write(POS_UNLOAD_INIT) ; 
+  lift_position = 0 ; 
 }
 
 int move_lift(int wanted_position) {  // move lift to the correct floor 
@@ -112,8 +117,6 @@ int lift_atoms_to_sas() { //bring up the rest of atoms to the sas
 }
 
 
-// ~ Unload ~ 
-
 void unload_atom() { 
   int success ; 
   if ( unload_content == 1 &&  game_status == 1 ) { //unload atom with slider 
@@ -145,6 +148,7 @@ int  unload_atom_slider() {
     nb_atom_in     = nb_atom_in - 1 ; 
     nb_atom_in_sas = nb_atom_in_sas - 1 ; 
     nb_atom_out    = nb_atom_out + 1 ; 
+    success = 1 ; 
   }
 
   if (nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
@@ -290,12 +294,16 @@ void setup() {
   // Servo Actuator init 
   servo_unload.attach(servo_unload_pin) ;  // attaches the servo on pin 22 to the servo object
 
+  //Arduino 
+  Serial.begin(9600);
 }
 
 void loop() {
   unload_atom() ; 
   load_atom(); 
   stepper_load.update() ; 
+  //Serial.print(3);
+  
   
   //ROS loop 
   nh.spinOnce() ; 

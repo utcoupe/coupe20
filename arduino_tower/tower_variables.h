@@ -15,7 +15,7 @@ int servo_unload_pin = 22 ;
 
 
 // ~ Stepper ~ Load Atom 
-int lift_position = -1 ; // no postion for now 
+int lift_position = 0 ; // no postion for now 
 #define H_SAS_LOW  100  // ? 
 #define H_FLOOR_5  85   // ? 
 #define H_FLOOR_4  75   // ? 

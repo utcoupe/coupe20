@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 import rospy
 import static_map.msg
 import static_map.srv
-from map_manager import SetMode, MapManager, Object, Container, Waypoint, Terrain, Position2D
+from map_manager import MapManager, Object, Container, Waypoint, Terrain, Position2D
 from occupancy import OccupancyGenerator
 
 

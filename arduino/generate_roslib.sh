@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ARDUINO_LIBS_DIR="$HOME/sketchbook/libraries"
+ARDUINO_LIBS_DIR="$HOME/Arduino/libraries"
 
 function clean_arduino_lib() {
     if [ -d "$ARDUINO_LIBS_DIR/ros_lib" ]; then

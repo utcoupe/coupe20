@@ -20,9 +20,15 @@ public:
         Position(other.toPoint(), other.getAngle())
     {}
     
+    constexpr Position(const geometry_msgs::Pose2D& pos) noexcept:
+        Position(Point(pos), pos.theta)
+    {}
+    
     constexpr Point toPoint() const noexcept {
         return {_x, _y};
     }
+    
+    geometry_msgs::Pose2D toPose2D() const;
     
     // Operators
     constexpr bool operator== (Position other) const noexcept {

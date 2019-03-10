@@ -29,6 +29,7 @@ add_compile_options(
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     roslib
+    geometry_msgs
 )
 
 ################################################

@@ -29,29 +29,29 @@ ros :: NodeHandle nh ;
 Servo servo_unload ; // create servo object to control a servo
 
 // Stepper motor 
-PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay); 
+//PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay); 
 
 //----- ROS methods ------ 
 void on_tower_init(const ard_tower::TowerLoad& msg) { //change TowerLoad to TowerInit
   tower_initialize(); 
-  Serial.println("tower_initialize_msg");
+  //Serial.print("tower_initialize_msg");
 }
 
 void on_game_status(const game_manager::GameStatus& msg){
   game_status = msg.game_status;
-  Serial.println("game_status_msg");
+  //Serial.print("game_status_msg");
 }
 
 void on_tower_load  (const ard_tower::TowerLoad& msg){
   load_content          = msg.load_content ; 
   load_content_nb       = msg.load_content_nb ; 
   load_content_position = msg.load_content_nb ; 
-  Serial.println("on_tower_load_msg");
+  //Serial.print("on_tower_load_msg");
 }
 
 void on_tower_unload (const ard_tower::TowerUnload& msg){
   unload_content = msg.unload_content ; 
-  Serial.println("on_tower_unload_msg");
+  //Serial.print("on_tower_unload_msg");
 }
 
 // ~ Subscriber ~ 
@@ -80,13 +80,13 @@ void tower_initialize() {
 
 int move_lift(int wanted_position) {  // move lift to the correct floor 
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
-    stepper_load.moveStep(wanted_position,true) ; 
+    //stepper_load.moveStep(wanted_position,true) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
 
   if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
-    stepper_load.moveStep(wanted_position,false) ; 
+    //stepper_load.moveStep(wanted_position,false) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
@@ -295,13 +295,13 @@ void setup() {
   servo_unload.attach(servo_unload_pin) ;  // attaches the servo on pin 22 to the servo object
 
   //Arduino 
-  Serial.begin(9600);
+  //Serial.begin(9600);
 }
 
 void loop() {
   unload_atom() ; 
   load_atom(); 
-  stepper_load.update() ; 
+  //stepper_load.update() ; 
   //Serial.print(3);
   
   

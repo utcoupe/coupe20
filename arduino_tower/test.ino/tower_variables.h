@@ -10,8 +10,8 @@ uint16_t min_delay = 1000 ;
 int servo_unload_pin = 22 ; 
  
 // ~ Servo ~ Unload Atom 
-#define POS_UNLOAD_INIT  90  
-#define POS_UNLOAD       0  //store servo position
+#define POS_UNLOAD_INIT  104 //90   
+#define POS_UNLOAD       70  //store servo position
 
 
 // ~ Stepper ~ Load Atom 

@@ -2,8 +2,14 @@
 
 # The goal of this script is to compile and install external ROS nodes used by the UTCoupe nodes. This avoids to compile the external nodes each time the UTCoupe workspace is recompiled.
 
+
+if [ "$(lsb_release -sc)" = "xenial" ] || [ "$(lsb_release -sc)" = "willy" ]; then
+	ROS_VER="kinetic"
+else
+	ROS_VER="melodic"
+fi
 ARCH=$(uname -m)
-INSTALL_ROOT=/opt/ros/kinetic
+INSTALL_ROOT=/opt/ros/$ROS_VER
 TMP_ROOT=/tmp/utcoupe_ws
 TMP_SRC=$TMP_ROOT/src
 
@@ -25,6 +31,12 @@ function fetch_missing_nodes() {
 			echo "$node_name is already installed installed."
 		fi
 	done
+
+	if [ "$ROS_VER" != "kinetic" ]; then
+		cd "obstacle_detector"
+		git checkout melodic-fix
+		cd ..
+	fi
 }
 
 function compile_and_install_nodes() {
@@ -32,6 +44,7 @@ function compile_and_install_nodes() {
 		cd $TMP_ROOT
 		# Kind of ideal command to use, but catkin wont install direclty in ros base workspace because of _setup_util.py file...
 		#sudo -u $USER -H bash -c "source $INSTALL_ROOT/setup.bash; catkin_make install -DCMAKE_INSTALL_PREFIX=$INSTALL_ROOT -DCMAKE_BUILD_TYPE=Release"
+		source $INSTALL_ROOT/setup.bash
 		#TODO improve using jobs directly (get the number of the current computer)
 		catkin_make install -DCMAKE_BUILD_TYPE=Release
 		sudo cp -ar $TMP_ROOT/install/include/* $INSTALL_ROOT/include

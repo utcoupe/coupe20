@@ -75,11 +75,14 @@ void Pathfinder::setPathToRenderOutputFile(std::string path)
     _renderFile = path;
 }
 
-std::pair<unsigned int, unsigned int> Pathfinder::getMapSize()
+Point Pathfinder::getMapSize()
 {
     if (_allowedPositions.size() == 0)
         return {0,0};
-    return { _allowedPositions.front().size(), _allowedPositions.size() };
+    return {
+        static_cast<double>(_allowedPositions.front().size()),
+        static_cast<double>(_allowedPositions.size())
+    };
 }
 
 

@@ -57,13 +57,6 @@ public:
 private:
     std::vector< BarriersSubscriber > subscribers;
     std::shared_ptr<PosConvertor> _convertor;
-    
-    /**
-     * Converts a position from the inside referential and type to the outside ones.
-     * @param pos The position in the inside referential and type.
-     * @return The position in the outside referential and type.
-     */
-    geometry_msgs::Pose2D pointToPose2D(const Point& pos) const;
 };
 
 #endif // DYNAMIC_BARRIERS_MANAGER_H

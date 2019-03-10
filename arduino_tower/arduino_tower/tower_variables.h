@@ -52,5 +52,5 @@ void unload_atom() ;
 int unload_atom_slider() ; 
 int unload_atom_pliers() ; 
 void load_atom() ; 
-void load_atom_single() ; 
-void load_atom_tower() ; 
+int load_atom_single() ; 
+int load_atom_tower() ; 

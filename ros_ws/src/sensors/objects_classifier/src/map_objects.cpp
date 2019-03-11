@@ -27,8 +27,7 @@ void MapObjects::fetch_map_objects() {
             switch(mapObject.shape_type) {
                 case static_map::MapObject::SHAPE_RECT:
                     map_shapes_.push_back(std::make_shared<Rectangle>(
-                        mapObject.pose.x,
-                        mapObject.pose.y,
+                        Point(mapObject.pose),
                         mapObject.width,
                         mapObject.height
                     ));
@@ -36,8 +35,7 @@ void MapObjects::fetch_map_objects() {
                 
                 case static_map::MapObject::SHAPE_CIRCLE:
                     map_shapes_.push_back(std::make_shared<Circle>(
-                        mapObject.pose.x,
-                        mapObject.pose.y,
+                        Point(mapObject.pose),
                         mapObject.radius
                     ));
                     break;
@@ -59,14 +57,20 @@ void MapObjects::fetch_map_objects() {
     }
 }
 
-bool MapObjects::contains_point(float x, float y) {
+bool MapObjects::contains_point(Point point) const {
     // TODO: remove hardcoded values and fetch from map
     
-    if (x > 3 - WALLS_MARGIN || x < WALLS_MARGIN || y < WALLS_MARGIN || y > 2 - WALLS_MARGIN)
+    if (
+        point.getX() > 3 - WALLS_MARGIN ||
+        point.getX() < WALLS_MARGIN ||
+        point.getY() < WALLS_MARGIN ||
+        point.getY() > 2 - WALLS_MARGIN
+    ) {
         return true;
+    }
 
-    for (auto &map_shape : map_shapes_) {
-        if (map_shape->contains_point(x, y))
+    for (const auto &map_shape : map_shapes_) {
+        if (map_shape->contains_point(point))
             return true;
     }
 

@@ -123,14 +123,14 @@ class AsservSimu(AsservAbstract):
         self._node.goal_reached(goal_id, True)
         return True
 
-    def pwm(self, left, right, duration, autoStop):
+    def pwm(self, left, right, duration, auto_stop):
 
         #Accelerate until run into wall then come to a complete stop
         #Only checks if pwm is backwards or forward, always goes top speed and does not turn
         if left != right :
             rospy.logwarn("remember, PWM does not turn !")
-        if not autoStop:
-            rospy.logwarn("PWM without autoStop has not been implemented yet...")
+        if not auto_stop:
+            rospy.logwarn("PWM without auto_stop has not been implemented yet...")
             return False
         
         if left>=0 and right>=0 :

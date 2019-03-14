@@ -64,7 +64,6 @@ class Order(Task):
             rospy.logwarn("Order was resumed but failed again, blocking it.")
             new_status = TaskStatus.BLOCKED # do not let a paused action go back to paused (potential infinite loop)
 
-        print "setting new status " + str(new_status)
         self.setStatus(new_status)
 
         if new_status == TaskStatus.SUCCESS:

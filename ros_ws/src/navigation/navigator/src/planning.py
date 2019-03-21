@@ -61,6 +61,7 @@ class Plan(object):
         debugStr += " to " + pointToStr(self._endPos)
         rospy.logdebug(debugStr)
         try:
+            path = []
             if not self._disablePathfinder:
                 # sends a request to the pathfinder
                 (path, invalidPos) = self._pathfinderClient.FindPath(startPos, self._endPos)
@@ -75,7 +76,6 @@ class Plan(object):
                 path.pop() # Removes the last point
             
             lastPoint = startPos
-
             for point in path:
                 idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), self._slowGo, False, self._asservGotoCallback)
                 self._currentPath[idOrder] = point

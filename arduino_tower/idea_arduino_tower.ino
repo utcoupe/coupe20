@@ -140,7 +140,7 @@ void unload_atom() {
 }
 
 int  unload_atom_slider() {
-  int success ; 
+  int success = 0 ; 
   if ( nb_atom_in_sas > 0 && game_status == 1 ){
     servo_unload.write(POS_UNLOAD); 
     delay(500); 

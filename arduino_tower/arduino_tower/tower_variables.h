@@ -10,20 +10,20 @@ uint16_t min_delay = 1000 ;
 int servo_unload_pin = 22 ; 
  
 // ~ Servo ~ Unload Atom 
-#define POS_UNLOAD_INIT  104 //90   
-#define POS_UNLOAD       70  //store servo position
+#define POS_UNLOAD_INIT  102 //90   
+#define POS_UNLOAD       72  //store servo position
 
 
 // ~ Stepper ~ Load Atom 
 int lift_position = 0 ; // no postion for now 
-#define H_SAS_LOW  100  // ? 
-#define H_FLOOR_5  85   // ? 
-#define H_FLOOR_4  75   // ? 
-#define H_FLOOR_3  65   // ? 
-#define H_FLOOR_2  55   // ? 
-#define H_FLOOR_1  45   // ? 
+#define H_SAS_LOW  1800  // ? 
+#define H_FLOOR_5  1500   // ? 
+#define H_FLOOR_4  1200   // ? 
+#define H_FLOOR_3  900   // ? 
+#define H_FLOOR_2  600  // ? 
+#define H_FLOOR_1  300   // ? 
 #define H_GROUND   0    // ? 
-#define H_ATOM     4    // ? 
+#define H_ATOM     50   // ? 
 
 
 

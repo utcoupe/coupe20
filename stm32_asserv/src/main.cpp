@@ -261,12 +261,6 @@ static void MX_NVIC_Init(void)
   /* USART2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(USART2_IRQn, 14, 0);
   HAL_NVIC_EnableIRQ(USART2_IRQn);
-  /* CAN_RX1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN_RX1_IRQn, 15, 0);
-  HAL_NVIC_EnableIRQ(CAN_RX1_IRQn);
-  /* CAN_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN_RX0_IRQn, 15, 0);
-  HAL_NVIC_EnableIRQ(CAN_RX0_IRQn);
 }
 
 /* TIM2 init function */

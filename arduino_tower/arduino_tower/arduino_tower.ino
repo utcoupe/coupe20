@@ -70,20 +70,29 @@ int move_lift(int wanted_position) {  // move lift to the correct floor
 nh.loginfo("move_lift"); 
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
-    //stepper_load.moveStep(wanted_position,true) ; 
+    stepper_load.moveStep(wanted_position,true); 
+    while( stepper_load.getRemainingStep() >0 ) {
+      stepper_load.update() ; 
+    }
+    delay(500) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
 
   if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
     nh.loginfo("goes up"); 
+    stepper_load.moveStep(wanted_position,false); 
+    while( stepper_load.getRemainingStep() >0 ) {
+      stepper_load.update() ; 
+    }
+    delay(500) ; 
     //stepper_load.moveStep(wanted_position,false) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
 
   if (lift_position == wanted_position && game_status == 1) { //nothing 
-    nh.loginfo("do nothing)"); 
+    nh.loginfo("do nothing"); 
     return 1 ; 
   }
 
@@ -115,6 +124,31 @@ int lift_atoms_to_sas() { //bring up the rest of atoms to the sas
       nb_atom_in_sas = nb_atom_in ; 
 
     return success ; 
+  }
+}
+
+
+int load_atom_sas() {
+  nh.loginfo("load_atom_sas"); 
+  if (nb_atom_in<MAX_ATOM_SAS){
+    nh.loginfo("not enough atom"); 
+    return 1 ; 
+  }
+  else {
+    if (nb_atom_in == MAX_ATOM_SAS && nb_atom_in_sas <=MAX_ATOM_SAS) {
+      nh.loginfo("enough atoms"); 
+      int y = nb_atom_in - (MAX_ATOM_SAS - nb_atom_in_sas); 
+      int h = (H_SAS_LOW-lift_position)-y*H_ATOM ;
+      int wanted_position = lift_position + h ;  
+      int success = move_lift(wanted_position); 
+      //TODO AX12 (open)
+      nb_atom_in_sas = nb_atom_in ; 
+      return success ; 
+    }
+    else {
+      nh.loginfo("sas already full"); 
+      return 1 ; 
+    }
   }
 }
 
@@ -177,6 +211,7 @@ int unload_atom_slider() {
 int unload_atom_pliers() { 
   nh.loginfo("unload_atom_pliers") ; 
   if ( nb_atom_in - nb_atom_in_sas != 0 ) {
+    nh.loginfo("atoms drop"); 
     // send message to AX12 and open gates 
     // TODO 
     nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
@@ -184,6 +219,7 @@ int unload_atom_pliers() {
     return 1 ; 
   }
   else { // nothing to unload 
+    nh.loginfo("nothing to drop"); 
     return 1 ; 
   }
 }
@@ -192,58 +228,42 @@ int unload_atom_pliers() {
 // ~ Load ~ 
 void load_atom() {
   //nh.loginfo("load_atom"); 
-  int success ; 
+  int success = -1 ; 
   if (load_content == 1 && game_status == 1 ) {
     success = load_atom_single() ;  //load one atom and ingame 
   }  
   if (load_content == 2 && game_status == 1) {  
     success = load_atom_tower() ;   //load tower of atoms and ingame
   }
-  load_content = 0 ; 
-  load_event_msg.load_success = success ; // in progress 
-  load_event_msg.nb_atom_in  = nb_atom_in; // number of atom in 
-  pub_tower_load.publish(&load_event_msg); 
+  if (success != -1 ) {
+    event_msg.load_success = success ; 
+    event_msg.nb_atom_in   = nb_atom_in; // number of atom in 
+    pub_tower_responses.publish(&event_msg); 
+    success = load_atom_sas() ; //if enough atomes and space bring atoms to sas 
+    load_content = 0 ; 
+  }
+  
 }
 
 int load_atom_single() {
   nh.loginfo("load_atom_single") ; 
   int success ; 
-  if ( nb_atom_in_sas == nb_atom_in && nb_atom_in_sas < MAX_ATOM_SAS )  { // can still load in sas 
-    nh.loginfo("loading in sas"); 
+  if (nb_atom_in-nb_atom_in_sas == 0){ //pliers empty 
     //TODO send message to AX12 (open)
     success = move_lift(H_GROUND) ; 
     //TODO send message to AX12 (close)
-    // TODO make it while moving ??? 
-    if (success == 1) {
-      success = lift_atoms_to_sas() ; 
-      nb_atom_in     += 1 ; 
-      nb_atom_in_sas += 1 ; 
-    }
   }
-
-  if ( nb_atom_in_sas == nb_atom_in && nb_atom_in_sas == MAX_ATOM_SAS ) { // pliers empty but sas full 
-    nh.loginfo("loading in pliers 1")
-    //TODO send message to AX12 (open)
-    success = move_lift(H_GROUND) ; 
-    //TODO send message to AX12 (close)
-    if (success == 1) {
-      success = move_lift(H_FLOOR_1) ; 
-      nb_atom_in += 1 ; 
-    } 
-  }
-
-  if ( nb_atom_in_sas - nb_atom_in < 0 ) { // pliers not empty and sas full 
+  else { //pliers not empty 
     success = unload_atom_pliers() ; 
-    nb_atom_out = 0 ; //take them back after 
+    //TODO send message to AX12 (open)
     success = move_lift(H_GROUND) ; 
     //TODO send message to AX12 (close)
-    if (success==1) {
-      success = move_lift(H_FLOOR_1) ; 
-      nb_atom_in += 1 ; 
-    }
-    else 
-      success = 0 ; 
-}
+  }
+  success = move_lift(H_FLOOR_1); 
+  nb_atom_in    = nb_atom_in + nb_atom_out + 1 ; 
+  nb_atom_out   = 0 ;
+  return success ; // atom has been grabbed 
+} 
 
 int load_atom_tower() {
   nh.loginfo("load_atom_tower") ; 

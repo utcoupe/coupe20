@@ -34,6 +34,10 @@ public:
         return std::hypot(_x - other.getX(), _y - other.getY());
     }
     
+    Point floor () const noexcept {
+        return { std::floor(_x), std::floor(_y) };
+    }
+    
     // Operators
     constexpr Point operator+ (Point other) const noexcept {
         return {_x + other.getX(), _y + other.getY()};

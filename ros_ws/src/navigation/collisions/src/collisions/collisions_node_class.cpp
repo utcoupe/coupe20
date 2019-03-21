@@ -78,9 +78,7 @@ void CollisionsNode::publishCollision(const Collision& collision)
         break;
     }
     auto obst = collision.getObstacle();
-    msg.obstacle_pos.x = obst->getPos().getX();
-    msg.obstacle_pos.y = obst->getPos().getY();
-    msg.obstacle_pos.theta = obst->getPos().getAngle();
+    msg.obstacle_pos = obst->getPos().toPose2D();
     
     using ShapeType = CollisionsShapes::ShapeType;
     switch (obst->getShape()->getShapeType()) {

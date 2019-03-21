@@ -1,53 +1,34 @@
-
 #ifndef objects_classifier_MAIN_THREAD_H
 #define objects_classifier_MAIN_THREAD_H
 
-#include <vector>
-
 #include <ros/ros.h>
-#include <tf2_ros/transform_listener.h>
-
-#include <belt_interpreter/BeltRects.h>
-#include "processing_lidar_objects/Obstacles.h"
-#include <objects_classifier/ClassifiedObjects.h>
-
-#include <dynamic_reconfigure/server.h>
-#include "objects_classifier/ObjectsClassifierConfig.h"
 
 #include "map_objects.h"
+#include "map_point.h"
 #include "processing_thread.h"
 #include "markers_publisher.h"
 
+#include <objects_classifier/ClassifiedObjects.h>
+#include <objects_classifier/ObjectsClassifierConfig.h>
 
-struct Point {
-    float x;
-    float y;
-    bool is_map;
-};
+#include <belt_interpreter/BeltRects.h>
+#include <dynamic_reconfigure/server.h>
+#include <tf2_ros/transform_listener.h>
+#include <processing_lidar_objects/Obstacles.h>
 
-const std::string PUB_TOPIC = "recognition/objects_classifier/objects";
-
-const int SENSORS_NBR = 6;
-
-// maximum number of points created per rect
-const int MAX_POINTS = 500;
-
-const int THREADS_NBR = 6;
-
-// discretization steps (m)
-const float STEP_X = 0.02;
-const float STEP_Y = 0.02;
-
-// if the absolute time diff between the received time and the header time is
-// greater than this (s), adjusts the header time (for rects)
-const float TIME_DIFF_MAX = 0.05;
-
-// if a circle has a velocity above this value, it is considered unknown
-const float CIRCLE_SPEED_MAX = 1.0;
-
-const double SECS_BETWEEN_RVIZ_PUB = 0.08;
+#include <array>
+#include <vector>
 
 class MainThread {
+public:
+    MainThread(ros::NodeHandle &nh);
+
+    ~MainThread();
+
+    void classify_and_publish_rects(belt_interpreter::BeltRects &rects);
+
+    void classify_and_publish_lidar_objects(processing_lidar_objects::Obstacles &obstacles);
+
 protected:
     // minimum fraction of a rect to be in map for it to be considered static
     // not const because of dynamic reconfigure
@@ -63,7 +44,7 @@ protected:
     ros::Time last_rviz_rect_pub_;
     ros::Time last_rviz_lidar_pub_;
 
-    Point points_[SENSORS_NBR * MAX_POINTS];
+    PointArray points_;
     std::vector<std::pair<int, geometry_msgs::TransformStamped> > rects_transforms_;
     std::vector<std::unique_ptr<ProcessingThread> > threads_;
 
@@ -92,15 +73,6 @@ protected:
     void notify_threads_and_wait(int num_points);
 
     void reconfigure_callback(objects_classifier::ObjectsClassifierConfig &config, uint32_t level);
-
-public:
-    MainThread(ros::NodeHandle &nh);
-
-    ~MainThread();
-
-    void classify_and_publish_rects(belt_interpreter::BeltRects &rects);
-
-    void classify_and_publish_lidar_objects(processing_lidar_objects::Obstacles &obstacles);
 };
 
 

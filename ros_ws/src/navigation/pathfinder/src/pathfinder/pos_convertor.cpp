@@ -11,7 +11,7 @@ Point PosConvertor::fromRosToMapPos (Point rosPos) const
     if (_invertedY)
         y = _sizeMap.getY() - y;
     
-    return {x, y};
+    return Point(x, y).floor();
 }
 
 

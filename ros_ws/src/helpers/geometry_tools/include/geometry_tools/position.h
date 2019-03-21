@@ -24,6 +24,10 @@ public:
         Position(Point(pos), pos.theta)
     {}
     
+    constexpr Position(const geometry_msgs::Point& pos, double theta = 0.0) noexcept:
+        Position(Point(pos), theta)
+    {}
+    
     constexpr Point toPoint() const noexcept {
         return {_x, _y};
     }

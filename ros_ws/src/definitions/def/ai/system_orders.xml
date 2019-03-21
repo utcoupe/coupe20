@@ -86,10 +86,14 @@
 
 	<order ref="navigator_goto_waypoint">
 		<message dest="/navigation/navigator/gotowaypoint_action">
-			<param name="mode" type="int">1</param> <!-- 0 = GOTO, 1 = GOTOA -->
+			<param name="mode" type="int">0</param> <!-- 0 = GOTO, 1 = GOTOA -->
 			<param name="waypoint_name" type="string"/>
-			<param name="disable_collisions" type="bool" optional="true">0</param>
+			
 			<param name="direction" type="int" optional="true">1</param>
+
+
+			<param name="disable_pathfinder" type="int">1</param>
+			<param name="disable_collisions" type="int">1</param> <!-- TODO remove, tests only -->
 		</message>
 		<response>
 			<param name="success" type="bool" condition="==">1</param>
@@ -101,9 +105,12 @@
 
 	<order ref="asserv_goto_waypoint">
 		<message dest="/drivers/ard_asserv/goto_action">
-			<param name="mode" type="int">1</param>
+			<param name="mode" type="int">0</param>
 			<param name="position_waypoint" type="string"/>
 			<param name="direction" type="int">1</param>
+
+			<param name="disable_pathfinder" type="int">1</param>
+			<param name="disable_collisions" type="int">1</param>
 		</message>
 		<response>
 			<param name="result" type="bool" condition="==">1</param>
@@ -115,7 +122,7 @@
 			<param name="left" type="int"/>
 			<param name="right" type="int"/>
 			<param name="duration" type="int"/>
-			<!-- <param name="auto_stop" type="int"/> -->
+			<param name="auto_stop" type="int" optional="true">1</param>
 		</message>
 		<response>
 			<param name="response" type="bool" condition="==">1</param>

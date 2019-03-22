@@ -88,12 +88,11 @@
 		<message dest="/navigation/navigator/gotowaypoint_action">
 			<param name="mode" type="int">0</param> <!-- 0 = GOTO, 1 = GOTOA -->
 			<param name="waypoint_name" type="string"/>
+
+			<param name="disable_pathfinder" type="int" optional="true">0</param>
+			<param name="disable_collisions" type="int" optional="true">0</param>
 			
 			<param name="direction" type="int" optional="true">1</param>
-
-
-			<param name="disable_pathfinder" type="int">1</param>
-			<param name="disable_collisions" type="int">1</param> <!-- TODO remove, tests only -->
 		</message>
 		<response>
 			<param name="success" type="bool" condition="==">1</param>
@@ -108,9 +107,6 @@
 			<param name="mode" type="int">0</param>
 			<param name="position_waypoint" type="string"/>
 			<param name="direction" type="int">1</param>
-
-			<param name="disable_pathfinder" type="int">1</param>
-			<param name="disable_collisions" type="int">1</param>
 		</message>
 		<response>
 			<param name="result" type="bool" condition="==">1</param>

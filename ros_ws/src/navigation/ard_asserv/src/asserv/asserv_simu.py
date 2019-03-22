@@ -128,24 +128,22 @@ class AsservSimu(AsservAbstract):
         #Accelerate until run into wall then come to a complete stop
         #Only checks if pwm is backwards or forward, always goes top speed and does not turn
         if left != right :
-            rospy.logwarn("remember, PWM does not turn !")
+            rospy.logwarn("Remember, can't turn with PWM with simu !")
         if not auto_stop:
             rospy.logwarn("PWM without auto_stop has not been implemented yet...")
             return False
         
-        if left>=0 and right>=0 :
-            direction = 1
-        else :
-            direction = 0
-
-        self._accelerate(1, direction)
+        direction = 1 if (left >= 0 and right >= 0) else 0
+        self._accelerate(1, direction) # set linear speed
+        print "hi"
+        self._current_goal_initial_angle = self._current_pose.theta # set current angle
 
         x_high_edge = self._map_x - self._robot_height/2
         y_high_edge = self._map_y - self._robot_height/2
         low_edge = self._robot_height/2
         
-        while (self._current_pose.x<x_high_edge and self._current_pose.x>low_edge \
-            and self._current_pose.y<y_high_edge and self._current_pose.y>low_edge) :
+        while  (self._current_pose.x < x_high_edge and self._current_pose.x > low_edge \
+            and self._current_pose.y < y_high_edge and self._current_pose.y > low_edge):
             self._update_current_pose_pos()
             sleep(0.005)
 

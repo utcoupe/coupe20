@@ -13,6 +13,7 @@
 #include "pathfinder/pos_convertor.h"
 
 #include <memory>
+#include <utility>
 
 using namespace std;
 using namespace Memory;
@@ -39,8 +40,8 @@ const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_c
  * @param topic The topic (or service) name the subscriber has to connect to.
  * @return A unique_ptr containing the subscriber. Will implicitly use std::move.
  */
-template<typename T>
-unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic);
+template<typename Ptr_T, typename... Arg_T>
+unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T... otherArgs);
 
 /**
  * Retrieve the robot's name from the parameters
@@ -76,8 +77,7 @@ int main (int argc, char* argv[])
     PathfinderROSInterface pathfinderInterface(mapPath, convertor);
     
     // Add some obstacle sources
-    auto mapSubscriber = constructSubscriber<MapSubscriber>(nodeHandle, MAP_GET_OBJECTS_SERVER);
-    mapSubscriber->setConvertor(convertor);
+    auto mapSubscriber = constructSubscriber<MapSubscriber>(nodeHandle, MAP_GET_OBJECTS_SERVER, convertor);
     pathfinderInterface.addBarrierSubscriber(std::move(mapSubscriber));
     pathfinderInterface.addBarrierSubscriber(constructSubscriber<ObjectsClassifierSubscriber>(nodeHandle, OBJECTS_CLASSIFIER_TOPIC));
 
@@ -102,10 +102,9 @@ int main (int argc, char* argv[])
     return 0;
 }
 
-template<typename T>
-unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic)
-{
-    unique_ptr<T> subscriber = std::make_unique<T>(SAFETY_MARGIN);
+template<typename Ptr_T, typename... Arg_T>
+unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T... otherArgs) {
+    unique_ptr<Ptr_T> subscriber = std::make_unique<Ptr_T>(SAFETY_MARGIN, std::forward<Arg_T>(otherArgs)...);
     subscriber->subscribe(nodeHandle, SIZE_MAX_QUEUE, topic);
     return subscriber;
 }

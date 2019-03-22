@@ -5,9 +5,8 @@
 using namespace std;
 using namespace Recognition;
 
-ObjectsClassifierSubscriber::ObjectsClassifierSubscriber(const double& safetyMargin)
-    : AbstractBarriersSubscriber(safetyMargin)
-{
+ObjectsClassifierSubscriber::ObjectsClassifierSubscriber(double safetyMargin):
+    AbstractBarriersSubscriber(safetyMargin) {
     //
 }
 

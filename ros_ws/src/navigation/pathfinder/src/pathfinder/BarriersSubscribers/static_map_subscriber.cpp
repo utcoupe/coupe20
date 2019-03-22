@@ -7,7 +7,7 @@
 using namespace Memory;
 using namespace std;
 
-MapSubscriber::MapSubscriber(const double& safetyMargin, shared_ptr<PosConvertor> convertor)
+MapSubscriber::MapSubscriber(double safetyMargin, shared_ptr<PosConvertor> convertor)
     : AbstractBarriersSubscriber(safetyMargin), _convertor(convertor)
 {
 }

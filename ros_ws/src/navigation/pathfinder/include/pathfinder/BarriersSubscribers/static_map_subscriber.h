@@ -12,7 +12,8 @@ namespace Memory {
     class MapSubscriber : public AbstractBarriersSubscriber
     {
     public:
-        MapSubscriber(const double& safetyMargin, std::shared_ptr<PosConvertor> convertor);
+        MapSubscriber(double safetyMargin): MapSubscriber(safetyMargin, nullptr) {}
+        MapSubscriber(double safetyMargin, std::shared_ptr<PosConvertor> convertor);
         
         bool hasBarrier(const geometry_msgs::Pose2D& pos) override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;

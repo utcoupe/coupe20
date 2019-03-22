@@ -17,7 +17,7 @@ public:
      * Initialize the safety margin.
      * @param safetyMargin Margin to add to barriers.
      */
-    AbstractBarriersSubscriber(const double& safetyMargin) : _safetyMargin(safetyMargin) {};
+    AbstractBarriersSubscriber(double safetyMargin) : _safetyMargin(safetyMargin) {};
     
     /**
      * Check if there are any obstacles at the given position.
@@ -37,7 +37,7 @@ public:
      * Update the safety margin.
      * @param safetyMargin The new safety margin.
      */
-    void setSafetyMargin(const double& safetyMargin) { _safetyMargin = safetyMargin; }
+    void setSafetyMargin(double safetyMargin) { _safetyMargin = safetyMargin; }
     
     /**
      * Before starting its algorithm, the pathfinder can ask the subscriber to make a cache of all current barriers.

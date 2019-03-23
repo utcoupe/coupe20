@@ -7,9 +7,11 @@
 #include "pathfinder/PathfinderNodeConfig.h"
 
 #include "pathfinder/map_storage.h"
-#include "geometry_tools/point.h"
 #include "pathfinder/pos_convertor.h"
 #include "pathfinder/dynamic_barriers_manager.h"
+#include "pathfinder/occupancy_grid.h"
+
+#include <geometry_tools/point.h>
 
 #include <vector>
 #include <memory>

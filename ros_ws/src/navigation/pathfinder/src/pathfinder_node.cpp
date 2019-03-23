@@ -77,9 +77,12 @@ int main (int argc, char* argv[])
     PathfinderROSInterface pathfinderInterface(mapPath, convertor);
     
     // Add some obstacle sources
-    auto mapSubscriber = constructSubscriber<MapSubscriber>(nodeHandle, MAP_GET_OBJECTS_SERVER, convertor);
-    pathfinderInterface.addBarrierSubscriber(std::move(mapSubscriber));
-    pathfinderInterface.addBarrierSubscriber(constructSubscriber<ObjectsClassifierSubscriber>(nodeHandle, OBJECTS_CLASSIFIER_TOPIC));
+    pathfinderInterface.addBarrierSubscriber(
+        constructSubscriber<MapSubscriber>(nodeHandle, MAP_GET_OBJECTS_SERVER, convertor)
+    );
+    pathfinderInterface.addBarrierSubscriber(
+        constructSubscriber<ObjectsClassifierSubscriber>(nodeHandle, OBJECTS_CLASSIFIER_TOPIC)
+    );
 
     ros::service::waitForService(MAP_GET_OBJECTS_SERVER, 20000);
 

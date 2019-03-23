@@ -3,8 +3,9 @@
 
 #include "pathfinder/BarriersSubscribers/abstract_barriers_subscriber.h"
 #include "pathfinder/pos_convertor.h"
+#include "pathfinder/occupancy_grid.h"
 
-#include "static_map/MapContainer.h"
+#include <static_map/MapContainer.h>
 
 #include <vector>
 
@@ -21,17 +22,16 @@ namespace Memory {
         void fetchOccupancyData(const uint& withGrid, const uint& heightGrid) override;
         const bool needConversionBefore() const  override { return false; }
         
-        void setConvertor(std::shared_ptr<PosConvertor> convertor) { _convertor = convertor; };
+        void setConvertor(std::shared_ptr<PosConvertor> convertor) {
+            _convertor = convertor;
+            _occupancyGrid.setConvertor(convertor);
+        };
         
     private:
-        static_map::MapContainer _lastReceivedContainer;
+        pathfinder::OccupancyGrid _occupancyGrid;
         ros::ServiceClient _srvGetMapObjects;
-        std::vector< std::vector<bool> > _occupancyGrid;
         
         std::shared_ptr<PosConvertor> _convertor;
-        
-        void drawRectangle(const static_map::MapObject& objectRect);
-        void drawCircle(const static_map::MapObject& objectCircle);
     };
 }
 

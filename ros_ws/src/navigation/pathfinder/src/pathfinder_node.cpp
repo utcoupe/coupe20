@@ -41,7 +41,7 @@ const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_c
  * @return A unique_ptr containing the subscriber. Will implicitly use std::move.
  */
 template<typename Ptr_T, typename... Arg_T>
-unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T... otherArgs);
+unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T&&... otherArgs);
 
 /**
  * Retrieve the robot's name from the parameters
@@ -103,7 +103,7 @@ int main (int argc, char* argv[])
 }
 
 template<typename Ptr_T, typename... Arg_T>
-unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T... otherArgs) {
+unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T&&... otherArgs) {
     unique_ptr<Ptr_T> subscriber = std::make_unique<Ptr_T>(SAFETY_MARGIN, std::forward<Arg_T>(otherArgs)...);
     subscriber->subscribe(nodeHandle, SIZE_MAX_QUEUE, topic);
     return subscriber;

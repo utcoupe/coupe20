@@ -38,6 +38,14 @@ public:
         return { std::floor(_x), std::floor(_y) };
     }
     
+    constexpr double scalarProduct(Point other) const noexcept {
+        return _x * other.getX() + _y * other.getY();
+    }
+    
+    constexpr double vectorProduct(Point other) const noexcept {
+        return _x * other.getY() - _y * other.getX();
+    }
+    
     // Operators
     constexpr Point operator+ (Point other) const noexcept {
         return {_x + other.getX(), _y + other.getY()};

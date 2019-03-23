@@ -3,7 +3,7 @@
 
 #include "abstract_barriers_subscriber.h"
 
-#include "objects_classifier/ClassifiedObjects.h"
+#include <objects_classifier/ClassifiedObjects.h>
 
 #include <vector>
 
@@ -14,7 +14,7 @@ namespace Recognition
     public:
         ObjectsClassifierSubscriber(double safetyMargin);
         
-        bool hasBarrier(const geometry_msgs::Pose2D& pos) override;
+        bool hasBarrier(Point pos) override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
     private:
@@ -32,12 +32,9 @@ namespace Recognition
         void addCircles(const std::vector<Circle>& circs);
         void addSegments(const std::vector<Segment>& segs);
         
-        bool isInsideRect(const Rectangle& rect, const geometry_msgs::Pose2D& pos) const;
-        bool isInsideCircle(const Circle& circ, const geometry_msgs::Pose2D& pos) const;
-        bool isCloseToSegment(const Segment& seg, const geometry_msgs::Pose2D& pos) const;
-        
-        double scalarProduct(std::pair<double, double> vA, std::pair<double, double> vB) const;
-        double vectorProduct(std::pair<double, double> vA, std::pair<double, double> vB) const;
+        bool isInsideRect(const Rectangle& rect, Point pos) const;
+        bool isInsideCircle(const Circle& circ, Point pos) const;
+        bool isCloseToSegment(const Segment& seg, Point pos) const;
     };
 } // namespace Recognition
 

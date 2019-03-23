@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 
-#include "geometry_msgs/Pose2D.h"
+#include <geometry_tools/point.h>
 
 #include <mutex>
 
@@ -23,7 +23,7 @@ public:
      * Check if there are any obstacles at the given position.
      * @param pos The position to check.
      */
-    virtual bool hasBarrier(const geometry_msgs::Pose2D& pos) = 0;
+    virtual bool hasBarrier(Point pos) = 0;
     
     /**
      * Create internaly the ros subscriber.

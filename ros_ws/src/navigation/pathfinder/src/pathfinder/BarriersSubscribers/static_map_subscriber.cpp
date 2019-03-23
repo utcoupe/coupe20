@@ -12,9 +12,9 @@ MapSubscriber::MapSubscriber(double safetyMargin, shared_ptr<PosConvertor> conve
 {
 }
 
-bool MapSubscriber::hasBarrier(const geometry_msgs::Pose2D& pos)
+bool MapSubscriber::hasBarrier(Point pos)
 {
-    return _occupancyGrid[pos.y][pos.x];
+    return _occupancyGrid[pos.getY()][pos.getX()];
 }
 
 void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic)

@@ -33,7 +33,7 @@ def processMenu(feedback, has_angle):
 
     goal.direction = goal.AUTOMATIC
     goal.disable_collisions = False
-    goal.disable_pathfinder = True
+    goal.disable_pathfinder = False
     goal.target_pos.x = feedback.pose.position.x
     goal.target_pos.y = feedback.pose.position.y
 

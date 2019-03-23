@@ -42,7 +42,7 @@ class Plan(object):
         self._disablePathfinder = False
         self._direction = Directions.AUTOMATIC
         self.invalidStartOrEndPos = False
-    
+
     def newPlan(self, startPos, endPos, hasAngle, direction, disablePathfinder, slowGo):
         self._endPos = endPos
         self._hasAngle = hasAngle
@@ -51,7 +51,7 @@ class Plan(object):
         self._slowGo = slowGo
         self.replan(startPos)
         self.invalidStartOrEndPos = False
-    
+
     def replan(self, startPos):
         if len(self._currentPath) > 0:
             self.cancelAsservGoals()
@@ -77,11 +77,11 @@ class Plan(object):
                 path.pop() # Removes the last point
 
                 for point in path:
-                    idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), self._slowGo, False, self._asservGotoCallback)
+                    idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint, hasAngle=False), self._slowGo, False, self._asservGotoCallback)
                     self._currentPath[idOrder] = point
                     lastPoint = point
-            
-            idOrder = self._asservClient.doGoto(self._endPos, self._getDirection(self._direction, self._endPos, lastPoint), self._slowGo, self._hasAngle, self._asservGotoCallback)
+
+            idOrder = self._asservClient.doGoto(self._endPos, self._getDirection(self._direction, self._endPos, lastPoint, self._hasAngle), self._slowGo, self._hasAngle, self._asservGotoCallback)
             self._currentPath[idOrder] = self._endPos
             self._status = PlanStatuses.NAVIGATING
             rospy.logdebug("Our path has " + str(len(self._currentPath)) + " points:")
@@ -116,7 +116,7 @@ class Plan(object):
         #for idGoal in self._currentPath.keys():
         #    self._asservClient.cancelGoal(idGoal)
         self._asservClient.cancelAllGoals()
-    
+
     def getCurrentPath(self):
         path = []
         for idOrder in self._currentPath.keys():
@@ -125,19 +125,24 @@ class Plan(object):
         return path
 
     def _getAngle(self, v1, v2):
+        # get angle between the x axis and the (v1, v2) line (in rad)
         diffX = v2.x - v1.x
         diffY = v2.y - v1.y
         return math.atan2(diffY, diffX)
-    
-    def _getDirection(self, askedDirection, newPos, lastPos):
-        # TODO debug (last angle / current angle ?)
+
+    def _getDirection(self, askedDirection, newPos, lastPos, hasAngle):
         if askedDirection != Directions.AUTOMATIC:
             return askedDirection
-        if abs(lastPos.theta - self._getAngle(lastPos, newPos)) > (math.pi / 2):
+
+        # if GOTO, minimize the start rotation
+        # if GOTOA, minimize the end rotation
+        checked_pos = newPos if hasAngle else lastPos
+
+        if abs(checked_pos.theta - self._getAngle(lastPos, newPos)) > math.pi / 2:
             return Directions.BACKWARD
         else:
             return Directions.FORWARD
-    
+
     def _printPath (self, path):
         """
         Print the path in the debug log from ROS.

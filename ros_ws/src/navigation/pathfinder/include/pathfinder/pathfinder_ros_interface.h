@@ -6,8 +6,9 @@
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/dynamic_barriers_manager.h"
 #include "pathfinder/pos_convertor.h"
+#include "pathfinder/occupancy_grid.h"
 
-#include "geometry_msgs/Pose2D.h"
+#include <geometry_msgs/Pose2D.h>
 
 class PathfinderROSInterface
 {
@@ -41,12 +42,9 @@ public:
      */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
-private:
-    /**
-     * Pointer to the main algorithm
-     */
-    std::unique_ptr<Pathfinder> pathfinderPtr_;
+    void updateStaticMap();
     
+private:
     /**
      * The barrier subscribers manager
      */
@@ -55,20 +53,14 @@ private:
     /** Convertor object between inside and outside referentials **/
     std::shared_ptr<PosConvertor> convertor_;
     
-    // Convertors
-    /**
-     * Converts a position from the outside referential and type to the inside ones.
-     * @param pos The position in the outside referential and type.
-     * @return The position in the inside referential and type.
-     */
-    Point pose2DToPoint_(const geometry_msgs::Pose2D& pos) const;
-    /**
-     * Converts a position from the inside referential and type to the outside ones.
-     * @param pos The position in the inside referential and type.
-     * @return The position in the outside referential and type.
-     */
-    geometry_msgs::Pose2D pointToPose2D_(const Point& pos) const;
+    pathfinder::OccupancyGrid _occupancyGrid;
     
+    /**
+     * Main algorithm
+     */
+    Pathfinder pathfinder_;
+    
+    // Convertors
     /**
      * Convert the path in the outside type to a string for debugging purposes.
      * @param path The path in outside referential and type.

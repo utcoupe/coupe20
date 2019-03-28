@@ -7,11 +7,11 @@
 
 using namespace std;
 
-Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<DynamicBarriersManager> dynBarriersMng)
+Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<DynamicBarriersManager> dynBarriersMng, const pathfinder::OccupancyGrid& occupancyGrid):
+    _dynBarriersMng(dynBarriersMng), _occupancyGrid(occupancyGrid)
 {
     _renderAfterComputing = false;
     _renderFile = "tmp.bmp";
-    _dynBarriersMng = dynBarriersMng;
     
     _allowedPositions = _mapStorage.loadAllowedPositionsFromFile(mapFileName);
 }

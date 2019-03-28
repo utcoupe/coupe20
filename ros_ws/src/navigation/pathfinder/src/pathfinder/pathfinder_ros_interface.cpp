@@ -2,13 +2,13 @@
 
 using namespace std;
 
-PathfinderROSInterface::PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor)
+PathfinderROSInterface::PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor):
+    dynBarriersMng_(make_shared<DynamicBarriersManager>()),
+    convertor_(convertor),
+    _occupancyGrid(convertor_),
+    pathfinder_(mapFileName, dynBarriersMng_, _occupancyGrid)
 {
-    dynBarriersMng_ = make_shared<DynamicBarriersManager>();
-    pathfinderPtr_ = make_unique<Pathfinder>(mapFileName, dynBarriersMng_);
-    convertor_ = convertor;
-    
-    auto mapSize = pathfinderPtr_->getMapSize();
+    auto mapSize = pathfinder_.getMapSize();
     if (mapSize.getX() == 0)
         ROS_FATAL("Allowed positions empty. Cannot define a scale. Please restart the node, it may crash soon.");
     else
@@ -33,7 +33,7 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
     auto startPos = convertor_->fromRosToMapPos(req.posStart);
     auto endPos = convertor_->fromRosToMapPos(req.posEnd);
     
-    auto statusCode = pathfinderPtr_->findPath(startPos, endPos, path);
+    auto statusCode = pathfinder_.findPath(startPos, endPos, path);
     switch (statusCode) {
         case Pathfinder::FindPathStatus::MAP_NOT_LOADED: // [[fallthrough]] to be uncommented if annoying warnings
         case Pathfinder::FindPathStatus::START_END_POS_NOT_VALID:
@@ -62,8 +62,8 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
 void PathfinderROSInterface::reconfigureCallback(pathfinder::PathfinderNodeConfig& config, uint32_t level)
 {
     ROS_INFO_STREAM ("Reconfigure request : " << config.render << " " << config.renderFile << " " << config.safetyMargin);
-    pathfinderPtr_->activatePathRendering(config.render);
-    pathfinderPtr_->setPathToRenderOutputFile(config.renderFile);
+    pathfinder_.activatePathRendering(config.render);
+    pathfinder_.setPathToRenderOutputFile(config.renderFile);
     // TODO detect env var and home
     dynBarriersMng_->updateSafetyMargin(config.safetyMargin);
 }

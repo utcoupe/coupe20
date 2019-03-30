@@ -113,10 +113,10 @@ nh.loginfo("move_lift");
 
 
 int unload_atom_sas () {
-  nh.loginfo("unload_atom_sas")
-  int sucess ; 
+  nh.loginfo("unload_atom_sas"); 
+  int success ; 
   if (nb_atom_in > MAX_ATOM_SAS && nb_atom_in_sas == 0 && game_status == 1 ) { // not enough space in sas for all atoms 
-    nh.loginfo("not enough space")
+    nh.loginfo("not enough space"); 
     float nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
     success = unload_atom_pliers() ;   // nb_atom_in = 0 at this point and nb_atom_out will change 
     float nb_atom_out_wrong = nb_atom_out - nb_atom_out_right ; 
@@ -211,7 +211,7 @@ int unload_atom_slider() {
   }
 
   if (nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
-    success = lift_atoms_to_sas() ; // 1 good, 0 bad wasn't able to reload sas 
+    success = unload_atom_sas() ; // 1 good, 0 bad wasn't able to reload sas 
   }
 
   return success ; 
@@ -244,7 +244,7 @@ void load_atom() {
     success = load_atom_single() ;  //load one atom and ingame 
   }  
   if (load_content == 2 && game_status == 1) {  
-    success = load_atom_tower() ;   //load tower of atoms and ingame
+    success = load_atom_tower(load_content_nb,load_content_nb) ;   //load tower of atoms and ingame
   }
   if (success != -1 ) {
     event_msg.load_success = success ; 
@@ -281,8 +281,8 @@ int load_atom_tower(float nb_atom_tower, float nb_atom_wanted) {
   if (nb_atom_in - nb_atom_in_sas == 0 ) {  // will only do this case !! 
     success = move_lift(nb_atom_tower-nb_atom_wanted*300) ; 
     // TODO AX12 (close)
-    if (sucess != 0) nb_atom_in = nb_atom_wanted ; 
-    nh.loginfo("tower taken")
+    if (success != 0) nb_atom_in = nb_atom_wanted ; 
+    nh.loginfo("tower taken"); 
   }
   return success ; 
 }

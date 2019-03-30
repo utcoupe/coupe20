@@ -58,6 +58,16 @@ void pathfinder::OccupancyGrid::setOccupancyFromMap(const vector<static_map::Map
     }
 }
 
+void pathfinder::OccupancyGrid::setOccupancyFromGrid(const std::vector<std::vector<bool> >& grid)
+{
+    if (grid.size() == 0 || grid.front().size() == 0){
+        ROS_WARN("[OccupancyGrid::setOccupancyFromMap] Creating an empty grid!");
+    }
+    
+    _grid = grid;
+}
+
+
 void pathfinder::OccupancyGrid::drawCircle(const static_map::MapObject& objectCircle, double safetyMargin)
 {
     double r;

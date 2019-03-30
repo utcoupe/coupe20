@@ -19,7 +19,7 @@ namespace pathfinder {
         
         std::pair<std::size_t, std::size_t> getSize() const noexcept {
             if (_grid.size() > 0)
-                return { _grid.size(), _grid.front().size() };
+                return { _grid.front().size(), _grid.size() };
             else
                 return {};
         }
@@ -28,11 +28,15 @@ namespace pathfinder {
         
         void resize(std::size_t nrows, std::size_t ncols);
         
-        bool isOccupied(Point pos) const {
+        bool isAllowed(Point pos) const {
+            return isAllowed(static_cast<unsigned>(pos.getX()), static_cast<unsigned>(pos.getY()));
+        }
+        
+        bool isAllowed(unsigned x, unsigned y) const {
             if (_grid.size() > 0)
-                return _grid[pos.getY()][pos.getX()];
+                return _grid[y][x];
             else
-                return false;
+                return true; // TODO as editable attribute
         }
         
         void setConvertor(std::shared_ptr<PosConvertor> convertor) { _convertor = convertor; }
@@ -40,6 +44,8 @@ namespace pathfinder {
         void setOccupancy(Point pos, bool occupied) { _grid[pos.getY()][pos.getX()] = occupied; }
         
         void setOccupancyFromMap(const std::vector<static_map::MapObject>& objects, double safetyMargin = 0.0);
+        
+        void setOccupancyFromGrid(const std::vector<std::vector<bool>>& grid);
     
     protected:
         std::shared_ptr<PosConvertor> _convertor;

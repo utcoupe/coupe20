@@ -39,7 +39,7 @@ public:
      * @param mapFileName The name of the image file to load.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
      */
-    Pathfinder(std::shared_ptr<DynamicBarriersManager> dynBarriersMng, const pathfinder::OccupancyGrid& occupancyGrid, const std::string& mapFileName = "");
+    Pathfinder(std::shared_ptr<DynamicBarriersManager> dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const std::string& mapFileName = "");
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -61,11 +61,6 @@ public:
      * @param path The path to the image.
      */
     void setPathToRenderOutputFile(std::string path);
-    
-    /**
-     * Return the sizes of the internal barrier map.
-     */
-    Point getMapSize();
 
 private:
     /** Shortcut to define a 2D array of short. **/
@@ -75,9 +70,6 @@ private:
     
     /** Manager for loading and saving image files **/
     MapStorage _mapStorage;
-    
-    /** Contains the positions of static barriers. **/
-    Vect2DBool _allowedPositions;
     /** Contains the positions of dynamic barriers. **/
     std::shared_ptr<DynamicBarriersManager> _dynBarriersMng;
     
@@ -86,7 +78,7 @@ private:
     /** Name of the file that will be generated after computing. **/
     std::string _renderFile;
     
-    const pathfinder::OccupancyGrid& _occupancyGrid;
+    pathfinder::OccupancyGrid& _occupancyGrid;
     
     /**
      * From the end positions tries to reach the start position by increasing step-by-step the distance. For all intermedediate points it stores its distance to count it only one time and to be able after to retrieve the shortest path. Returns true if start position is reached, false else.

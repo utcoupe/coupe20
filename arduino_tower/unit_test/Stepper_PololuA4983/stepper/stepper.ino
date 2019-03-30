@@ -1,3 +1,6 @@
+//Code très bien mais que dans le même sens 
+//Fluide dans le mouvement 
+
 #include "PololuA4983.h"
 
 
@@ -70,7 +73,7 @@ void test_2() {
 
 void test_3() {
   //stepper.moveStep(850,0); 
-  stepper.moveRevolution(8,1);
+  stepper.moveRevolution(8,0);
   while( stepper.getRemainingStep() !=0 ) {
     stepper.update() ; 
   }

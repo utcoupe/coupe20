@@ -2,6 +2,7 @@
 // on an Uno the onboard led will flash with each step
 // this version uses delay() to manage timing
 
+/*
 byte directionPin = 10;
 byte stepPin = 9;
 int numberOfSteps = 9000;
@@ -15,7 +16,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Starting StepperTest");
   digitalWrite(ledPin, LOW);
-  
+ 
   //delay(2000);
 
   pinMode(directionPin, OUTPUT);
@@ -37,5 +38,45 @@ void loop() {
     
     digitalWrite(ledPin, !digitalRead(ledPin));
   }
+
+}
+
+*/
+
+//Code très bien mais que dans le même sens 
+//Fluide dans le mouvement 
+
+#include "stepper.h"
+
+int dir_pin = 10;
+int step_pin = 9;
+
+int en_pin = 11;
+uint16_t min_delay = 1000 ; //250 impossible 
+PololuA4983 stepper = PololuA4983(step_pin,dir_pin, en_pin, min_delay);
+
+
+void setup(){
+  stepper.enable() ; 
+  Serial.begin(2560);
+  Serial.print("HELLO");
+  
+}
+
+
+void test_3() {
+  //stepper.moveStep(850,0); 
+  stepper.moveRevolution(8,0);
+  while( stepper.getRemainingStep() !=0 ) {
+    stepper.update() ; 
+  }
+  delay(5000) ; 
+}
+
+
+void loop(){
+  //stepper.disable() ; 
+  test_3(); 
+  
 
 }

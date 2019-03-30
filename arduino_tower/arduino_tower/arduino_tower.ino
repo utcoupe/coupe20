@@ -4,13 +4,17 @@
 // Need AFMotor. h and AFMotor.cpp in folder 
 //------------------------------------------------
 
-// ----- Includes --------
+// -----------------------------------------------------------
+// --------------------- Includes ----------------------------
+// -----------------------------------------------------------
 
 //ROS includes
 #include <ros.h> 
 #include <game_manager/GameStatus.h>
 #include <ard_tower/Tower.h> 
 #include <ard_tower/TowerResponses.h> 
+#include <ard_tower/AX12Responses.h> 
+
 
 ros :: NodeHandle nh ; 
 
@@ -28,8 +32,9 @@ Servo servo_unload ; // create servo object to control a servo
 PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay); 
 
 
-
-//----- ROS methods ------ 
+// ----------------------------------------------------------------
+// ---------------------------- ROS methods ----------------------- 
+// ----------------------------------------------------------------
 void on_game_status(const game_manager::GameStatus& msg){
   game_status = msg.game_status;
   nh.loginfo("game_status_msg");
@@ -51,11 +56,14 @@ ros::Subscriber<ard_tower::Tower>         sub_tower        ("actuators/ard_tower
 
 // ~ Publisher ~ 
 ard_tower::TowerResponses  event_msg ; 
+ard_tower::AX12Responses   ax12_event_msg ; 
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
+ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event_msg); 
 
 
-
-// ------ MAIN FUNCTIONS ----- 
+// --------------------------------------------------------------
+// --------------------- FUNCTIONS ------------------------------ 
+// --------------------------------------------------------------
 
 void tower_initialize() { 
   nh.loginfo("tower_initialize"); 
@@ -66,11 +74,15 @@ void tower_initialize() {
   event_msg.init_success = 0 ; 
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~ Lift  ~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~
+
 int move_lift(int wanted_position) {  // move lift to the correct floor 
 nh.loginfo("move_lift"); 
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
-    stepper_load.moveStep(wanted_position,true); 
+    stepper_load.moveStep(lift_position - wanted_position,true); 
     while( stepper_load.getRemainingStep() >0 ) {
       stepper_load.update() ; 
     }
@@ -81,12 +93,11 @@ nh.loginfo("move_lift");
 
   if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
     nh.loginfo("goes up"); 
-    stepper_load.moveStep(wanted_position,false); 
+    stepper_load.moveStep(wanted_position-lift_position,false); 
     while( stepper_load.getRemainingStep() >0 ) {
       stepper_load.update() ; 
     }
     delay(500) ; 
-    //stepper_load.moveStep(wanted_position,false) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
@@ -96,51 +107,47 @@ nh.loginfo("move_lift");
     return 1 ; 
   }
 
-  //TODO => sucess of the move before closing or opening AX12 
   nh.logwarn("error in moving"); 
   return 0 ; 
 }
 
-int lift_atoms_to_sas() { //bring up the rest of atoms to the sas 
-  nh.loginfo("lift_atoms_to_sas"); 
-  int y ; //number of atom not being brought up to the sas 
-  if (nb_atom_in > MAX_ATOM_SAS )
-    y = nb_atom_in - ( MAX_ATOM_SAS - nb_atom_in_sas ) ; 
-  else 
-    y = 0 ; 
-    
-  int h = (H_SAS_LOW-lift_position)-y*H_ATOM ; // or (y-1/2)  // h the  high that need to be brought up 
-  int wanted_position = lift_position + h ; 
-  int success = move_lift(wanted_position) ; 
-  //TODO open AX12 
 
-  if (success == 0 ){ 
-    return success ; 
+int unload_atom_sas () {
+  nh.loginfo("unload_atom_sas")
+  int sucess ; 
+  if (nb_atom_in > MAX_ATOM_SAS && nb_atom_in_sas == 0 && game_status == 1 ) { // not enough space in sas for all atoms 
+    nh.loginfo("not enough space")
+    float nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
+    success = unload_atom_pliers() ;   // nb_atom_in = 0 at this point and nb_atom_out will change 
+    float nb_atom_out_wrong = nb_atom_out - nb_atom_out_right ; 
+    if (success != 0 ) success = load_atom_tower(nb_atom_out_wrong,MAX_ATOM_SAS) ; 
+    if (success != 0 ) nb_atom_out_wrong = nb_atom_out_wrong - nb_atom_in ; // with nb_atom_in = MAX_ATOM_SAS
+    if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
+    if (success != 0) nb_atom_in_sas = MAX_ATOM_SAS  ; 
+    //TODO open AX12 
+    if (success != 0)  success = load_atom_tower(nb_atom_out_wrong, nb_atom_out_wrong) ; 
   }
-  else {
-    if ( y != 0 )
-      nb_atom_in_sas = MAX_ATOM_SAS ; 
-    else 
-      nb_atom_in_sas = nb_atom_in ; 
-
-    return success ; 
+  else { // enough space for all the atoms 
+    nh.loginfo(" enough space"); 
+    if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
+    if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
+    //TODO open AX12 
   }
+  
+  return success ; 
 }
 
 
 int load_atom_sas() {
   nh.loginfo("load_atom_sas"); 
   if (nb_atom_in<MAX_ATOM_SAS){
-    nh.loginfo("not enough atom"); 
+    nh.loginfo("not enough atom.s"); 
     return 1 ; 
   }
   else {
-    if (nb_atom_in == MAX_ATOM_SAS && nb_atom_in_sas <=MAX_ATOM_SAS) {
+    if (nb_atom_in == MAX_ATOM_SAS && nb_atom_in_sas == 0 ) {    
       nh.loginfo("enough atoms"); 
-      int y = nb_atom_in - (MAX_ATOM_SAS - nb_atom_in_sas); 
-      int h = (H_SAS_LOW-lift_position)-y*H_ATOM ;
-      int wanted_position = lift_position + h ;  
-      int success = move_lift(wanted_position); 
+      int success = move_lift(H_SAS_LOW); 
       //TODO AX12 (open)
       nb_atom_in_sas = nb_atom_in ; 
       return success ; 
@@ -152,7 +159,9 @@ int load_atom_sas() {
   }
 }
 
-// ~ unload ~ 
+// ~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~ Unload ~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~
 
 void unload_atom() {
   int success ; 
@@ -224,8 +233,10 @@ int unload_atom_pliers() {
   }
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~ Load ~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~
 
-// ~ Load ~ 
 void load_atom() {
   //nh.loginfo("load_atom"); 
   int success = -1 ; 
@@ -255,7 +266,6 @@ int load_atom_single() {
   }
   else { //pliers not empty 
     success = unload_atom_pliers() ; 
-    //TODO send message to AX12 (open)
     success = move_lift(H_GROUND) ; 
     //TODO send message to AX12 (close)
   }
@@ -265,12 +275,22 @@ int load_atom_single() {
   return success ; // atom has been grabbed 
 } 
 
-int load_atom_tower() {
+int load_atom_tower(float nb_atom_tower, float nb_atom_wanted) {
   nh.loginfo("load_atom_tower") ; 
-  return 1 ; 
+  int success ; 
+  if (nb_atom_in - nb_atom_in_sas == 0 ) {  // will only do this case !! 
+    success = move_lift(nb_atom_tower-nb_atom_wanted*300) ; 
+    // TODO AX12 (close)
+    if (sucess != 0) nb_atom_in = nb_atom_wanted ; 
+    nh.loginfo("tower taken")
+  }
+  return success ; 
 }
 
 
+// ----------------------------------------------------------------------
+// --------------------------- MAIN -------------------------------------
+// ----------------------------------------------------------------------
 
 void setup() {
   // ROS init 
@@ -280,10 +300,10 @@ void setup() {
   nh.subscribe(sub_tower); 
  
   nh.advertise(pub_tower_responses); 
+  nh.advertise(pub_ax12_responses); 
 
   // Servo Actuator init 
   servo_unload.attach(servo_unload_pin) ; 
-  //stepper_load.moveStep(5000,false);  // test 
   
 }
 

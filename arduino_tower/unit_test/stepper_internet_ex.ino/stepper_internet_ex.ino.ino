@@ -1,3 +1,6 @@
+// Dans les 2 sens 
+// Mouvement sacadé 
+
 // testing a stepper motor with a Pololu A4988 driver board or equivalent
 // on an Uno the onboard led will flash with each step
 // this version uses delay() to manage timing
@@ -21,7 +24,8 @@ void setup() {
   pinMode(directionPin, OUTPUT);
   pinMode(stepPin, OUTPUT);
   pinMode(ledPin, OUTPUT);
-  
+
+ 
  
   digitalWrite(directionPin, HIGH);
   for(int n = 0; n < numberOfSteps; n++) {
@@ -31,10 +35,10 @@ void setup() {
     
     delay(millisbetweenSteps);
     
-    digitalWrite(ledPin, !digitalRead(ledPin));
+    //digitalWrite(ledPin, !digitalRead(ledPin));
   }
   
-  delay(3000);
+  /*delay(3000);
   
 
   digitalWrite(directionPin, LOW);
@@ -47,6 +51,7 @@ void setup() {
     
     digitalWrite(ledPin, !digitalRead(ledPin));
   }
+  */ 
 }
 
 void loop() { 

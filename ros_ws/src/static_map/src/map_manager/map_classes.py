@@ -80,8 +80,7 @@ class Waypoint(object):
             self.Position = Position2D(xml, validate)
     
     def transform(self, codes):
-        print "transform with " + str(codes)
-        pass #TODO
+        return self.Position.transform(codes)
 
 
 class Container(object):
@@ -139,9 +138,9 @@ class Container(object):
 
     def transform(self, codes):
         for e in self.Elements:
-            if isinstance(e, Object):
-                if e.Name == path[0]:
-                    return e.get_container(path[1:])
+            if not e.transform(codes):
+                return False
+        return True
 
 
 class Object(object):
@@ -178,8 +177,7 @@ class Object(object):
             raise ValueError("ERROR : Even after merge object '{}' still has a marker but no color.".format(self.Name))
     
     def transform(self, codes):
-        print "transform with " + str(codes)
-        pass #TODO
+        return self.Position.transform(codes)
 
 class Class(Object):
     def __init__(self, xml, obj_classes):

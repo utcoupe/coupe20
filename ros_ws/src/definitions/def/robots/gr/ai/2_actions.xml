@@ -147,7 +147,7 @@
 		</actions>
 	</action>
 
-	<action ref="unload_tower" name="Unload red & green atoms to the PR">
+	<action ref="unload_tower" name="Unload red/green atoms to the PR">
 		<params></params>
 		<actions exec="all" order="linear">
 			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
@@ -163,7 +163,7 @@
 		</actions>
 	</action>
 
-	<action ref="unload_weight" name="Unload blue & green atoms (through the ramp)">
+	<action ref="unload_weight" name="Unload blue/green atoms (through the ramp)">
 		<params></params>
 		<actions exec="all" order="linear">
 			

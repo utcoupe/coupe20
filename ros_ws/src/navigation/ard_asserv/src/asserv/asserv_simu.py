@@ -135,7 +135,6 @@ class AsservSimu(AsservAbstract):
         
         direction = 1 if (left >= 0 and right >= 0) else 0
         self._accelerate(1, direction) # set linear speed
-        print "hi"
         self._current_goal_initial_angle = self._current_pose.theta # set current angle
 
         x_high_edge = self._map_x - self._robot_height/2
@@ -294,7 +293,6 @@ class AsservSimu(AsservAbstract):
             self.set_max_speed(self._max_linear_speed, self._angular_speed_ratio)
 
     def _wallhit_stop(self, direction):
-
         x_high_edge = self._map_x - self._robot_height/2
         y_high_edge = self._map_y - self._robot_height/2
         low_edge = self._robot_height/2
@@ -304,25 +302,16 @@ class AsservSimu(AsservAbstract):
         self._current_angular_speed = 0
         if self._current_pose.x>= x_high_edge :
             self._current_pose.theta = 0
-            return True
-
         if self._current_pose.x <= low_edge :
             self._current_pose.theta = -math.pi
-            return True
-
         if self._current_pose.y >= y_high_edge :
             self._current_pose.theta = math.pi/2
-            return True
-
         if self._current_pose.y <= low_edge :
             self._current_pose.theta = -math.pi/2
-            return True
 
-        if direction == -1 :
+        if direction == 0 : # Semiturn if we were going backwards
             self._current_pose.theta += math.pi
-            return True
 
-        return False
 
     def _accelerate(self, acc_mult=1, direction=1):
         self._current_linear_speed += acc_mult * self._max_acceleration * ASSERV_RATE

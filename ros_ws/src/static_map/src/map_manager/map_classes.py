@@ -78,6 +78,10 @@ class Waypoint(object):
             LoadingHelpers.checkAttribExist(xml, "name")
             self.Name = xml.get("name")
             self.Position = Position2D(xml, validate)
+    
+    def transform(self, codes):
+        print "transform with " + str(codes)
+        pass #TODO
 
 
 class Container(object):
@@ -133,6 +137,12 @@ class Container(object):
             rospy.logerr("    RMV Request failed : no object with name '{}' found in container '{}'.".format(path[1], self.Name))
         return None
 
+    def transform(self, codes):
+        for e in self.Elements:
+            if isinstance(e, Object):
+                if e.Name == path[0]:
+                    return e.get_container(path[1:])
+
 
 class Object(object):
     def __init__(self, xml, obj_classes, check_valid = True):
@@ -167,7 +177,8 @@ class Object(object):
         if self.Marker is not None and self.Color is None:
             raise ValueError("ERROR : Even after merge object '{}' still has a marker but no color.".format(self.Name))
     
-    def transform(codes):
+    def transform(self, codes):
+        print "transform with " + str(codes)
         pass #TODO
 
 class Class(Object):

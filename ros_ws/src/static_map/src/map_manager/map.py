@@ -132,4 +132,10 @@ class MapManager():
 
     @staticmethod
     def transform(codes):
-        return MapManager.MapDict.transform(codes)
+        if not MapDict.Objects.transform(codes):
+            return False
+        for w in MapDict.Waypoints:
+            if not w.transform(codes):
+                return False
+        return True
+        

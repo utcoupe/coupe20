@@ -39,7 +39,7 @@ public:
      * @param mapFileName The name of the image file to load.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
      */
-    Pathfinder(const std::string& mapFileName, std::shared_ptr<DynamicBarriersManager> dynBarriersMng, const pathfinder::OccupancyGrid& occupancyGrid);
+    Pathfinder(std::shared_ptr<DynamicBarriersManager> dynBarriersMng, const pathfinder::OccupancyGrid& occupancyGrid, const std::string& mapFileName = "");
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -124,7 +124,7 @@ private:
      * Defines all possible directions to move from any positions. May be implemented as constexpression in the future.
      * @return The lists of all allowed movements.
      */
-    std::vector<Point> directions() const;
+    static const std::vector<Point> directions();
     
     /**
      * Convert the path in the inside type to a string for debugging purposes.

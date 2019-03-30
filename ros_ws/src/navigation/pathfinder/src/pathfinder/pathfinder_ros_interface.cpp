@@ -6,20 +6,23 @@ PathfinderROSInterface::PathfinderROSInterface(const std::string& mapFileName, s
     dynBarriersMng_(make_shared<DynamicBarriersManager>()),
     convertor_(convertor),
     _occupancyGrid(convertor_),
-    pathfinder_(mapFileName, dynBarriersMng_, _occupancyGrid)
+    pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
-    auto mapSize = pathfinder_.getMapSize();
-    if (mapSize.getX() == 0)
+    if (mapFileName == "") {
+        // TODO fetch from static_map
+    }
+    auto mapSize = _occupancyGrid.getSize();
+    if (mapSize.first == 0)
         ROS_FATAL("Allowed positions empty. Cannot define a scale. Please restart the node, it may crash soon.");
     else
     {
-        if (mapSize.getX() * mapSize.getY() > 200000) {
+        if (mapSize.first * mapSize.second > 200000) {
             ROS_WARN("Map image is big, the pathfinder may be very slow ! (150x100px works fine)");
         }
 
-        convertor_->setMapSize(mapSize);
+        convertor_->setMapSize({ static_cast<double>(mapSize.first), static_cast<double>(mapSize.second) });
         dynBarriersMng_->setConvertor(convertor_);
-        dynBarriersMng_->fetchOccupancyDatas(mapSize.getX(), mapSize.getY());
+        dynBarriersMng_->fetchOccupancyDatas(mapSize.first, mapSize.second);
     }
 }
 

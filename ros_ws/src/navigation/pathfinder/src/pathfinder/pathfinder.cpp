@@ -7,13 +7,19 @@
 
 using namespace std;
 
-Pathfinder::Pathfinder(const string& mapFileName, shared_ptr<DynamicBarriersManager> dynBarriersMng, const pathfinder::OccupancyGrid& occupancyGrid):
+Pathfinder::Pathfinder(shared_ptr<DynamicBarriersManager> dynBarriersMng, const pathfinder::OccupancyGrid& occupancyGrid, const string& mapFileName):
     _dynBarriersMng(dynBarriersMng), _occupancyGrid(occupancyGrid)
 {
     _renderAfterComputing = false;
     _renderFile = "tmp.bmp";
     
-    _allowedPositions = _mapStorage.loadAllowedPositionsFromFile(mapFileName);
+    if (mapFileName != "") {
+        ROS_INFO("Loading walls from image...");
+        _allowedPositions = _mapStorage.loadAllowedPositionsFromFile(mapFileName);
+//         ROS_INFO_STREAM("Done loading, map size is " << _allowedPositions.
+    } else if (_occupancyGrid.getSize().first == 0) {
+        ROS_WARN("Pathfinder may not be ready yet");
+    }
 }
 
 
@@ -235,7 +241,7 @@ bool Pathfinder::canConnectWithLine(const Point& pA, const Point& pB)
 }
 
 
-std::vector< Point > Pathfinder::directions() const
+const std::vector< Point > Pathfinder::directions()
 {
     const vector<Point> dirs {
         Point(0, 1),

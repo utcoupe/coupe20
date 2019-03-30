@@ -91,58 +91,64 @@
 			<orderref ref="asserv_pwm" name="smart pwm on distrib1">
 				<left>100</left>
 				<right>100</right>
+				<duration>3</duration>
 				<auto_stop>1</auto_stop>
 			</orderref>
 
 			<!-- TODO move actuators : load 3 atoms and set colors -->
 
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
+			<orderref ref="navigator_goto_waypoint" name="exit distrib1">
 				<waypoint_name>way_distrib1_exit</waypoint_name>
 				<direction>0</direction> <!-- Backwards -->
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
 		</actions>
 	</action>
 
-	<action ref="load_distrib2" name="Load distributor 1">
+	<action ref="load_distrib2" name="Load distributor 2">
 		<params></params>
 		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
+			<orderref ref="navigator_goto_waypoint" name="approach distrib2">
 				<waypoint_name>way_distrib2_approach</waypoint_name>
 				<direction>1</direction> <!-- Forward -->
 			</orderref>
-			<orderref ref="asserv_pwm" name="smart pwm on distrib1">
+			<orderref ref="asserv_pwm" name="smart pwm on distrib2">
 				<left>100</left>
 				<right>100</right>
+				<duration>3</duration>
 				<auto_stop>1</auto_stop>
 			</orderref>
 
 			<!-- TODO move actuators : load 3 atoms and set colors -->
 
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
-				<waypoint_name>way_distrib2_exit</waypoint_name>
+			<orderref ref="navigator_goto_waypoint" name="go back">
+				<waypoint_name>way_distrib2_approach</waypoint_name>
 				<direction>0</direction> <!-- Backwards -->
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
 		</actions>
 	</action>
 
-	<action ref="load_distrib3" name="Load distributor 1">
+	<action ref="load_distrib3" name="Load distributor 3">
 		<params></params>
 		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
+			<orderref ref="navigator_goto_waypoint" name="approach distrib3">
 				<waypoint_name>way_distrib3_approach</waypoint_name>
 				<direction>1</direction> <!-- Forward -->
 			</orderref>
-			<orderref ref="asserv_pwm" name="smart pwm on distrib1">
+			<orderref ref="asserv_pwm" name="smart pwm on distrib3">
 				<left>100</left>
 				<right>100</right>
+				<duration>3</duration>
 				<auto_stop>1</auto_stop>
 			</orderref>
 
 			<!-- TODO move actuators : load 3 atoms and set colors -->
 
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
-				<waypoint_name>way_distrib3_exit</waypoint_name>
+			<orderref ref="navigator_goto_waypoint" name="go back">
+				<waypoint_name>way_distrib3_approach</waypoint_name>
 				<direction>0</direction> <!-- Backwards -->
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
 		</actions>
 	</action>
@@ -150,16 +156,21 @@
 	<action ref="unload_tower" name="Unload red/green atoms to the PR">
 		<params></params>
 		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
+			<orderref ref="navigator_goto_waypoint" name="approach tower zone">
 				<waypoint_name>way_tower_approach</waypoint_name>
 				<direction>1</direction> <!-- Forward -->
 			</orderref>
-			<orderref ref="navigator_goto_waypoint" name="approach distrib1">
+			<orderref ref="navigator_goto_waypoint" name="goto tower zone">
 				<waypoint_name>way_tower</waypoint_name>
 				<direction>1</direction> <!-- Forward -->
 			</orderref>
 
 			<!-- TODO move actuators : open tower doors -->
+
+			<orderref ref="navigator_goto_waypoint" name="go back">
+				<waypoint_name>way_tower_approach</waypoint_name>
+				<direction>0</direction> <!-- Forward -->
+			</orderref>
 		</actions>
 	</action>
 

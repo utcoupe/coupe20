@@ -17,12 +17,8 @@
     <!-- GR waypoints -->
     <waypoint name="way_spawn_gr"          x="0.225" y="1.25"  a="-1.57079632679"/>
 
-    <waypoint name="way_distrib1_approach" x="0.225" y="1.25"  a="-1.57079632679"/>
-    <waypoint name="way_distrib1_exit"     x="0.225" y="1.25"  a="-1.57079632679"/>
-
-    <waypoint name="way_distrib2_approach" x="0.225" y="1.25"  a="-1.57079632679"/>
-    <waypoint name="way_distrib2_exit"     x="0.225" y="1.25"  a="-1.57079632679"/>
-
-    <waypoint name="way_distrib3_approach" x="0.225" y="1.25"  a="-1.57079632679"/>
-    <waypoint name="way_distrib3_exit"     x="0.225" y="1.25"  a="-1.57079632679"/>
+    <waypoint name="way_distrib1_approach" x="0.225" y="0.3"   a="-1.57079632679"/>
+    <waypoint name="way_distrib1_exit"     x="0.225" y="0.7"   a="-1.57079632679"/>
+    <waypoint name="way_distrib2_approach" x="0.6"   y="0.7"   a="-1.57079632679"/>
+    <waypoint name="way_distrib3_approach" x="0.9"   y="0.7"   a="-1.57079632679"/>
 </waypoints>

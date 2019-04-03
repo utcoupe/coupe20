@@ -75,6 +75,23 @@ void tower_initialize() {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~ AX12  ~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~
+
+int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12 
+  nh.loginfo("move_ax12"); 
+  ax12_event_msg.speed = 1000 ; 
+  ax12_event_msg.mode = 0 ; 
+  ax12_event_msg.motor_id = 2 ; 
+  // 135 pour ouvrir 
+  // 170 pour fermer 
+  if ( open == 1 ) ax12_event_msg.position =135  ; // Open 
+  if ( open == 0 ) ax12_event_msg.position =170 ;  // Close 
+  pub_ax12_responses.publish(&ax12_event_msg) ; 
+  return 1 ; 
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~ Lift  ~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -124,14 +141,14 @@ int unload_atom_sas () {
     if (success != 0 ) nb_atom_out_wrong = nb_atom_out_wrong - nb_atom_in ; // with nb_atom_in = MAX_ATOM_SAS
     if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
     if (success != 0) nb_atom_in_sas = MAX_ATOM_SAS  ; 
-    //TODO open AX12 
+    if (success != 0 ) success = move_ax12(1);  // open AX12 
     if (success != 0)  success = load_atom_tower(nb_atom_out_wrong, nb_atom_out_wrong) ; 
   }
   else { // enough space for all the atoms 
     nh.loginfo(" enough space"); 
     if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
     if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
-    //TODO open AX12 
+    if (success != 0) success = move_ax12(1) ; // open AX12 
   }
   
   return success ; 
@@ -148,7 +165,7 @@ int load_atom_sas() {
     if (nb_atom_in == MAX_ATOM_SAS && nb_atom_in_sas == 0 ) {    
       nh.loginfo("enough atoms"); 
       int success = move_lift(H_SAS_LOW); 
-      //TODO AX12 (open)
+      if (success != 0 ) success = move_ax12(1) ; // open AX12 
       nb_atom_in_sas = nb_atom_in ; 
       return success ; 
     }
@@ -219,17 +236,17 @@ int unload_atom_slider() {
 
 int unload_atom_pliers() { 
   nh.loginfo("unload_atom_pliers") ; 
+  int success ; 
   if ( nb_atom_in - nb_atom_in_sas != 0 ) {
     nh.loginfo("atoms drop"); 
-    // send message to AX12 and open gates 
-    // TODO 
+    success = move_ax12(1) ; // AX12 open 
     nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
     nb_atom_in  = nb_atom_in_sas ; 
     return 1 ; 
   }
   else { // nothing to unload 
     nh.loginfo("nothing to drop"); 
-    return 1 ; 
+    return success ; 
   }
 }
 
@@ -243,7 +260,7 @@ void load_atom() {
   if (load_content == 1 && game_status == 1 ) {
     success = load_atom_single() ;  //load one atom and ingame 
   }  
-  if (load_content == 2 && game_status == 1) {  
+  if (load_content == 2 && game_status == 1) {  // TODO Specify size of tower the whole with messages (See with AI)
     success = load_atom_tower(load_content_nb,load_content_nb) ;   //load tower of atoms and ingame
   }
   if (success != -1 ) {
@@ -260,16 +277,16 @@ int load_atom_single() {
   nh.loginfo("load_atom_single") ; 
   int success ; 
   if (nb_atom_in-nb_atom_in_sas == 0){ //pliers empty 
-    //TODO send message to AX12 (open)
-    success = move_lift(H_GROUND) ; 
-    //TODO send message to AX12 (close)
+    success = move_ax12(1) ; // open 
+    if (success != 0 ) success = move_lift(H_GROUND) ; 
+    if (success != 0 ) success = move_ax12(0); // close
   }
   else { //pliers not empty 
     success = unload_atom_pliers() ; 
-    success = move_lift(H_GROUND) ; 
-    //TODO send message to AX12 (close)
+    if (success != 0 ) success = move_lift(H_GROUND) ; 
+    if (success != 0 ) success = move_ax12(0) ; //close 
   }
-  success = move_lift(H_FLOOR_1); 
+  if (success != 0 ) success = move_lift(H_FLOOR_1); 
   nb_atom_in    = nb_atom_in + nb_atom_out + 1 ; 
   nb_atom_out   = 0 ;
   return success ; // atom has been grabbed 
@@ -279,8 +296,8 @@ int load_atom_tower(float nb_atom_tower, float nb_atom_wanted) {
   nh.loginfo("load_atom_tower") ; 
   int success ; 
   if (nb_atom_in - nb_atom_in_sas == 0 ) {  // will only do this case !! 
-    success = move_lift(nb_atom_tower-nb_atom_wanted*300) ; 
-    // TODO AX12 (close)
+    success = move_lift(nb_atom_tower-nb_atom_wanted*300) ; // TODO replace 300 with constante 
+    if (success != 0 ) success = move_ax12(0) ; //close
     if (success != 0) nb_atom_in = nb_atom_wanted ; 
     nh.loginfo("tower taken"); 
   }

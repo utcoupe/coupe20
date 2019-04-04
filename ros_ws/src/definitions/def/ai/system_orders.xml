@@ -44,8 +44,9 @@
 	<!-- Map -->
 	<order ref="map_transfer" duration="0" name="Map object or entity transfer">
 		<message dest="/static_map/transfer">
-			<param name="old_path" type="string" preset="true">/objects/cube_1</param>
-			<param name="new_path" type="string" preset="true">/objects/cube_2</param>
+			<param name="mode" type="int"/> <!-- 0=OBJECT, 1=CONTAINER, 2=CONTAINER_OBJECTS -->
+			<param name="old_path" type="string"/>
+			<param name="new_path" type="string" optional="true"></param>
 		</message>
 		<response>
 			<param name="success" type="bool" condition="==">1</param>

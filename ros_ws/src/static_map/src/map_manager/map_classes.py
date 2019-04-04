@@ -30,6 +30,15 @@ class Robot(object):
         orientation.attrib["z"] = 0.0
         self.Marker = Marker(m)
 
+    def get_container(self, path):
+        return self.Container.get_container(path)
+
+    def add_object(self, path, obj):
+        return self.Container.add_object(path, obj)
+    
+    def remove_object(self, path):
+        return self.Container.remove_object(path)
+
 
 
 class Terrain(object):
@@ -120,6 +129,7 @@ class Container(object):
         return False
     
     def remove_object(self, path):
+        print "remove object, path = " + str(path)
         if len(path) > 2:
             for e in self.Elements:
                 if isinstance(e, Container) and e.Name == path[1]:

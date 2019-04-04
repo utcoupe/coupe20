@@ -1,6 +1,6 @@
 <waypoints>
     <!-- Common waypoint -->
-    <!-- <waypoint name="way_tower_approach"    x="1.7"   y="1.7"/> -->
+    <waypoint name="way_tower_approach"    x="0.5"   y="1.6"/>
     <waypoint name="way_tower"             x="0.3"   y="1.6"   a="3.141592"/>
 
     <!-- PR waypoints -->
@@ -17,8 +17,10 @@
     <!-- GR waypoints -->
     <waypoint name="way_spawn_gr"          x="0.225" y="1.25"  a="-1.57079632679"/>
 
-    <waypoint name="way_distrib1_approach" x="0.225" y="0.3"   a="-1.57079632679"/>
+    <waypoint name="way_distrib1_approach" x="0.225" y="0.2"   a="-1.57079632679"/>
     <waypoint name="way_distrib1_exit"     x="0.225" y="0.7"   a="-1.57079632679"/>
     <waypoint name="way_distrib2_approach" x="0.6"   y="0.7"   a="-1.57079632679"/>
     <waypoint name="way_distrib3_approach" x="0.9"   y="0.7"   a="-1.57079632679"/>
+
+    <waypoint name="way_weight_approach"   x="1.0"   y="0.2"   a="3.141592"/>
 </waypoints>

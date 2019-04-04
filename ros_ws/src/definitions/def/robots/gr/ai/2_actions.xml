@@ -177,7 +177,20 @@
 	<action ref="unload_weight" name="Unload blue/green atoms (through the ramp)">
 		<params></params>
 		<actions exec="all" order="linear">
-			
+			<orderref ref="navigator_goto_waypoint" name="go back">
+				<waypoint_name>way_distrib1_exit</waypoint_name>
+			</orderref>
+			<orderref ref="navigator_goto_waypoint" name="go back">
+				<waypoint_name>way_distrib1_approach</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
+			</orderref>
+
+			<orderref ref="navigator_goto_waypoint" name="go back">
+				<waypoint_name>way_weight_approach</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
+			</orderref>
+
+			<!-- TODO move actuators : unload weight atoms -->
 		</actions>
 	</action>
 </actions>

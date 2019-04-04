@@ -364,7 +364,73 @@ void Ax12Server::game_status_cb(const game_manager::GameStatusConstPtr &status) 
     }
 }
 
-Ax12Server::Ax12Server(const std::string &action_name, const std::string &service_name) :
+// TODO : remove duplicate code
+void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
+    uint8_t motor_id = command->motor_id;
+
+    if (is_halted) {
+        ROS_ERROR("AX-12 server received a command, but game_status said that the system is halted !");
+        return;
+    }
+
+    if (!driver_.motor_id_exists(motor_id)) {
+        ROS_ERROR_STREAM("AX-12 server received a command for motor ID " << static_cast<unsigned>(motor_id) << ", but no such motor was detected");
+        return;
+    }
+
+    if (!driver_.motor_id_connected(motor_id)) {
+        ROS_ERROR_STREAM("AX-12 server received a command for motor ID " << static_cast<unsigned>(motor_id) << ", but the motor was disconnected");
+        return;
+    }
+
+    if (command->mode == command->JOINT) {
+        uint16_t position = command->position;
+
+        if (position <= 0 || position > 1023) {
+            ROS_ERROR_STREAM("AX-12 server received a joint command for motor ID " << static_cast<unsigned>(motor_id)
+                            << ", but with an invalid position: " << position);
+            return;
+        }
+
+        uint16_t speed = command->speed;
+        if (speed < 0 || speed > 1023) {
+            ROS_ERROR_STREAM("AX-12 server received a joint command for motor ID " << static_cast<unsigned>(motor_id)
+                    << ", but with an invalid speed: " << speed);
+            return;
+        }
+
+
+        for (auto it = joint_goals_.begin(); it != joint_goals_.end();) {
+            if (it->getGoal()->motor_id == motor_id) {
+                it->setCanceled();
+                ROS_WARN_STREAM("AX-12 server received a joint command for motor ID "
+                        << static_cast<unsigned>(motor_id) << " while another joint goal was running for that motor."
+                        << " The old goal was canceled.");
+                it = joint_goals_.erase(it);
+            } else {
+                it++;
+            }
+        }
+
+        bool success = true;
+        success &= driver_.joint_mode(motor_id);
+        success &= driver_.write_register(motor_id, MOVING_SPEED, speed);
+        success &= driver_.write_register(motor_id, GOAL_POSITION, position);
+
+        ROS_INFO_STREAM("Received a joint command for motor " << static_cast<unsigned>(motor_id));
+
+        if(!success)
+            ROS_WARN("At least one of the register writes was not successful, be careful");
+
+        ROS_DEBUG_STREAM("Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id));
+    } else {
+        // TODO: wheel mode
+    }
+
+}
+
+
+Ax12Server::Ax12Server(const std::string &action_name, const std::string &service_name, const std::string &topic_name) :
         as_(nh_, action_name, boost::bind(&Ax12Server::execute_goal_cb, this, _1),
             boost::bind(&Ax12Server::cancel_goal_cb, this, _1), false),
         set_param_service(nh_.advertiseService(service_name, &Ax12Server::execute_set_service_cb, this)),
@@ -374,6 +440,9 @@ Ax12Server::Ax12Server(const std::string &action_name, const std::string &servic
         result_(),
         driver_(),
         is_halted(false) {
+
+    if (topic_name != "")
+        cmd_topic_sub_ = nh_.subscribe(topic_name, 30, &Ax12Server::game_status_cb, this);
 
     as_.start();
 

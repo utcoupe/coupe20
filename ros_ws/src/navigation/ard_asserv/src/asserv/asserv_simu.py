@@ -6,7 +6,7 @@ from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
 from time import sleep
-from static_map.srv import MapGetTerrain, MapGetTerrainRequest
+from static_map.srv import MapGetContext, MapGetContextRequest
 
 __author__ = "Thomas Fuhrmann & milesial & Mindstan"
 __date__ = 19/04/2018
@@ -72,30 +72,34 @@ class AsservSimu(AsservAbstract):
 
         self._states = StatesManager()
         # Get map size 
-        self._map_x, self._map_y = self.getTerrain() # Height is y, width is X
+        self._map_x = 3.0
+        self._map_y = 2.0
+        self._robot_height = 0.2
+        
+        context = self.getMapContext()
+        if context:
+            self._map_x = context.terrain_shape.width
+            self._map_y = context.terrain_shape.height
+            self._robot_height = context.robot_shape.height
+        else:
+            rospy.logwarn("Can't get map context, taking default values.")
 
-        # Robot size
-        self._robot_height = 0.18 ## TODO TODO TODO get robot width from map
 
-    def getTerrain(self):
-        dest = "/static_map/get_terrain"
+    def getMapContext(self):
+        dest = "/static_map/get_context"
         try: # Handle a timeout in case one node doesn't respond
-            
             server_wait_timeout = 2
             rospy.logdebug("Waiting for service %s for %d seconds" % (dest, server_wait_timeout))
             rospy.wait_for_service(dest, timeout=server_wait_timeout)
-
         except rospy.ROSException:
-
             return False
 
         rospy.loginfo("Sending service request to '{}'...".format(dest))
-        service = rospy.ServiceProxy(dest, MapGetTerrain)
-
-        response = service(MapGetTerrainRequest()) #TODO rospy can't handle timeout, solution?
+        service = rospy.ServiceProxy(dest, MapGetContext)
+        response = service(MapGetContextRequest()) # rospy can't handle timeout, solution ?
 
         if response is not None:
-            return response.shape.width, response.shape.height
+            return response
         else:
             rospy.logerr("Service call response from '{}' is null.".format(dest))
         return False

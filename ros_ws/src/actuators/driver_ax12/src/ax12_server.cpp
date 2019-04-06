@@ -442,7 +442,7 @@ Ax12Server::Ax12Server(const std::string &action_name, const std::string &servic
         is_halted(false) {
 
     if (topic_name != "")
-        cmd_topic_sub_ = nh_.subscribe(topic_name, 30, &Ax12Server::game_status_cb, this);
+        cmd_topic_sub_ = nh_.subscribe(topic_name, 30, &Ax12Server::cmd_topic_cb, this);
 
     as_.start();
 

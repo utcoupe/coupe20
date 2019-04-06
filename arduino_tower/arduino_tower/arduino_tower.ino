@@ -166,6 +166,7 @@ int load_atom_sas() {
       nh.loginfo("enough atoms"); 
       int success = move_lift(H_SAS_LOW); 
       if (success != 0 ) success = move_ax12(1) ; // open AX12 
+      if (sucess != 0) success = move_lift(H_FLOOR_1) ; 
       nb_atom_in_sas = nb_atom_in ; 
       return success ; 
     }

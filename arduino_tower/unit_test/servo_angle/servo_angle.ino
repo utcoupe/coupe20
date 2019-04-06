@@ -10,8 +10,8 @@ Servo servo_2 ;
 #define POS_INIT_1 120 
 #define POS_1      40
 
-#define POS_INIT_2 40 //15
-#define POS_2      120 //80
+#define POS_INIT_2 45 //15
+#define POS_2      125 //80
 
 
 void setup() {

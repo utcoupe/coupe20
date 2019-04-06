@@ -10,6 +10,7 @@
 #include <actionlib/server/action_server.h>
 #include <driver_ax12/Ax12CommandAction.h>
 #include <driver_ax12/SetAx12Param.h>
+#include <driver_ax12/Ax12Command.h>
 #include <port_finder/GetPort.h>
 #include <definitions/GetDefinition.h>
 #include <game_manager/init_service.h>
@@ -35,6 +36,7 @@ protected:
     actionlib::ActionServer <driver_ax12::Ax12CommandAction> as_;
     ros::ServiceServer set_param_service;
     ros::Subscriber game_status_sub_;
+    ros::Subscriber cmd_topic_sub_;
     std::list <GoalHandle> joint_goals_;
 
     // create messages that are used to published feedback/result
@@ -57,6 +59,8 @@ public:
 
     void game_status_cb(const game_manager::GameStatusConstPtr &status);
 
+    void cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command);
+
     std::string fetch_port(const std::string &service_name);
 
     void init_driver(const std::string &port);
@@ -69,7 +73,7 @@ public:
 
     const Ax12Table::Register *service_param_to_register(uint8_t param);
 
-    Ax12Server(const std::string &action_name, const std::string &service_name);
+    Ax12Server(const std::string &action_name, const std::string &service_name, const std::string &topic_name="");
 
     ~Ax12Server();
 };

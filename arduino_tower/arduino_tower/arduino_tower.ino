@@ -13,7 +13,7 @@
 #include <game_manager/GameStatus.h>
 #include <ard_tower/Tower.h> 
 #include <ard_tower/TowerResponses.h> 
-#include <ard_tower/AX12Responses.h> 
+//#include <driver_ax12/Ax12Command.h> 
 
 
 ros :: NodeHandle nh ; 
@@ -26,7 +26,8 @@ ros :: NodeHandle nh ;
 #include "tower_variables.h" 
 
 // Servo motor 
-Servo servo_unload ; // create servo object to control a servo
+Servo servo_unload_1 ; // create servo object to control a servo
+Servo servo_unload_2 ; 
 
 // Stepper motor 
 PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay); 
@@ -37,7 +38,7 @@ PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay);
 // ----------------------------------------------------------------
 void on_game_status(const game_manager::GameStatus& msg){
   game_status = msg.game_status;
-  nh.loginfo("game_status_msg");
+  //nh.loginfo("game_status_msg");
 }
 void on_tower(const ard_tower::Tower& msg){
   nh.loginfo("tower_msg");
@@ -56,9 +57,9 @@ ros::Subscriber<ard_tower::Tower>         sub_tower        ("actuators/ard_tower
 
 // ~ Publisher ~ 
 ard_tower::TowerResponses  event_msg ; 
-ard_tower::AX12Responses   ax12_event_msg ; 
+//driver_ax12::Ax12Command  ax12_event_msg ; 
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
-ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event_msg); 
+//ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event_msg); 
 
 
 // --------------------------------------------------------------
@@ -67,7 +68,8 @@ ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event
 
 void tower_initialize() { 
   nh.loginfo("tower_initialize"); 
-  servo_unload.write(POS_UNLOAD_INIT) ;   
+  servo_unload_1.write(POS_UNLOAD_INIT_1) ;
+  servo_unload_2.write(POS_UNLOAD_INIT_2) ;    
   // initialize stepper 
   event_msg.init_success = 1 ; 
   pub_tower_responses.publish(&event_msg); 
@@ -80,14 +82,12 @@ void tower_initialize() {
 
 int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12 
   nh.loginfo("move_ax12"); 
-  ax12_event_msg.speed = 1000 ; 
-  ax12_event_msg.mode = 0 ; 
-  ax12_event_msg.motor_id = 2 ; 
-  // 135 pour ouvrir 
-  // 170 pour fermer 
-  if ( open == 1 ) ax12_event_msg.position =135  ; // Open 
-  if ( open == 0 ) ax12_event_msg.position =170 ;  // Close 
-  pub_ax12_responses.publish(&ax12_event_msg) ; 
+  //ax12_event_msg.speed = 1000 ; 
+  //ax12_event_msg.mode = 0 ; 
+  //ax12_event_msg.motor_id = 2 ; 
+  //if ( open == 1 ) ax12_event_msg.position =135  ; // Open 
+  //if ( open == 0 ) ax12_event_msg.position =170 ;  // Close 
+  //pub_ax12_responses.publish(&ax12_event_msg) ; 
   return 1 ; 
 }
 
@@ -142,6 +142,7 @@ int unload_atom_sas () {
     if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
     if (success != 0) nb_atom_in_sas = MAX_ATOM_SAS  ; 
     if (success != 0 ) success = move_ax12(1);  // open AX12 
+    if (success != 0) success = move_lift(H_FLOOR_1) ; 
     if (success != 0)  success = load_atom_tower(nb_atom_out_wrong, nb_atom_out_wrong) ; 
   }
   else { // enough space for all the atoms 
@@ -149,6 +150,7 @@ int unload_atom_sas () {
     if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
     if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
     if (success != 0) success = move_ax12(1) ; // open AX12 
+    if (success != 0 ) success = move_lift(H_FLOOR_1) ; 
   }
   
   return success ; 
@@ -166,7 +168,7 @@ int load_atom_sas() {
       nh.loginfo("enough atoms"); 
       int success = move_lift(H_SAS_LOW); 
       if (success != 0 ) success = move_ax12(1) ; // open AX12 
-      if (sucess != 0) success = move_lift(H_FLOOR_1) ; 
+      if (success != 0) success = move_lift(H_FLOOR_1) ; 
       nb_atom_in_sas = nb_atom_in ; 
       return success ; 
     }
@@ -186,11 +188,12 @@ void unload_atom() {
   if (unload_content == 1 && game_status == 1 ) { //unload atom with slider 
     success = unload_atom_slider() ; 
 
-     if (( (nb_atom_in_sas == 0 && nb_atom_in == 0) || success == 0 ) && game_status == 1) {
+     if (( nb_atom_in == 0 || success == 0 ) && game_status == 1) {
       nh.loginfo("unload finished"); 
       //TODO clarify message if no success 
       event_msg.unload_success = success ;
       event_msg.nb_atom_out    = nb_atom_out ; 
+      event_msg.nb_atom_in     = nb_atom_in ; 
       pub_tower_responses.publish(&event_msg) ; 
       unload_content = 0 ; 
       nb_atom_out    = 0 ; 
@@ -217,14 +220,18 @@ int unload_atom_slider() {
   nh.loginfo("unload_atom_slider") ; 
   int success = 0 ; 
   if (nb_atom_in_sas > 0 && game_status == 1) { // sas not empty yet 
-    nh.loginfo("atom in sas") ; 
-    servo_unload.write(POS_UNLOAD); 
+    nh.loginfo("atom in sas") ;  
+    servo_unload_1.write(POS_UNLOAD_1);
+    servo_unload_2.write(POS_UNLOAD_2); 
+    //close 
     delay(500); 
-    servo_unload.write(POS_UNLOAD_INIT); 
+    servo_unload_1.write(POS_UNLOAD_INIT_1); 
+    servo_unload_2.write(POS_UNLOAD_INIT_2); 
+    //open  
     delay(500) ; 
-    nb_atom_in     = nb_atom_in - 1 ; 
-    nb_atom_in_sas = nb_atom_in_sas - 1 ; 
-    nb_atom_out    = nb_atom_out + 1 ; 
+    nb_atom_in     -= 1 ; 
+    nb_atom_in_sas -= 1 ; 
+    nb_atom_out    += 1 ; 
     success = 1 ; 
   }
 
@@ -318,10 +325,11 @@ void setup() {
   nh.subscribe(sub_tower); 
  
   nh.advertise(pub_tower_responses); 
-  nh.advertise(pub_ax12_responses); 
+//  nh.advertise(pub_ax12_responses); 
 
   // Servo Actuator init 
-  servo_unload.attach(servo_unload_pin) ; 
+  servo_unload_1.attach(servo_unload_pin_1) ; 
+  servo_unload_2.attach(servo_unload_pin_2) ; 
   
 }
 

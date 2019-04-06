@@ -7,12 +7,14 @@ int step_pin       = 9 ;
 int en_pin         = 11; 
 uint16_t min_delay = 1000 ; 
 
-int servo_unload_pin = 22 ; 
+int servo_unload_pin_1 = 22 ; //number 1 right side 
+int servo_unload_pin_2 = 24 ; //number 2 left side 
  
 // ~ Servo ~ Unload Atom 
-#define POS_UNLOAD_INIT  102 //90   
-#define POS_UNLOAD       72  //store servo position
-
+#define POS_UNLOAD_INIT_1   95 //90   
+#define POS_UNLOAD_1        0  //store servo position
+#define POS_UNLOAD_INIT_2   50
+#define POS_UNLOAD_2        170
 
 // ~ Stepper ~ Load Atom 
 int lift_position = 0 ; // no postion for now 
@@ -42,7 +44,7 @@ int load_content_position = -1 ;
 int unload_content        = -1 ; // actions given to stepper  => 0 for nothing // 1 for unoload 
 int load_success          = -1 ; // info on stepper status 
 int unload_success        = -1 ; // info on stepper status 
-int game_status           = -1 ; // info on game status  // 1 ingame 
+int game_status           = 1 ; //-1 ; // info on game status  // 1 ingame 
 
 
 // ------ Functions --------- 

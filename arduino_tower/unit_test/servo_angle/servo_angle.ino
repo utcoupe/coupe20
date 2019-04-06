@@ -7,11 +7,11 @@ Servo servo_2 ;
 #define POS_UNLOAD_INIT  130 //90   
 #define POS_UNLOAD       74  //store servo position
 
-#define POS_INIT_1 120 
-#define POS_1      40
+#define POS_INIT_1 95
+#define POS_1      0
 
-#define POS_INIT_2 45 //15
-#define POS_2      125 //80
+#define POS_INIT_2 50 //15
+#define POS_2      170 //80
 
 
 void setup() {

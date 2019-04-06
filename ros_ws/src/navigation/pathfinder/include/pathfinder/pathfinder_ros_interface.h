@@ -9,6 +9,8 @@
 #include "pathfinder/occupancy_grid.h"
 
 #include <geometry_msgs/Pose2D.h>
+#include <ros/service_client.h>
+#include <ros/node_handle.h>
 
 class PathfinderROSInterface
 {
@@ -19,7 +21,11 @@ public:
      * @param mapFileName The path to the image containing the static obstacles.
      * @param convertor The convertor that will be used to convert positions between the two referencials.
      */
-    PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor);
+    PathfinderROSInterface(
+        const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor,
+        const std::string& getTerrainSrvName, ros::NodeHandle& nh,
+        std::pair<unsigned, unsigned> defaultScale = {}
+    );
     
     /**
      * Callback for the ros FindPath service. Coordinates are converted between the outside and inside referential.
@@ -42,9 +48,11 @@ public:
      */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
-    void updateStaticMap();
+    void setSafetyMargin(double margin);
     
 private:
+    double _safetyMargin = 0.15;
+    
     /**
      * The barrier subscribers manager
      */
@@ -60,6 +68,8 @@ private:
      */
     Pathfinder pathfinder_;
     
+    ros::ServiceClient _srvGetTerrain;
+    
     // Convertors
     /**
      * Convert the path in the outside type to a string for debugging purposes.
@@ -67,6 +77,8 @@ private:
      * @return The path in string format.
      */
     std::string pathRosToStr_(const std::vector<geometry_msgs::Pose2D>& path);
+    
+    bool _updateStaticMap();
 };
 
 #endif // PATHFINDER_ROS_INTERFACE_H

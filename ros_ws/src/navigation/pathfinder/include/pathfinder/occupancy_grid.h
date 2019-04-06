@@ -41,9 +41,9 @@ namespace pathfinder {
         
         void setConvertor(std::shared_ptr<PosConvertor> convertor) { _convertor = convertor; }
         
-        void setOccupancy(Point pos, bool occupied) { _grid[pos.getY()][pos.getX()] = occupied; }
+        void setAllowed(Point pos, bool allowed) { _grid[pos.getY()][pos.getX()] = allowed; }
         
-        void setOccupancyFromMap(const std::vector<static_map::MapObject>& objects, double safetyMargin = 0.0);
+        void setOccupancyFromMap(const std::vector<static_map::MapObject>& objects, bool clearBefore = false, double safetyMargin = 0.0);
         
         void setOccupancyFromGrid(const std::vector<std::vector<bool>>& grid);
     

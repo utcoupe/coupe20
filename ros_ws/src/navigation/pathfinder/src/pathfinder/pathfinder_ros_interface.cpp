@@ -1,22 +1,35 @@
 #include "pathfinder/pathfinder_ros_interface.h"
 
+#include <static_map/MapGetTerrain.h>
+
 using namespace std;
 
-PathfinderROSInterface::PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor):
+const string MAP_LAYER_NAME = "pathfinder";
+const unsigned WARN_MAP_SIZE = 200000;
+
+PathfinderROSInterface::PathfinderROSInterface(
+        const string& mapFileName, std::shared_ptr<PosConvertor> convertor,
+        const string& getTerrainSrvName, ros::NodeHandle& nh,
+        std::pair<unsigned, unsigned> defaultScale
+                                              ):
     dynBarriersMng_(make_shared<DynamicBarriersManager>()),
     convertor_(convertor),
-    _occupancyGrid(convertor_),
+    _occupancyGrid(convertor_, defaultScale.second, defaultScale.first),
     pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
+    _srvGetTerrain = nh.serviceClient<static_map::MapGetTerrain>(getTerrainSrvName);
+    
     if (mapFileName == "") {
-        // TODO fetch from static_map
+        if (!_updateStaticMap()) {
+            ROS_WARN("Cannot initialize terrain with static_map service!");
+        }
     }
     auto mapSize = _occupancyGrid.getSize();
     if (mapSize.first == 0)
         ROS_FATAL("Allowed positions empty. Cannot define a scale. Please restart the node, it may crash soon.");
     else
     {
-        if (mapSize.first * mapSize.second > 200000) {
+        if (mapSize.first * mapSize.second > WARN_MAP_SIZE) {
             ROS_WARN("Map image is big, the pathfinder may be very slow ! (150x100px works fine)");
         }
 
@@ -68,7 +81,7 @@ void PathfinderROSInterface::reconfigureCallback(pathfinder::PathfinderNodeConfi
     pathfinder_.activatePathRendering(config.render);
     pathfinder_.setPathToRenderOutputFile(config.renderFile);
     // TODO detect env var and home
-    dynBarriersMng_->updateSafetyMargin(config.safetyMargin);
+    setSafetyMargin(config.safetyMargin);
 }
 
 void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber)
@@ -76,6 +89,12 @@ void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::Barrie
     dynBarriersMng_->addBarrierSubscriber(std::move(subscriber));
 }
 
+void PathfinderROSInterface::setSafetyMargin(double margin)
+{
+    _safetyMargin = margin;
+    dynBarriersMng_->updateSafetyMargin(margin);
+    _updateStaticMap();
+}
 
 string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>& path)
 {
@@ -89,3 +108,24 @@ string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>
     str += "]";
     return str;
 }
+
+bool PathfinderROSInterface::_updateStaticMap()
+{
+    static_map::MapGetTerrain srv;
+    if (!_srvGetTerrain.call(srv)) {
+        ROS_ERROR("PathfinderROSInterface::_updateStaticMap(): Cannot contact static_map.");
+        return false;
+    }
+    
+    _occupancyGrid.clear();
+    
+    for (const auto& layer: srv.response.layers) {
+        if (layer.name == MAP_LAYER_NAME) {
+            ROS_DEBUG_STREAM("Loading wall " << layer.name);
+            _occupancyGrid.setOccupancyFromMap(layer.walls, false, _safetyMargin);
+        }
+    }
+    
+    return true;
+}
+

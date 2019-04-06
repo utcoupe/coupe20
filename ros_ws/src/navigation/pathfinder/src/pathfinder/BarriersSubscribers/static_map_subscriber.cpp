@@ -14,7 +14,7 @@ MapSubscriber::MapSubscriber(double safetyMargin, shared_ptr<PosConvertor> conve
 
 bool MapSubscriber::hasBarrier(Point pos)
 {
-    return _occupancyGrid.isAllowed(pos);
+    return !_occupancyGrid.isAllowed(pos);
 }
 
 void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic)
@@ -33,6 +33,6 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
         ROS_ERROR("Error when trying to call static_map/get_container");
         return;
     }
-    _occupancyGrid.setOccupancyFromMap(srv.response.container.objects, _safetyMargin);
+    _occupancyGrid.setOccupancyFromMap(srv.response.container.objects, true, _safetyMargin);
 }
 

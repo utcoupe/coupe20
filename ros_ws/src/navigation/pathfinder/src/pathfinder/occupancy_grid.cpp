@@ -15,7 +15,7 @@ pathfinder::OccupancyGrid::OccupancyGrid(shared_ptr<PosConvertor> convertor, siz
 void pathfinder::OccupancyGrid::clear()
 {
     for (auto& row : _grid) {
-        fill(row.begin(), row.end(), false);
+        fill(row.begin(), row.end(), true);
     }
 }
 
@@ -28,14 +28,16 @@ void pathfinder::OccupancyGrid::resize(size_t nrows, size_t ncols)
     _grid = vector<vector<bool>>(nrows, vector<bool>(ncols, false));
 }
 
-void pathfinder::OccupancyGrid::setOccupancyFromMap(const vector<static_map::MapObject>& objects, double safetyMargin)
+void pathfinder::OccupancyGrid::setOccupancyFromMap(const vector<static_map::MapObject>& objects, bool clearBefore, double safetyMargin)
 {
     if (_grid.size() == 0 || _grid.front().size() == 0){
         ROS_ERROR("[OccupancyGrid::setOccupancyFromMap] Trying to fill an empty grid!");
         return;
     }
     
-    clear();
+    if (clearBefore) {
+        clear();
+    }
     
     for (auto&& mapObject : objects)
     {
@@ -92,7 +94,7 @@ void pathfinder::OccupancyGrid::drawCircle(const static_map::MapObject& objectCi
     for (uint row = yMin; row < yMax; row++)
         for (uint column = xMin; column < xMax; column++)
             if (pos.norm2Dist({static_cast<double>(column), static_cast<double>(row)}) <= r + safeMarg)
-                _grid[row][column] = true;
+                _grid[row][column] = false;
 }
 
 void pathfinder::OccupancyGrid::drawRectangle(const static_map::MapObject& objectRect, double safetyMargin)
@@ -120,7 +122,7 @@ void pathfinder::OccupancyGrid::drawRectangle(const static_map::MapObject& objec
     
     for (uint row = yMin; row < yMax; row++)
         for (uint column = xMin; column < xMax; column++)
-            _grid[row][column] = true;
+            _grid[row][column] = false;
 }
 
 

@@ -73,7 +73,9 @@ public:
 
     const Ax12Table::Register *service_param_to_register(uint8_t param);
 
-    Ax12Server(const std::string &action_name, const std::string &service_name, const std::string &topic_name="");
+    Ax12Server(const std::string &action_name, const std::string &service_name);
+
+    Ax12Server(const std::string &action_name, const std::string &service_name, const std::string &topic_name);
 
     ~Ax12Server();
 };

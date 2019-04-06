@@ -74,14 +74,16 @@ void Ax12Server::execute_goal_cb(GoalHandle goal_handle) {
     }
 
     if (!driver_.motor_id_exists(motor_id)) {
-        ROS_ERROR_STREAM("AX-12 action server received a goal for motor ID " << static_cast<unsigned>(motor_id) << ", but no such motor was detected");
+        ROS_ERROR_STREAM("AX-12 action server received a goal for motor ID " << static_cast<unsigned>(motor_id)
+                                                                             << ", but no such motor was detected");
         result_.success = 0;
         goal_handle.setRejected(result_);
         return;
     }
 
     if (!driver_.motor_id_connected(motor_id)) {
-        ROS_ERROR_STREAM("AX-12 action server received a goal for motor ID " << static_cast<unsigned>(motor_id) << ", but the motor was disconnected");
+        ROS_ERROR_STREAM("AX-12 action server received a goal for motor ID " << static_cast<unsigned>(motor_id)
+                                                                             << ", but the motor was disconnected");
         result_.success = 0;
         goal_handle.setRejected(result_);
         return;
@@ -100,7 +102,8 @@ bool Ax12Server::handle_joint_goal(GoalHandle goal_handle) {
 
     if (position <= 0 || position > 1023) {
         ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id)
-                        << ", but with an invalid position: " << position);
+                                                                                   << ", but with an invalid position: "
+                                                                                   << position);
         result_.success = 0;
         goal_handle.setRejected(result_);
         return false;
@@ -108,8 +111,9 @@ bool Ax12Server::handle_joint_goal(GoalHandle goal_handle) {
 
     uint16_t speed = goal->speed;
     if (speed < 0 || speed > 1023) {
-        ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id) 
-                << ", but with an invalid speed: " << speed);
+        ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id)
+                                                                                   << ", but with an invalid speed: "
+                                                                                   << speed);
         result_.success = 0;
         goal_handle.setRejected(result_);
         return false;
@@ -121,8 +125,9 @@ bool Ax12Server::handle_joint_goal(GoalHandle goal_handle) {
         if (it->getGoal()->motor_id == motor_id) {
             it->setCanceled();
             ROS_WARN_STREAM("AX-12 action server received a joint goal for motor ID "
-                    << static_cast<unsigned>(motor_id) << " while another joint goal was running for that motor."
-                    << " The old goal was canceled.");
+                                    << static_cast<unsigned>(motor_id)
+                                    << " while another joint goal was running for that motor."
+                                    << " The old goal was canceled.");
 
             it = joint_goals_.erase(it);
         } else {
@@ -140,10 +145,11 @@ bool Ax12Server::handle_joint_goal(GoalHandle goal_handle) {
     joint_goals_.push_back(goal_handle);
     ROS_INFO_STREAM("Received a joint goal for motor " << static_cast<unsigned>(motor_id));
 
-    if(!success)
+    if (!success)
         ROS_WARN("At least one of the register writes was not successful, be careful");
 
-    ROS_DEBUG_STREAM("Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id) << ", adding the goal to the list");
+    ROS_DEBUG_STREAM("Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id)
+                                << ", adding the goal to the list");
 
     return success;
 }
@@ -154,8 +160,9 @@ bool Ax12Server::handle_wheel_goal(GoalHandle goal_handle) {
     uint16_t speed = goal->speed;
 
     if (speed < 0 || speed > 2047) {
-        ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id) 
-                << ", but with an invalid speed: " << speed);
+        ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id)
+                                                                                   << ", but with an invalid speed: "
+                                                                                   << speed);
         result_.success = 0;
         goal_handle.setRejected(result_);
         return false;
@@ -168,8 +175,8 @@ bool Ax12Server::handle_wheel_goal(GoalHandle goal_handle) {
             result_.success = 0;
             it->setCanceled(result_);
             ROS_WARN_STREAM("AX-12 action server received a wheel goal for motor ID " << static_cast<unsigned>(motor_id)
-                    << " while another joint goal was running for that motor. "
-                    << "The old goal was canceled.");
+                                                                                      << " while another joint goal was running for that motor. "
+                                                                                      << "The old goal was canceled.");
             it = joint_goals_.erase(it);
         } else {
             it++;
@@ -185,7 +192,7 @@ bool Ax12Server::handle_wheel_goal(GoalHandle goal_handle) {
     goal_handle.setSucceeded(result_);
 
     ROS_INFO_STREAM("Received a wheel goal for motor " << static_cast<unsigned>(motor_id));
-    if(!success)
+    if (!success)
         ROS_WARN("Returning a bad result, as one of the register writes was not successful");
     else
         ROS_INFO("Setting the goal as succeeded, all register writes successful");
@@ -215,15 +222,18 @@ void Ax12Server::main_loop(const ros::TimerEvent &) {
 
         if (curr_position >= (goal_position - POSITION_MARGIN) && curr_position <= (goal_position + POSITION_MARGIN)) {
             ROS_DEBUG_STREAM("Motor has reached the goal position ! curr_pos : " << curr_position
-                    << ", goal_pos : " << goal_position);
+                                                                                 << ", goal_pos : " << goal_position);
             result_.success = 1;
             it->setSucceeded(result_);
             it = joint_goals_.erase(it);
-            ROS_INFO_STREAM("AX-12 position goal " << goal_position << " succeeded for motor ID " << static_cast<unsigned>(motor_id));
+            ROS_INFO_STREAM("AX-12 position goal " << goal_position << " succeeded for motor ID "
+                                                   << static_cast<unsigned>(motor_id));
 
-        } else if (ros::Time::now().toSec() - it->getGoalID().stamp.toSec() > MAX_STOP_TIME && it->getGoal()->speed == 0) {
+        } else if (ros::Time::now().toSec() - it->getGoalID().stamp.toSec() > MAX_STOP_TIME &&
+                   it->getGoal()->speed == 0) {
             ROS_ERROR_STREAM("Motor has not reached the goal position, timeout reached ! curr_pos : " << curr_position
-                    << ", goal_pos : " << goal_position);
+                                                                                                      << ", goal_pos : "
+                                                                                                      << goal_position);
 
             // reset the alarm
             driver_.write_register(motor_id, TORQUE_ENABLE, 0);
@@ -329,7 +339,7 @@ bool Ax12Server::execute_set_service_cb(driver_ax12::SetAx12Param::Request &req,
 
     if (!driver_.motor_id_exists(req.motor_id)) {
         ROS_ERROR_STREAM("AX-12 set_param service server received a request for motor ID " << req.motor_id
-                << ", but no such motor was detected");
+                                                                                           << ", but no such motor was detected");
         res.success = 0;
         return true;
     }
@@ -346,7 +356,7 @@ bool Ax12Server::execute_set_service_cb(driver_ax12::SetAx12Param::Request &req,
     res.success = (uint8_t) driver_.write_register(req.motor_id, *reg, static_cast<uint16_t>(req.value));
 
     ROS_INFO_STREAM("Successfully changed parameter " << req.param << " of motor with ID " << req.motor_id
-            << " to " <<  req.value);
+                                                      << " to " << req.value);
 
     return true;
 }
@@ -374,12 +384,14 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
     }
 
     if (!driver_.motor_id_exists(motor_id)) {
-        ROS_ERROR_STREAM("AX-12 server received a command for motor ID " << static_cast<unsigned>(motor_id) << ", but no such motor was detected");
+        ROS_ERROR_STREAM("AX-12 server received a command for motor ID " << static_cast<unsigned>(motor_id)
+                                                                         << ", but no such motor was detected");
         return;
     }
 
     if (!driver_.motor_id_connected(motor_id)) {
-        ROS_ERROR_STREAM("AX-12 server received a command for motor ID " << static_cast<unsigned>(motor_id) << ", but the motor was disconnected");
+        ROS_ERROR_STREAM("AX-12 server received a command for motor ID " << static_cast<unsigned>(motor_id)
+                                                                         << ", but the motor was disconnected");
         return;
     }
 
@@ -388,14 +400,16 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
 
         if (position <= 0 || position > 1023) {
             ROS_ERROR_STREAM("AX-12 server received a joint command for motor ID " << static_cast<unsigned>(motor_id)
-                            << ", but with an invalid position: " << position);
+                                                                                   << ", but with an invalid position: "
+                                                                                   << position);
             return;
         }
 
         uint16_t speed = command->speed;
         if (speed < 0 || speed > 1023) {
             ROS_ERROR_STREAM("AX-12 server received a joint command for motor ID " << static_cast<unsigned>(motor_id)
-                    << ", but with an invalid speed: " << speed);
+                                                                                   << ", but with an invalid speed: "
+                                                                                   << speed);
             return;
         }
 
@@ -404,8 +418,9 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
             if (it->getGoal()->motor_id == motor_id) {
                 it->setCanceled();
                 ROS_WARN_STREAM("AX-12 server received a joint command for motor ID "
-                        << static_cast<unsigned>(motor_id) << " while another joint goal was running for that motor."
-                        << " The old goal was canceled.");
+                                        << static_cast<unsigned>(motor_id)
+                                        << " while another joint goal was running for that motor."
+                                        << " The old goal was canceled.");
                 it = joint_goals_.erase(it);
             } else {
                 it++;
@@ -419,10 +434,11 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
 
         ROS_INFO_STREAM("Received a joint command for motor " << static_cast<unsigned>(motor_id));
 
-        if(!success)
+        if (!success)
             ROS_WARN("At least one of the register writes was not successful, be careful");
 
-        ROS_DEBUG_STREAM("Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id));
+        ROS_DEBUG_STREAM(
+                "Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id));
     } else {
         // TODO: wheel mode
     }
@@ -430,7 +446,7 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
 }
 
 
-Ax12Server::Ax12Server(const std::string &action_name, const std::string &service_name, const std::string &topic_name) :
+Ax12Server::Ax12Server(const std::string &action_name, const std::string &service_name) :
         as_(nh_, action_name, boost::bind(&Ax12Server::execute_goal_cb, this, _1),
             boost::bind(&Ax12Server::cancel_goal_cb, this, _1), false),
         set_param_service(nh_.advertiseService(service_name, &Ax12Server::execute_set_service_cb, this)),
@@ -441,16 +457,14 @@ Ax12Server::Ax12Server(const std::string &action_name, const std::string &servic
         driver_(),
         is_halted(false) {
 
-    if (topic_name != "")
-        cmd_topic_sub_ = nh_.subscribe(topic_name, 30, &Ax12Server::cmd_topic_cb, this);
 
     as_.start();
 
     status_services_ = std::make_unique<StatusServices>(
-        "drivers", "ax12", [this](const game_manager::ArmRequest::ConstPtr &){
-            driver_.scan_motors(); // TODO: uncomment and test if arm can be called while in game ???
-            // driver_.toggle_torque(true);
-        });
+            "drivers", "ax12", [this](const game_manager::ArmRequest::ConstPtr &) {
+                driver_.scan_motors(); // TODO: uncomment and test if arm can be called while in game ???
+                // driver_.toggle_torque(true);
+            });
 
     std::string port = fetch_port(PORT_FINDER_SERVICE);
 
@@ -461,6 +475,16 @@ Ax12Server::Ax12Server(const std::string &action_name, const std::string &servic
     timer_ = nh_.createTimer(ros::Duration(1.0 / MAIN_FREQUENCY), &Ax12Server::main_loop, this);
 
     status_services_->setReady(true);
+}
+
+Ax12Server::Ax12Server(const std::string &action_name, const std::string &service_name, const std::string &topic_name) :
+        Ax12Server(action_name, service_name) {
+    /*
+     * Serves a topic for commands, in parallel of the action server
+     * so that the arduinos can send orders (with no feedback or result)
+     */
+
+    cmd_topic_sub_ = nh_.subscribe(topic_name, 30, &Ax12Server::cmd_topic_cb, this);
 }
 
 Ax12Server::~Ax12Server() {

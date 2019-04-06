@@ -176,7 +176,7 @@ class Asserv:
         """
         rospy.loginfo("[ASSERV] Received a request (pwm service).")
         if self._asserv_instance:
-            ret_value = self._asserv_instance.pwm(request.left, request.right, request.duration, request.autoStop)
+            ret_value = self._asserv_instance.pwm(request.left, request.right, request.duration, request.auto_stop)
         else:
             ret_value = False
         return PwmResponse(ret_value)

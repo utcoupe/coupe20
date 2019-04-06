@@ -61,8 +61,8 @@ class Plan(object):
         debugStr += " to " + pointToStr(self._endPos)
         rospy.logdebug(debugStr)
         try:
+            path = []
             lastPoint = startPos
-
             if not self._disablePathfinder:
                 # sends a request to the pathfinder
                 (path, invalidPos) = self._pathfinderClient.FindPath(startPos, self._endPos)
@@ -75,11 +75,12 @@ class Plan(object):
                 # then sends the path point per point to the arduino_asserv
                 path.pop(0) # Removes the first point (we are already on startPos)
                 path.pop() # Removes the last point
-
-                for point in path:
-                    idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), self._slowGo, False, self._asservGotoCallback)
-                    self._currentPath[idOrder] = point
-                    lastPoint = point
+            
+            lastPoint = startPos
+            for point in path:
+                idOrder = self._asservClient.doGoto(point, self._getDirection(self._direction, point, lastPoint), self._slowGo, False, self._asservGotoCallback)
+                self._currentPath[idOrder] = point
+                lastPoint = point
             
             idOrder = self._asservClient.doGoto(self._endPos, self._getDirection(self._direction, self._endPos, lastPoint), self._slowGo, self._hasAngle, self._asservGotoCallback)
             self._currentPath[idOrder] = self._endPos

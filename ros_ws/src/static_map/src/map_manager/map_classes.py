@@ -30,6 +30,15 @@ class Robot(object):
         orientation.attrib["z"] = 0.0
         self.Marker = Marker(m)
 
+    def get_container(self, path):
+        return self.Container.get_container(path)
+
+    def add_object(self, path, obj):
+        return self.Container.add_object(path, obj)
+    
+    def remove_object(self, path):
+        return self.Container.remove_object(path)
+
 
 
 class Terrain(object):
@@ -78,6 +87,9 @@ class Waypoint(object):
             LoadingHelpers.checkAttribExist(xml, "name")
             self.Name = xml.get("name")
             self.Position = Position2D(xml, validate)
+    
+    def transform(self, codes):
+        return self.Position.transform(codes)
 
 
 class Container(object):
@@ -117,6 +129,7 @@ class Container(object):
         return False
     
     def remove_object(self, path):
+        print "remove object, path = " + str(path)
         if len(path) > 2:
             for e in self.Elements:
                 if isinstance(e, Container) and e.Name == path[1]:
@@ -132,6 +145,12 @@ class Container(object):
                     return res_obj
             rospy.logerr("    RMV Request failed : no object with name '{}' found in container '{}'.".format(path[1], self.Name))
         return None
+
+    def transform(self, codes):
+        for e in self.Elements:
+            if not e.transform(codes):
+                return False
+        return True
 
 
 class Object(object):
@@ -167,8 +186,8 @@ class Object(object):
         if self.Marker is not None and self.Color is None:
             raise ValueError("ERROR : Even after merge object '{}' still has a marker but no color.".format(self.Name))
     
-    def transform(codes):
-        pass #TODO
+    def transform(self, codes):
+        return self.Position.transform(codes)
 
 class Class(Object):
     def __init__(self, xml, obj_classes):

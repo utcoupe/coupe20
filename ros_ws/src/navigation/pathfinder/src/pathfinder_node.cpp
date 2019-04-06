@@ -33,7 +33,7 @@ const bool                          USE_IMAGE_AS_TERRAIN        {false};
 const size_t                        SIZE_MAX_QUEUE              {10};
 const double                        SAFETY_MARGIN               {0.15};
 const string                        MAP_GET_OBJECTS_SERVER      {"static_map/get_container"};
-const string                        MAP_GET_TERRAIN_SERVER      {"static_map/get_terrain"};
+const string                        MAP_GET_TERRAIN_SERVER      {"static_map/get_context"};
 const string                        OBJECTS_CLASSIFIER_TOPIC    {"recognition/objects_classifier/objects"};
 
 /**
@@ -58,7 +58,7 @@ int main (int argc, char* argv[])
 {
     ros::init(argc, argv, "pathfinder_node");
     
-    ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
+//     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
     ros::NodeHandle nodeHandle;
     
     // Select the configuration depending on param robot

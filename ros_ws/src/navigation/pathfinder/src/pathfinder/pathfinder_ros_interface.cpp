@@ -1,6 +1,6 @@
 #include "pathfinder/pathfinder_ros_interface.h"
 
-#include <static_map/MapGetTerrain.h>
+#include <static_map/MapGetContext.h>
 
 using namespace std;
 
@@ -17,7 +17,7 @@ PathfinderROSInterface::PathfinderROSInterface(
     _occupancyGrid(convertor_, defaultScale.second, defaultScale.first),
     pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
-    _srvGetTerrain = nh.serviceClient<static_map::MapGetTerrain>(getTerrainSrvName);
+    _srvGetTerrain = nh.serviceClient<static_map::MapGetContext>(getTerrainSrvName);
     
     if (mapFileName == "") {
         if (!_updateStaticMap()) {
@@ -111,7 +111,7 @@ string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>
 
 bool PathfinderROSInterface::_updateStaticMap()
 {
-    static_map::MapGetTerrain srv;
+    static_map::MapGetContext srv;
     if (!_srvGetTerrain.call(srv)) {
         ROS_ERROR("PathfinderROSInterface::_updateStaticMap(): Cannot contact static_map.");
         return false;
@@ -119,7 +119,7 @@ bool PathfinderROSInterface::_updateStaticMap()
     
     _occupancyGrid.clear();
     
-    for (const auto& layer: srv.response.layers) {
+    for (const auto& layer: srv.response.terrain_layers) {
         if (layer.name == MAP_LAYER_NAME) {
             ROS_DEBUG_STREAM("Loading wall " << layer.name);
             _occupancyGrid.setOccupancyFromMap(layer.walls, false, _safetyMargin);

@@ -89,37 +89,41 @@ void Ax12Server::execute_goal_cb(GoalHandle goal_handle) {
         return;
     }
 
+    uint16_t position = goal->position;
+    uint16_t speed = goal->speed;
+    bool success;
     if (goal->mode == goal->JOINT)
-        handle_joint_goal(goal_handle);
-    else
-        handle_wheel_goal(goal_handle);
+        success = handle_joint_goal(motor_id, position, speed);
+    else {
+        success = handle_wheel_goal(motor_id, speed);
+    }
+
+    result_.success = static_cast<uint8_t >(success);
+    if (!success) {
+        goal_handle.setRejected(result_);
+    } else {
+        goal_handle.setAccepted();
+        if (goal->mode == goal->JOINT)
+            joint_goals_.push_back(goal_handle);
+        else
+            goal_handle.setSucceeded(result_);
+    }
 }
 
-bool Ax12Server::handle_joint_goal(GoalHandle goal_handle) {
-    auto goal = goal_handle.getGoal();
-    uint8_t motor_id = goal->motor_id;
-    uint16_t position = goal->position;
-
+bool Ax12Server::handle_joint_goal(uint8_t motor_id, uint16_t position, uint16_t speed) {
     if (position <= 0 || position > 1023) {
         ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id)
                                                                                    << ", but with an invalid position: "
                                                                                    << position);
-        result_.success = 0;
-        goal_handle.setRejected(result_);
         return false;
     }
 
-    uint16_t speed = goal->speed;
     if (speed < 0 || speed > 1023) {
         ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id)
                                                                                    << ", but with an invalid speed: "
                                                                                    << speed);
-        result_.success = 0;
-        goal_handle.setRejected(result_);
         return false;
     }
-
-    goal_handle.setAccepted();
 
     for (auto it = joint_goals_.begin(); it != joint_goals_.end();) {
         if (it->getGoal()->motor_id == motor_id) {
@@ -136,39 +140,29 @@ bool Ax12Server::handle_joint_goal(GoalHandle goal_handle) {
     }
 
     bool success = true;
-
     success &= driver_.joint_mode(motor_id);
-
     success &= driver_.write_register(motor_id, MOVING_SPEED, speed);
     success &= driver_.write_register(motor_id, GOAL_POSITION, position);
 
-    joint_goals_.push_back(goal_handle);
+
     ROS_INFO_STREAM("Received a joint goal for motor " << static_cast<unsigned>(motor_id));
 
     if (!success)
         ROS_WARN("At least one of the register writes was not successful, be careful");
 
     ROS_DEBUG_STREAM("Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id)
-                                << ", adding the goal to the list");
+                                << ", adding the goal to the list (if it was an action)");
 
     return success;
 }
 
-bool Ax12Server::handle_wheel_goal(GoalHandle goal_handle) {
-    auto goal = goal_handle.getGoal();
-    uint8_t motor_id = goal->motor_id;
-    uint16_t speed = goal->speed;
-
+bool Ax12Server::handle_wheel_goal(uint8_t motor_id, uint16_t speed) {
     if (speed < 0 || speed > 2047) {
         ROS_ERROR_STREAM("AX-12 action server received a joint goal for motor ID " << static_cast<unsigned>(motor_id)
                                                                                    << ", but with an invalid speed: "
                                                                                    << speed);
-        result_.success = 0;
-        goal_handle.setRejected(result_);
         return false;
     }
-
-    goal_handle.setAccepted();
 
     for (auto it = joint_goals_.begin(); it != joint_goals_.end();) {
         if (it->getGoal()->motor_id == motor_id) {
@@ -187,16 +181,11 @@ bool Ax12Server::handle_wheel_goal(GoalHandle goal_handle) {
     success &= driver_.write_register(motor_id, MOVING_SPEED, speed);
     success &= driver_.wheel_mode(motor_id);
 
-
-    result_.success = static_cast<unsigned char>(success);
-    goal_handle.setSucceeded(result_);
-
     ROS_INFO_STREAM("Received a wheel goal for motor " << static_cast<unsigned>(motor_id));
     if (!success)
         ROS_WARN("Returning a bad result, as one of the register writes was not successful");
     else
         ROS_INFO("Setting the goal as succeeded, all register writes successful");
-
 
     return success;
 }
@@ -395,54 +384,13 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
         return;
     }
 
-    if (command->mode == command->JOINT) {
-        uint16_t position = command->position;
-
-        if (position <= 0 || position > 1023) {
-            ROS_ERROR_STREAM("AX-12 server received a joint command for motor ID " << static_cast<unsigned>(motor_id)
-                                                                                   << ", but with an invalid position: "
-                                                                                   << position);
-            return;
-        }
-
-        uint16_t speed = command->speed;
-        if (speed < 0 || speed > 1023) {
-            ROS_ERROR_STREAM("AX-12 server received a joint command for motor ID " << static_cast<unsigned>(motor_id)
-                                                                                   << ", but with an invalid speed: "
-                                                                                   << speed);
-            return;
-        }
-
-
-        for (auto it = joint_goals_.begin(); it != joint_goals_.end();) {
-            if (it->getGoal()->motor_id == motor_id) {
-                it->setCanceled();
-                ROS_WARN_STREAM("AX-12 server received a joint command for motor ID "
-                                        << static_cast<unsigned>(motor_id)
-                                        << " while another joint goal was running for that motor."
-                                        << " The old goal was canceled.");
-                it = joint_goals_.erase(it);
-            } else {
-                it++;
-            }
-        }
-
-        bool success = true;
-        success &= driver_.joint_mode(motor_id);
-        success &= driver_.write_register(motor_id, MOVING_SPEED, speed);
-        success &= driver_.write_register(motor_id, GOAL_POSITION, position);
-
-        ROS_INFO_STREAM("Received a joint command for motor " << static_cast<unsigned>(motor_id));
-
-        if (!success)
-            ROS_WARN("At least one of the register writes was not successful, be careful");
-
-        ROS_DEBUG_STREAM(
-                "Success " << success << " setting goal and speed for motor " << static_cast<unsigned>(motor_id));
-    } else {
-        // TODO: wheel mode
+    uint8_t position = command->position;
+    uint16_t speed = command->speed;
+    if (command->mode == command->JOINT)
+        handle_joint_goal(motor_id, position, speed);
+    else {
+        handle_wheel_goal(motor_id, speed);
     }
-
 }
 
 

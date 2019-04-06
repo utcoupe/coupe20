@@ -67,9 +67,9 @@ public:
 
     void main_loop(const ros::TimerEvent &);
 
-    bool handle_joint_goal(GoalHandle goal_handle);
+    bool handle_joint_goal(uint8_t motor_id, uint16_t position, uint16_t speed);
 
-    bool handle_wheel_goal(GoalHandle goal_handle);
+    bool handle_wheel_goal(uint8_t motor_id, uint16_t speed);
 
     const Ax12Table::Register *service_param_to_register(uint8_t param);
 

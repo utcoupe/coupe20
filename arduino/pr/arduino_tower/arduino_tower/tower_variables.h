@@ -44,7 +44,7 @@ int load_content_position = -1 ;
 int unload_content        = -1 ; // actions given to stepper  => 0 for nothing // 1 for unoload 
 int load_success          = -1 ; // info on stepper status 
 int unload_success        = -1 ; // info on stepper status 
-int game_status           = 1 ; //-1 ; // info on game status  // 1 ingame 
+int game_status           = -1 ; // info on game status  // 1 ingame 
 
 
 // ------ Functions --------- 

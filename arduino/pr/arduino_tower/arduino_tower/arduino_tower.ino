@@ -1,7 +1,7 @@
 //-----------------------------------------------
 // Arduino : PR tower 
 // Author : Floriane ALLAIRE Feb 2019 , UTCoupe 
-// Need AFMotor. h and AFMotor.cpp in folder 
+// Need AFMotor. h tower_variables.h and AFMotor.cpp in folder 
 //------------------------------------------------
 
 // -----------------------------------------------------------
@@ -13,6 +13,7 @@
 #include <game_manager/GameStatus.h>
 #include <ard_tower/Tower.h> 
 #include <ard_tower/TowerResponses.h> 
+#include <ard_door/Door.h> 
 //#include <driver_ax12/Ax12Command.h> 
 
 
@@ -57,8 +58,11 @@ ros::Subscriber<ard_tower::Tower>         sub_tower        ("actuators/ard_tower
 
 // ~ Publisher ~ 
 ard_tower::TowerResponses  event_msg ; 
+ard_door::Door door_msg ; 
 //driver_ax12::Ax12Command  ax12_event_msg ; 
+
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
+ros::Publisher pub_door_action       ("actuators/ard_door/action",   &door_msg ); 
 //ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event_msg); 
 
 
@@ -325,6 +329,7 @@ void setup() {
   nh.subscribe(sub_tower); 
  
   nh.advertise(pub_tower_responses); 
+  nh.advertise(pub_door_action); 
 //  nh.advertise(pub_ax12_responses); 
 
   // Servo Actuator init 

@@ -6,8 +6,11 @@
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/dynamic_barriers_manager.h"
 #include "pathfinder/pos_convertor.h"
+#include "pathfinder/occupancy_grid.h"
 
-#include "geometry_msgs/Pose2D.h"
+#include <geometry_msgs/Pose2D.h>
+#include <ros/service_client.h>
+#include <ros/node_handle.h>
 
 class PathfinderROSInterface
 {
@@ -18,7 +21,11 @@ public:
      * @param mapFileName The path to the image containing the static obstacles.
      * @param convertor The convertor that will be used to convert positions between the two referencials.
      */
-    PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor);
+    PathfinderROSInterface(
+        const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor,
+        const std::string& getTerrainSrvName, ros::NodeHandle& nh,
+        std::pair<unsigned, unsigned> defaultScale = {}
+    );
     
     /**
      * Callback for the ros FindPath service. Coordinates are converted between the outside and inside referential.
@@ -41,11 +48,10 @@ public:
      */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
+    void setSafetyMargin(double margin);
+    
 private:
-    /**
-     * Pointer to the main algorithm
-     */
-    std::unique_ptr<Pathfinder> pathfinderPtr_;
+    double _safetyMargin = 0.15;
     
     /**
      * The barrier subscribers manager
@@ -55,26 +61,24 @@ private:
     /** Convertor object between inside and outside referentials **/
     std::shared_ptr<PosConvertor> convertor_;
     
-    // Convertors
-    /**
-     * Converts a position from the outside referential and type to the inside ones.
-     * @param pos The position in the outside referential and type.
-     * @return The position in the inside referential and type.
-     */
-    Point pose2DToPoint_(const geometry_msgs::Pose2D& pos) const;
-    /**
-     * Converts a position from the inside referential and type to the outside ones.
-     * @param pos The position in the inside referential and type.
-     * @return The position in the outside referential and type.
-     */
-    geometry_msgs::Pose2D pointToPose2D_(const Point& pos) const;
+    pathfinder::OccupancyGrid _occupancyGrid;
     
+    /**
+     * Main algorithm
+     */
+    Pathfinder pathfinder_;
+    
+    ros::ServiceClient _srvGetTerrain;
+    
+    // Convertors
     /**
      * Convert the path in the outside type to a string for debugging purposes.
      * @param path The path in outside referential and type.
      * @return The path in string format.
      */
     std::string pathRosToStr_(const std::vector<geometry_msgs::Pose2D>& path);
+    
+    bool _updateStaticMap();
 };
 
 #endif // PATHFINDER_ROS_INTERFACE_H

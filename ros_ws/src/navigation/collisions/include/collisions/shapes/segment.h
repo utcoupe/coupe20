@@ -2,7 +2,7 @@
 #define COLLISIONS_SHAPES_SEGMENT_H
 
 #include "collisions/shapes/abstract_shape.h"
-#include "collisions/point.h"
+#include "geometry_tools/point.h"
 
 namespace CollisionsShapes {
 

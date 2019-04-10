@@ -14,16 +14,13 @@ bool DynamicBarriersManager::hasBarriers(const geometry_msgs::Pose2D& pos)
 
 bool DynamicBarriersManager::hasBarriers(const Point& pos)
 {
-    auto pose2dConvert = pointToPose2D(pos);
-    geometry_msgs::Pose2D pose2d;
-    pose2d.x = pos.getX();
-    pose2d.y = pos.getY();
+    auto pose2dConvert = _convertor->fromMapToRosPos(pos).toPose2D();
     
     for (const auto& subscriber : subscribers)
     {
         if (subscriber->needConversionBefore() && subscriber->hasBarrier(pose2dConvert))
             return true;
-        else if (!subscriber->needConversionBefore() && subscriber->hasBarrier(pose2d))
+        else if (!subscriber->needConversionBefore() && subscriber->hasBarrier(pos.toPose2D()))
             return true;
     }
     return false;
@@ -50,14 +47,5 @@ void DynamicBarriersManager::fetchOccupancyDatas(const uint& widthGrid, const ui
 {
     for (const auto& subscriber : subscribers)
         subscriber->fetchOccupancyData(widthGrid, heightGrid);
-}
-
-geometry_msgs::Pose2D DynamicBarriersManager::pointToPose2D(const Point& pos) const
-{
-    auto convertedPos = _convertor->fromMapToRosPos(pair<double, double>(pos.getX(), pos.getY()));
-    geometry_msgs::Pose2D newPos;
-    newPos.x = convertedPos.first;
-    newPos.y = convertedPos.second;
-    return newPos;
 }
 

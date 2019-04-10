@@ -1,6 +1,6 @@
 #include "collisions/markers_publisher.h"
 
-#include "collisions/position.h"
+#include "geometry_tools/position.h"
 #include "collisions/shapes/segment.h"
 #include "collisions/shapes/rectangle.h"
 #include "collisions/shapes/circle.h"
@@ -91,8 +91,7 @@ void MarkersPublisher::publishMarker(std::string ns, int index, ShapePtr shape, 
     
     marker.scale.z = z_scale;
     marker.color = color;
-    marker.pose.position.x = shape->getPos().getX();
-    marker.pose.position.y = shape->getPos().getY();
+    marker.pose.position = shape->getPos().toGeoPoint();
     marker.pose.position.z = z_height;
     marker.pose.orientation = eulerToQuaternion({0, 0, shape->getPos().getAngle()});
     marker.lifetime = ros::Duration(0.1);

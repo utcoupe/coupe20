@@ -28,7 +28,7 @@ class StatusServices(object):
             if success: rospy.loginfo("Node '{}' initialized successfully.".format(self.node_name))
             else:       rospy.logerr( "Node '{}' didn't initialize correctly.".format(self.node_name))
         except:
-            rospy.logerr("status_services couldn't contact ai/game_manager to send init notification.")
+            rospy.logwarn("status_services couldn't contact ai/game_manager to send init notification.")
 
 
 '''

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
     <name>collisions</name>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <description>The collisions package</description>
     <license>GLPv3</license>
     <author email="pielaclau@gmail.com">MadeInPierre</author>
@@ -23,6 +23,7 @@
     <depend>tf2_ros</depend>
     <depend>tf</depend>
     <depend>visualization_msgs</depend>
+    <depend>geometry_tools</depend>
     <exec_depend>message_runtime</exec_depend>
     <export>
     </export>

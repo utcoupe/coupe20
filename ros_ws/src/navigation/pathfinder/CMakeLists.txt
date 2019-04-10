@@ -13,14 +13,13 @@ find_package(catkin REQUIRED COMPONENTS
     game_manager
     static_map
     objects_classifier
+    geometry_tools
 )
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH}) # Please note the use of CMAKE_CURRENT_SOURCE_DIR
 find_package(SFML 2 REQUIRED COMPONENTS
     graphics
 )
-
-set(NLOHMANN_JSON_HEADER_LOCATION "$ENV{UTCOUPE_WORKSPACE}/libs/json/single_include/")
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -59,7 +58,6 @@ catkin_package(
 
 include_directories(
     include
-    ${NLOHMANN_JSON_HEADER_LOCATION}
     ${catkin_INCLUDE_DIRS}
 )
 

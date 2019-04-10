@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os
-import yaml
 import rospy
+import xml.etree.ElementTree as ET
 
 from definitions.srv import GetDefinition
 
@@ -12,14 +12,26 @@ class LoadingHelpers():
     '''
 
     @staticmethod
-    def checkKeysExist(checkdict, *keys_required):
+    def checkAttribExist(check_xml, *keys_required):
         '''
         Checks if the dict given has all of the keys given in keys_required.
         Pops a ROS error and stops the node if the condition is not verified.
         '''
         for k in keys_required:
-            if k not in checkdict.keys():
-                m = "Missing required '{}' element in Map YML description file. Couldn't load Map.".format(k)
+            if k not in check_xml.attrib.keys():
+                m = "Missing required '{}' attribute in Map XML description file. Couldn't load Map.".format(k)
+                rospy.logerr(m)
+                raise ValueError(m)
+    
+    @staticmethod
+    def checkChildExist(check_xml, *keys_required):
+        '''
+        Checks if the dict given has all of the children given in keys_required.
+        Pops a ROS error and stops the node if the condition is not verified.
+        '''
+        for k in keys_required:
+            if not check_xml.findall(k):
+                m = "Missing required '{}' element in Map XML description file. Couldn't load Map.".format(k)
                 rospy.logerr(m)
                 raise ValueError(m)
 
@@ -30,7 +42,7 @@ class LoadingHelpers():
         Pops a ROS error and stops the node if the condition is not verified.
         '''
         if value not in values_required:
-            m = "Element value '{}' not valid, must be in '{}'. Couldn't load Map.".format(value, values_required)
+            m = "Element value '{}' not valid, must be in {}. Couldn't load Map.".format(value, values_required)
             rospy.logerr(m)
             raise ValueError(m)
 
@@ -48,42 +60,39 @@ class MapLoader():
         Gets the YML Map description file from the specified method
         Please change the method correspondingly to what is currently used in your package.
         '''
-        return MapLoader.loafYamlFromDescriptionModule(filename)
+        return MapLoader.loafXmlFromDescriptionModule(filename)
 
     @staticmethod
-    def loadYamlFromFile(filename): # DEPRECATED
+    def loadXmlFromFile(filename): # DEPRECATED
         '''
         Loads the description file simply by getting the file in disk.
         The file MUST be in the package's directory to avoid any problems.
         '''
-        return MapLoader._json_from_file(os.path.dirname(__file__) + "/../../def" + filename)
+        return MapLoader._xml_from_file(os.path.dirname(__file__) + "/../../def" + filename)
 
     @staticmethod
-    def loafYamlFromDescriptionModule(filename):
+    def loafXmlFromDescriptionModule(filename):
         '''
         Loads the description file by gettign it from the 'memory/definitions' ROS package.
         '''
-        get_def = rospy.ServiceProxy('memory/definitions/get', GetDefinition)
+        rospy.logdebug("Fetching '{}' xml file...".format(filename))
+        srv_get_def = rospy.ServiceProxy('memory/definitions/get', GetDefinition)
         try:
-            get_def.wait_for_service(timeout = 2)
+            srv_get_def.wait_for_service(timeout = 2)
         except:
             rospy.logerr("FATAL Could not contact definitions service, timeout reached. Aborting.")
             raise Exception()
 
         try:
-            res = get_def('map/' + filename)
+            res = srv_get_def("map/" + filename)
             if not res.success:
                 rospy.logerr("Error when fetching '{}' definition file".format(filename))
                 raise Exception()
-            return MapLoader._json_from_file(res.path)
+            return MapLoader._xml_from_file(res.path)
         except rospy.ServiceException as exc:
             rospy.logerr("Unhandled error while getting def file: {}".format(str(exc)))
             raise Exception()
 
     @staticmethod
-    def _json_from_file(path):
-        with open(path, 'r') as stream:
-            try:
-                return yaml.load(stream)
-            except yaml.YAMLError as exc:
-                rospy.logerr("Could not load map YML file : " + str(exc))
+    def _xml_from_file(path):
+        return ET.parse(path).getroot()

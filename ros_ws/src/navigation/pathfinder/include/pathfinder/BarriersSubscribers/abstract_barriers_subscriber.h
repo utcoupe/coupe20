@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 
-#include "geometry_msgs/Pose2D.h"
+#include <geometry_tools/point.h>
 
 #include <mutex>
 
@@ -17,13 +17,13 @@ public:
      * Initialize the safety margin.
      * @param safetyMargin Margin to add to barriers.
      */
-    AbstractBarriersSubscriber(const double& safetyMargin) : _safetyMargin(safetyMargin) {};
+    AbstractBarriersSubscriber(double safetyMargin) : _safetyMargin(safetyMargin) {};
     
     /**
      * Check if there are any obstacles at the given position.
      * @param pos The position to check.
      */
-    virtual bool hasBarrier(const geometry_msgs::Pose2D& pos) = 0;
+    virtual bool hasBarrier(Point pos) = 0;
     
     /**
      * Create internaly the ros subscriber.
@@ -37,7 +37,7 @@ public:
      * Update the safety margin.
      * @param safetyMargin The new safety margin.
      */
-    void setSafetyMargin(const double& safetyMargin) { _safetyMargin = safetyMargin; }
+    void setSafetyMargin(double safetyMargin) { _safetyMargin = safetyMargin; }
     
     /**
      * Before starting its algorithm, the pathfinder can ask the subscriber to make a cache of all current barriers.

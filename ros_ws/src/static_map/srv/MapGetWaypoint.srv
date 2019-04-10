@@ -1,0 +1,9 @@
+# Service that takes an incomplete static_map/Waypoint message 
+# and that responds with the same message with the rest of the fields
+# completed if possible.
+# E.g. Send a waypoint with only its name and you will get the same 
+# thing with the XY filled (if the waypoint exists).
+static_map/Waypoint waypoint
+---
+bool success
+static_map/Waypoint filled_waypoint

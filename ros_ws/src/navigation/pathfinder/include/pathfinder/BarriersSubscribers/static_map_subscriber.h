@@ -1,10 +1,11 @@
-#ifndef static_map_SUBSCRIBER_H
-#define static_map_SUBSCRIBER_H
+#ifndef STATIC_MAP_SUBSCRIBER_H
+#define STATIC_MAP_SUBSCRIBER_H
 
 #include "pathfinder/BarriersSubscribers/abstract_barriers_subscriber.h"
 #include "pathfinder/pos_convertor.h"
+#include "pathfinder/occupancy_grid.h"
 
-#include "nlohmann/json.hpp"
+#include <static_map/MapContainer.h>
 
 #include <vector>
 
@@ -12,26 +13,26 @@ namespace Memory {
     class MapSubscriber : public AbstractBarriersSubscriber
     {
     public:
-        MapSubscriber(const double& safetyMargin);
+        MapSubscriber(double safetyMargin): MapSubscriber(safetyMargin, nullptr) {}
+        MapSubscriber(double safetyMargin, std::shared_ptr<PosConvertor> convertor);
         
-        bool hasBarrier(const geometry_msgs::Pose2D& pos) override;
+        bool hasBarrier(Point pos) override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
         void fetchOccupancyData(const uint& withGrid, const uint& heightGrid) override;
         const bool needConversionBefore() const  override { return false; }
         
-        void setConvertor(std::shared_ptr<PosConvertor> convertor) { _convertor = convertor; };
+        void setConvertor(std::shared_ptr<PosConvertor> convertor) {
+            _convertor = convertor;
+            _occupancyGrid.setConvertor(convertor);
+        };
         
     private:
-        std::vector<nlohmann::json> _lastReceivedJsons;
+        pathfinder::OccupancyGrid _occupancyGrid;
         ros::ServiceClient _srvGetMapObjects;
-        std::vector< std::vector<bool> > _occupancyGrid;
         
         std::shared_ptr<PosConvertor> _convertor;
-        
-        void drawRectangle(const nlohmann::json& jsonRect);
-        void drawCircle(const nlohmann::json& jsonCircle);
     };
 }
 
-#endif // static_map_SUBSCRIBER_H
+#endif // STATIC_MAP_SUBSCRIBER_H

@@ -3,7 +3,7 @@
 
 import rospy
 
-from static_map.srv import FillWaypoint
+from static_map.srv import MapGetWaypoint
 from static_map.msg import Waypoint
 
 
@@ -14,13 +14,14 @@ class MapClient(object):
     def __init__ (self):
         self._fillWaypointSrv = ""
 
-        self.FILLWAYPOINTS_SERVICE_NAME = "memory/map/fill_waypoint"
+        self.FILLWAYPOINTS_SERVICE_NAME = "static_map/get_waypoint"
 
         self._connectToServer()
 
     def getPosFromWaypoint(self, waypointName):
         waypoint = Waypoint(name = waypointName, has_angle = True)
-        return self._fillWaypointSrv.call(waypoint = waypoint).filled_waypoint.pose
+        response = self._fillWaypointSrv.call(waypoint = waypoint).filled_waypoint
+        return response.pose, response.has_angle
     
     def _connectToServer(self):
         rospy.loginfo("Waiting for \"" + self.FILLWAYPOINTS_SERVICE_NAME + "\"")
@@ -28,7 +29,7 @@ class MapClient(object):
         rospy.loginfo("Map found")
 
         try:
-            self._fillWaypointSrv = rospy.ServiceProxy(self.FILLWAYPOINTS_SERVICE_NAME, FillWaypoint)
+            self._fillWaypointSrv = rospy.ServiceProxy(self.FILLWAYPOINTS_SERVICE_NAME, MapGetWaypoint)
         except rospy.ServiceException, e:
             str_error = "Error when trying to connect to "
             str_error += self.FILLWAYPOINTS_SERVICE_NAME

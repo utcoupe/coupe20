@@ -3,13 +3,15 @@
 
 #include <ros/console.h>
 
-#include "pathfinder/point.h"
 #include "pathfinder/dynamic_barriers_manager.h"
+#include "pathfinder/occupancy_grid.h"
+
+#include <geometry_tools/point.h>
+
+#include <SFML/Graphics/Image.hpp>
 
 #include <memory>
 #include <vector>
-
-#include <SFML/Graphics/Image.hpp>
 
 /**
  * Class used to load and save the pathfinder's datas in an image format.
@@ -17,7 +19,7 @@
 class MapStorage
 {
 public:
-    using Vect2DBool = std::vector<std::vector<bool> >;
+    using Vect2DBool = std::vector<std::vector<bool>>;
     
     MapStorage() = default;
     
@@ -36,7 +38,7 @@ public:
      * @param path The raw path at the end of the pathfinder algorithm
      * @param smoothPath The smoothed path that will be send as response.
      */
-    void saveMapToFile(const std::string& fileName, const Vect2DBool& allowedPos, std::shared_ptr<DynamicBarriersManager> dynBarriersMng, const std::vector<Point>& path, const std::vector<Point>& smoothPath);
+    void saveMapToFile(const std::string& fileName, const pathfinder::OccupancyGrid& allowedPos, std::shared_ptr<DynamicBarriersManager> dynBarriersMng, const std::vector<Point>& path, const std::vector<Point>& smoothPath);
 
 private:
     const sf::Color ALLOWED_POS_COLOR       = sf::Color::White;

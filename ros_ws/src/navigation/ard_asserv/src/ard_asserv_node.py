@@ -9,7 +9,7 @@ from port_finder.srv import *
 import asserv
 from game_manager import StatusServices
 from game_manager.msg import GameStatus
-from static_map.srv import FillWaypoint
+from static_map.srv import MapGetWaypoint
 from static_map.msg import Waypoint
 import tf
 import tf2_ros
@@ -19,7 +19,7 @@ __date__ = 21/10/2017
 
 NODE_NAME = "ard_asserv"
 GET_PORT_SERVICE_NAME = "drivers/port_finder/get_port"
-GET_MAP_SERVICE_NAME = "memory/map/fill_waypoint"
+GET_MAP_SERVICE_NAME = "static_map/get_waypoint"
 GET_PORT_SERVICE_TIMEOUT = 25  # in seconds
 GET_MAP_SERVICE_TIMEOUT = 15  # in seconds
 
@@ -78,7 +78,7 @@ class Asserv:
             self._asserv_instance = asserv.AsservReal(self, arduino_port)
         try:
             rospy.wait_for_service(GET_MAP_SERVICE_NAME, GET_MAP_SERVICE_TIMEOUT)
-            self._srv_client_map_fill_waypoints = rospy.ServiceProxy(GET_MAP_SERVICE_NAME, FillWaypoint)
+            self._srv_client_map_fill_waypoints = rospy.ServiceProxy(GET_MAP_SERVICE_NAME, MapGetWaypoint)
             rospy.logdebug("static_map has been found.")
         except rospy.ROSException as exc:
             rospy.logwarn("static_map has not been launched...")
@@ -176,7 +176,7 @@ class Asserv:
         """
         rospy.loginfo("[ASSERV] Received a request (pwm service).")
         if self._asserv_instance:
-            ret_value = self._asserv_instance.pwm(request.left, request.right, request.duration, request.autoStop)
+            ret_value = self._asserv_instance.pwm(request.left, request.right, request.duration, request.auto_stop)
         else:
             ret_value = False
         return PwmResponse(ret_value)

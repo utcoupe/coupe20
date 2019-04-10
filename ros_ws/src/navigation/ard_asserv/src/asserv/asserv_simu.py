@@ -5,8 +5,10 @@ import rospy
 from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
+from time import sleep
+from static_map.srv import MapGetContext, MapGetContextRequest
 
-__author__ = "Thomas Fuhrmann & milesial"
+__author__ = "Thomas Fuhrmann & milesial & Mindstan"
 __date__ = 19/04/2018
 
 # TODO adapt to have realistic behaviour of the robot
@@ -18,6 +20,15 @@ ASSERV_ERROR_POSITION = 0.005  # in meters
 ASSERV_ERROR_ANGLE = 0.05  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
 
+class AsservSetPosModes():
+    AXY = 0
+    A = 1
+    Y = 2
+    AY = 3
+    X = 4
+    AX = 5
+    XY = 6
+
 class AsservGoal():
     def __init__(self, goal_id, pose, has_angle=False, direction=1):
         self.goal_id = goal_id
@@ -27,6 +38,7 @@ class AsservGoal():
 
 class AsservSimu(AsservAbstract):
     def __init__(self, asserv_node):
+        
         AsservAbstract.__init__(self, asserv_node)
         rospy.loginfo("AsservSimu")
         # Asserv management stuff
@@ -49,6 +61,8 @@ class AsservSimu(AsservAbstract):
         self._max_acceleration = 0.1
         # The speed is in m/s
         self._max_linear_speed = 0.5
+        # The angular speed ratio
+        self._angular_speed_ratio = 2
         # The angular speed is in rad/s
         self._max_angular_speed = 1.0
         # ROS stuff
@@ -57,30 +71,88 @@ class AsservSimu(AsservAbstract):
         self._tmr_asserv_computation = rospy.Timer(rospy.Duration(ASSERV_RATE), self._callback_timer_asserv_computation)
 
         self._states = StatesManager()
+        # Get map size 
+        self._map_x = 3.0
+        self._map_y = 2.0
+        self._robot_height = 0.2
+        
+        context = self.getMapContext()
+        if context:
+            self._map_x = context.terrain_shape.width
+            self._map_y = context.terrain_shape.height
+            self._robot_height = context.robot_shape.height
+        else:
+            rospy.logwarn("Can't get map context, taking default values.")
+
+
+    def getMapContext(self):
+        dest = "/static_map/get_context"
+        try: # Handle a timeout in case one node doesn't respond
+            server_wait_timeout = 2
+            rospy.logdebug("Waiting for service %s for %d seconds" % (dest, server_wait_timeout))
+            rospy.wait_for_service(dest, timeout=server_wait_timeout)
+        except rospy.ROSException:
+            return False
+
+        rospy.loginfo("Sending service request to '{}'...".format(dest))
+        service = rospy.ServiceProxy(dest, MapGetContext)
+        response = service(MapGetContextRequest()) # rospy can't handle timeout, solution ?
+
+        if response is not None:
+            return response
+        else:
+            rospy.logerr("Service call response from '{}' is null.".format(dest))
+        return False
 
     def start(self):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
         rospy.spin()
 
-    def goto(self, goal_id, x, y, direction):
+    def goto(self, goal_id, x, y, direction, slow_go):
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ").")
+        self._apply_slow_go(slow_go)
         self._start_trajectory(goal_id, x, y, 0, direction)
         return True
 
-    def gotoa(self, goal_id, x, y, a, direction):
+    def gotoa(self, goal_id, x, y, a, direction, slow_go):
+        self._apply_slow_go(slow_go)
         #rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ", a = " + str(a) + ").")
         self._start_trajectory(goal_id, x, y, a, direction, has_angle=True)
         return True
 
-    def rot(self, goal_id, a, no_modulo):
+    def rot(self, goal_id, a, no_modulo, slow_go):
+        self._apply_slow_go(slow_go)
         #rospy.loginfo("[ASSERV] Accepting goal (a = " + str(a) + ").")
         self._current_pose.theta = a
         self._node.goal_reached(goal_id, True)
         return True
 
-    def pwm(self, left, right, duration):
-        rospy.logwarn("Pwm is not implemented in simu yet...")
-        return False
+    def pwm(self, left, right, duration, auto_stop):
+
+        #Accelerate until run into wall then come to a complete stop
+        #Only checks if pwm is backwards or forward, always goes top speed and does not turn
+        if left != right :
+            rospy.logwarn("Remember, can't turn with PWM with simu !")
+        if not auto_stop:
+            rospy.logwarn("PWM without auto_stop has not been implemented yet...")
+            return False
+        
+        direction = 1 if (left >= 0 and right >= 0) else 0
+        self._accelerate(1, direction) # set linear speed
+        self._current_goal_initial_angle = self._current_pose.theta # set current angle
+
+        x_high_edge = self._map_x - self._robot_height/2
+        y_high_edge = self._map_y - self._robot_height/2
+        low_edge = self._robot_height/2
+        
+        while  (self._current_pose.x < x_high_edge and self._current_pose.x > low_edge \
+            and self._current_pose.y < y_high_edge and self._current_pose.y > low_edge):
+            self._update_current_pose_pos()
+            sleep(0.005)
+
+        self._wallhit_stop(direction)
+
+        return True
 
     def speed(self, linear, angular, duration):
         rospy.logerr("This function has not been implemented yet...")
@@ -127,12 +199,27 @@ class AsservSimu(AsservAbstract):
     def set_pid(self, p, i, d):
         return True
 
-    def set_pos(self, x, y, a):
+    def set_pos(self, x, y, a, mode):
         return_value = True
         if self._current_linear_speed > 0 or self._current_angular_speed > 0:
             rospy.logwarn("Setting pose wile moving is not a good idea...")
             return_value = False
         else:
+            if mode == AsservSetPosModes.A:
+                x = self._current_pose.x
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.Y:
+                x = self._current_pose.x
+                a = self._current_pose.theta
+            elif mode == AsservSetPosModes.AY:
+                x = self._current_pose.x
+            elif mode == AsservSetPosModes.X:
+                a = self._current_pose.theta
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.AX:
+                y = self._current_pose.y
+            elif mode == AsservSetPosModes.XY:
+                a = self._current_pose.theta
             self._current_pose = Pose2D(x, y, a)
         return return_value
 
@@ -203,7 +290,34 @@ class AsservSimu(AsservAbstract):
         )
         self._rotate(rot_mult)
 
-    def _accelerate(self, acc_mult=1):
+    def _apply_slow_go(self, slow_go=False):
+        if slow_go : 
+            self.set_max_speed(self._max_linear_speed/2, self._angular_speed_ratio)
+        else :
+            self.set_max_speed(self._max_linear_speed, self._angular_speed_ratio)
+
+    def _wallhit_stop(self, direction):
+        x_high_edge = self._map_x - self._robot_height/2
+        y_high_edge = self._map_y - self._robot_height/2
+        low_edge = self._robot_height/2
+
+        self._states.stop_movement()
+        self._current_linear_speed = 0
+        self._current_angular_speed = 0
+        if self._current_pose.x>= x_high_edge :
+            self._current_pose.theta = 0
+        if self._current_pose.x <= low_edge :
+            self._current_pose.theta = -math.pi
+        if self._current_pose.y >= y_high_edge :
+            self._current_pose.theta = math.pi/2
+        if self._current_pose.y <= low_edge :
+            self._current_pose.theta = -math.pi/2
+
+        if direction == 0 : # Semiturn if we were going backwards
+            self._current_pose.theta += math.pi
+
+
+    def _accelerate(self, acc_mult=1, direction=1):
         self._current_linear_speed += acc_mult * self._max_acceleration * ASSERV_RATE
 
         if self._current_linear_speed < ASSERV_MINIMAL_SPEED:
@@ -211,6 +325,11 @@ class AsservSimu(AsservAbstract):
 
         elif self._current_linear_speed > self._max_linear_speed:
             self._current_linear_speed = self._max_linear_speed
+
+        if not direction :
+            self._current_linear_speed = -self._current_linear_speed
+
+
 
     def _update_current_pose_pos(self):
         current_x = self._current_pose.x + self._current_linear_speed * ASSERV_RATE * math.cos(

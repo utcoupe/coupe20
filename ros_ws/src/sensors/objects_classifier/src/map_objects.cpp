@@ -1,51 +1,51 @@
 #include <ros/ros.h>
-#include <nlohmann/json.hpp>
 
-#include <static_map/MapGet.h>
+#include <static_map/MapGetContainer.h>
+#include <static_map/MapObject.h>
 
 #include "map_objects.h"
 
-using namespace nlohmann;
+
+const std::string MAP_GET_SERVICE = "static_map/get_container";
+const std::string MAP_OBJECTS = "map";
 
 void MapObjects::fetch_map_objects() {
-    ros::ServiceClient client = nh_.serviceClient<static_map::MapGet>(MAP_GET_SERVICE);
+    ros::ServiceClient client = nh_.serviceClient<static_map::MapGetContainer>(MAP_GET_SERVICE);
 
     client.waitForExistence();
 
-    static_map::MapGet srv;
+    static_map::MapGetContainer srv;
 
-    srv.request.request_path = MAP_OBJECTS;
+    srv.request.path = MAP_OBJECTS;
+    srv.request.include_subcontainers = true;
 
     if (client.call(srv) && srv.response.success) {
-        auto objects = json::parse(srv.response.response);
+        const auto& mapObjects = srv.response.container.objects;
 
         map_shapes_.clear();
-        for (auto &object : objects) {
-
-            if (object["position"]["frame_id"] != "/map") {
-                ROS_ERROR("Map object not in /map !");
-                continue;
-            }
-
-
-            std::string type = object["shape"]["type"];
-
-            float x = object["position"]["x"];
-            float y = object["position"]["y"];
-
-            if (type == "rect") {
-                float height = object["shape"]["height"];
-                float width = object["shape"]["width"];
-
-                map_shapes_.push_back(std::make_shared<const Rectangle>(x, y, width, height));
-
-            } else if (type == "circle") {
-                float radius = object["shape"]["radius"];
-
-                map_shapes_.push_back(std::make_shared<const Circle>(x, y, radius));
-
-            } else {
-                ROS_ERROR("Polygons from map not supported !");
+        for (auto &mapObject : mapObjects) {
+            switch(mapObject.shape_type) {
+                case static_map::MapObject::SHAPE_RECT:
+                    map_shapes_.push_back(std::make_shared<Rectangle>(
+                        Point(mapObject.pose),
+                        mapObject.width,
+                        mapObject.height
+                    ));
+                    break;
+                
+                case static_map::MapObject::SHAPE_CIRCLE:
+                    map_shapes_.push_back(std::make_shared<Circle>(
+                        Point(mapObject.pose),
+                        mapObject.radius
+                    ));
+                    break;
+                
+                case static_map::MapObject::SHAPE_POINT:
+                    ROS_WARN_ONCE("[MapObjects::fetch_map_objects] Point shape not supported!");
+                    break;
+                
+                default:
+                    ROS_ERROR("[MapObjects::fetch_map_objects] Unknown shape!");
             }
 
         }
@@ -57,14 +57,20 @@ void MapObjects::fetch_map_objects() {
     }
 }
 
-bool MapObjects::contains_point(float x, float y) {
+bool MapObjects::contains_point(Point point) const {
     // TODO: remove hardcoded values and fetch from map
     
-    if (x > 3 - WALLS_MARGIN || x < WALLS_MARGIN || y < WALLS_MARGIN || y > 2 - WALLS_MARGIN)
+    if (
+        point.getX() > 3 - WALLS_MARGIN ||
+        point.getX() < WALLS_MARGIN ||
+        point.getY() < WALLS_MARGIN ||
+        point.getY() > 2 - WALLS_MARGIN
+    ) {
         return true;
+    }
 
-    for (auto &map_shape : map_shapes_) {
-        if (map_shape->contains_point(x, y))
+    for (const auto &map_shape : map_shapes_) {
+        if (map_shape->contains_point(point))
             return true;
     }
 

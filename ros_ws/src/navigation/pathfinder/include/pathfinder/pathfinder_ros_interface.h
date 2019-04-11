@@ -48,7 +48,7 @@ public:
      */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
-    void setSafetyMargin(double margin, bool cascade = false);
+    bool setSafetyMargin(double margin, bool cascade = false);
     
 private:
     double _safetyMargin = 0.15;
@@ -59,11 +59,16 @@ private:
     std::atomic<bool> _lockUpdateMap { false };
     
     /**
+     * Prevents PathfinderROSInterface::_updateMarginFromStaticMap to run multiple times simultanously
+     */
+    std::atomic<bool> _lockUpdateMargin { false };
+    
+    /**
      * The barrier subscribers manager
      */
     std::shared_ptr<DynamicBarriersManager> dynBarriersMng_;
     
-    /** Convertor object between inside and outside referentials **/
+    /** Convertor object between pathfinder and ros referentials **/
     std::shared_ptr<PosConvertor> convertor_;
     
     pathfinder::OccupancyGrid _occupancyGrid;
@@ -75,15 +80,22 @@ private:
     
     ros::ServiceClient _srvGetTerrain;
     
-    // Convertors
     /**
-     * Convert the path in the outside type to a string for debugging purposes.
+     * Convert the path from geometry_msgs::Pose2D type to a string for debugging purposes.
      * @param path The path in outside referential and type.
      * @return The path in string format.
      */
     std::string pathRosToStr_(const std::vector<geometry_msgs::Pose2D>& path);
     
+    /**
+     * Updates the pathfinder map and the safety margin
+     */
     bool _updateStaticMap();
+    
+    /**
+     * Computes the safety margin with the robot shape given by static_map.
+     */
+    bool _updateMarginFromStaticMap();
 };
 
 #endif // PATHFINDER_ROS_INTERFACE_H

@@ -4,8 +4,9 @@
 
 using namespace std;
 
-const string MAP_LAYER_NAME = "pathfinder";
-const unsigned WARN_MAP_SIZE = 200000;
+const string   MAP_LAYER_NAME   = "pathfinder";
+const unsigned WARN_MAP_SIZE    = 200000; // In square pixels (pathfinder referencial)
+const double   PRECISION_MARGIN = 0.05; // In meters (ROS referencial)
 
 PathfinderROSInterface::PathfinderROSInterface(
         const string& mapFileName, std::shared_ptr<PosConvertor> convertor,
@@ -20,8 +21,8 @@ PathfinderROSInterface::PathfinderROSInterface(
     _srvGetTerrain = nh.serviceClient<static_map::MapGetContext>(getTerrainSrvName);
     
     if (mapFileName == "") {
-        if (!_updateStaticMap()) {
-            ROS_WARN("Cannot initialize terrain with static_map service!");
+        if (!_updateMarginFromStaticMap()) {
+            ROS_WARN("Cannot initialize margin or terrain with static_map service!");
         }
     }
     auto mapSize = _occupancyGrid.getSize();
@@ -77,11 +78,17 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
 
 void PathfinderROSInterface::reconfigureCallback(pathfinder::PathfinderNodeConfig& config, uint32_t level)
 {
+    static bool firstCall = true; // TODO Find better approach
     ROS_INFO_STREAM ("Reconfigure request : " << config.render << " " << config.renderFile << " " << config.safetyMargin);
     pathfinder_.activatePathRendering(config.render);
     pathfinder_.setPathToRenderOutputFile(config.renderFile);
-    // TODO detect env var and home
-    setSafetyMargin(config.safetyMargin);
+    if (!firstCall) {
+        // TODO detect env var and home
+        setSafetyMargin(config.safetyMargin);
+    } else {
+        ROS_INFO("Not updating margin since it is init call");
+    }
+    firstCall = false;
 }
 
 void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber)
@@ -89,14 +96,16 @@ void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::Barrie
     dynBarriersMng_->addBarrierSubscriber(std::move(subscriber));
 }
 
-void PathfinderROSInterface::setSafetyMargin(double margin, bool cascade)
+bool PathfinderROSInterface::setSafetyMargin(double margin, bool cascade)
 {
     _safetyMargin = margin;
     dynBarriersMng_->updateSafetyMargin(margin);
+    auto success = true;
     if (cascade) {
         ROS_INFO("Updating safety margin of pathfinder map.");
-        _updateStaticMap(); // TODO what if something went wrong ?
+        success = _updateStaticMap(); // TODO what if something went wrong ?
     }
+    return success;
 }
 
 string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>& path)
@@ -119,23 +128,57 @@ bool PathfinderROSInterface::_updateStaticMap()
         return true; // or false ?
     }
     _lockUpdateMap = true;
+    auto success = true;
     
     static_map::MapGetContext srv;
     if (!_srvGetTerrain.call(srv)) {
         ROS_ERROR("PathfinderROSInterface::_updateStaticMap(): Cannot contact static_map.");
-        return false;
-    }
-    
-    _occupancyGrid.clear();
-    
-    for (const auto& layer: srv.response.terrain_layers) {
-        if (layer.name == MAP_LAYER_NAME) {
-            ROS_DEBUG_STREAM("Loading wall " << layer.name);
-            _occupancyGrid.setOccupancyFromMap(layer.walls, false, _safetyMargin);
+        success = false;
+    } else {
+        _occupancyGrid.clear();
+        
+        for (const auto& layer: srv.response.terrain_layers) {
+            if (layer.name == MAP_LAYER_NAME) {
+                ROS_DEBUG_STREAM("Loading wall " << layer.name);
+                _occupancyGrid.setOccupancyFromMap(layer.walls, false, _safetyMargin);
+            }
         }
     }
     
     _lockUpdateMap = false;
-    return true;
+    return success;
+}
+
+bool PathfinderROSInterface::_updateMarginFromStaticMap()
+{
+    if (_lockUpdateMargin) {
+        // _updateMarginFromStaticMap is already updating
+        return true;
+    }
+    _lockUpdateMargin = true;
+    auto success = true;
+    
+    static_map::MapGetContext srv;
+    if (!_srvGetTerrain.call(srv)) {
+        ROS_ERROR("PathfinderROSInterface::_updateMarginFromStaticMap(): Cannot contact static_map.");
+        success = false;
+    } else {
+        const auto& shape = srv.response.robot_shape;
+        switch (shape.shape_type) {
+        case static_map::MapObject::SHAPE_RECT:
+            // TODO switch between central or offset point
+            success = setSafetyMargin(std::hypot(shape.width / 2.0, shape.height / 2.0) + PRECISION_MARGIN);
+            break;
+        case static_map::MapObject::SHAPE_CIRCLE:
+            success = setSafetyMargin(shape.radius + PRECISION_MARGIN);
+            break;
+        default:
+            ROS_FATAL_ONCE("PathfinderROSInterface::_updateMarginFromStaticMap(): Unknown shape. This message will print once.");
+            success = false;
+        }
+    }
+    
+    _lockUpdateMargin = false;
+    return success;
 }
 

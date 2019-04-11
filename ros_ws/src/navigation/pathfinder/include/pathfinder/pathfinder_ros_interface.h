@@ -56,12 +56,12 @@ private:
     /**
      * Prevents PathfinderROSInterface::_updateStaticMap to run multiple times simultanously
      */
-    std::atomic<bool> _lockUpdateMap { false };
+    std::atomic<bool> _lockUpdateMap; // TODO C++17: = { false };
     
     /**
      * Prevents PathfinderROSInterface::_updateMarginFromStaticMap to run multiple times simultanously
      */
-    std::atomic<bool> _lockUpdateMargin { false };
+    std::atomic<bool> _lockUpdateMargin; // TODO C++17: = { false };
     
     /**
      * The barrier subscribers manager

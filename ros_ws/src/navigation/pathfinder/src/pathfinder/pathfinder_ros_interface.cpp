@@ -18,9 +18,6 @@ PathfinderROSInterface::PathfinderROSInterface(
     _occupancyGrid(convertor_, defaultScale.second, defaultScale.first),
     pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
-    _lockUpdateMap = false;
-    _lockUpdateMargin = false;
-
     _srvGetTerrain = nh.serviceClient<static_map::MapGetContext>(getTerrainSrvName);
     
     if (mapFileName == "") {

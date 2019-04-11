@@ -89,11 +89,14 @@ void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::Barrie
     dynBarriersMng_->addBarrierSubscriber(std::move(subscriber));
 }
 
-void PathfinderROSInterface::setSafetyMargin(double margin)
+void PathfinderROSInterface::setSafetyMargin(double margin, bool cascade)
 {
     _safetyMargin = margin;
     dynBarriersMng_->updateSafetyMargin(margin);
-    _updateStaticMap();
+    if (cascade) {
+        ROS_INFO("Updating safety margin of pathfinder map.");
+        _updateStaticMap(); // TODO what if something went wrong ?
+    }
 }
 
 string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>& path)
@@ -111,6 +114,12 @@ string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>
 
 bool PathfinderROSInterface::_updateStaticMap()
 {
+    if (_lockUpdateMap) {
+        // _updateStaticMap is already updating
+        return true; // or false ?
+    }
+    _lockUpdateMap = true;
+    
     static_map::MapGetContext srv;
     if (!_srvGetTerrain.call(srv)) {
         ROS_ERROR("PathfinderROSInterface::_updateStaticMap(): Cannot contact static_map.");
@@ -126,6 +135,7 @@ bool PathfinderROSInterface::_updateStaticMap()
         }
     }
     
+    _lockUpdateMap = false;
     return true;
 }
 

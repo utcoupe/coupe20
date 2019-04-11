@@ -48,10 +48,15 @@ public:
      */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
-    void setSafetyMargin(double margin);
+    void setSafetyMargin(double margin, bool cascade = false);
     
 private:
     double _safetyMargin = 0.15;
+    
+    /**
+     * Prevents PathfinderROSInterface::_updateStaticMap to run multiple times simultanously
+     */
+    std::atomic<bool> _lockUpdateMap { false };
     
     /**
      * The barrier subscribers manager

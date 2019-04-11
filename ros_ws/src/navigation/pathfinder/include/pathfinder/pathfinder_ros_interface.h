@@ -12,6 +12,8 @@
 #include <ros/service_client.h>
 #include <ros/node_handle.h>
 
+#include <atomic>
+
 class PathfinderROSInterface
 {
 public:

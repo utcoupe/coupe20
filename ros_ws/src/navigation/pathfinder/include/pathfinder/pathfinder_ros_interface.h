@@ -5,7 +5,6 @@
 
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/dynamic_barriers_manager.h"
-#include "pathfinder/pos_convertor.h"
 #include "pathfinder/occupancy_grid.h"
 
 #include <geometry_msgs/Pose2D.h>
@@ -13,6 +12,8 @@
 #include <ros/node_handle.h>
 
 #include <atomic>
+
+class PosConvertor;
 
 class PathfinderROSInterface
 {
@@ -24,7 +25,7 @@ public:
      * @param convertor The convertor that will be used to convert positions between the two referencials.
      */
     PathfinderROSInterface(
-        const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor,
+        const std::string& mapFileName, PosConvertor& convertor,
         const std::string& getTerrainSrvName, ros::NodeHandle& nh,
         std::pair<unsigned, unsigned> defaultScale = {}
     );
@@ -68,10 +69,10 @@ private:
     /**
      * The barrier subscribers manager
      */
-    std::shared_ptr<DynamicBarriersManager> dynBarriersMng_;
+    DynamicBarriersManager dynBarriersMng_;
     
     /** Convertor object between pathfinder and ros referentials **/
-    std::shared_ptr<PosConvertor> convertor_;
+    PosConvertor& convertor_;
     
     pathfinder::OccupancyGrid _occupancyGrid;
     

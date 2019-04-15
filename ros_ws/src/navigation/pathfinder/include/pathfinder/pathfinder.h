@@ -7,19 +7,22 @@
 #include "pathfinder/PathfinderNodeConfig.h"
 
 #include "pathfinder/map_storage.h"
-#include "pathfinder/pos_convertor.h"
-#include "pathfinder/dynamic_barriers_manager.h"
-#include "pathfinder/occupancy_grid.h"
 
 #include <geometry_tools/point.h>
 
 #include <vector>
-#include <memory>
 
+class DynamicBarriersManager;
+
+namespace pathfinder {
+    class OccupancyGrid;
+}
 
 /**
  * Main class for the pathfinder algorithm.
- * From arrays reprenting the static and dynamic barriers, it looks for a path between two positions and returns the shortest one if at least one exists.
+ * 
+ * From arrays reprenting the static and dynamic barriers, it looks for a path
+ * between two positions and returns the shortest one if it exists.
  */
 class Pathfinder
 {
@@ -39,7 +42,7 @@ public:
      * @param mapFileName The name of the image file to load.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
      */
-    Pathfinder(std::shared_ptr<DynamicBarriersManager> dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const std::string& mapFileName = "");
+    Pathfinder(DynamicBarriersManager& dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const std::string& mapFileName = "");
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -70,8 +73,9 @@ private:
     
     /** Manager for loading and saving image files **/
     MapStorage _mapStorage;
+    
     /** Contains the positions of dynamic barriers. **/
-    std::shared_ptr<DynamicBarriersManager> _dynBarriersMng;
+    DynamicBarriersManager& _dynBarriersMng;
     
     /** Tells if the map and the path must be saved after computing. **/
     bool _renderAfterComputing;
@@ -116,7 +120,7 @@ private:
      * Defines all possible directions to move from any positions. May be implemented as constexpression in the future.
      * @return The lists of all allowed movements.
      */
-    static const std::vector<Point> directions();
+    static const std::vector<Point> m_directions;
     
     /**
      * Convert the path in the inside type to a string for debugging purposes.

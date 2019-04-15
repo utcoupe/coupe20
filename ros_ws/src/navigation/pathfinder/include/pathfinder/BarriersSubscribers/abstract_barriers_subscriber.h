@@ -3,9 +3,9 @@
 
 #include <ros/ros.h>
 
-#include <geometry_tools/point.h>
-
 #include <mutex>
+
+class Point;
 
 /**
  * Class defining an abstract subscriber.
@@ -23,7 +23,7 @@ public:
      * Check if there are any obstacles at the given position.
      * @param pos The position to check.
      */
-    virtual bool hasBarrier(const Point& pos) = 0;
+    virtual bool hasBarrier(const Point& pos) const = 0;
     
     /**
      * Create internaly the ros subscriber.
@@ -53,7 +53,7 @@ public:
     const virtual bool needConversionBefore() const { return true; };
 
 protected:
-    std::mutex g_mutex;
+    mutable std::mutex g_mutex;
     ros::Subscriber subscriber;
     double _safetyMargin;
 };

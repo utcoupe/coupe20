@@ -1,5 +1,7 @@
 #include "pathfinder/pathfinder_ros_interface.h"
 
+#include "pathfinder/pos_convertor.h"
+
 #include <static_map/MapGetContext.h>
 
 using namespace std;
@@ -9,12 +11,12 @@ const unsigned WARN_MAP_SIZE    = 200000; // In square pixels (pathfinder refere
 const double   PRECISION_MARGIN = 0.05; // In meters (ROS referencial)
 
 PathfinderROSInterface::PathfinderROSInterface(
-        const string& mapFileName, std::shared_ptr<PosConvertor> convertor,
+        const string& mapFileName, PosConvertor& convertor,
         const string& getTerrainSrvName, ros::NodeHandle& nh,
         std::pair<unsigned, unsigned> defaultScale
                                               ):
-    dynBarriersMng_(make_shared<DynamicBarriersManager>()),
-    convertor_(std::move(convertor)),
+    dynBarriersMng_(convertor),
+    convertor_(convertor),
     _occupancyGrid(convertor_, defaultScale.second, defaultScale.first),
     pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
@@ -34,9 +36,8 @@ PathfinderROSInterface::PathfinderROSInterface(
             ROS_WARN("Map image is big, the pathfinder may be very slow ! (150x100px works fine)");
         }
 
-        convertor_->setMapSize({ static_cast<double>(mapSize.first), static_cast<double>(mapSize.second) });
-        dynBarriersMng_->setConvertor(convertor_);
-        dynBarriersMng_->fetchOccupancyDatas(mapSize.first, mapSize.second);
+        convertor_.setMapSize({ static_cast<double>(mapSize.first), static_cast<double>(mapSize.second) });
+        dynBarriersMng_.fetchOccupancyDatas(mapSize.first, mapSize.second);
     }
 }
 
@@ -47,8 +48,8 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
     
     ROS_INFO_STREAM("Received request from " << Point(req.posStart) << " to " << Point(req.posEnd));
     
-    auto startPos = convertor_->fromRosToMapPos(req.posStart);
-    auto endPos = convertor_->fromRosToMapPos(req.posEnd);
+    auto startPos = convertor_.fromRosToMapPos(req.posStart);
+    auto endPos = convertor_.fromRosToMapPos(req.posEnd);
     
     auto statusCode = pathfinder_.findPath(startPos, endPos, path);
     switch (statusCode) {
@@ -65,7 +66,7 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
 
         case Pathfinder::FindPathStatus::NO_ERROR:
             for (const Point& pos : path)
-                rep.path.push_back(convertor_->fromMapToRosPos(pos).toPose2D());
+                rep.path.push_back(convertor_.fromMapToRosPos(pos).toPose2D());
             rep.return_code = rep.PATH_FOUND;
             rep.path.front() = req.posStart;
             rep.path.back() = req.posEnd;
@@ -93,13 +94,13 @@ void PathfinderROSInterface::reconfigureCallback(pathfinder::PathfinderNodeConfi
 
 void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber)
 {
-    dynBarriersMng_->addBarrierSubscriber(std::move(subscriber));
+    dynBarriersMng_.addBarrierSubscriber(std::move(subscriber));
 }
 
 bool PathfinderROSInterface::setSafetyMargin(double margin, bool cascade)
 {
     _safetyMargin = margin;
-    dynBarriersMng_->updateSafetyMargin(margin);
+    dynBarriersMng_.updateSafetyMargin(margin);
     auto success = true;
     if (cascade) {
         ROS_INFO("Updating safety margin of pathfinder map.");

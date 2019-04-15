@@ -1,5 +1,7 @@
 #include "pathfinder/occupancy_grid.h"
 
+#include "pathfinder/pos_convertor.h"
+
 #include <ros/console.h>
 
 #include <algorithm>
@@ -8,8 +10,8 @@
 
 using namespace std;
 
-pathfinder::OccupancyGrid::OccupancyGrid(shared_ptr<PosConvertor> convertor, size_t nrow, size_t ncol):
-    _convertor(move(convertor)), _grid(nrow, vector<bool>(ncol, false))
+pathfinder::OccupancyGrid::OccupancyGrid(const PosConvertor& convertor, size_t nrow, size_t ncol):
+    _convertor(convertor), _grid(nrow, vector<bool>(ncol, false))
 {
 }
 
@@ -76,10 +78,10 @@ void pathfinder::OccupancyGrid::drawCircle(const static_map::MapObject& objectCi
     double r;
     r = objectCircle.radius;
     
-    auto pos = _convertor->fromRosToMapPos(objectCircle.pose);
-    r = _convertor->fromRosToMapDistance(r);
+    auto pos = _convertor.fromRosToMapPos(objectCircle.pose);
+    r = _convertor.fromRosToMapDistance(r);
     
-    auto safeMarg = _convertor->fromRosToMapDistance(safetyMargin);
+    auto safeMarg = _convertor.fromRosToMapDistance(safetyMargin);
     
     uint yMin = max(pos.getY() - r - safeMarg, 0.0);
     uint yMax = min(
@@ -104,11 +106,11 @@ void pathfinder::OccupancyGrid::drawRectangle(const static_map::MapObject& objec
     w = objectRect.width;
     h = objectRect.height;
     
-    auto pos = _convertor->fromRosToMapPos(objectRect.pose);
-    w = _convertor->fromRosToMapDistance(w);
-    h = _convertor->fromRosToMapDistance(h);
+    auto pos = _convertor.fromRosToMapPos(objectRect.pose);
+    w = _convertor.fromRosToMapDistance(w);
+    h = _convertor.fromRosToMapDistance(h);
     
-    auto safeMarg = _convertor->fromRosToMapDistance(safetyMargin);
+    auto safeMarg = _convertor.fromRosToMapDistance(safetyMargin);
     
     uint yMin = max(pos.getY() - (h/2) - safeMarg, 0.0);
     uint yMax = min(

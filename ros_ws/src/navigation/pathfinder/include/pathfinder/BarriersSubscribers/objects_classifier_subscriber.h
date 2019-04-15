@@ -14,7 +14,7 @@ namespace Recognition
     public:
         ObjectsClassifierSubscriber(double safetyMargin);
         
-        bool hasBarrier(const Point& pos) override;
+        bool hasBarrier(const Point& pos) const override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
     private:

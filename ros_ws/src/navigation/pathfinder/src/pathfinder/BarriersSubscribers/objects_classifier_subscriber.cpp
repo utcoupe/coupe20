@@ -1,5 +1,7 @@
 #include "pathfinder/BarriersSubscribers/objects_classifier_subscriber.h"
 
+#include <geometry_tools/point.h>
+
 #include <cmath>
 
 using namespace std;
@@ -10,7 +12,7 @@ ObjectsClassifierSubscriber::ObjectsClassifierSubscriber(double safetyMargin):
     //
 }
 
-bool ObjectsClassifierSubscriber::hasBarrier(const Point& pos)
+bool ObjectsClassifierSubscriber::hasBarrier(const Point& pos) const
 {
     lock_guard<mutex> lock(g_mutex);
     

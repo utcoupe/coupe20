@@ -1,14 +1,16 @@
 #include "pathfinder/pathfinder.h"
 
+#include "pathfinder/dynamic_barriers_manager.h"
+#include "pathfinder/occupancy_grid.h"
+
 #include <chrono>
 #include <limits>
 #include <sstream>
-#include <utility>
 
 using namespace std;
 
-Pathfinder::Pathfinder(shared_ptr<DynamicBarriersManager> dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const string& mapFileName):
-    _dynBarriersMng(move(dynBarriersMng)), _occupancyGrid(occupancyGrid)
+Pathfinder::Pathfinder(DynamicBarriersManager& dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const string& mapFileName):
+    _dynBarriersMng(dynBarriersMng), _occupancyGrid(occupancyGrid)
 {
     _renderAfterComputing = false;
     _renderFile = "tmp.bmp";
@@ -37,7 +39,7 @@ Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Poi
         return FindPathStatus::MAP_NOT_LOADED;
     }
 
-    _dynBarriersMng->fetchOccupancyDatas(gridSize.first, gridSize.second);
+    _dynBarriersMng.fetchOccupancyDatas(gridSize.first, gridSize.second);
     
     auto startTime = chrono::high_resolution_clock::now();
     
@@ -101,7 +103,7 @@ bool Pathfinder::exploreGraph(Vect2DShort& distMap, const Point& startPos, const
     {
         for (const Point& prevPos : previousPositions)
         {
-            for (const Point& dir : directions())
+            for (const Point& dir : m_directions)
             {
                 Point nextPos = prevPos + dir;
                 if (isValid(nextPos) && distMap[nextPos.getY()][nextPos.getX()] == -1)
@@ -135,7 +137,7 @@ Pathfinder::Path Pathfinder::retrievePath(const Vect2DShort& distMap, const Poin
     {
         Point bestNextPos;
         short bestDist = numeric_limits<short>::max();
-        for (const Point& dir : directions())
+        for (const Point& dir : m_directions)
         {
             Point nextPos = lastPos + dir;
             if (isValid(nextPos))
@@ -180,7 +182,7 @@ bool Pathfinder::isValid(const Point& pos)
         return false;
     if (pos.getX() < 0 || pos.getX() >= _occupancyGrid.getSize().first)
         return false;
-    if (!_occupancyGrid.isAllowed(pos) || _dynBarriersMng->hasBarriers(pos))
+    if (!_occupancyGrid.isAllowed(pos) || _dynBarriersMng.hasBarriers(pos))
         return false;
     return true;
 }
@@ -234,17 +236,13 @@ bool Pathfinder::canConnectWithLine(const Point& pA, const Point& pB)
 }
 
 
-const std::vector< Point > Pathfinder::directions()
-{
-    const vector<Point> dirs {
-        Point(0, 1),
-        Point(0, -1),
-        Point(1, 0),
-        Point(-1, 0)
-        // Add other directions if needed
-    };
-    return dirs; // Should use move semantics with recent compilators
-}
+const std::vector< Point > Pathfinder::m_directions =  {
+    Point(0, 1),
+    Point(0, -1),
+    Point(1, 0),
+    Point(-1, 0)
+    // Add other directions if needed
+};
 
 string Pathfinder::pathMapToStr(const Path& path)
 {

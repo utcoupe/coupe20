@@ -58,7 +58,7 @@ int main (int argc, char* argv[])
 {
     ros::init(argc, argv, "pathfinder_node");
     
-//     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
+    ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
     ros::NodeHandle nodeHandle;
     
     // Select the configuration depending on param robot
@@ -77,9 +77,9 @@ int main (int argc, char* argv[])
     }
     
     // Partialy initialize the convertor
-    auto convertor = make_shared<PosConvertor>();
-    convertor->setInvertedY(true);
-    convertor->setRosSize(TABLE_SIZE);
+    PosConvertor convertor;
+    convertor.setInvertedY(true);
+    convertor.setRosSize(TABLE_SIZE);
 
     // Wait until static_map finishes starting
     ROS_INFO("Waiting for static_map...");

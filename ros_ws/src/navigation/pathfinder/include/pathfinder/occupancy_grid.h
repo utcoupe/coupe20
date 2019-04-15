@@ -1,13 +1,12 @@
 #ifndef PATHFINDER_OCCUPATION_GRID
 #define PATHFINDER_OCCUPATION_GRID
 
-#include "pathfinder/pos_convertor.h"
-
 #include <geometry_tools/point.h>
 #include <static_map/MapObject.h>
 
-#include <memory>
 #include <vector>
+
+class PosConvertor;
 
 namespace pathfinder {
     /**
@@ -15,7 +14,7 @@ namespace pathfinder {
      */
     class OccupancyGrid {
     public:
-        OccupancyGrid(std::shared_ptr<PosConvertor> convertor, std::size_t nrows = 0, std::size_t ncols = 0);
+        OccupancyGrid(const PosConvertor& convertor, std::size_t nrows = 0, std::size_t ncols = 0);
         
         std::pair<std::size_t, std::size_t> getSize() const noexcept {
             if (_grid.size() > 0)
@@ -39,8 +38,6 @@ namespace pathfinder {
                 return true; // TODO as editable attribute
         }
         
-        void setConvertor(std::shared_ptr<PosConvertor> convertor) { _convertor = convertor; }
-        
         void setAllowed(Point pos, bool allowed) { _grid[pos.getY()][pos.getX()] = allowed; }
         
         void setOccupancyFromMap(const std::vector<static_map::MapObject>& objects, bool clearBefore = false, double safetyMargin = 0.0);
@@ -48,7 +45,7 @@ namespace pathfinder {
         void setOccupancyFromGrid(const std::vector<std::vector<bool>>& grid);
     
     protected:
-        std::shared_ptr<PosConvertor> _convertor;
+        const PosConvertor& _convertor;
         std::vector<std::vector<bool>> _grid;
         
         void drawRectangle(const static_map::MapObject& objectRect, double safetyMargin);

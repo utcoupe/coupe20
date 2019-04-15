@@ -1,6 +1,9 @@
 #include "pathfinder/BarriersSubscribers/static_map_subscriber.h"
 
-#include "static_map/MapGetContainer.h"
+#include "pathfinder/pos_convertor.h"
+
+#include <geometry_tools/point.h>
+#include <static_map/MapGetContainer.h>
 
 #include <cmath>
 #include <utility>
@@ -8,13 +11,12 @@
 using namespace Memory;
 using namespace std;
 
-MapSubscriber::MapSubscriber(double safetyMargin, shared_ptr<PosConvertor> convertor)
-    : AbstractBarriersSubscriber(safetyMargin), _occupancyGrid(convertor), _convertor(move(convertor))
+MapSubscriber::MapSubscriber(double safetyMargin, const PosConvertor& convertor)
+    : AbstractBarriersSubscriber(safetyMargin), _occupancyGrid(convertor)
 {
 }
 
-bool Memory::MapSubscriber::hasBarrier(const Point& pos)
-{
+bool Memory::MapSubscriber::hasBarrier(const Point& pos) const {
     return !_occupancyGrid.isAllowed(pos);
 }
 

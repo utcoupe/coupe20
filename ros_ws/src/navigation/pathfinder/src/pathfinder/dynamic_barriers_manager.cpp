@@ -1,12 +1,15 @@
 #include "pathfinder/dynamic_barriers_manager.h"
 
+#include "pathfinder/pos_convertor.h"
+
+#include <geometry_tools/point.h>
+
 #include <utility>
 
 using namespace std;
 
-bool DynamicBarriersManager::hasBarriers(const Point& pos)
-{
-    auto posConverted = _convertor->fromMapToRosPos(pos);
+bool DynamicBarriersManager::hasBarriers(const Point& pos) const {
+    auto posConverted = _convertor.fromMapToRosPos(pos);
     
     for (const auto& subscriber : subscribers)
     {
@@ -22,11 +25,6 @@ bool DynamicBarriersManager::hasBarriers(const Point& pos)
 void DynamicBarriersManager::addBarrierSubscriber(BarriersSubscriber && subscriber)
 {
     subscribers.push_back(std::move(subscriber));
-}
-
-void DynamicBarriersManager::setConvertor(const shared_ptr<PosConvertor>& convertor)
-{
-    _convertor = convertor;
 }
 
 void DynamicBarriersManager::updateSafetyMargin(const double& newMargin)

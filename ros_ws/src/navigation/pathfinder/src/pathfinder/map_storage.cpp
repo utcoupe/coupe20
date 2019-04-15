@@ -22,7 +22,7 @@ MapStorage::Vect2DBool MapStorage::loadAllowedPositionsFromFile(const string& fi
     return allowedPos;
 }
 
-void MapStorage::saveMapToFile(const string& fileName, const pathfinder::OccupancyGrid& allowedPos, shared_ptr<DynamicBarriersManager> dynBarriersMng, const vector<Point>& path, const vector<Point>& smoothPath)
+void MapStorage::saveMapToFile(const string& fileName, const pathfinder::OccupancyGrid& allowedPos, const shared_ptr<DynamicBarriersManager>& dynBarriersMng, const vector<Point>& path, const vector<Point>& smoothPath)
 {
     ROS_DEBUG_STREAM("MapStorage: saving to " << fileName);
     sf::Image image;

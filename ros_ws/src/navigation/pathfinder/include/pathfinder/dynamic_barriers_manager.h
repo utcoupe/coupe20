@@ -20,13 +20,6 @@ public:
     using BarriersSubscriber = std::unique_ptr<AbstractBarriersSubscriber>;
     
     DynamicBarriersManager() = default;
-    
-    /**
-     * Check if there is any dynamic obstacle on the given position.
-     * @param pos The position to check.
-     * @return True if there is at least one obstacle.
-     */
-    bool hasBarriers(const geometry_msgs::Pose2D& pos);
     /**
      * Check if there is any dynamic obstacle on the given position.
      * @param pos The position to check.
@@ -45,7 +38,7 @@ public:
      * Set the convertor to use with the subscribers. It must be already initialized.
      * @param convertor The new convertor.
      */
-    void setConvertor(std::shared_ptr<PosConvertor> convertor);
+    void setConvertor(const std::shared_ptr< PosConvertor >& convertor);
     
     /**
      * Update the safety margin used in all subscribers.

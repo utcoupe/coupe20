@@ -4,11 +4,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 using namespace std;
 
 pathfinder::OccupancyGrid::OccupancyGrid(shared_ptr<PosConvertor> convertor, size_t nrow, size_t ncol):
-    _convertor(convertor), _grid(nrow, vector<bool>(ncol, false))
+    _convertor(move(convertor)), _grid(nrow, vector<bool>(ncol, false))
 {
 }
 
@@ -21,7 +22,7 @@ void pathfinder::OccupancyGrid::clear()
 
 void pathfinder::OccupancyGrid::resize(size_t nrows, size_t ncols)
 {
-    if (_grid.size() > 0 && _grid.size() == nrows && _grid.front().size() == ncols) {
+    if (!_grid.empty() && _grid.size() == nrows && _grid.front().size() == ncols) {
         return;
     }
     _grid.clear();
@@ -30,7 +31,7 @@ void pathfinder::OccupancyGrid::resize(size_t nrows, size_t ncols)
 
 void pathfinder::OccupancyGrid::setOccupancyFromMap(const vector<static_map::MapObject>& objects, bool clearBefore, double safetyMargin)
 {
-    if (_grid.size() == 0 || _grid.front().size() == 0){
+    if (_grid.empty() || _grid.front().empty()){
         ROS_ERROR("[OccupancyGrid::setOccupancyFromMap] Trying to fill an empty grid!");
         return;
     }
@@ -62,7 +63,7 @@ void pathfinder::OccupancyGrid::setOccupancyFromMap(const vector<static_map::Map
 
 void pathfinder::OccupancyGrid::setOccupancyFromGrid(const std::vector<std::vector<bool> >& grid)
 {
-    if (grid.size() == 0 || grid.front().size() == 0){
+    if (grid.empty() || grid.front().empty()){
         ROS_WARN("[OccupancyGrid::setOccupancyFromMap] Creating an empty grid!");
     }
     

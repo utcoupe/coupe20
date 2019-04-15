@@ -14,7 +14,7 @@ namespace Recognition
     public:
         ObjectsClassifierSubscriber(double safetyMargin);
         
-        bool hasBarrier(Point pos) override;
+        bool hasBarrier(const Point& pos) override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
     private:
@@ -32,9 +32,9 @@ namespace Recognition
         void addCircles(const std::vector<Circle>& circs);
         void addSegments(const std::vector<Segment>& segs);
         
-        bool isInsideRect(const Rectangle& rect, Point pos) const;
-        bool isInsideCircle(const Circle& circ, Point pos) const;
-        bool isCloseToSegment(const Segment& seg, Point pos) const;
+        bool isInsideRect(const Rectangle& rect, const Point& pos) const;
+        bool isInsideCircle(const Circle& circ, const Point& pos) const;
+        bool isCloseToSegment(const Segment& seg, const Point& pos) const;
     };
 } // namespace Recognition
 

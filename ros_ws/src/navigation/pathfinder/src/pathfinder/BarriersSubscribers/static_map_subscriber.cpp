@@ -3,16 +3,17 @@
 #include "static_map/MapGetContainer.h"
 
 #include <cmath>
+#include <utility>
 
 using namespace Memory;
 using namespace std;
 
 MapSubscriber::MapSubscriber(double safetyMargin, shared_ptr<PosConvertor> convertor)
-    : AbstractBarriersSubscriber(safetyMargin), _occupancyGrid(convertor), _convertor(convertor)
+    : AbstractBarriersSubscriber(safetyMargin), _occupancyGrid(convertor), _convertor(move(convertor))
 {
 }
 
-bool MapSubscriber::hasBarrier(Point pos)
+bool Memory::MapSubscriber::hasBarrier(const Point& pos)
 {
     return !_occupancyGrid.isAllowed(pos);
 }

@@ -4,23 +4,15 @@
 
 using namespace std;
 
-bool DynamicBarriersManager::hasBarriers(const geometry_msgs::Pose2D& pos)
-{
-    for (const auto& subscriber : subscribers)
-        if (subscriber->needConversionBefore() && subscriber->hasBarrier(pos))
-            return true;
-    return false;
-}
-
 bool DynamicBarriersManager::hasBarriers(const Point& pos)
 {
-    auto pose2dConvert = _convertor->fromMapToRosPos(pos).toPose2D();
+    auto posConverted = _convertor->fromMapToRosPos(pos);
     
     for (const auto& subscriber : subscribers)
     {
-        if (subscriber->needConversionBefore() && subscriber->hasBarrier(pose2dConvert))
+        if (subscriber->needConversionBefore() && subscriber->hasBarrier(posConverted))
             return true;
-        else if (!subscriber->needConversionBefore() && subscriber->hasBarrier(pos.toPose2D()))
+        else if (!subscriber->needConversionBefore() && subscriber->hasBarrier(pos))
             return true;
     }
     return false;
@@ -32,7 +24,7 @@ void DynamicBarriersManager::addBarrierSubscriber(BarriersSubscriber && subscrib
     subscribers.push_back(std::move(subscriber));
 }
 
-void DynamicBarriersManager::setConvertor(std::shared_ptr<PosConvertor> convertor)
+void DynamicBarriersManager::setConvertor(const shared_ptr<PosConvertor>& convertor)
 {
     _convertor = convertor;
 }

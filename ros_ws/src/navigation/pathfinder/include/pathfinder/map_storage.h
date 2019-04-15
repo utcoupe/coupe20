@@ -38,7 +38,7 @@ public:
      * @param path The raw path at the end of the pathfinder algorithm
      * @param smoothPath The smoothed path that will be send as response.
      */
-    void saveMapToFile(const std::string& fileName, const pathfinder::OccupancyGrid& allowedPos, std::shared_ptr<DynamicBarriersManager> dynBarriersMng, const std::vector<Point>& path, const std::vector<Point>& smoothPath);
+    void saveMapToFile(const std::__cxx11::string& fileName, const pathfinder::OccupancyGrid& allowedPos, const std::shared_ptr< DynamicBarriersManager >& dynBarriersMng, const std::vector< Point >& path, const std::vector< Point >& smoothPath);
 
 private:
     const sf::Color ALLOWED_POS_COLOR       = sf::Color::White;

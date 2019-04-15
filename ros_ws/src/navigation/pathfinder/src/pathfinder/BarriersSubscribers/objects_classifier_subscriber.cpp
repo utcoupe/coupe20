@@ -10,7 +10,7 @@ ObjectsClassifierSubscriber::ObjectsClassifierSubscriber(double safetyMargin):
     //
 }
 
-bool ObjectsClassifierSubscriber::hasBarrier(Point pos)
+bool ObjectsClassifierSubscriber::hasBarrier(const Point& pos)
 {
     lock_guard<mutex> lock(g_mutex);
     
@@ -68,7 +68,7 @@ void ObjectsClassifierSubscriber::addSegments(const std::vector<Segment>& segs)
     lastSegments.insert(lastSegments.end(), segs.begin(), segs.end());
 }
 
-bool ObjectsClassifierSubscriber::isInsideRect(const Rectangle& rect, Point pos) const
+bool ObjectsClassifierSubscriber::isInsideRect(const Rectangle& rect, const Point& pos) const
 {
     if (rect.h == 0 || rect.w == 0)
         return false;
@@ -89,14 +89,14 @@ bool ObjectsClassifierSubscriber::isInsideRect(const Rectangle& rect, Point pos)
     return true;
 }
 
-bool ObjectsClassifierSubscriber::isInsideCircle(const Circle& circ, Point pos) const
+bool ObjectsClassifierSubscriber::isInsideCircle(const Circle& circ, const Point& pos) const
 {
     processing_lidar_objects::CircleObstacle circle(circ.circle);
     double distToCenter = sqrt(pow(pos.getX() - circle.center.x, 2) + pow(pos.getY() - circle.center.y, 2));
     return (distToCenter + _safetyMargin <= circle.radius);
 }
 
-bool ObjectsClassifierSubscriber::isCloseToSegment(const Segment& seg, Point pos) const
+bool ObjectsClassifierSubscriber::isCloseToSegment(const Segment& seg, const Point& pos) const
 {
     Point firstPoint(seg.segment.first_point), lastPoint(seg.segment.last_point);
     if (firstPoint == lastPoint) // It's a point, not a segment

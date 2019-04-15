@@ -60,7 +60,7 @@ public:
      * 
      * @param path The path to the image.
      */
-    void setPathToRenderOutputFile(std::string path);
+    void setPathToRenderOutputFile(const std::__cxx11::string& path);
 
 private:
     /** Shortcut to define a 2D array of short. **/

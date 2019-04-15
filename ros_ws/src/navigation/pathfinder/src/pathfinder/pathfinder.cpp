@@ -1,19 +1,19 @@
 #include "pathfinder/pathfinder.h"
 
 #include <chrono>
+#include <limits>
 #include <sstream>
 #include <utility>
-#include <limits>
 
 using namespace std;
 
 Pathfinder::Pathfinder(shared_ptr<DynamicBarriersManager> dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const string& mapFileName):
-    _dynBarriersMng(dynBarriersMng), _occupancyGrid(occupancyGrid)
+    _dynBarriersMng(move(dynBarriersMng)), _occupancyGrid(occupancyGrid)
 {
     _renderAfterComputing = false;
     _renderFile = "tmp.bmp";
     
-    if (mapFileName != "") {
+    if (!mapFileName.empty()) {
         ROS_INFO("Loading walls from image...");
         auto allowedPositions = _mapStorage.loadAllowedPositionsFromFile(mapFileName);
         _occupancyGrid.setOccupancyFromGrid(allowedPositions);
@@ -80,7 +80,7 @@ void Pathfinder::activatePathRendering(bool activate)
     _renderAfterComputing = activate;
 }
 
-void Pathfinder::setPathToRenderOutputFile(std::string path)
+void Pathfinder::setPathToRenderOutputFile(const std::string& path)
 {
     _renderFile = path;
 }

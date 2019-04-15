@@ -16,7 +16,7 @@ namespace Memory {
         MapSubscriber(double safetyMargin): MapSubscriber(safetyMargin, nullptr) {}
         MapSubscriber(double safetyMargin, std::shared_ptr<PosConvertor> convertor);
         
-        bool hasBarrier(Point pos) override;
+        bool hasBarrier(const Point& pos) override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
         void fetchOccupancyData(const uint& withGrid, const uint& heightGrid) override;

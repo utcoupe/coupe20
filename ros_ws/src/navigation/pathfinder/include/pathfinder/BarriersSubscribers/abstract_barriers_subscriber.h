@@ -23,7 +23,7 @@ public:
      * Check if there are any obstacles at the given position.
      * @param pos The position to check.
      */
-    virtual bool hasBarrier(Point pos) = 0;
+    virtual bool hasBarrier(const Point& pos) = 0;
     
     /**
      * Create internaly the ros subscriber.

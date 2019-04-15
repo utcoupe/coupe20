@@ -14,13 +14,13 @@ PathfinderROSInterface::PathfinderROSInterface(
         std::pair<unsigned, unsigned> defaultScale
                                               ):
     dynBarriersMng_(make_shared<DynamicBarriersManager>()),
-    convertor_(convertor),
+    convertor_(std::move(convertor)),
     _occupancyGrid(convertor_, defaultScale.second, defaultScale.first),
     pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
     _srvGetTerrain = nh.serviceClient<static_map::MapGetContext>(getTerrainSrvName);
     
-    if (mapFileName == "") {
+    if (mapFileName.empty()) {
         if (!_updateMarginFromStaticMap()) {
             ROS_WARN("Cannot initialize margin or terrain with static_map service!");
         }

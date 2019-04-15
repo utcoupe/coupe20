@@ -9,8 +9,9 @@ if __name__ == "__main__":
     status = StatusManager()
     timer = TimerManager()
 
-    r = rospy.Rate(5)
+    r = rospy.Rate(3)
     while not rospy.is_shutdown():
         status.update()
         timer.update()
+        r.sleep()
 

@@ -19,8 +19,8 @@ namespace Memory {
         bool hasBarrier(const Point& pos) const override;
         void subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic) override;
         
-        void fetchOccupancyData(const uint& withGrid, const uint& heightGrid) override;
-        const bool needConversionBefore() const  override { return false; }
+        void fetchOccupancyData(uint widthGrid, uint heightGrid) override;
+        bool needConversionBefore() const  override { return false; }
         
     private:
         pathfinder::OccupancyGrid _occupancyGrid;

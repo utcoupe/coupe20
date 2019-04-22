@@ -19,6 +19,8 @@ public:
      */
     AbstractBarriersSubscriber(double safetyMargin) : _safetyMargin(safetyMargin) {};
     
+    virtual ~AbstractBarriersSubscriber() = default;
+    
     /**
      * Check if there are any obstacles at the given position.
      * @param pos The position to check.
@@ -45,12 +47,12 @@ public:
      * @param widthGrid The width of pathfinder internal map.
      * @param heightGrid The height of pathfinder internal map.
      */
-    virtual void fetchOccupancyData(const uint& widthGrid, const uint& heightGrid) {};
+    virtual void fetchOccupancyData(uint widthGrid /** unused **/, uint heightGrid /** unused **/) {};
     
     /**
      * Indicate if the base coordinates used in the subscriber are different from the pathfinder.
      */
-    const virtual bool needConversionBefore() const { return true; };
+    virtual bool needConversionBefore() const { return true; };
 
 protected:
     mutable std::mutex g_mutex;

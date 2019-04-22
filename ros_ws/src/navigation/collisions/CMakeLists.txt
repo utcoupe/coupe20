@@ -4,11 +4,11 @@ project(collisions)
 add_compile_options(
     -std=c++14
     
-#    -Wall
-#    -Wextra
-#    -Wpedantic
-#    -Wshadow
-#    -Wnon-virtual-dtor
+#     -Wall
+#     -Wextra
+#     -Wpedantic
+#     -Wshadow
+#     -Wnon-virtual-dtor
     
 #     -Wold-style-cast
 #     -Wcast-align
@@ -23,7 +23,9 @@ add_compile_options(
 #     -Wnull-dereference
 #     -Wuseless-cast
 #     -Wdouble-promotion
-    
+
+    "$<$<CONFIG:DEBUG>:-Og>"
+    "$<$<CONFIG:RELEASE>:-O3>"
 )
 
 ## Find catkin macros and libraries

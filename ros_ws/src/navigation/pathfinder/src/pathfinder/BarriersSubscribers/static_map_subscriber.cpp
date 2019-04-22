@@ -25,7 +25,7 @@ void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQu
     _srvGetMapObjects = nodeHandle.serviceClient<static_map::MapGetContainer>(topic);
 }
 
-void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& heightGrid)
+void MapSubscriber::fetchOccupancyData(uint widthGrid, uint heightGrid)
 {
     _occupancyGrid.resize(heightGrid, widthGrid);
     static_map::MapGetContainer srv;

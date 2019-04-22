@@ -21,10 +21,17 @@ PathfinderROSInterface::PathfinderROSInterface(
     pathfinder_(dynBarriersMng_, _occupancyGrid, mapFileName)
 {
     _srvGetTerrain = nh.serviceClient<static_map::MapGetContext>(getTerrainSrvName);
+    if (!_srvGetTerrain.exists()) {
+        ROS_INFO_STREAM("Waiting for " << getTerrainSrvName << " service...");
+        _srvGetTerrain.waitForExistence();
+        ROS_INFO("Continuing.");
+    }
     
     if (mapFileName.empty()) {
         if (!_updateMarginFromStaticMap()) {
             ROS_WARN("Cannot initialize margin or terrain with static_map service!");
+        } else {
+            ROS_INFO("Map initialized with static_map service.");
         }
     }
     auto mapSize = _occupancyGrid.getSize();
@@ -56,7 +63,7 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
         case Pathfinder::FindPathStatus::MAP_NOT_LOADED: // [[fallthrough]] to be uncommented if annoying warnings
         case Pathfinder::FindPathStatus::START_END_POS_NOT_VALID:
             rep.return_code = rep.START_END_POS_NOT_VALID;
-            ROS_DEBUG_STREAM("Answering: Invalid posision for start or end");
+            ROS_DEBUG_STREAM("Answering: Invalid position for start or end");
             break;
 
         case Pathfinder::FindPathStatus::NO_PATH_FOUND:
@@ -125,7 +132,7 @@ string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>
 bool PathfinderROSInterface::_updateStaticMap()
 {
     if (_lockUpdateMap) {
-        // _updateStaticMap is already updating
+        ROS_DEBUG("PathfinderROSInterface::_updateStaticMap() is already updating");
         return true; // or false ?
     }
     _lockUpdateMap = true;
@@ -137,11 +144,14 @@ bool PathfinderROSInterface::_updateStaticMap()
         success = false;
     } else {
         _occupancyGrid.clear();
+        ROS_INFO("Trying to load walls...");
         
         for (const auto& layer: srv.response.terrain_layers) {
             if (layer.name == MAP_LAYER_NAME) {
-                ROS_DEBUG_STREAM("Loading wall " << layer.name);
+                ROS_INFO_STREAM("Loading wall " << layer.name);
                 _occupancyGrid.setOccupancyFromMap(layer.walls, false, _safetyMargin);
+            } else {
+                ROS_DEBUG_STREAM("Ignoring wall " << layer.name);
             }
         }
     }
@@ -153,7 +163,7 @@ bool PathfinderROSInterface::_updateStaticMap()
 bool PathfinderROSInterface::_updateMarginFromStaticMap()
 {
     if (_lockUpdateMargin) {
-        // _updateMarginFromStaticMap is already updating
+        ROS_DEBUG("_updateMarginFromStaticMap is already updating");
         return true;
     }
     _lockUpdateMargin = true;
@@ -168,10 +178,10 @@ bool PathfinderROSInterface::_updateMarginFromStaticMap()
         switch (shape.shape_type) {
         case static_map::MapObject::SHAPE_RECT:
             // TODO switch between central or offset point
-            success = setSafetyMargin(std::hypot(shape.width / 2.0, shape.height / 2.0) + PRECISION_MARGIN);
+            success = setSafetyMargin(std::hypot(shape.width / 2.0, shape.height / 2.0) + PRECISION_MARGIN, true);
             break;
         case static_map::MapObject::SHAPE_CIRCLE:
-            success = setSafetyMargin(shape.radius + PRECISION_MARGIN);
+            success = setSafetyMargin(shape.radius + PRECISION_MARGIN, true);
             break;
         default:
             ROS_FATAL_ONCE("PathfinderROSInterface::_updateMarginFromStaticMap(): Unknown shape. This message will print once.");

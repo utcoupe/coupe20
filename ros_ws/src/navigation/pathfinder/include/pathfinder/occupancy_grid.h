@@ -38,6 +38,10 @@ namespace pathfinder {
                 return true; // TODO as editable attribute
         }
         
+        bool empty() const noexcept {
+            return _grid.empty() || _grid.front().empty();
+        }
+        
         void setAllowed(Point pos, bool allowed) { _grid[pos.getY()][pos.getX()] = allowed; }
         
         void setOccupancyFromMap(const std::vector<static_map::MapObject>& objects, bool clearBefore = false, double safetyMargin = 0.0);

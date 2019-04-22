@@ -3,6 +3,8 @@
 #include "pathfinder/dynamic_barriers_manager.h"
 #include "pathfinder/occupancy_grid.h"
 
+#include <ros/console.h>
+
 #include <chrono>
 #include <limits>
 #include <sstream>
@@ -20,8 +22,10 @@ Pathfinder::Pathfinder(DynamicBarriersManager& dynBarriersMng, pathfinder::Occup
         auto allowedPositions = _mapStorage.loadAllowedPositionsFromFile(mapFileName);
         _occupancyGrid.setOccupancyFromGrid(allowedPositions);
         ROS_INFO_STREAM("Done loading, map size is " << _occupancyGrid.getSize().first << "*" << _occupancyGrid.getSize().second << "px.");
-    } else if (_occupancyGrid.getSize().first == 0) {
+    } else if (_occupancyGrid.empty()) {
         ROS_WARN("Pathfinder may not be ready, no map loaded yet.");
+    } else {
+        ROS_INFO_STREAM("Map already loaded, map size is " << _occupancyGrid.getSize().first << "*" << _occupancyGrid.getSize().second << "px.");
     }
 }
 

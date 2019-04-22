@@ -63,7 +63,7 @@ public:
      * 
      * @param path The path to the image.
      */
-    void setPathToRenderOutputFile(const std::__cxx11::string& path);
+    void setPathToRenderOutputFile(const std::string& path);
 
 private:
     /** Shortcut to define a 2D array of short. **/
@@ -112,7 +112,7 @@ private:
      **/
     bool isValid(const Point& pos);
     /**
-     * Check by "drawing" a line between two positinos if they can be directly connected. Returns true if there is no barriers, false else.
+     * Check by "drawing" a line between two positions if they can be directly connected. Returns true if there is no barriers, false else.
      */
     bool canConnectWithLine(const Point& pA, const Point& pB);
     

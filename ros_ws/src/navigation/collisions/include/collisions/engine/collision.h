@@ -8,18 +8,48 @@
 
 class Collision {
 public:
+    /**
+     * Alias to store Obstacle
+     * TODO As reference or std::weak_ptr
+     */
     using PtrObstacle = std::shared_ptr<Obstacle>;
     
-    Collision(CollisionLevel level, PtrObstacle obstacle, double approxDistance);
+    /**
+     * Main constructor of Collision.
+     * 
+     * @param level The danger level of collision
+     * @param obstacle The corresponding Obstacle
+     * @param approxDistance Distance between the robot and the obstacle
+     */
+    Collision(CollisionLevel level, PtrObstacle obstacle, double approxDistance):
+        m_level(level), m_obstacle(obstacle), m_approxDistance(approxDistance) {}
     
-    CollisionLevel  getLevel()      const noexcept { return level_; }
-              PtrObstacle     getObstacle()   const noexcept { return obstacle_; }
-    double          getDistance()   const noexcept { return approxDistance_; }
+    /**
+     * Returns the danger level of collision
+     * 
+     * @return The level of collision
+     */
+    CollisionLevel  getLevel()      const noexcept { return m_level; }
+    /**
+     * Returns the corresponding obstacle
+     * 
+     * @return The corresponding obstacle
+     */
+    PtrObstacle     getObstacle()   const noexcept { return m_obstacle; }
+    /**
+     * Returns the approximative distance between the robot and the obstacle.
+     * 
+     * @return The distance
+     */
+    double          getDistance()   const noexcept { return m_approxDistance; }
     
 private:
-    CollisionLevel level_;
-    double approxDistance_;
-    PtrObstacle obstacle_;
+    /** The danger level of collision **/
+    const CollisionLevel m_level;
+    /** The distance between the robot and the obstacle **/
+    const double m_approxDistance;
+    /** The corresponding obstacle **/
+    PtrObstacle m_obstacle;
 };
 
 #endif // COLLISIONS_ENGINE_COLLISION

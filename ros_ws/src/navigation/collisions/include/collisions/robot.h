@@ -13,36 +13,102 @@
 #include <utility>
 #include <vector>
 
-class Robot {
+class Robot: protected Obstacle {
 public:
+    /**
+     * Alias to manipulate shapes
+     * TODO replace with reference
+     */
     using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    /**
+     * Alias to manipulate obstacles
+     * TODO replace with reference
+     */
     using ObstaclePtr = std::shared_ptr<Obstacle>;
+    
+    /**
+     * Status of the robot
+     */
     enum class NavStatus { IDLE, NAVIGATING };
     
+    /**
+     * Initialize the shapes of the robot.
+     * 
+     * Only Rectangle shape is available for now, it may change in the future.
+     * 
+     * @param width The biggest width of the robot
+     * @param height The biggest height of the robot
+     */
     Robot(double width, double height);
     
-    void setPos(Position pos) noexcept { pos_ = pos; }
-    Position getPos() const   noexcept { return pos_; }
-    
-    void updateVelocity(double velLinear, double velAngular) noexcept {
-        velocity_.setVelLinear(velLinear);
-        velocity_.setVelAngular(velAngular);
+    /**
+     * Updates robot position.
+     * 
+     * @param pos The new position
+     */
+    void setPos(Position pos) noexcept {
+        m_shape->setPos(pos);
+        m_velocity->setObjectPos(pos);
     }
     
-    void updateStatus(NavStatus status) noexcept { navStatus_ = status; }
-    void updateWaypoints(const std::vector<Position>& newWaypoints) { pathCheckZone_.updateWaypoints(newWaypoints); }
+    /**
+     * Updates robot velocity.
+     * 
+     * @param velLinear The linear velocity
+     * @param velAngular The angular velovity
+     */
+    void updateVelocity(double velLinear, double velAngular) noexcept {
+        m_velocity->setVelocity(velLinear, velAngular);
+    }
     
+    /**
+     * Updates robot status.
+     * 
+     * @param status The new status
+     */
+    void updateStatus(NavStatus status) noexcept { m_navStatus = status; }
+    
+    /**
+     * Updates robot path waypoints.
+     * 
+     * @param newWaypoints The new waypoints
+     */
+    void updateWaypoints(const std::vector<Position>& newWaypoints) {
+        m_pathCheckZone.updateWaypoints(newWaypoints);
+    }
+    
+    /**
+     * Computes and returns robot velocity shapes.
+     * 
+     * @return The computed shapes.
+     */
     std::vector<ShapePtr> getMainShapes();
+    
+    /**
+     * Computes and returns robot path shapes.
+     * 
+     * @return The computed shapes.
+     */
     std::vector<ShapePtr> getPathShapes();
+    
+    /**
+     * Check all possible collisions between the robot and all other obstacles.
+     * 
+     * @return All found collisions.
+     */
     std::vector<Collision> checkCollisions(std::vector<ObstaclePtr> obstacles);
     
 private:
-    double width_, height_;
-    Position pos_;
-    Velocity velocity_;
-    NavStatus navStatus_ = NavStatus::IDLE;
-    PathCheckZone pathCheckZone_;
+    /** Robot status **/
+    NavStatus m_navStatus = NavStatus::IDLE;
+    /** Collision path checker **/
+    PathCheckZone m_pathCheckZone;
     
+    /**
+     * Returns the distance between the robot and the path first waypoint if it exists, else return -1.0. Its role is to set the maximum distance to check in front of the robot.
+     * 
+     * @return The maximum distance
+     */
     double getMaxMainDist() const;
 };
 

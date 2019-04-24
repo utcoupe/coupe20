@@ -1,34 +1,47 @@
 #include "collisions/robot.h"
 
+#include "collisions/shapes/rectangle.h"
+
+#include <memory>
+
+using namespace std;
+
 Robot::Robot(double width, double height):
-    width_(width), height_(height), velocity_(width, height), pathCheckZone_(width, height, CollisionLevel::LEVEL_DANGER)
+    Obstacle(
+        make_shared<CollisionsShapes::Rectangle>(Position(), width, height),
+        make_shared<ObstacleVelocity>(width, height)
+    ),
+    m_pathCheckZone(width, height, CollisionLevel::LEVEL_DANGER)
 {
 }
 
 std::vector<Robot::ShapePtr> Robot::getMainShapes()
 {
-    return velocity_.getShapes(pos_, getMaxMainDist());
+    // TODO + static shape ?
+    return m_velocity->getShapes(getMaxMainDist());
 }
 
 
 std::vector<Robot::ShapePtr> Robot::getPathShapes()
 {
-    return pathCheckZone_.getShapes(pos_);
+    return m_pathCheckZone.getShapes(m_shape->getPos());
 }
 
 std::vector<Collision> Robot::checkCollisions(std::vector<ObstaclePtr> obstacles)
 {
-    auto collisionsVel = velocity_.checkCollisions(pos_, obstacles);
-    auto collisionsPath = pathCheckZone_.checkCollisions(pos_, obstacles);
-    collisionsVel.insert(collisionsVel.end(), collisionsPath.begin(), collisionsPath.end());
-    return collisionsVel;
+    // TODO
+//     auto collisionsVel = velocity_.checkCollisions(pos_, obstacles);
+    auto collisionsPath = m_pathCheckZone.checkCollisions(m_shape->getPos(), obstacles);
+//     collisionsVel.insert(collisionsVel.end(), collisionsPath.begin(), collisionsPath.end());
+//     return collisionsVel;
+    return collisionsPath;
 }
 
 
 double Robot::getMaxMainDist() const
 {
-    if (pathCheckZone_.hasWaypoints())
-        return pos_.norm2Dist(pathCheckZone_.getFirstWaypoint());
+    if (m_pathCheckZone.hasWaypoints())
+        return m_shape->getPos().norm2Dist(m_pathCheckZone.getFirstWaypoint());
     else
         return -1.0;
 }

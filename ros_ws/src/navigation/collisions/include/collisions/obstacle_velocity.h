@@ -15,18 +15,24 @@ public:
     std::vector<ShapePtr> getShapes(double maxDist = -1.0);
     
     void setObjectPos(Position pos) noexcept {
-        objectPos_ = pos;
-        needUpdate_ = true;
+        m_objectPos = pos;
+        m_needUpdate = true;
+    }
+    
+    void setVelocity(double velLinear, double velAngular) {
+        m_velLinear = velLinear;
+        m_velAngular = velAngular;
+        m_needUpdate = true;
     }
     
 private:
-    bool needUpdate_ = true;
-    double width_, height_, velLinear_, velAngular_;
-    Position objectPos_;
-    std::vector<ShapePtr> velShapes_;
-    double lastMaxDist_ = -1.0;
+    bool m_needUpdate = true;
+    double m_width, m_height, m_velLinear, m_velAngular;
+    Position m_objectPos;
+    std::vector<ShapePtr> m_velShapes;
+    double m_lastMaxDist = -1.0;
     
-    void generateVelShapes(double maxDist);
+    void m_generateVelShapes(double maxDist);
 };
 
 #endif // COLLISIONS_OBSTACLE_VELOCITY_H

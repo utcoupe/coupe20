@@ -14,13 +14,13 @@ public:
     bool isCollidingWith(const AbstractShape* otherShape) const override;
     ShapeType getShapeType() const override { return ShapeType::SEGMENT; }
     
-    Point  getFirstPoint() const noexcept { return firstPoint_; }
-    Point  getLastPoint()  const noexcept { return lastPoint_; }
-    double getLength()    const noexcept { return length_; }
+    Point  getFirstPoint() const noexcept { return m_firstPoint; }
+    Point  getLastPoint()  const noexcept { return m_lastPoint; }
+    double getLength()    const noexcept { return m_length; }
     
 protected:
-    Point firstPoint_, lastPoint_;
-    double length_;
+    Point m_firstPoint, m_lastPoint;
+    double m_length;
 };
 
 } // namespace CollisionsShapes

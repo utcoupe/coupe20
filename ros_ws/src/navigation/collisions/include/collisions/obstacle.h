@@ -8,11 +8,13 @@
 #include <memory>
 
 class Obstacle {
-public:/**
+public:
+    /**
      * Alias to manipulate shapes
      * TODO replace with reference
      */
     using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    
     /**
      * Alias to manipulate obstacle velocity
      * TODO replace with reference

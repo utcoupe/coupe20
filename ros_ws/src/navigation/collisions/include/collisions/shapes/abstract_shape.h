@@ -9,16 +9,17 @@ enum class ShapeType { UNDEFINED, SEGMENT, RECTANGLE, CIRCLE };
 
 class AbstractShape {
 public:
-    AbstractShape(Position pos = {}) noexcept: pos_(pos) {}
+    AbstractShape(const Position& pos = {}) noexcept: m_pos(pos) {}
     virtual ~AbstractShape() = default;
     
     virtual bool isCollidingWith(const AbstractShape* otherShape) const = 0;
     virtual ShapeType getShapeType() const = 0;
     
-    Position getPos() const noexcept { return pos_; };
+    void setPos(const Position& pos) noexcept { m_pos = pos; }
+    const Position& getPos() const noexcept { return m_pos; };
     
 protected:
-    Position pos_;
+    Position m_pos;
 };
 
 } // namespace CollisionsShapes

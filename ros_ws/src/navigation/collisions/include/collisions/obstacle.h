@@ -19,7 +19,7 @@ public:
      * Alias to manipulate obstacle velocity
      * TODO replace with reference
      */
-    using VelocityPtr = std::shared_ptr<ObstacleVelocity>;
+    using VelocityPtr = std::unique_ptr<ObstacleVelocity>;
     
     /**
      * Main constructor of Obstacle
@@ -27,7 +27,7 @@ public:
      * @param shape The shape of the obstacle
      * @param velocity The velocity of the obstacle
      */
-    Obstacle(ShapePtr shape, VelocityPtr velocity = nullptr);
+    Obstacle(ShapePtr shape, VelocityPtr&& velocity = nullptr);
     
     /**
      * Returns the static shape of the obstacle

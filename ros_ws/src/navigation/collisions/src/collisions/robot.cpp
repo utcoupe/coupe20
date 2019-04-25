@@ -9,7 +9,7 @@ using namespace std;
 Robot::Robot(double width, double height):
     Obstacle(
         make_shared<CollisionsShapes::Rectangle>(Position(), width, height),
-        make_shared<ObstacleVelocity>(width, height)
+        make_unique<ObstacleVelocity>(width, height)
     ),
     m_pathCheckZone(width, height, CollisionLevel::LEVEL_DANGER)
 {

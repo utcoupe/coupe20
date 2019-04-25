@@ -1,7 +1,9 @@
 #include "collisions/obstacle.h"
 
-Obstacle::Obstacle(ShapePtr shape, VelocityPtr velocity):
-    m_shape(shape), m_velocity(velocity)
+#include <utility>
+
+Obstacle::Obstacle(ShapePtr shape, VelocityPtr&& velocity):
+    m_shape(shape), m_velocity(std::move(velocity))
 {
     if (m_velocity) {
         m_velocity->setObjectPos(shape->getPos());

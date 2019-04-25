@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <string>
+#include <utility>
 
 const double      CACHE_TIME_TF2_BUFFER  = 5.0;
 const std::size_t SIZE_MAX_QUEUE         = 10;
@@ -197,13 +198,13 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
             Position(circ.circle.center, velAngle),
             circ.circle.radius
         );
-        auto velocity = std::make_shared<ObstacleVelocity>(
+        auto velocity = std::make_unique<ObstacleVelocity>(
             0.0,
             0.0,
             velAngle,
             velDist
         );
-        newLidar.emplace_back(std::make_shared<Obstacle>(circShape, velocity));
+        newLidar.emplace_back(std::make_shared<Obstacle>(circShape, std::move(velocity)));
     }
     if (!newLidar.empty()) {
         obstaclesStack_->updateLidarObjects(newLidar);

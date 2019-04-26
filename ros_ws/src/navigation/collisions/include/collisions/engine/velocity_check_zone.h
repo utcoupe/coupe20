@@ -3,18 +3,24 @@
 
 #include "collisions/engine/check_zone.h"
 
+class ObstacleVelocity;
+
 class VelocityCheckZone: public CheckZone {
 public:
-    VelocityCheckZone(double width, double height, CollisionLevel level) noexcept:
-        CheckZone(width, height, level)
-    {}
+    VelocityCheckZone(CollisionLevel level, const Position& robotPos, const ObstacleVelocity& robotVelocity) noexcept:
+        CheckZone(level, robotPos), m_robotVelocity(robotVelocity) {}
+    
     ~VelocityCheckZone() override = default;
     
-    std::vector<ShapePtr> getShapes(Position robotPos) override { return getShapes(robotPos, 0.0, 0.0); }
-    std::vector<ShapePtr> getShapes(Position robotPos, double velLinear, double velAngular, double maxDist = -1.0);
+    const std::vector<ShapePtr>& getShapes() const override { return m_robotVelocity.getShapes(); }
+    const std::vector<ShapePtr>& getShapes(double maxDist) const {
+        return m_robotVelocity.getShapes(maxDist);
+    }
     
-    std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) override;
-    std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles, double velLinear, double velAngular);
+    std::vector<Collision> checkCollisions(const std::vector<ObstaclePtr>& obstacles) const override;
+
+private:
+    const ObstacleVelocity& m_robotVelocity;
 };
 
 #endif // COLLISIONS_ENGINE_VELOCITY_CHECK_ZONE_H

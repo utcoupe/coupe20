@@ -1,28 +1,27 @@
 #ifndef COLLISIONS_ROBOT_H
 #define COLLISIONS_ROBOT_H
 
-#include "geometry_tools/position.h"
 #include "collisions/obstacle.h"
-#include "collisions/engine/velocity.h"
 #include "collisions/engine/constants.h"
 #include "collisions/engine/path_check_zone.h"
 #include "collisions/engine/collision.h"
+#include "collisions/engine/velocity_check_zone.h"
 #include "collisions/shapes/abstract_shape.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
+class Position;
+
 class Robot: protected Obstacle {
 public:
     /**
      * Alias to manipulate shapes
-     * TODO replace with reference
      */
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     /**
      * Alias to manipulate obstacles
-     * TODO replace with reference
      */
     using ObstaclePtr = std::shared_ptr<Obstacle>;
     
@@ -46,7 +45,7 @@ public:
      * 
      * @param pos The new position
      */
-    void setPos(Position pos) noexcept {
+    void setPos(const Position& pos) noexcept {
         m_shape->setPos(pos);
         m_velocity->setObjectPos(pos);
     }
@@ -82,27 +81,30 @@ public:
      * 
      * @return The computed shapes.
      */
-    std::vector<ShapePtr> getMainShapes();
+    const std::vector<ShapePtr>& getMainShapes() const;
     
     /**
      * Computes and returns robot path shapes.
      * 
      * @return The computed shapes.
      */
-    std::vector<ShapePtr> getPathShapes();
+    const std::vector<ShapePtr>& getPathShapes() const {
+        return m_pathCheckZone.getShapes();
+    }
     
     /**
      * Check all possible collisions between the robot and all other obstacles.
      * 
      * @return All found collisions.
      */
-    std::vector<Collision> checkCollisions(std::vector<ObstaclePtr> obstacles);
+    std::vector<Collision> checkCollisions(const std::vector<ObstaclePtr>& obstacles);
     
 private:
     /** Robot status **/
     NavStatus m_navStatus = NavStatus::IDLE;
     /** Collision path checker **/
     PathCheckZone m_pathCheckZone;
+    VelocityCheckZone m_velocityCheckZone;
     
     /**
      * Returns the distance between the robot and the path first waypoint if it exists, else return -1.0. Its role is to set the maximum distance to check in front of the robot.

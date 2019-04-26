@@ -29,61 +29,61 @@ const std::string MARKER_FRAME_ID = "/map";
 geometry_msgs::Quaternion eulerToQuaternion(Position pos) noexcept;
 
 MarkersPublisher::MarkersPublisher(ros::NodeHandle& nhandle) {
-    markersPubl_ = nhandle.advertise<visualization_msgs::Marker>(MARKERS_TOPIC, QUEUE_SIZE);
+    m_markersPubl = nhandle.advertise<visualization_msgs::Marker>(MARKERS_TOPIC, QUEUE_SIZE);
 }
 
 void MarkersPublisher::publishCheckZones(RobotPtr robot) {
-    if (!isConnected())
+    if (!m_isConnected())
         return;
     int index = 0;
-    for (auto shape: robot->getMainShapes()) {
-        publishMarker(NS_MARKERS_MAIN, index, shape, 0.02, 0.01, COLOR_ROBOT_MAIN_SHAPES);
+    for (const auto& shape: robot->getMainShapes()) {
+        m_publishMarker(NS_MARKERS_MAIN, index, *shape, 0.02, 0.01, COLOR_ROBOT_MAIN_SHAPES);
         index++;
     }
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " robot shapes.");
     index = 0;
-    for (auto shape: robot->getPathShapes()) {
-        publishMarker(NS_MARKERS_PATH, index, shape, 0.02, 0.01, COLOR_ROBOT_PATH_SHAPES);
+    for (const auto& shape: robot->getPathShapes()) {
+        m_publishMarker(NS_MARKERS_PATH, index, *shape, 0.02, 0.01, COLOR_ROBOT_PATH_SHAPES);
         index++;
     }
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " path shapes.");
 }
 
 void MarkersPublisher::publishObstacles(const std::vector<ObstaclePtr>& obstacles) {
-    if (!isConnected())
+    if (!m_isConnected())
         return;
     int index = 0;
     for (auto obstacle: obstacles) {
-        publishMarker(NS_MARKERS_OBSTACLES, index, obstacle->getShape(), 0.35, 0.35 / 2.0, COLOR_OBSTACLES_SHAPES);
+        m_publishMarker(NS_MARKERS_OBSTACLES, index, obstacle->getShape(), 0.35, 0.35 / 2.0, COLOR_OBSTACLES_SHAPES);
         index++;
         
-        for (auto velShape: obstacle->getVelocityShapes()) {
-            publishMarker(NS_MARKERS_OBSTACLES, index, velShape, 0.02, 0.01, COLOR_OBSTACLE_VELOCITY_SHAPES);
+        for (const auto& velShape: obstacle->getVelocityShapes()) {
+            m_publishMarker(NS_MARKERS_OBSTACLES, index, *velShape, 0.02, 0.01, COLOR_OBSTACLE_VELOCITY_SHAPES);
             index++;
         }
     }
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " obstacle shapes.");
 }
 
-bool MarkersPublisher::isConnected() const {
-    return markersPubl_.getNumSubscribers() > 0;
+bool MarkersPublisher::m_isConnected() const {
+    return m_markersPubl.getNumSubscribers() > 0;
 }
 
-void MarkersPublisher::publishMarker(std::string ns, int index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color) {
+void MarkersPublisher::m_publishMarker(std::string ns, int index, const CollisionsShapes::AbstractShape& shape, double z_scale, double z_height, std_msgs::ColorRGBA color) {
     visualization_msgs::Marker marker;
     marker.header.frame_id = MARKER_FRAME_ID;
     marker.ns = ns;
     marker.id = index;
     
-    switch (shape->getShapeType()) {
+    switch (shape.getShapeType()) {
     case CollisionsShapes::ShapeType::SEGMENT:
-        addSegmentInfoToMarker(shape, marker);
+        m_addSegmentInfoToMarker(shape, marker);
         break;
     case CollisionsShapes::ShapeType::RECTANGLE:
-        addRectangleInfoToMarker(shape, marker);
+        m_addRectangleInfoToMarker(shape, marker);
         break;
     case CollisionsShapes::ShapeType::CIRCLE:
-        addCircleInfoToMarker(shape, marker);
+        m_addCircleInfoToMarker(shape, marker);
         break;
     default:
         ROS_WARN_ONCE("Tried to publish marker for an unknown shape. This message will be printed once.");
@@ -91,43 +91,38 @@ void MarkersPublisher::publishMarker(std::string ns, int index, ShapePtr shape, 
     
     marker.scale.z = z_scale;
     marker.color = color;
-    marker.pose.position = shape->getPos().toGeoPoint();
+    marker.pose.position = shape.getPos().toGeoPoint();
     marker.pose.position.z = z_height;
-    marker.pose.orientation = eulerToQuaternion({0, 0, shape->getPos().getAngle()});
+    marker.pose.orientation = eulerToQuaternion({0, 0, shape.getPos().getAngle()});
     marker.lifetime = ros::Duration(0.1);
     
-    markersPubl_.publish(marker);
+    m_markersPubl.publish(marker);
 }
 
-void MarkersPublisher::addSegmentInfoToMarker(MarkersPublisher::ShapePtr shape, visualization_msgs::Marker& marker)
-{
-    auto* seg = dynamic_cast<const CollisionsShapes::Segment* const>(shape.get());
+void MarkersPublisher::m_addSegmentInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const {
+    const auto& seg = dynamic_cast<const CollisionsShapes::Segment&>(shape);
     
     marker.type = marker.CUBE;
-    marker.scale.x = seg->getLength();
+    marker.scale.x = seg.getLength();
     marker.scale.y = 0.02;
 }
 
-void MarkersPublisher::addRectangleInfoToMarker(MarkersPublisher::ShapePtr shape, visualization_msgs::Marker& marker)
-{
-    auto* rect = dynamic_cast<const CollisionsShapes::Rectangle* const>(shape.get());
+void MarkersPublisher::m_addRectangleInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const {
+    const auto& rect = dynamic_cast<const CollisionsShapes::Rectangle&>(shape);
     
     marker.type = marker.CUBE;
-    marker.scale.x = rect->getWidth();
-    marker.scale.y = rect->getHeight();
+    marker.scale.x = rect.getWidth();
+    marker.scale.y = rect.getHeight();
 }
 
-void MarkersPublisher::addCircleInfoToMarker(MarkersPublisher::ShapePtr shape, visualization_msgs::Marker& marker)
-{
-    auto* circ = dynamic_cast<const CollisionsShapes::Circle* const>(shape.get());
+void MarkersPublisher::m_addCircleInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const {
+    const auto& circ = dynamic_cast<const CollisionsShapes::Circle&>(shape);
     
     marker.type = marker.CYLINDER;
-    marker.scale.x = circ->getRadius() * 2.0;
-    marker.scale.y = circ->getRadius() * 2.0;
+    marker.scale.x = marker.scale.y = circ.getRadius() * 2.0;
 }
 
-const std_msgs::ColorRGBA constructColorRGBA(float r, float g, float b, float a) noexcept
-{
+const std_msgs::ColorRGBA constructColorRGBA(float r, float g, float b, float a) noexcept {
     std_msgs::ColorRGBA color;
     color.r = r;
     color.g = g;

@@ -15,7 +15,7 @@ class MarkersPublisher {
 public:
     using RobotPtr = std::shared_ptr<Robot>;
     using ObstaclePtr = std::shared_ptr<Obstacle>;
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     
     MarkersPublisher(ros::NodeHandle& nhandle);
     
@@ -23,14 +23,14 @@ public:
     void publishObstacles(const std::vector<ObstaclePtr>& obstacles);
     
 private:
-    ros::Publisher markersPubl_;
+    ros::Publisher m_markersPubl;
     
-    bool isConnected() const;
-    void publishMarker(std::string ns, int index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color);
+    bool m_isConnected() const;
+    void m_publishMarker(std::string ns, int index, const CollisionsShapes::AbstractShape& shape, double z_scale, double z_height, std_msgs::ColorRGBA color);
     
-    void addSegmentInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
-    void addRectangleInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
-    void addCircleInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
+    void m_addSegmentInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const;
+    void m_addRectangleInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const;
+    void m_addCircleInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const;
 };
 
 #endif // COLLISIONS_MARKERS_PUBLISHER_H

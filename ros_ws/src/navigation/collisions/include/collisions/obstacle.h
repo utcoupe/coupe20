@@ -11,13 +11,11 @@ class Obstacle {
 public:
     /**
      * Alias to manipulate shapes
-     * TODO replace with reference
      */
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     
     /**
      * Alias to manipulate obstacle velocity
-     * TODO replace with reference
      */
     using VelocityPtr = std::unique_ptr<ObstacleVelocity>;
     
@@ -27,16 +25,23 @@ public:
      * @param shape The shape of the obstacle
      * @param velocity The velocity of the obstacle
      */
-    Obstacle(ShapePtr shape, VelocityPtr&& velocity = nullptr);
+    Obstacle(ShapePtr&& shape, VelocityPtr&& velocity);
+    
+    /**
+     * Main constructor of Obstacle
+     * 
+     * @param shape The shape of the obstacle
+     */
+    Obstacle(ShapePtr&& shape);
     
     /**
      * Returns the static shape of the obstacle
      * 
      * TODO As const reference
      * 
-     * @return Obstacle::ShapePtr
+     * @return The shape
      */
-    ShapePtr getShape() const noexcept { return m_shape; }
+    const CollisionsShapes::AbstractShape& getShape() const noexcept { return *m_shape; }
     
     /**
      * Returns the velocity shapes of the obstacle.
@@ -46,7 +51,7 @@ public:
      * @param maxDist The maximum projection distance
      * @return The shapes describing the theroretical object velocity
      */
-    std::vector<ShapePtr> getVelocityShapes (double maxDist = -1.0);
+    const std::vector<ShapePtr>& getVelocityShapes (double maxDist = -1.0);
     
     /**
      * Retuns the object position

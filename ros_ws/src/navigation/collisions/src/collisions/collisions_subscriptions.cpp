@@ -165,12 +165,14 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
             ROS_WARN_STREAM("Belt rect not in /" << MAP_TF_FRAME << " tf frame, skipping.");
             continue;
         }
-        auto rectShape = std::make_shared<CollisionsShapes::Rectangle>(
+        auto rectShape = std::make_unique<CollisionsShapes::Rectangle>(
             Position(rect.x, rect.y, rect.a),
             rect.w,
             rect.h
         );
-        newBelt.emplace_back(std::make_shared<Obstacle>(rectShape));
+        newBelt.emplace_back(
+            std::make_shared<Obstacle>(std::move(rectShape))
+        );
     }
     if (!newBelt.empty()) {
         obstaclesStack_->updateBeltPoints(newBelt);
@@ -181,11 +183,13 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
             ROS_WARN_STREAM("Lidar segment not in /" << MAP_TF_FRAME << " tf frame, skipping.");
             continue;
         }
-        auto segShape = std::make_shared<CollisionsShapes::Segment>(
+        auto segShape = std::make_unique<CollisionsShapes::Segment>(
             seg.segment.first_point,
             seg.segment.last_point
         );
-        newLidar.emplace_back(std::make_shared<Obstacle>(segShape));
+        newLidar.emplace_back(
+            std::make_shared<Obstacle>(std::move(segShape))
+        );
     }
     for (auto circ: objects->unknown_circles) {
         if (circ.header.frame_id != MAP_TF_FRAME && circ.header.frame_id != "/" + MAP_TF_FRAME) {
@@ -194,7 +198,7 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
         }
         double velDist = std::hypot(circ.circle.velocity.x, circ.circle.velocity.y);
         double velAngle = std::atan2(circ.circle.velocity.y, circ.circle.velocity.x);
-        auto circShape = std::make_shared<CollisionsShapes::Circle>(
+        auto circShape = std::make_unique<CollisionsShapes::Circle>(
             Position(circ.circle.center, velAngle),
             circ.circle.radius
         );
@@ -204,7 +208,9 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
             velAngle,
             velDist
         );
-        newLidar.emplace_back(std::make_shared<Obstacle>(circShape, std::move(velocity)));
+        newLidar.emplace_back(
+            std::make_shared<Obstacle>(std::move(circShape), std::move(velocity))
+        );
     }
     if (!newLidar.empty()) {
         obstaclesStack_->updateLidarObjects(newLidar);

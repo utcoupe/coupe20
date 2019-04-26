@@ -9,8 +9,7 @@ ObstacleVelocity::ObstacleVelocity(double width, double height, double velLinear
 {
 }
 
-std::vector<ObstacleVelocity::ShapePtr> ObstacleVelocity::getShapes(double maxDist)
-{
+const std::vector<ObstacleVelocity::ShapePtr>& ObstacleVelocity::getShapes(double maxDist) const {
     if (m_needUpdate || m_lastMaxDist != maxDist) {
         m_generateVelShapes(maxDist);
         m_lastMaxDist = maxDist;
@@ -19,8 +18,7 @@ std::vector<ObstacleVelocity::ShapePtr> ObstacleVelocity::getShapes(double maxDi
     return m_velShapes;
 }
 
-void ObstacleVelocity::m_generateVelShapes(double maxDist)
-{
+void ObstacleVelocity::m_generateVelShapes(double maxDist) const {
     m_velShapes.clear();
     if (abs(m_velLinear) < CollisionThresholds::VEL_MIN) {
         return;
@@ -41,5 +39,7 @@ void ObstacleVelocity::m_generateVelShapes(double maxDist)
         m_objectPos.getY() + len * std::sin(m_objectPos.getAngle() + sideAngle),
         m_objectPos.getAngle()
     );
-    m_velShapes.emplace_back( std::make_shared<CollisionsShapes::Rectangle>(pos, width, height) );
+    m_velShapes.emplace_back(
+        std::make_unique<CollisionsShapes::Rectangle>(pos, width, height)
+    );
 }

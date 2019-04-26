@@ -4,24 +4,15 @@
 #include "collisions/shapes/rectangle.h"
 #include "collisions/obstacle_velocity.h"
 
+
+#include <geometry_tools/position.h>
+
 using namespace CollisionsShapes;
 
-std::vector<VelocityCheckZone::ShapePtr> VelocityCheckZone::getShapes(Position robotPos, double velLinear, double velAngular, double maxDist) {
-    ObstacleVelocity vel(width_, height_, velLinear, velAngular, robotPos);
-    return vel.getShapes(maxDist);
-}
-
-std::vector<Collision> VelocityCheckZone::checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) {
-    return checkCollisions(robotPos, obstacles, 0.0, 0.0);
-}
-
-std::vector<Collision> VelocityCheckZone::checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles, double velLinear, double velAngular)
-{
+std::vector<Collision> VelocityCheckZone::checkCollisions(const std::vector<ObstaclePtr>& obstacles) const {
     std::vector<Collision> collisions;
-    auto shapeObstacles = getShapes(robotPos, velLinear, velAngular);
-    for (auto obst: CollisionResolver::findCollisions(shapeObstacles, obstacles))
-    {
-        double approxDist = robotPos.norm2Dist(obst->getPos());
+    for (auto obst: CollisionResolver::findCollisions(m_robotVelocity.getShapes(), obstacles)) {
+        double approxDist = m_robotPos.norm2Dist(obst->getPos());
         collisions.emplace_back(CollisionLevel::LEVEL_STOP, obst, approxDist);
     }
     return collisions;

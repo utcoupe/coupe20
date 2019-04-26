@@ -10,7 +10,7 @@ namespace CollisionsShapes {
     
 class Rectangle: public AbstractShape {
 public:
-    Rectangle(Position pos, double width, double height) noexcept:
+    Rectangle(const Position& pos, double width, double height) noexcept:
         AbstractShape(pos), m_width(width), m_height(height)
     {}
     ~Rectangle() override = default;

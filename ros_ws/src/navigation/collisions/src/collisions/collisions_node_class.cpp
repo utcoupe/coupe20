@@ -81,12 +81,12 @@ void CollisionsNode::publishCollision(const Collision& collision)
     msg.obstacle_pos = obst->getPos().toPose2D();
     
     using ShapeType = CollisionsShapes::ShapeType;
-    switch (obst->getShape()->getShapeType()) {
+    switch (obst->getShape().getShapeType()) {
     case ShapeType::RECTANGLE:
-        addRectInfosToPredictedCollision(msg, obst->getShape().get());
+        addRectInfosToPredictedCollision(msg, & obst->getShape());
         break;
     case ShapeType::CIRCLE:
-        addCircInfosToPredictedCollision(msg, obst->getShape().get());
+        addCircInfosToPredictedCollision(msg, & obst->getShape());
         break;
     default:
         ROS_WARN_ONCE("Found collision has a special shape that cannot be reported.");

@@ -8,7 +8,7 @@
 #include <memory>
 
 namespace CollisionResolver {
-    using PtrShape = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using PtrShape = std::unique_ptr<CollisionsShapes::AbstractShape>;
     using PtrObstacle = std::shared_ptr<Obstacle>;
     std::vector<PtrObstacle> findCollisions(const std::vector<PtrShape>& robotShapes, const std::vector<PtrObstacle>& obstacleShapes);
 } // namespace CollisionResolver

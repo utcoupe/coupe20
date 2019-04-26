@@ -9,7 +9,7 @@ namespace CollisionsShapes {
 
 class Circle: public AbstractShape {
 public:
-    Circle(Position pos, double radius) noexcept:
+    Circle(const Position& pos, double radius) noexcept:
         AbstractShape(pos), m_radius(radius)
     {}
     ~Circle() override = default;

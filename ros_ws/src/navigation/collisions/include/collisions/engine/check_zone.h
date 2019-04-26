@@ -2,7 +2,6 @@
 #define COLLISIONS_CHECK_ZONE_H
 
 #include "collisions/engine/constants.h"
-#include "geometry_tools/position.h"
 #include "collisions/engine/engine.h"
 #include "collisions/obstacle.h"
 #include "collisions/engine/collision.h"
@@ -11,26 +10,26 @@
 #include <memory>
 #include <vector>
 
+class Position;
+
 class CheckZone {
 public:
     using ObstaclePtr = std::shared_ptr<Obstacle>;
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     
-    CheckZone(double width, double height, CollisionLevel level) noexcept:
-        width_(width), height_(height), level_(level)
-    {}
+    CheckZone(CollisionLevel level, const Position& robotPos) noexcept:
+        m_level(level), m_robotPos(robotPos){}
+    
     virtual ~CheckZone() = default;
     
-    virtual std::vector<ShapePtr> getShapes(Position robotPos) = 0;
-    virtual std::vector<Collision> checkCollisions(Position robotPos, std::vector<ObstaclePtr> obstacles) = 0;
+    virtual const std::vector<ShapePtr>& getShapes() const = 0;
+    virtual std::vector<Collision> checkCollisions(const std::vector<ObstaclePtr>& obstacles) const = 0;
     
-    CollisionLevel  getLevel()  const noexcept { return level_; }
-    double          getHeight() const noexcept { return height_; }
-    double          getWidth()  const noexcept { return width_; }
+    CollisionLevel  getLevel()  const noexcept { return m_level; }
     
 protected:
-    double width_, height_;
-    CollisionLevel level_;
+    CollisionLevel m_level;
+    const Position& m_robotPos;
 };
 
 #endif // COLLISIONS_CHECK_ZONE_H

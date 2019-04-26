@@ -8,13 +8,13 @@
 
 class ObstacleVelocity {
 public:
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     
     ObstacleVelocity(double width, double height, double velLinear = 0.0, double velAngular = 0.0, Position objectPos = {}) noexcept;
     
-    std::vector<ShapePtr> getShapes(double maxDist = -1.0);
+    const std::vector<ShapePtr>& getShapes(double maxDist = -1.0) const;
     
-    void setObjectPos(Position pos) noexcept {
+    void setObjectPos(const Position& pos) noexcept {
         m_objectPos = pos;
         m_needUpdate = true;
     }
@@ -26,13 +26,13 @@ public:
     }
     
 private:
-    bool m_needUpdate = true;
+    mutable bool m_needUpdate = true;
     double m_width, m_height, m_velLinear, m_velAngular;
     Position m_objectPos;
-    std::vector<ShapePtr> m_velShapes;
-    double m_lastMaxDist = -1.0;
+    mutable std::vector<ShapePtr> m_velShapes;
+    mutable double m_lastMaxDist = -1.0;
     
-    void m_generateVelShapes(double maxDist);
+    void m_generateVelShapes(double maxDist) const;
 };
 
 #endif // COLLISIONS_OBSTACLE_VELOCITY_H

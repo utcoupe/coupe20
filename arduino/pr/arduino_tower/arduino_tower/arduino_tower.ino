@@ -15,6 +15,7 @@
 #include <ard_tower/TowerResponses.h> 
 #include <ard_door/Door.h> 
 //#include <driver_ax12/Ax12Command.h> 
+#include <driver_
 
 
 ros :: NodeHandle nh ; 
@@ -64,7 +65,7 @@ ard_door::Door door_msg ;
 
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
 ros::Publisher pub_door_action       ("actuators/ard_door/action",   &door_msg ); 
-//ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event_msg); 
+ros::Publisher pub_ax12_responses    ("drivers//ax12/simple_command",    &ax12_event_msg); 
 
 
 // --------------------------------------------------------------

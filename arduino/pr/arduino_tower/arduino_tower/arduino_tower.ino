@@ -25,6 +25,8 @@ ros :: NodeHandle nh ;
 
 // Code includes 
 #include "tower_variables.h" 
+#include "stdio.h"
+#include "string.h" 
 
 // Servo motor 
 Servo servo_unload_1 ; // create servo object to control a servo
@@ -55,7 +57,6 @@ void on_tower(const ard_tower::Tower& msg){
 ros::Subscriber<game_manager::GameStatus> sub_game_status  ("ai/game_manager/status", &on_game_status)  ;
 ros::Subscriber<ard_tower::Tower>         sub_tower        ("actuators/ard_tower",    &on_tower)   ;  
 
-
 // ~ Publisher ~ 
 ard_tower::TowerResponses  event_msg ; 
 ard_door::Door door_msg ; 
@@ -74,7 +75,7 @@ void tower_initialize() {
   nh.loginfo("tower_initialize"); 
   servo_unload_1.write(POS_UNLOAD_INIT_1) ;
   servo_unload_2.write(POS_UNLOAD_INIT_2) ;    
-  // initialize stepper 
+  // TODO initialize stepper with push buttom 
   event_msg.init_success = 1 ; 
   pub_tower_responses.publish(&event_msg); 
   event_msg.init_success = 0 ; 
@@ -101,10 +102,14 @@ int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12
 
 int move_lift(int wanted_position) {  // move lift to the correct floor 
 nh.loginfo("move_lift"); 
+//char msg_wanted_position ; 
+//sprintf(msg_wanted_position, "%d", wanted_position); 
+nh.loginfo(wanted_position);   // understand error 
+nh.loginfo(lift_position);          // understand error 
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
     stepper_load.moveStep(lift_position - wanted_position,true); 
-    while( stepper_load.getRemainingStep() >0 ) {
+    while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
     delay(500) ; 
@@ -115,7 +120,7 @@ nh.loginfo("move_lift");
   if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
     nh.loginfo("goes up"); 
     stepper_load.moveStep(wanted_position-lift_position,false); 
-    while( stepper_load.getRemainingStep() >0 ) {
+    while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
     delay(500) ; 
@@ -138,12 +143,12 @@ int unload_atom_sas () {
   int success ; 
   if (nb_atom_in > MAX_ATOM_SAS && nb_atom_in_sas == 0 && game_status == 1 ) { // not enough space in sas for all atoms 
     nh.loginfo("not enough space"); 
-    float nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
+    int nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
     success = unload_atom_pliers() ;   // nb_atom_in = 0 at this point and nb_atom_out will change 
-    float nb_atom_out_wrong = nb_atom_out - nb_atom_out_right ; 
+    int nb_atom_out_wrong = nb_atom_out - nb_atom_out_right ; 
     if (success != 0 ) success = load_atom_tower(nb_atom_out_wrong,MAX_ATOM_SAS) ; 
     if (success != 0 ) nb_atom_out_wrong = nb_atom_out_wrong - nb_atom_in ; // with nb_atom_in = MAX_ATOM_SAS
-    if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
+    if (success != 0 ) success = move_lift(H_SAS_LOW) ; //bring to sas 
     if (success != 0) nb_atom_in_sas = MAX_ATOM_SAS  ; 
     if (success != 0 ) success = move_ax12(1);  // open AX12 
     if (success != 0) success = move_lift(H_FLOOR_1) ; 
@@ -252,7 +257,7 @@ int unload_atom_pliers() {
   if ( nb_atom_in - nb_atom_in_sas != 0 ) {
     nh.loginfo("atoms drop"); 
     success = move_ax12(1) ; // AX12 open 
-    nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
+    nb_atom_out +=  nb_atom_in - nb_atom_in_sas ; 
     nb_atom_in  = nb_atom_in_sas ; 
     return 1 ; 
   }
@@ -308,7 +313,7 @@ int load_atom_tower(float nb_atom_tower, float nb_atom_wanted) {
   nh.loginfo("load_atom_tower") ; 
   int success ; 
   if (nb_atom_in - nb_atom_in_sas == 0 ) {  // will only do this case !! 
-    success = move_lift(nb_atom_tower-nb_atom_wanted*300) ; // TODO replace 300 with constante 
+    success = move_lift((nb_atom_tower-nb_atom_wanted)*H) ; // TODO replace 300 with constante 
     if (success != 0 ) success = move_ax12(0) ; //close
     if (success != 0) nb_atom_in = nb_atom_wanted ; 
     nh.loginfo("tower taken"); 

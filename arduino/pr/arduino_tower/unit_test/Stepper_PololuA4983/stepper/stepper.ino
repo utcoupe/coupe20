@@ -67,17 +67,16 @@ void test_2() {
     } 
      i+=1 ; 
    }
-
 }
 
 
 void test_3() {
-  //stepper.moveStep(850,0); 
-  stepper.moveRevolution(8,0);
+  //stepper.moveRevolution(8,1);
+  stepper.moveStep(500,0); 
   while( stepper.getRemainingStep() !=0 ) {
     stepper.update() ; 
   }
-  delay(5000) ; 
+  delay(1000) ; 
 }
 
 

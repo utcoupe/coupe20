@@ -26,7 +26,7 @@ add_service_files(
     FILES
     MapGetContainer.srv
     MapGetWaypoint.srv
-    MapGetTerrain.srv
+    MapGetContext.srv
 
     MapSetObject.srv
     MapTransfer.srv

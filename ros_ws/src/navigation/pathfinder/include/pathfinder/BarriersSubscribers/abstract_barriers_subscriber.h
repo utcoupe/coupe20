@@ -3,9 +3,9 @@
 
 #include <ros/ros.h>
 
-#include "geometry_msgs/Pose2D.h"
-
 #include <mutex>
+
+class Point;
 
 /**
  * Class defining an abstract subscriber.
@@ -17,13 +17,15 @@ public:
      * Initialize the safety margin.
      * @param safetyMargin Margin to add to barriers.
      */
-    AbstractBarriersSubscriber(const double& safetyMargin) : _safetyMargin(safetyMargin) {};
+    AbstractBarriersSubscriber(double safetyMargin) : _safetyMargin(safetyMargin) {};
+    
+    virtual ~AbstractBarriersSubscriber() = default;
     
     /**
      * Check if there are any obstacles at the given position.
      * @param pos The position to check.
      */
-    virtual bool hasBarrier(const geometry_msgs::Pose2D& pos) = 0;
+    virtual bool hasBarrier(const Point& pos) const = 0;
     
     /**
      * Create internaly the ros subscriber.
@@ -37,7 +39,7 @@ public:
      * Update the safety margin.
      * @param safetyMargin The new safety margin.
      */
-    void setSafetyMargin(const double& safetyMargin) { _safetyMargin = safetyMargin; }
+    void setSafetyMargin(double safetyMargin) { _safetyMargin = safetyMargin; }
     
     /**
      * Before starting its algorithm, the pathfinder can ask the subscriber to make a cache of all current barriers.
@@ -45,15 +47,15 @@ public:
      * @param widthGrid The width of pathfinder internal map.
      * @param heightGrid The height of pathfinder internal map.
      */
-    virtual void fetchOccupancyData(const uint& widthGrid, const uint& heightGrid) {};
+    virtual void fetchOccupancyData(uint widthGrid /** unused **/, uint heightGrid /** unused **/) {};
     
     /**
      * Indicate if the base coordinates used in the subscriber are different from the pathfinder.
      */
-    const virtual bool needConversionBefore() const { return true; };
+    virtual bool needConversionBefore() const { return true; };
 
 protected:
-    std::mutex g_mutex;
+    mutable std::mutex g_mutex;
     ros::Subscriber subscriber;
     double _safetyMargin;
 };

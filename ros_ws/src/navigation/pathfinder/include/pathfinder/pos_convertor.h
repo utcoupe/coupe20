@@ -19,24 +19,24 @@ public:
      * @param rosPos The coodinate in ROS system
      * @return The coordinate in pathfinder system
      */
-    Point fromRosToMapPos (Point rosPos) const;
+    Point fromRosToMapPos(const Point& rosPos) const;
     
     /**
      * @brief Converts a coodinate from pathfinding system to ROS system using the scales.
      * @param mapPos The coodinate in pathfinder system
      * @return The coordinate in ROS system
      */
-    Point fromMapToRosPos (Point mapPos) const;
+    Point fromMapToRosPos(const Point& mapPos) const;
     
     double fromMapToRosDistance (double dist) const;
     
     double fromRosToMapDistance (double dist) const;
     
     // Getters & Setters
-    void setSizes (Point sizeRos, Point sizeMap) noexcept { setRosSize(sizeRos); setMapSize(sizeMap); }
+    void setSizes (const Point& sizeRos, const Point& sizeMap) noexcept { setRosSize(sizeRos); setMapSize(sizeMap); }
     
-    void setRosSize(Point sizeRos) noexcept { _sizeRos = sizeRos; }
-    void setMapSize(Point sizeMap) noexcept { _sizeMap = sizeMap; }
+    void setRosSize(const Point& sizeRos) noexcept { _sizeRos = sizeRos; }
+    void setMapSize(const Point& sizeMap) noexcept { _sizeMap = sizeMap; }
     
     void setInvertedY(bool invertedY) noexcept { _invertedY = invertedY; }
     

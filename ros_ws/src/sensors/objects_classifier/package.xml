@@ -19,6 +19,7 @@
     <depend>belt_interpreter</depend>
     <depend>game_manager</depend>
     <depend>dynamic_reconfigure</depend>
+    <depend>geometry_tools</depend>
     <exec_depend>message_runtime</exec_depend>
     <export>
     </export>

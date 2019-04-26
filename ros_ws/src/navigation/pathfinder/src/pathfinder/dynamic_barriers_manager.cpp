@@ -1,26 +1,21 @@
 #include "pathfinder/dynamic_barriers_manager.h"
 
+#include "pathfinder/pos_convertor.h"
+
+#include <geometry_tools/point.h>
+
 #include <utility>
 
 using namespace std;
 
-bool DynamicBarriersManager::hasBarriers(const geometry_msgs::Pose2D& pos)
-{
-    for (const auto& subscriber : subscribers)
-        if (subscriber->needConversionBefore() && subscriber->hasBarrier(pos))
-            return true;
-    return false;
-}
-
-bool DynamicBarriersManager::hasBarriers(const Point& pos)
-{
-    auto pose2dConvert = _convertor->fromMapToRosPos(pos).toPose2D();
+bool DynamicBarriersManager::hasBarriers(const Point& pos) const {
+    auto posConverted = _convertor.fromMapToRosPos(pos);
     
     for (const auto& subscriber : subscribers)
     {
-        if (subscriber->needConversionBefore() && subscriber->hasBarrier(pose2dConvert))
+        if (subscriber->needConversionBefore() && subscriber->hasBarrier(posConverted))
             return true;
-        else if (!subscriber->needConversionBefore() && subscriber->hasBarrier(pos.toPose2D()))
+        else if (!subscriber->needConversionBefore() && subscriber->hasBarrier(pos))
             return true;
     }
     return false;
@@ -30,11 +25,6 @@ bool DynamicBarriersManager::hasBarriers(const Point& pos)
 void DynamicBarriersManager::addBarrierSubscriber(BarriersSubscriber && subscriber)
 {
     subscribers.push_back(std::move(subscriber));
-}
-
-void DynamicBarriersManager::setConvertor(std::shared_ptr<PosConvertor> convertor)
-{
-    _convertor = convertor;
 }
 
 void DynamicBarriersManager::updateSafetyMargin(const double& newMargin)

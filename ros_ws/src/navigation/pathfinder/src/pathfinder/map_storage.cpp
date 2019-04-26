@@ -1,5 +1,10 @@
 #include "pathfinder/map_storage.h"
 
+#include "pathfinder/dynamic_barriers_manager.h"
+#include "pathfinder/occupancy_grid.h"
+
+#include <geometry_tools/point.h>
+
 #include <cmath>
 
 using namespace std;
@@ -22,19 +27,22 @@ MapStorage::Vect2DBool MapStorage::loadAllowedPositionsFromFile(const string& fi
     return allowedPos;
 }
 
-void MapStorage::saveMapToFile(const string& fileName, const Vect2DBool& allowedPos, shared_ptr<DynamicBarriersManager> dynBarriersMng, const vector<Point>& path, const vector<Point>& smoothPath)
-{
+void MapStorage::saveMapToFile(
+    const string& fileName, const pathfinder::OccupancyGrid& allowedPos,
+    const DynamicBarriersManager& dynBarriersMng,
+    const vector<Point>& path, const vector<Point>& smoothPath
+) const {
     ROS_DEBUG_STREAM("MapStorage: saving to " << fileName);
     sf::Image image;
-    image.create(allowedPos.front().size(), allowedPos.size());
+    image.create(allowedPos.getSize().first, allowedPos.getSize().second);
     
-    for (unsigned int line = 0; line < allowedPos.size(); line++)
+    for (unsigned int line = 0; line < allowedPos.getSize().second; line++)
     {
-        for (unsigned int column = 0; column < allowedPos.front().size(); column++)
+        for (unsigned int column = 0; column < allowedPos.getSize().first; column++)
         {
-            if (!allowedPos[line][column])
+            if (!allowedPos.isAllowed(column, line))
                 image.setPixel(column, line, NOT_ALLOWED_POS_COLOR);
-            else if (dynBarriersMng->hasBarriers(Point(column, line)))
+            else if (dynBarriersMng.hasBarriers(Point(column, line)))
                 image.setPixel(column, line, DYN_BARRIER_COLOR);
             else
                 image.setPixel(column, line, ALLOWED_POS_COLOR);
@@ -60,7 +68,7 @@ void MapStorage::saveMapToFile(const string& fileName, const Vect2DBool& allowed
     ROS_DEBUG("MapStorage: Done");
 }
 
-void MapStorage::drawPath(sf::Image& image, const Point& pA, const Point& pB, const sf::Color& color)
+void MapStorage::drawPath(sf::Image& image, const Point& pA, const Point& pB, const sf::Color& color) const
 {
     Point drawPos = pA;
     int dX, dY, stepX, stepY, error;

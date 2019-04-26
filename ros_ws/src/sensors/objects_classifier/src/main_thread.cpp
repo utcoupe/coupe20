@@ -1,13 +1,29 @@
-#include <memory>
+#include "main_thread.h"
+
+#include <objects_classifier/ClassifiedObjects.h>
 
 #include <tf/transform_datatypes.h>
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include <tf2_ros/transform_listener.h>
 
-#include <objects_classifier/ClassifiedObjects.h>
+#include <memory>
 
-#include "main_thread.h"
+const std::string PUB_TOPIC = "recognition/objects_classifier/objects";
+
+const int THREADS_NBR = 6;
+
+// discretization steps (m)
+const float STEP_X = 0.02;
+const float STEP_Y = 0.02;
+
+// if a circle has a velocity above this value, it is considered unknown
+const float CIRCLE_SPEED_MAX = 1.0;
+
+const double SECS_BETWEEN_RVIZ_PUB = 0.08;
+
+// if the absolute time diff between the received time and the header time is
+// greater than this (s), adjusts the header time (for rects)
+const float TIME_DIFF_MAX = 0.05;
 
 
 void MainThread::classify_and_publish_rects(belt_interpreter::BeltRects &rects) {
@@ -45,8 +61,8 @@ void MainThread::classify_and_publish_rects(belt_interpreter::BeltRects &rects) 
 
         for (float x = rect.x - rect.w / 2; x <= rect.x + rect.w / 2; x += step_x) {
             for (float y = rect.y - rect.h / 2; y <= rect.y + rect.h / 2; y += step_y) {
-                this->points_[point_idx].x = x;
-                this->points_[point_idx].y = y;
+                this->points_[point_idx].setX(x);
+                this->points_[point_idx].setY(y);
                 point_idx++;
             }
         }
@@ -245,8 +261,7 @@ void MainThread::classify_and_publish_lidar_objects(processing_lidar_objects::Ob
         // classify circle
         circle_s.circle = circle;
         if (pow(circle.velocity.x, 2) + pow(circle.velocity.y, 2) + pow(circle.velocity.z, 2) >=
-            pow(CIRCLE_SPEED_MAX, 2) || !map_objects_.contains_point(static_cast<float>(circle.center.x),
-                                                                     static_cast<float>(circle.center.y))) {
+            pow(CIRCLE_SPEED_MAX, 2) || !map_objects_.contains_point({ circle.center })) {
 
             classified_objects_.unknown_circles.push_back(circle_s);
         } else {
@@ -257,10 +272,8 @@ void MainThread::classify_and_publish_lidar_objects(processing_lidar_objects::Ob
     for (auto &segment : obstacles.segments) {
         segment_s.segment = segment;
 
-        if (map_objects_.contains_point(static_cast<float>(segment.first_point.x),
-                                        static_cast<float>(segment.first_point.y)) &&
-            map_objects_.contains_point(static_cast<float>(segment.last_point.x),
-                                        static_cast<float>(segment.last_point.y))) {
+        if (map_objects_.contains_point({ segment.first_point }) &&
+            map_objects_.contains_point({ segment.last_point })) {
             classified_objects_.map_segments.push_back(segment_s);
         } else {
             classified_objects_.unknown_segments.push_back(segment_s);

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Point PosConvertor::fromRosToMapPos (Point rosPos) const
+Point PosConvertor::fromRosToMapPos (const Point& rosPos) const
 {
     double x, y;
     x = rosPos.getX() * (_sizeMap.getX() / _sizeRos.getX());
@@ -11,11 +11,11 @@ Point PosConvertor::fromRosToMapPos (Point rosPos) const
     if (_invertedY)
         y = _sizeMap.getY() - y;
     
-    return {x, y};
+    return Point(x, y).floor();
 }
 
 
-Point PosConvertor::fromMapToRosPos (Point mapPos) const
+Point PosConvertor::fromMapToRosPos (const Point& mapPos) const
 {
     double x, y;
     x = mapPos.getX() * (_sizeRos.getX() / _sizeMap.getX());

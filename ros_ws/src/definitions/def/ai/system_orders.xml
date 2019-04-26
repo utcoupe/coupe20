@@ -1,7 +1,7 @@
 <orders>
     <!-- AI Specific -->
 	<order ref="delay" duration="1">
-		<message dest="ai/game_manager/delay">
+		<message dest="/ai/game_manager/delay">
 			<param name="duration" type="float" optional="true">0</param>
 		</message>
 		<response>
@@ -10,20 +10,20 @@
 	</order>
 
 	<order ref="ask_for_jack" duration="1">
-		<message dest="feedback/ard_hmi/ros_event">
+		<message dest="/feedback/ard_hmi/ros_event">
 			<param name="event" type="int" preset="true">0</param>
 		</message>
 	</order>
 
-	<order ref="wait_for_jack" duration="1" name="Wait for that motherf*cking Jack">
-		<message dest="feedback/ard_hmi/hmi_event" timeout="3600"/>
+	<order ref="wait_for_jack" duration="1" name="Wait for Jack">
+		<message dest="/feedback/ard_hmi/hmi_event" timeout="3600"/>
 		<response>
 			<param name="event" type="int" condition="==">1</param> <!-- TODO only Jack fired event-->
 		</response>
 	</order>
 
 	<order ref="timer_start">
-		<message dest="ai/game_manager/set_timer">
+		<message dest="/ai/game_manager/set_timer">
 			<param name="action" type="int" preset="true">0</param> <!-- start command -->
 			<param name="duration" type="float">100</param>
 		</message>
@@ -33,7 +33,7 @@
 	</order>
 
 	<order ref="set_game_status_ingame" duration="0">
-		<message dest="ai/game_manager/set_status">
+		<message dest="/ai/game_manager/set_status">
 			<param name="new_game_status" type="int" preset="true">1</param>
 		</message>
 		<response>
@@ -43,9 +43,10 @@
 
 	<!-- Map -->
 	<order ref="map_transfer" duration="0" name="Map object or entity transfer">
-		<message dest="static_map/transfer">
-			<param name="old_path" type="string" preset="true">/objects/cube_1</param>
-			<param name="new_path" type="string" preset="true">/objects/cube_2</param>
+		<message dest="/static_map/transfer">
+			<param name="mode" type="int"/> <!-- 0=OBJECT, 1=CONTAINER, 2=CONTAINER_OBJECTS -->
+			<param name="old_path" type="string"/>
+			<param name="new_path" type="string" optional="true"></param>
 		</message>
 		<response>
 			<param name="success" type="bool" condition="==">1</param>
@@ -53,7 +54,7 @@
 	</order>
 
 	<order ref="map_set" duration="0" name="Map element set">
-		<message dest="static_map/set">
+		<message dest="/static_map/set">
 			<param name="mode" type="int" optional="true">1</param> <!-- default to REPLACE mode -->
 			<param name="request_path" type="string"/>
 		</message>
@@ -65,7 +66,7 @@
 
 	<!-- Navigation -->
 	<order ref="set_robot_pos">
-		<message dest="drivers/ard_asserv/set_pos">
+		<message dest="/drivers/ard_asserv/set_pos">
 			<param name="position_waypoint" type="string" optional="true"/>
 			<param name="position" type="pose2d" optional="true"/>
 		</message>
@@ -75,7 +76,7 @@
 	</order>
 
 	<order ref="navigator_goto_pos">
-		<message dest="navigation/navigator/goto_action">
+		<message dest="/navigation/navigator/goto_action">
 			<param name="target_pos" type="pose2d"/>
 			<param name="direction" type="int" optional="true">1</param>
 		</message>
@@ -85,10 +86,13 @@
 	</order>
 
 	<order ref="navigator_goto_waypoint">
-		<message dest="navigation/navigator/gotowaypoint_action">
-			<param name="mode" type="int">1</param> <!-- 0 = GOTO, 1 = GOTOA -->
+		<message dest="/navigation/navigator/gotowaypoint_action">
+			<param name="mode" type="int">0</param> <!-- 0 = GOTO, 1 = GOTOA -->
 			<param name="waypoint_name" type="string"/>
-			<param name="disable_collisions" type="bool" optional="true">0</param>
+
+			<param name="disable_pathfinder" type="int" optional="true">0</param>
+			<param name="disable_collisions" type="int" optional="true">0</param>
+			
 			<param name="direction" type="int" optional="true">1</param>
 		</message>
 		<response>
@@ -100,8 +104,8 @@
 	</order>
 
 	<order ref="asserv_goto_waypoint">
-		<message dest="drivers/ard_asserv/goto_action">
-			<param name="mode" type="int">1</param>
+		<message dest="/drivers/ard_asserv/goto_action">
+			<param name="mode" type="int">0</param>
 			<param name="position_waypoint" type="string"/>
 			<param name="direction" type="int">1</param>
 		</message>
@@ -111,11 +115,11 @@
 	</order>
 
 	<order ref="asserv_pwm">
-		<message dest="drivers/ard_asserv/pwm">
+		<message dest="/drivers/ard_asserv/pwm">
 			<param name="left" type="int"/>
 			<param name="right" type="int"/>
 			<param name="duration" type="int"/>
-			<!-- <param name="auto_stop" type="int"/> -->
+			<param name="auto_stop" type="int" optional="true">1</param>
 		</message>
 		<response>
 			<param name="response" type="bool" condition="==">1</param>
@@ -124,7 +128,7 @@
 
 	<!-- Actuators -->
 	<order ref="actuator_set" duration="1.5">
-		<message dest="movement/actuators/dispatch">
+		<message dest="/movement/actuators/dispatch">
 			<param name="name" type="string"/>
 			<param name="preset" type="string" optional="true"/> <!-- Set either a preset or param-->
 			<param name="param" type="int" optional="true"/>
@@ -135,7 +139,7 @@
 	</order>
 
 	<order ref="actuator_ax12_set_pos" duration="1.5">
-		<message dest="drivers/ax12" timeout="8">
+		<message dest="/drivers/ax12" timeout="8">
 			<param name="motor_id" type="int"/>
 			<param name="position" type="int"/> <!-- Set either a preset or param-->
 			<param name="speed" type="int" optional="true">0</param>

@@ -5,6 +5,7 @@
 #include <ostream>
 
 #include "geometry_msgs/Pose2D.h"
+#include "geometry_msgs/Point.h"
 
 /**
  * Class representing a position or a vector.
@@ -21,6 +22,9 @@ public:
     constexpr Point (const geometry_msgs::Pose2D& pos) noexcept:
         Point(pos.x, pos.y)
     {}
+    constexpr Point (const geometry_msgs::Point& pos) noexcept:
+        Point(pos.x, pos.y)
+    {}
     
     constexpr double norm1Dist (Point other) const noexcept {
         return std::abs (_x - other.getX()) + std::abs (_y - other.getY());
@@ -28,6 +32,18 @@ public:
     
     double norm2Dist (Point other) const noexcept {
         return std::hypot(_x - other.getX(), _y - other.getY());
+    }
+    
+    Point floor () const noexcept {
+        return { std::floor(_x), std::floor(_y) };
+    }
+    
+    constexpr double scalarProduct(Point other) const noexcept {
+        return _x * other.getX() + _y * other.getY();
+    }
+    
+    constexpr double vectorProduct(Point other) const noexcept {
+        return _x * other.getY() - _y * other.getX();
     }
     
     // Operators
@@ -64,6 +80,7 @@ public:
     constexpr void   setY (const double& y) noexcept { _y = y; }
     
     geometry_msgs::Pose2D toPose2D() const;
+    geometry_msgs::Point toGeoPoint() const;
     
 protected:
     double _x, _y;

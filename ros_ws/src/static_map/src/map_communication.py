@@ -13,7 +13,7 @@ from occupancy import OccupancyGenerator
 class Servers():
     GET_CONTAINER_SRV = "static_map/get_container"
     GET_WAYPOINT_SRV  = "static_map/get_waypoint"
-    GET_TERRAIN_SRV   = "static_map/get_terrain"
+    GET_TERRAIN_SRV   = "static_map/get_context"
     SET_SRV           = "static_map/set"
     TRANSFER_SRV      = "static_map/transfer"
 
@@ -21,8 +21,8 @@ class MapServices():
     def __init__(self, occupancy_generator):
         self._get_container_srv = rospy.Service(Servers.GET_CONTAINER_SRV, static_map.srv.MapGetContainer, self.on_get_container)
         self._get_waypoint_srv  = rospy.Service(Servers.GET_WAYPOINT_SRV,  static_map.srv.MapGetWaypoint,  self.on_get_waypoint)
-        self._get_terrain_srv   = rospy.Service(Servers.GET_TERRAIN_SRV,   static_map.srv.MapGetTerrain,   self.on_get_terrain)
-        self._transfer_srv      = rospy.Service(Servers.TRANSFER_SRV,      static_map.srv.MapTransfer,    self.on_transfer)
+        self._get_terrain_srv   = rospy.Service(Servers.GET_TERRAIN_SRV,   static_map.srv.MapGetContext,   self.on_get_context)
+        self._transfer_srv      = rospy.Service(Servers.TRANSFER_SRV,      static_map.srv.MapTransfer,     self.on_transfer)
 
     def on_get_container(self, req):
         # Fetch it from the map
@@ -55,19 +55,25 @@ class MapServices():
             "None" if success is False else "name='{}' x={} y={} a={}".format(w.Name, w.Position.X, w.Position.Y, w.Position.A)))
         return static_map.srv.MapGetWaypointResponse(success, self._create_waypoint_msg(w))
     
-    def on_get_terrain(self, req):
-        terrain = MapManager.get_terrain()
+    def on_get_context(self, req):
+        terrain, robot_shape = MapManager.get_context()
 
-        msg = static_map.srv.MapGetTerrainResponse()
+        msg = static_map.srv.MapGetContextResponse()
         msg.success = True
-        msg.shape = self._create_object_msg(terrain)
-        msg.layers = []
+        msg.terrain_shape = self._create_object_msg(terrain)
+        msg.terrain_layers = []
+
+        # Robot shape
+        msg.robot_shape            = static_map.msg.MapObject()
+        msg.robot_shape.shape_type = msg.robot_shape.SHAPE_RECT
+        msg.robot_shape.width      = robot_shape.Width
+        msg.robot_shape.height     = robot_shape.Height
 
         for l in terrain.Layers:
             msg_layer = static_map.msg.MapLayer()
             msg_layer.name  = l.Name
             msg_layer.walls = [self._create_object_msg(w) for w in l.Walls]
-            msg.layers.append(msg_layer)
+            msg.terrain_layers.append(msg_layer)
         return msg
     
 
@@ -88,8 +94,8 @@ class MapServices():
         return static_map.srv.MapSetObjectResponse(success, self._create_object_msg(res_obj))
 
     def on_transfer(self, req):
-        old_path = path = [s for s in req.old_path.split('/') if s]
-        new_path = path = [s for s in req.new_path.split('/') if s]
+        old_path = [s for s in req.old_path.split('/') if s]
+        new_path = [s for s in req.new_path.split('/') if s]
 
         success = False
         if req.mode == req.MODE_OBJECT:
@@ -112,7 +118,7 @@ class MapServices():
         rospy.loginfo("TRANSFER (from={} to={}): {}".format(req.old_path, req.new_path, success))
         return static_map.srv.MapTransferResponse(success)
 
-    def on_get_occupancy(self, req):
+    def on_get_occupancy(self, req): # TODO deprecated
         s = time.time() * 1000
         rospy.loginfo("GET_OCCUPANCY:" + str(req.layer_name))
 
@@ -141,11 +147,11 @@ class MapServices():
     def _create_object_msg(self, obj):
         msg = static_map.msg.MapObject()
         if obj is not None:
-            msg.name = obj.Name
+            msg.name = obj.Name if obj.Name else ""
 
             msg.pose.x     = obj.Position.X
             msg.pose.y     = obj.Position.Y
-            msg.pose.theta = obj.Position.A        
+            msg.pose.theta = obj.Position.A
             
             if obj.Shape.Type == "rect":
                 msg.shape_type = msg.SHAPE_RECT
@@ -158,7 +164,7 @@ class MapServices():
                 msg.shape_type = msg.SHAPE_POINT
             
             if isinstance(obj, Object):
-                #msg.labels = obj.Labels
+                msg.labels = obj.Labels
                 msg.color  = obj.Color.Name if obj.Color is not None else ""
         return msg
     

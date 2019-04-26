@@ -104,8 +104,8 @@ class MapManager():
             rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
 
     @staticmethod
-    def get_terrain():
-        return MapDict.Terrain
+    def get_context():
+        return MapDict.Terrain, MapDict.Robot.Shape
 
     @staticmethod
     def add_object(path, obj):
@@ -132,4 +132,10 @@ class MapManager():
 
     @staticmethod
     def transform(codes):
-        return MapManager.MapDict.transform(codes)
+        if not MapDict.Objects.transform(codes):
+            return False
+        for w in MapDict.Waypoints:
+            if not w.transform(codes):
+                return False
+        return True
+        

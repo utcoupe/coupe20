@@ -27,6 +27,11 @@ add_service_files(
   SetAx12Param.srv
 )
 
+add_message_files(
+  FILES
+  Ax12Command.msg
+)
+
 generate_messages(
   DEPENDENCIES
   actionlib_msgs

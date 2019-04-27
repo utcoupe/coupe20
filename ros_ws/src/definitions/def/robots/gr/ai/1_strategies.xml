@@ -1,7 +1,7 @@
 <strategies>
 	<teams>
-		<team name="green"/>
-		<team name="orange"/>
+		<team name="left"/>
+		<team name="right"/>
 	</teams>
 
 	<!-- Real game strategies -->

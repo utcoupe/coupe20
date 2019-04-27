@@ -2,7 +2,6 @@
 import time
 import rospy
 from map_loader import MapLoader, LoadingHelpers
-from map_bases import RequestPath
 from map_attributes import Color
 from map_classes import Robot, Terrain, Waypoint, Container, Object, Class
 from map_teams import Team

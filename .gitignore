@@ -31,6 +31,8 @@ npm-debug.log
 .idea
 .vscode/
 cmake-build-debug/
+.kdev4/
+*.kdev4
 
 # UTCoupe folders
 bin/

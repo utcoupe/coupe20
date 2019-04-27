@@ -1,34 +1,44 @@
-
 #ifndef objects_classifier_SHAPES_H
 #define objects_classifier_SHAPES_H
 
+#include <geometry_tools/point.h>
+
 class Shape {
 public:
-    virtual bool contains_point(float x, float y) const = 0;
+    virtual bool contains_point(Point point) const = 0;
 
-    Shape() {}
+    Shape(Point pos = {}):
+        _pos(pos)
+    {}
 
     Shape(const Shape &other) {}
+    
+protected:
+    Point _pos;
 };
 
 class Circle : public Shape {
 protected:
-    float x_, y_, radius_;
+    double radius_;
 public:
-    Circle(float x, float y, float radius) :
-            x_(x), y_(y), radius_(radius) {}
+    Circle(Point pos, double radius) :
+        Shape(pos),
+        radius_(radius) {}
 
-    bool contains_point(float x, float y) const;
+    bool contains_point(Point point) const override;
 };
 
 class Rectangle : public Shape {
 protected:
-    float x_, y_, width_, height_;
+    double width_, height_;
 public:
-    Rectangle(float x, float y, float width, float height) :
-            x_(x), y_(y), width_(width), height_(height) {}
+    Rectangle(Point pos, double width, double height) :
+            Shape(pos),
+            width_(width),
+            height_(height)
+    {}
 
-    bool contains_point(float x, float y) const;
+    bool contains_point(Point point) const override;
 };
 
 // TODO: polygon

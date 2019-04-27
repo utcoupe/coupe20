@@ -7,13 +7,6 @@
 using namespace Memory;
 using namespace std;
 
-inline double getNorme2Distance(const double& x1, const double& y1, const double& x2, const double& y2)
-{
-    double dX = x1 - x2;
-    double dY = y1 - y2;
-    return sqrt(dX*dX + dY*dY);
-}
-
 MapSubscriber::MapSubscriber(const double& safetyMargin)
     : AbstractBarriersSubscriber(safetyMargin)
 {
@@ -80,22 +73,26 @@ void MapSubscriber::fetchOccupancyData(const uint& widthGrid, const uint& height
 
 void MapSubscriber::drawRectangle(const static_map::MapObject& objectRect)
 {
-    double x, y, w, h;
-    x = objectRect.pose.x;
-    y = objectRect.pose.y;
+    double w, h;
     w = objectRect.width;
     h = objectRect.height;
     
-    auto pos = _convertor->fromRosToMapPos(make_pair(x, y));
+    auto pos = _convertor->fromRosToMapPos(objectRect.pose);
     w = _convertor->fromRosToMapDistance(w);
     h = _convertor->fromRosToMapDistance(h);
     
     auto safeMarg = _convertor->fromRosToMapDistance(_safetyMargin);
     
-    uint yMin = max(pos.second - (h/2) - safeMarg, 0.0);
-    uint yMax = min((double)_occupancyGrid.size(), pos.second + (h/2) + safeMarg + 0.5);
-    uint xMin = max(pos.first - (w/2) - safeMarg, 0.0);
-    uint xMax = min((double)_occupancyGrid.front().size(), pos.first + (w/2) + safeMarg + 0.5);
+    uint yMin = max(pos.getY() - (h/2) - safeMarg, 0.0);
+    uint yMax = min(
+        static_cast<double>(_occupancyGrid.size()),
+        pos.getY() + (h/2) + safeMarg + 0.5
+    );
+    uint xMin = max(pos.getX() - (w/2) - safeMarg, 0.0);
+    uint xMax = min(
+        static_cast<double>(_occupancyGrid.front().size()),
+        pos.getX() + (w/2) + safeMarg + 0.5
+    );
     
     for (uint row = yMin; row < yMax; row++)
         for (uint column = xMin; column < xMax; column++)
@@ -104,24 +101,28 @@ void MapSubscriber::drawRectangle(const static_map::MapObject& objectRect)
 
 void MapSubscriber::drawCircle(const static_map::MapObject& objectCircle)
 {
-    double x, y, r;
-    x = objectCircle.pose.x;
-    y = objectCircle.pose.y;
+    double r;
     r = objectCircle.radius;
     
-    auto pos = _convertor->fromRosToMapPos(make_pair(x, y));
+    auto pos = _convertor->fromRosToMapPos(objectCircle.pose);
     r = _convertor->fromRosToMapDistance(r);
     
     auto safeMarg = _convertor->fromRosToMapDistance(_safetyMargin);
     
-    uint yMin = max(pos.second - r - safeMarg, 0.0);
-    uint yMax = min((double)_occupancyGrid.size(), pos.second + r + safeMarg + 0.5);
-    uint xMin = max(pos.first - r - safeMarg, 0.0);
-    uint xMax = min((double)_occupancyGrid.front().size(), pos.first + r + safeMarg + 0.5);
+    uint yMin = max(pos.getY() - r - safeMarg, 0.0);
+    uint yMax = min(
+        static_cast<double>(_occupancyGrid.size()),
+        pos.getY() + r + safeMarg + 0.5
+    );
+    uint xMin = max(pos.getX() - r - safeMarg, 0.0);
+    uint xMax = min(
+        static_cast<double>(_occupancyGrid.front().size()),
+        pos.getX() + r + safeMarg + 0.5
+    );
     
     for (uint row = yMin; row < yMax; row++)
         for (uint column = xMin; column < xMax; column++)
-            if (getNorme2Distance(column, row, pos.first, pos.second) <= r)
+            if (pos.norm2Dist({static_cast<double>(column), static_cast<double>(row)}) <= r)
                 _occupancyGrid[row][column] = true;
 }
 

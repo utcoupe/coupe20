@@ -1,7 +1,7 @@
 <orders> <!-- Creating an order with the same ref as a system order will override the latest. -->
 	<!-- Actuators -->
 	<order ref="actuator_ax12_set_pos" duration="1.5">
-		<message dest="drivers/ax12" timeout="8">
+		<message dest="/drivers/ax12" timeout="8">
 			<param name="motor_id" type="int"/>
 			<param name="position" type="int"/> <!-- Set either a preset or param-->
 			<param name="speed" type="int" optional="true">0</param>
@@ -13,19 +13,19 @@
 	</order>
 
 	<order ref="tower_load_atom" duration="3">
-		<message dest="actuators/ard_tower/load" timeout="8">
+		<message dest="/actuators/ard_tower/load" timeout="8">
 			<param name="mode" type="int" preset="true">0</param>
 		</message>
 	</order>
 
 	<order ref="tower_load_tower" duration="3">
-		<message dest="actuators/ard_tower/load" timeout="8">
+		<message dest="/actuators/ard_tower/load" timeout="8">
 			<param name="mode" type="int" preset="true">1</param>
 		</message>
 	</order>
 
 	<order ref="tower_unload_tower" duration="3">
-		<message dest="actuators/ard_tower/unload" timeout="8">
+		<message dest="/actuators/ard_tower/unload" timeout="8">
 		</message>
 	</order>
 </orders>

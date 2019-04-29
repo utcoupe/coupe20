@@ -6,5 +6,5 @@
     <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf_publisher" args="0.147 0.11 0.0 0.055 0 3.14159 robot laser" />
     
     <!-- TODO change 'x' (robot front) value -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="asserv_tf_publisher" args="-0.10 0.0 0.0 0.0 0.0 0.0 robot asserv" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="asserv_tf_publisher" args="0.10 0.0 0.0 0.0 0.0 0.0 asserv robot" />
 </launch>

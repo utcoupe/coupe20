@@ -10,13 +10,14 @@ class Localizer(object):
     def __init__(self):
         super(Localizer, self).__init__()
 
-        rospy.init_node('localizer_node', anonymous=False)
+        rospy.init_node("localizer_node", anonymous=False)
 
         self._br = tf2_ros.TransformBroadcaster()
 
         # TODO : subscribe to all sources of info
-        self._sub_asserv = rospy.Subscriber("drivers/ard_asserv/pose2d", Pose2D,
-                                          self.callback_asserv)
+        self._sub_asserv = rospy.Subscriber(
+            "drivers/ard_asserv/pose2d", Pose2D, self.callback_asserv
+        )
 
         self._data_asserv = None
 
@@ -36,7 +37,7 @@ class Localizer(object):
 
                 t.header.stamp = rospy.Time.now()
                 t.header.frame_id = "map"
-                t.child_frame_id = "robot"
+                t.child_frame_id = "asserv"
                 t.transform.translation.x = data.x
                 t.transform.translation.y = data.y
                 t.transform.translation.z = 0.0
@@ -54,6 +55,7 @@ class Localizer(object):
     def calculate(self):
         return self._data_asserv
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     loc = Localizer()
     loc.run()

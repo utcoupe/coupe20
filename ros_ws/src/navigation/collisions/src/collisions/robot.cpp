@@ -14,8 +14,8 @@ Robot::Robot(double width, double height):
         make_unique<CollisionsShapes::Rectangle>(Position(), width, height),
         make_unique<ObstacleVelocity>(width, height)
     ),
-    m_pathCheckZone(CollisionLevel::LEVEL_DANGER, m_shape->getPos(), width, height),
-    m_velocityCheckZone(CollisionLevel::LEVEL_STOP, m_shape->getPos(), *m_velocity)
+    m_pathCheckZone(CollisionLevel::POTENTIAL, m_shape->getPos(), width, height),
+    m_velocityCheckZone(CollisionLevel::STOP, m_shape->getPos(), *m_velocity)
 {
 }
 
@@ -25,16 +25,17 @@ const std::vector<Robot::ShapePtr>& Robot::getMainShapes() const {
 }
 
 std::vector<Collision> Robot::checkCollisions(const std::vector<ObstaclePtr>& obstacles) {
-    auto collisionsVel = m_velocityCheckZone.checkCollisions(obstacles);
-    auto collisionsPath = m_pathCheckZone.checkCollisions(obstacles);
+    auto&& collisionsVel = m_velocityCheckZone.checkCollisions(obstacles);
+    auto&& collisionsPath = m_pathCheckZone.checkCollisions(obstacles);
     collisionsVel.insert(collisionsVel.end(), collisionsPath.begin(), collisionsPath.end());
     return collisionsVel;
 }
 
 
 double Robot::getMaxMainDist() const {
-    if (m_pathCheckZone.hasWaypoints())
-        return m_shape->getPos().norm2Dist(m_pathCheckZone.getFirstWaypoint());
-    else
-        return -1.0;
+    return (
+        m_pathCheckZone.hasWaypoints()
+        ? m_shape->getPos().norm2Dist(m_pathCheckZone.getFirstWaypoint())
+        : -1.0
+    );
 }

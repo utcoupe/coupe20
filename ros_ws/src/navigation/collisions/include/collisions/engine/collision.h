@@ -29,21 +29,21 @@ public:
      * 
      * @return The level of collision
      */
-    CollisionLevel  getLevel()      const noexcept { return m_level; }
+    CollisionLevel getLevel() const noexcept { return m_level; }
     
     /**
      * Returns the corresponding obstacle
      * 
      * @return The corresponding obstacle
      */
-    const PtrObstacle&     getObstacle()   const noexcept { return m_obstacle; }
+    const PtrObstacle& getObstacle() const noexcept { return m_obstacle; }
     
     /**
      * Returns the approximative distance between the robot and the obstacle.
      * 
      * @return The distance
      */
-    double          getDistance()   const noexcept { return m_approxDistance; }
+    double getDistance() const noexcept { return m_approxDistance; }
     
 private:
     /** The danger level of collision **/

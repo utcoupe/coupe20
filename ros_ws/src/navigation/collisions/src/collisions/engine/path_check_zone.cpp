@@ -51,8 +51,8 @@ std::vector<Collision> PathCheckZone::checkCollisions(const std::vector<Obstacle
         double approxDist = m_robotPos.norm2Dist(obst->getPos());
         auto level = (
             approxDist < CollisionThresholds::DANGER_RADIUS ?
-            CollisionLevel::LEVEL_DANGER:
-            CollisionLevel::LEVEL_POTENTIAL
+            CollisionLevel::DANGER:
+            m_level
         );
         collisions.emplace_back(level, obst, approxDist);
     }

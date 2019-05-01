@@ -10,6 +10,7 @@
 #include <chrono>
 #include <functional>
 #include <string>
+#include <utility>
 
 const std::string SET_ACTIVE_SERVICE    = "navigation/collisions/set_active";
 const std::string WARNER_TOPIC          = "navigation/collisions/warner";
@@ -47,9 +48,14 @@ void CollisionsNode::run(const ros::TimerEvent&)
     startTime = std::chrono::system_clock::now();
     subscriptions_.updateRobot();
     if (active_) {
-        for (const auto& collision: robot_->checkCollisions(obstacleStack_->toList())) {
-            publishCollision(collision);
+        bool firstRun = true;
+        Collision worstCollsision(CollisionLevel::SAFE, nullptr, 0.0);
+        for (auto&& collision: robot_->checkCollisions(obstacleStack_->toList())) {
+            if (firstRun || worstCollsision.getLevel() < collision.getLevel()) {
+                worstCollsision = std::move(collision);
+            }
         }
+        publishCollision(worstCollsision);
         markersPublisher_.publishCheckZones(robot_);
     }
     
@@ -67,14 +73,17 @@ void CollisionsNode::publishCollision(const Collision& collision)
     msg.danger_level = static_cast<unsigned char>(collision.getLevel());
     
     switch(collision.getLevel()) {
-    case CollisionLevel::LEVEL_STOP:
+    case CollisionLevel::STOP:
         ROS_WARN_THROTTLE(0.2, "Found freaking close collision, please stop!!!");
         break;
-    case CollisionLevel::LEVEL_DANGER:
+    case CollisionLevel::DANGER:
         ROS_WARN_THROTTLE(0.5, "Found close collision intersecting with the path.");
         break;
-    case CollisionLevel::LEVEL_POTENTIAL:
+    case CollisionLevel::POTENTIAL:
         ROS_INFO_THROTTLE(1, "Found far-off collision intersecting with the path.");
+        break;
+    case CollisionLevel::SAFE:
+        ROS_INFO_THROTTLE(1, "Found no collisions intersecting with the path.");
         break;
     }
     auto obst = collision.getObstacle();
@@ -89,7 +98,7 @@ void CollisionsNode::publishCollision(const Collision& collision)
         addCircInfosToPredictedCollision(msg, & obst->getShape());
         break;
     default:
-        ROS_WARN_ONCE("Found collision has a special shape that cannot be reported.");
+        ROS_WARN_ONCE("Found collision has a special shape that cannot be reported. This message will print once.");
     }
     
     warnerPublisher_.publish(msg);

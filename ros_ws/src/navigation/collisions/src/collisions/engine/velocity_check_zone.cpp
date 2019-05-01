@@ -13,7 +13,7 @@ std::vector<Collision> VelocityCheckZone::checkCollisions(const std::vector<Obst
     std::vector<Collision> collisions;
     for (auto obst: CollisionResolver::findCollisions(m_robotVelocity.getShapes(), obstacles)) {
         double approxDist = m_robotPos.norm2Dist(obst->getPos());
-        collisions.emplace_back(CollisionLevel::LEVEL_STOP, obst, approxDist);
+        collisions.emplace_back(m_level, obst, approxDist);
     }
     return collisions;
 }

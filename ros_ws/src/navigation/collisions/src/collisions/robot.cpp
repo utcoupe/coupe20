@@ -2,7 +2,6 @@
 
 #include "collisions/shapes/rectangle.h"
 
-
 #include <geometry_tools/position.h>
 
 #include <memory>

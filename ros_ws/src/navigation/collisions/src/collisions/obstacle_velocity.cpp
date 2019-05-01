@@ -25,7 +25,7 @@ void ObstacleVelocity::m_generateVelShapes(double maxDist) const {
     }
     
     auto expansionDist = CollisionThresholds::getStopDistance(m_velLinear);
-    if (maxDist != -1) {
+    if (maxDist != EXPANSION_DIST_DISABLED) {
         // if set, reduce the expansion to the provided limit
         expansionDist = std::min(expansionDist, maxDist);
     }

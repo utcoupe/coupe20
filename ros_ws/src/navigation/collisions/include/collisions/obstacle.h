@@ -58,7 +58,7 @@ public:
      * 
      * @return The object position
      */
-    Position getPos() const { return m_shape->getPos(); }
+    const Position& getPos() const { return m_shape->getPos(); }
     
     /**
      * Returns the object lifetime since its creation

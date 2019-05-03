@@ -159,7 +159,7 @@ class Object(object):
         self.Name = xml.get("name")
         self.Position = Position2D(xml.find("position")) if xml.find("position") is not None else None
         self.Shape    = Shape2D(xml.find("shape"))       if xml.find("shape")    is not None else None
-        self.Tags   = [l.text for l in xml.find("tags").findall("tag")] if xml.find("tags") else []
+        self.Tags   = [l.text for l in xml.find("tags").findall("tag")] if xml.find("tags") is not None else []
 
         self.Color = Color(xml.find("color")) if xml.find("color") is not None else None
 

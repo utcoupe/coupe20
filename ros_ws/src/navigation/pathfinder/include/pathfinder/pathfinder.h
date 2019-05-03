@@ -7,17 +7,22 @@
 #include "pathfinder/PathfinderNodeConfig.h"
 
 #include "pathfinder/map_storage.h"
-#include "geometry_tools/point.h"
-#include "pathfinder/pos_convertor.h"
-#include "pathfinder/dynamic_barriers_manager.h"
+
+#include <geometry_tools/point.h>
 
 #include <vector>
-#include <memory>
 
+class DynamicBarriersManager;
+
+namespace pathfinder {
+    class OccupancyGrid;
+}
 
 /**
  * Main class for the pathfinder algorithm.
- * From arrays reprenting the static and dynamic barriers, it looks for a path between two positions and returns the shortest one if at least one exists.
+ * 
+ * From arrays reprenting the static and dynamic barriers, it looks for a path
+ * between two positions and returns the shortest one if it exists.
  */
 class Pathfinder
 {
@@ -37,7 +42,7 @@ public:
      * @param mapFileName The name of the image file to load.
      * @param dynBarriersMng The dynamic barriers manager already initialized.
      */
-    Pathfinder(const std::string& mapFileName, std::shared_ptr<DynamicBarriersManager> dynBarriersMng);
+    Pathfinder(DynamicBarriersManager& dynBarriersMng, pathfinder::OccupancyGrid& occupancyGrid, const std::string& mapFileName = "");
     
     /**
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
@@ -64,31 +69,26 @@ public:
      * 
      * @param path The path to the image.
      */
-    void setPathToRenderOutputFile(std::string path);
-    
-    /**
-     * Return the sizes of the internal barrier map.
-     */
-    Point getMapSize();
+    void setPathToRenderOutputFile(const std::string& path);
 
 private:
     /** Shortcut to define a 2D array of short. **/
-    typedef std::vector<std::vector<short> > Vect2DShort;
+    using Vect2DShort = std::vector<std::vector<short> >;
     /** Shortcut to define a 2D array of bool. vector<bool> is a special type, different from vector<T> **/
-    typedef std::vector<std::vector<bool> > Vect2DBool;
+    using Vect2DBool = std::vector<std::vector<bool> >;
     
     /** Manager for loading and saving image files **/
     MapStorage _mapStorage;
     
-    /** Contains the positions of static barriers. **/
-    Vect2DBool _allowedPositions;
     /** Contains the positions of dynamic barriers. **/
-    std::shared_ptr<DynamicBarriersManager> _dynBarriersMng;
+    DynamicBarriersManager& _dynBarriersMng;
     
     /** Tells if the map and the path must be saved after computing. **/
     bool _renderAfterComputing;
     /** Name of the file that will be generated after computing. **/
     std::string _renderFile;
+    
+    pathfinder::OccupancyGrid& _occupancyGrid;
     
     /**
      * From the end positions tries to reach the start position by increasing step-by-step the distance. For all intermedediate points it stores its distance to count it only one time and to be able after to retrieve the shortest path. Returns true if start position is reached, false else.
@@ -118,7 +118,7 @@ private:
      **/
     bool isValid(const Point& pos);
     /**
-     * Check by "drawing" a line between two positinos if they can be directly connected. Returns true if there is no barriers, false else.
+     * Check by "drawing" a line between two positions if they can be directly connected. Returns true if there is no barriers, false else.
      */
     bool canConnectWithLine(const Point& pA, const Point& pB);
     
@@ -126,7 +126,7 @@ private:
      * Defines all possible directions to move from any positions. May be implemented as constexpression in the future.
      * @return The lists of all allowed movements.
      */
-    std::vector<Point> directions() const;
+    static const std::vector<Point> m_directions;
     
     /**
      * Convert the path in the inside type to a string for debugging purposes.

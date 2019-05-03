@@ -6,7 +6,7 @@ from asserv_abstract import *
 from geometry_msgs.msg import Pose2D
 from ard_asserv.msg import RobotSpeed
 from time import sleep
-from static_map.srv import MapGetTerrain, MapGetTerrainRequest
+from static_map.srv import MapGetContext, MapGetContextRequest
 
 __author__ = "Thomas Fuhrmann & milesial & Mindstan"
 __date__ = 19/04/2018
@@ -72,30 +72,34 @@ class AsservSimu(AsservAbstract):
 
         self._states = StatesManager()
         # Get map size 
-        self._map_x, self._map_y = self.getTerrain() # Height is y, width is X
+        self._map_x = 3.0
+        self._map_y = 2.0
+        self._robot_height = 0.2
+        
+        context = self.getMapContext()
+        if context:
+            self._map_x = context.terrain_shape.width
+            self._map_y = context.terrain_shape.height
+            self._robot_height = context.robot_shape.height
+        else:
+            rospy.logwarn("Can't get map context, taking default values.")
 
-        # Robot size
-        self._robot_height = 0.18 ## TODO TODO TODO get robot width from map
 
-    def getTerrain(self):
-        dest = "/static_map/get_terrain"
+    def getMapContext(self):
+        dest = "/static_map/get_context"
         try: # Handle a timeout in case one node doesn't respond
-            
             server_wait_timeout = 2
             rospy.logdebug("Waiting for service %s for %d seconds" % (dest, server_wait_timeout))
             rospy.wait_for_service(dest, timeout=server_wait_timeout)
-
         except rospy.ROSException:
-
             return False
 
         rospy.loginfo("Sending service request to '{}'...".format(dest))
-        service = rospy.ServiceProxy(dest, MapGetTerrain)
-
-        response = service(MapGetTerrainRequest()) #TODO rospy can't handle timeout, solution?
+        service = rospy.ServiceProxy(dest, MapGetContext)
+        response = service(MapGetContextRequest()) # rospy can't handle timeout, solution ?
 
         if response is not None:
-            return response.shape.width, response.shape.height
+            return response
         else:
             rospy.logerr("Service call response from '{}' is null.".format(dest))
         return False
@@ -123,29 +127,26 @@ class AsservSimu(AsservAbstract):
         self._node.goal_reached(goal_id, True)
         return True
 
-    def pwm(self, left, right, duration, autoStop):
+    def pwm(self, left, right, duration, auto_stop):
 
         #Accelerate until run into wall then come to a complete stop
         #Only checks if pwm is backwards or forward, always goes top speed and does not turn
         if left != right :
-            rospy.logwarn("remember, PWM does not turn !")
-        if not autoStop:
-            rospy.logwarn("PWM without autoStop has not been implemented yet...")
+            rospy.logwarn("Remember, can't turn with PWM with simu !")
+        if not auto_stop:
+            rospy.logwarn("PWM without auto_stop has not been implemented yet...")
             return False
         
-        if left>=0 and right>=0 :
-            direction = 1
-        else :
-            direction = 0
-
-        self._accelerate(1, direction)
+        direction = 1 if (left >= 0 and right >= 0) else 0
+        self._accelerate(1, direction) # set linear speed
+        self._current_goal_initial_angle = self._current_pose.theta # set current angle
 
         x_high_edge = self._map_x - self._robot_height/2
         y_high_edge = self._map_y - self._robot_height/2
         low_edge = self._robot_height/2
         
-        while (self._current_pose.x<x_high_edge and self._current_pose.x>low_edge \
-            and self._current_pose.y<y_high_edge and self._current_pose.y>low_edge) :
+        while  (self._current_pose.x < x_high_edge and self._current_pose.x > low_edge \
+            and self._current_pose.y < y_high_edge and self._current_pose.y > low_edge):
             self._update_current_pose_pos()
             sleep(0.005)
 
@@ -296,7 +297,6 @@ class AsservSimu(AsservAbstract):
             self.set_max_speed(self._max_linear_speed, self._angular_speed_ratio)
 
     def _wallhit_stop(self, direction):
-
         x_high_edge = self._map_x - self._robot_height/2
         y_high_edge = self._map_y - self._robot_height/2
         low_edge = self._robot_height/2
@@ -306,25 +306,16 @@ class AsservSimu(AsservAbstract):
         self._current_angular_speed = 0
         if self._current_pose.x>= x_high_edge :
             self._current_pose.theta = 0
-            return True
-
         if self._current_pose.x <= low_edge :
             self._current_pose.theta = -math.pi
-            return True
-
         if self._current_pose.y >= y_high_edge :
             self._current_pose.theta = math.pi/2
-            return True
-
         if self._current_pose.y <= low_edge :
             self._current_pose.theta = -math.pi/2
-            return True
 
-        if direction == -1 :
+        if direction == 0 : # Semiturn if we were going backwards
             self._current_pose.theta += math.pi
-            return True
 
-        return False
 
     def _accelerate(self, acc_mult=1, direction=1):
         self._current_linear_speed += acc_mult * self._max_acceleration * ASSERV_RATE

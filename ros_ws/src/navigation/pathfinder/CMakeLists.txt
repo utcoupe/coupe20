@@ -1,7 +1,32 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(pathfinder)
 
-add_compile_options(-std=c++14)
+add_compile_options(
+    -std=c++14
+    
+#     -Wall
+#     -Wextra
+#     -Wpedantic
+#     -Wshadow
+#     -Wnon-virtual-dtor
+    
+#     -Wold-style-cast
+#     -Wcast-align
+#     -Wunused
+#     -Woverloaded-virtual
+#     -Wconversion
+#     -Wsign-conversion
+#     -Wmisleading-indentation
+#     -Wduplicated-cond
+#     -Wduplicated-branches
+#     -Wlogical-op
+#     -Wnull-dereference
+#     -Wuseless-cast
+#     -Wdouble-promotion
+
+    "$<$<CONFIG:DEBUG>:-Og>"
+    "$<$<CONFIG:RELEASE>:-O3>"
+)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp

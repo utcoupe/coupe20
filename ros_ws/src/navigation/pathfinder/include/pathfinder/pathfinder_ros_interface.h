@@ -5,9 +5,15 @@
 
 #include "pathfinder/pathfinder.h"
 #include "pathfinder/dynamic_barriers_manager.h"
-#include "pathfinder/pos_convertor.h"
+#include "pathfinder/occupancy_grid.h"
 
-#include "geometry_msgs/Pose2D.h"
+#include <geometry_msgs/Pose2D.h>
+#include <ros/service_client.h>
+#include <ros/node_handle.h>
+
+#include <atomic>
+
+class PosConvertor;
 
 class PathfinderROSInterface
 {
@@ -18,7 +24,11 @@ public:
      * @param mapFileName The path to the image containing the static obstacles.
      * @param convertor The convertor that will be used to convert positions between the two referencials.
      */
-    PathfinderROSInterface(const std::string& mapFileName, std::shared_ptr<PosConvertor> convertor);
+    PathfinderROSInterface(
+        const std::string& mapFileName, PosConvertor& convertor,
+        const std::string& getTerrainSrvName, ros::NodeHandle& nh,
+        std::pair<unsigned, unsigned> defaultScale = {}
+    );
     
     /**
      * Callback for the ros FindPath service. Coordinates are converted between the outside and inside referential.
@@ -41,40 +51,54 @@ public:
      */
     void addBarrierSubscriber(DynamicBarriersManager::BarriersSubscriber && subscriber);
     
+    bool setSafetyMargin(double margin, bool cascade = false);
+    
 private:
+    double _safetyMargin = 0.15;
+    
     /**
-     * Pointer to the main algorithm
+     * Prevents PathfinderROSInterface::_updateStaticMap to run multiple times simultanously
      */
-    std::unique_ptr<Pathfinder> pathfinderPtr_;
+    std::atomic<bool> _lockUpdateMap { false };
+    
+    /**
+     * Prevents PathfinderROSInterface::_updateMarginFromStaticMap to run multiple times simultanously
+     */
+    std::atomic<bool> _lockUpdateMargin { false };
     
     /**
      * The barrier subscribers manager
      */
-    std::shared_ptr<DynamicBarriersManager> dynBarriersMng_;
+    DynamicBarriersManager dynBarriersMng_;
     
-    /** Convertor object between inside and outside referentials **/
-    std::shared_ptr<PosConvertor> convertor_;
+    /** Convertor object between pathfinder and ros referentials **/
+    PosConvertor& convertor_;
     
-    // Convertors
+    pathfinder::OccupancyGrid _occupancyGrid;
+    
     /**
-     * Converts a position from the outside referential and type to the inside ones.
-     * @param pos The position in the outside referential and type.
-     * @return The position in the inside referential and type.
+     * Main algorithm
      */
-    Point pose2DToPoint_(const geometry_msgs::Pose2D& pos) const;
-    /**
-     * Converts a position from the inside referential and type to the outside ones.
-     * @param pos The position in the inside referential and type.
-     * @return The position in the outside referential and type.
-     */
-    geometry_msgs::Pose2D pointToPose2D_(const Point& pos) const;
+    Pathfinder pathfinder_;
+    
+    ros::ServiceClient _srvGetTerrain;
     
     /**
-     * Convert the path in the outside type to a string for debugging purposes.
+     * Convert the path from geometry_msgs::Pose2D type to a string for debugging purposes.
      * @param path The path in outside referential and type.
      * @return The path in string format.
      */
     std::string pathRosToStr_(const std::vector<geometry_msgs::Pose2D>& path);
+    
+    /**
+     * Updates the pathfinder map and the safety margin
+     */
+    bool _updateStaticMap();
+    
+    /**
+     * Computes the safety margin with the robot shape given by static_map.
+     */
+    bool _updateMarginFromStaticMap();
 };
 
 #endif // PATHFINDER_ROS_INTERFACE_H

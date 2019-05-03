@@ -115,9 +115,8 @@ class NavigatorNode(object):
     def _handleDoGotoWaypointRequest(self, handledGoal):
         rospy.logdebug("request waypoint")
         startPos = self._localizerClient.getLastKnownPos()
-        endPos = self._mapClient.getPosFromWaypoint(handledGoal.get_goal().waypoint_name)
-        hasAngle = False
-        if handledGoal.get_goal().mode == handledGoal.get_goal().GOTOA:
+        endPos, hasAngle = self._mapClient.getPosFromWaypoint(handledGoal.get_goal().waypoint_name)
+        if handledGoal.get_goal().mode == handledGoal.get_goal().GOTOA: # Force GOTOA if asked to
             hasAngle = True
         
         disablePathfinder = handledGoal.get_goal().disable_pathfinder

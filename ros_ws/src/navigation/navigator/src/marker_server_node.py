@@ -7,10 +7,12 @@ from navigator.msg import DoGotoAction, DoGotoGoal
 from tf.transformations import euler_from_quaternion
 from visualization_msgs.msg import *
 from visualization_msgs.msg import Marker
+import rospy
 
 
 def processFeedback(feedback):
     pass
+
 
 def goal_done(self, result):
     if result.success:
@@ -21,11 +23,17 @@ def goal_done(self, result):
         server.setPose(int_marker.name, pose)
         server.applyChanges()
 
-def processMenu(feedback):
+
+def processMenu(feedback, has_angle):
     goal = DoGotoGoal()
-    goal.mode = goal.GOTOA
+    if has_angle:
+        goal.mode = goal.GOTOA
+    else:
+        goal.mode = goal.GOTO
+
     goal.direction = goal.AUTOMATIC
     goal.disable_collisions = False
+    goal.disable_pathfinder = False
     goal.target_pos.x = feedback.pose.position.x
     goal.target_pos.y = feedback.pose.position.y
 
@@ -38,37 +46,13 @@ def processMenu(feedback):
     rospy.loginfo("Interactive marker sent goto goal !")
 
 
-if __name__ == "__main__":
-
-    rospy.init_node("navigator_interactive_marker")
-
-    client = actionlib.SimpleActionClient('navigation/navigator/goto_action', DoGotoAction)
-    client.wait_for_server()
-
-    server = InteractiveMarkerServer("navigator_marker")
-
-    int_marker = InteractiveMarker()
-    int_marker.header.frame_id = "map"
-    int_marker.name = "goto_pos"
-
-    # to make the rotation controls smaller
-    int_marker.scale = 0.5
-
-    # to make the rotation controls slightly above the ground so no glitch
-    int_marker.pose.position.z = 0.001
-
-    # position the marker outside the map so it does not block the view
-    int_marker.pose.position.x = -1
-    int_marker.pose.position.y = 1
-
-
+def get_robot_marker():
     # 'real' marker that will be displayed : shape of the robot
     box_marker = Marker()
     box_marker.type = Marker.CUBE
     box_marker.scale.x = 0.201
     box_marker.scale.y = 0.301
     box_marker.scale.z = 0.351
-
     box_marker.pose.position.z = 0.30 / 2.0 + 0.025
 
     # translucent purple
@@ -76,11 +60,40 @@ if __name__ == "__main__":
     box_marker.color.g = 0.0
     box_marker.color.b = 219.0 / 255.0
     box_marker.color.a = 0.3
+    return box_marker
 
 
+def get_interactive_marker():
+    int_marker = InteractiveMarker()
+    int_marker.header.frame_id = "map"
+    int_marker.name = "goto_pos"
+
+    # to make the rotation controls smaller
+    int_marker.scale = 0.5
+    # to make the rotation controls slightly above the ground so no glitch
+    int_marker.pose.position.z = 0.001
+    # position the marker outside the map so it does not block the view
+    int_marker.pose.position.x = -1
+    int_marker.pose.position.y = 1
+    return int_marker
+
+
+def get_menu():
     menu_handler = MenuHandler()
-    menu_handler.insert("Let's go !", callback=processMenu)
+    menu_handler.insert("GOTOA", callback=lambda f: processMenu(f, True))
+    menu_handler.insert("GOTO", callback=lambda f: processMenu(f, False))
+    return menu_handler
 
+if __name__ == "__main__":
+    rospy.init_node("navigator_interactive_marker")
+
+    client = actionlib.SimpleActionClient('navigation/navigator/goto_action', DoGotoAction)
+    client.wait_for_server()
+
+    server = InteractiveMarkerServer("navigator_marker")
+    int_marker = get_interactive_marker()
+    box_marker = get_robot_marker()
+    menu_handler = get_menu()
 
     # control for panning
     box_control = InteractiveMarkerControl()
@@ -91,12 +104,9 @@ if __name__ == "__main__":
     box_control.orientation.y = 1
     box_control.orientation.z = 0
     box_control.always_visible = True
-
     int_marker.controls.append(box_control)
-
     # so the robot can be clicked and dragged
     box_control.markers.append(box_marker)
-
 
     # control for z rotation
     rotate_control = InteractiveMarkerControl()
@@ -106,19 +116,17 @@ if __name__ == "__main__":
     rotate_control.orientation.x = 0
     rotate_control.orientation.y = 1
     rotate_control.orientation.z = 0
+    int_marker.controls.append(rotate_control)
 
     # control for the context menu (right click)
     menu_control = InteractiveMarkerControl()
     menu_control.name = "menu"
     menu_control.interaction_mode = InteractiveMarkerControl.MENU
     # left- and right-clickable text
-    menu_control.description = "Goto destination"
+    menu_control.description = "Right click for controls"
     menu_control.always_visible = True
-
     # so the controls are linked to the interactive marker
-    int_marker.controls.append(rotate_control)
     int_marker.controls.append(menu_control)
-
 
     # add the interactive marker to our collection &
     # tell the server to call processFeedback() when feedback arrives for it
@@ -130,4 +138,3 @@ if __name__ == "__main__":
     menu_handler.apply(server, int_marker.name)
 
     rospy.spin()
-

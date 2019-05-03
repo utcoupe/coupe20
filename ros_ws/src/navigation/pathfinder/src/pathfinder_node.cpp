@@ -13,24 +13,28 @@
 #include "pathfinder/pos_convertor.h"
 
 #include <memory>
+#include <utility>
 
 using namespace std;
 using namespace Memory;
 using namespace Recognition;
 
-const string                NAMESPACE_NAME              = "navigation";
-const string                NODE_NAME                   = "pathfinder";
+const string                        NAMESPACE_NAME              {"navigation"};
+const string                        NODE_NAME                   {"pathfinder"};
 
-const string                FINDPATH_SERVICE_NAME       = NAMESPACE_NAME + "/" + NODE_NAME + "/find_path";
-const Point                 TABLE_SIZE                  = {3.0, 2.0}; // Scale corresponding to messages received by the node
-const string                PR_MAP_FILE_NAME            = "layer_ground.bmp";
-const string                GR_MAP_FILE_NAME            = "layer_pathfinder.bmp"; //"/ros_ws/src/pathfinder/def/map.bmp"; for debug purposes
-const string                DEFAULT_ROBOT_NAME          = "gr";
+const string                        DEFAULT_ROBOT_NAME          {"gr"};
+const string                        FINDPATH_SERVICE_NAME       {NAMESPACE_NAME + "/" + NODE_NAME + "/find_path"};
+const string                        MAP_FILE_NAME_PR            {"layer_ground.bmp"};
+const string                        MAP_FILE_NAME_GR            {"layer_pathfinder.bmp"}; //"/ros_ws/src/pathfinder/def/map.bmp"; for debug purposes
+const std::pair<unsigned, unsigned> PATHFINDER_OCC_GRID_SIZE    {300, 200}; // Scale to use in the node when not using init image (x, y)
+const Point                         TABLE_SIZE                  {3.0, 2.0}; // Scale corresponding to messages received by the node (x, y)
+const bool                          USE_IMAGE_AS_TERRAIN        {false};
 
-const size_t                SIZE_MAX_QUEUE              = 10;
-const double                SAFETY_MARGIN               = 0.15;
-const string                MAP_GET_OBJECTS_SERVER      = "static_map/get_container";
-const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_classifier/objects";
+const size_t                        SIZE_MAX_QUEUE              {10};
+const double                        SAFETY_MARGIN               {0.15};
+const string                        MAP_GET_OBJECTS_SERVER      {"static_map/get_container"};
+const string                        MAP_GET_TERRAIN_SERVER      {"static_map/get_context"};
+const string                        OBJECTS_CLASSIFIER_TOPIC    {"recognition/objects_classifier/objects"};
 
 /**
  * Constructs BarrierSubcribers
@@ -39,8 +43,8 @@ const string                OBJECTS_CLASSIFIER_TOPIC    = "recognition/objects_c
  * @param topic The topic (or service) name the subscriber has to connect to.
  * @return A unique_ptr containing the subscriber. Will implicitly use std::move.
  */
-template<typename T>
-unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic);
+template<typename Ptr_T, typename... Arg_T>
+unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T&&... otherArgs);
 
 /**
  * Retrieve the robot's name from the parameters
@@ -54,34 +58,43 @@ int main (int argc, char* argv[])
 {
     ros::init(argc, argv, "pathfinder_node");
     
-//     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
+    ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
     ros::NodeHandle nodeHandle;
     
     // Select the configuration depending on param robot
     auto robotName = fetchRobotName(nodeHandle);
     string memoryMapPath = ros::package::getPath("static_map") + "/def/occupancy/";
-    string mapPath = memoryMapPath;
-    if (robotName == "pr")
-        mapPath += PR_MAP_FILE_NAME;
-    else
-        mapPath += GR_MAP_FILE_NAME;
+    string mapPath = "";
+    if (USE_IMAGE_AS_TERRAIN) {
+        if (robotName == "pr")
+            mapPath += memoryMapPath + MAP_FILE_NAME_PR;
+        else
+            mapPath += memoryMapPath + MAP_FILE_NAME_GR;
     
-    ROS_INFO_STREAM("Starting pathfinder with map \"" + mapPath + "\"...");
+        ROS_INFO_STREAM("Starting pathfinder with map \"" + mapPath + "\"...");
+    } else {
+        ROS_INFO("Starting pathfinder without map...");
+    }
     
     // Partialy initialize the convertor
-    auto convertor = make_shared<PosConvertor>();
-    convertor->setInvertedY(true);
-    convertor->setRosSize(TABLE_SIZE);
+    PosConvertor convertor;
+    convertor.setInvertedY(true);
+    convertor.setRosSize(TABLE_SIZE);
+
+    // Wait until static_map finishes starting
+    ROS_INFO("Waiting for static_map...");
+    ros::service::waitForService(MAP_GET_OBJECTS_SERVER, 20000);
+    ROS_INFO("Continuing start.");
     
-    PathfinderROSInterface pathfinderInterface(mapPath, convertor);
+    PathfinderROSInterface pathfinderInterface(mapPath, convertor, MAP_GET_TERRAIN_SERVER, nodeHandle, PATHFINDER_OCC_GRID_SIZE);
     
     // Add some obstacle sources
-    auto mapSubscriber = constructSubscriber<MapSubscriber>(nodeHandle, MAP_GET_OBJECTS_SERVER);
-    mapSubscriber->setConvertor(convertor);
-    pathfinderInterface.addBarrierSubscriber(std::move(mapSubscriber));
-    pathfinderInterface.addBarrierSubscriber(constructSubscriber<ObjectsClassifierSubscriber>(nodeHandle, OBJECTS_CLASSIFIER_TOPIC));
-
-    ros::service::waitForService(MAP_GET_OBJECTS_SERVER, 20000);
+    pathfinderInterface.addBarrierSubscriber(
+        constructSubscriber<MapSubscriber>(nodeHandle, MAP_GET_OBJECTS_SERVER, convertor)
+    );
+    pathfinderInterface.addBarrierSubscriber(
+        constructSubscriber<ObjectsClassifierSubscriber>(nodeHandle, OBJECTS_CLASSIFIER_TOPIC)
+    );
 
     // Configure the main service
     ros::ServiceServer findPathServer = nodeHandle.advertiseService(FINDPATH_SERVICE_NAME, &PathfinderROSInterface::findPathCallback, &pathfinderInterface);
@@ -102,10 +115,9 @@ int main (int argc, char* argv[])
     return 0;
 }
 
-template<typename T>
-unique_ptr<T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic)
-{
-    unique_ptr<T> subscriber = std::make_unique<T>(SAFETY_MARGIN);
+template<typename Ptr_T, typename... Arg_T>
+unique_ptr<Ptr_T> constructSubscriber(ros::NodeHandle& nodeHandle, const string& topic, Arg_T&&... otherArgs) {
+    unique_ptr<Ptr_T> subscriber = std::make_unique<Ptr_T>(SAFETY_MARGIN, std::forward<Arg_T>(otherArgs)...);
     subscriber->subscribe(nodeHandle, SIZE_MAX_QUEUE, topic);
     return subscriber;
 }

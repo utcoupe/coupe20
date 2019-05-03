@@ -1,5 +1,4 @@
 //delay for presure propagation
-
 #define PNEU_DELAY 150 // in ms TODO:OPTIMIZE THIS
 #define PUCK_TIME_TO_MOVE 600 // in ms TODO:OPTIMIZE THIS
 #define DOOR_TIME_TO_MOVE 1000// in ms TODO:OPTIMIZE THIS
@@ -18,7 +17,7 @@
 #define PUCKS_SUCKED_UP_MSG 2
 #define PUCKS_SORTED_MSG 3
 #define DOOR_RESET_MSG 4
-#define TOWER_PUSHED_OUT 5
+#define TOWER_OPEN 5
 
 //SELECTOR_PWM for pucks sorting
 #define SELECTOR_PWM 8
@@ -36,8 +35,7 @@
 #define TOWER_CLOSURE_CLOSED_POS 128
 //atom tower for PR's pickup
 #define DOOR_PWM 11
-#define DOOR_UP_CONST 256 //TODO :a changer
-#define DOOR_DOWN_CONST 0 //TODO :a changer
+
 
 
 

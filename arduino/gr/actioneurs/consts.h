@@ -12,6 +12,17 @@
 #define VENT2_TO_AIR 6
 #define VENT3_TO_AIR 7
 
+//Scale door
+#define SCALE_DOOR_CLOSE 0
+#define SCALE_DOOR_OPEN 1
+
+//Atom tower
+#define TOWER_DOWN 0
+#define TOWER_UP 1
+
+//Back door
+#define BACK_DOOR_CLOSE 0
+#define BACK_DOOR_OPEN 1
 
 //messages to ROS
 #define AWAITING_ORDER_MSG 1

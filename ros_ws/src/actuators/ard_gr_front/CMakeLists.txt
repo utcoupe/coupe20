@@ -12,7 +12,12 @@ add_message_files(
     PucksDump.msg
     PucksRaiseSort.msg
     PucksTake.msg
+    
     ArduinoToAI.msg
+
+    MoveBackDoor.msg
+    MoveScaleDoor.msg
+    MoveTower.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

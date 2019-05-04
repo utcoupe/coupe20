@@ -4,6 +4,7 @@
 #define DOOR_TIME_TO_MOVE 1000// in ms TODO:OPTIMIZE THIS
 // ELECTROVANNES Ventouse pins
 #define PUMP 1
+#define TEST1 3
 #define VENT1_TO_PUMP 2
 #define VENT2_TO_PUMP 3
 #define VENT3_TO_PUMP 4
@@ -35,9 +36,3 @@
 #define TOWER_CLOSURE_CLOSED_POS 128
 //atom tower for PR's pickup
 #define DOOR_PWM 11
-
-
-
-
-
-

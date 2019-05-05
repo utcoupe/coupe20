@@ -1,33 +1,44 @@
 #include "collisions/obstacles_stack.h"
 
-std::vector<ObstaclesStack::ObstaclePtr> ObstaclesStack::toList() const {
+std::vector<const Obstacle*> ObstaclesStack::toList() const {
     std::lock_guard<std::mutex> lock(m_mutex);
-    std::vector<ObstaclePtr> obstacles;
-    obstacles.insert(obstacles.end(), m_beltPoints.begin(), m_beltPoints.end());
-    obstacles.insert(obstacles.end(), m_lidarObjects.begin(), m_lidarObjects.end());
-    obstacles.insert(obstacles.end(), m_enemies.begin(), m_enemies.end());
+    std::vector<const Obstacle*> obstacles;
+    auto copyObstPtrs = [&obstacles](const auto& obstList) {
+        for (const auto& obst: obstList) {
+            obstacles.push_back(&obst);
+        }
+    };
+    copyObstPtrs(m_beltPoints);
+    copyObstPtrs(m_lidarObjects);
+    copyObstPtrs(m_enemies);
     return obstacles; // uses move semantic
 }
 
-void ObstaclesStack::updateBeltPoints(const std::vector<ObstaclePtr>& new_obstacles)
+void ObstaclesStack::updateBeltPoints(std::vector<Obstacle>&& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_beltPoints.clear();
-    m_beltPoints.insert_after(m_beltPoints.before_begin(), new_obstacles.begin(), new_obstacles.end());
+    for (auto&& obst : new_obstacles) {
+        m_beltPoints.insert_after(m_beltPoints.before_begin(), std::move(obst));
+    }
 }
 
-void ObstaclesStack::updateLidarObjects(const std::vector<ObstaclePtr>& new_obstacles)
+void ObstaclesStack::updateLidarObjects(std::vector<Obstacle>&& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_lidarObjects.clear();
-    m_lidarObjects.insert_after(m_lidarObjects.before_begin(), new_obstacles.begin(), new_obstacles.end());
+    for (auto&& obst : new_obstacles) {
+        m_lidarObjects.insert_after(m_lidarObjects.before_begin(), std::move(obst));
+    }
 }
 
-void ObstaclesStack::updateEnemies(const std::vector<ObstaclePtr>& new_obstacles)
+void ObstaclesStack::updateEnemies(std::vector<Obstacle>&& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_enemies.clear();
-    m_enemies.insert_after(m_enemies.before_begin(), new_obstacles.begin(), new_obstacles.end());
+    for (auto&& obst : new_obstacles) {
+        m_enemies.insert_after(m_enemies.before_begin(), std::move(obst));
+    }
 }
 
 void ObstaclesStack::garbageCollect()
@@ -38,11 +49,11 @@ void ObstaclesStack::garbageCollect()
     garbageCollect(m_enemies);
 }
 
-void ObstaclesStack::garbageCollect(std::forward_list<ObstaclePtr>& list)
+void ObstaclesStack::garbageCollect(std::forward_list<Obstacle>& list)
 {
     auto lifespan = M_OBSTACLE_LIVESPAN; // C++ limitation (as of C++14) =(
-    list.remove_if([lifespan] (ObstaclePtr obstacle) {
-        return obstacle->getAge() > lifespan;
+    list.remove_if([lifespan] (const Obstacle& obstacle) {
+        return obstacle.getAge() > lifespan;
     });
 }
 

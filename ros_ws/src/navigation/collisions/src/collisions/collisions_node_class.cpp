@@ -4,8 +4,10 @@
 #include "collisions/shapes/rectangle.h"
 #include "collisions/shapes/circle.h"
 #include "collisions/engine/constants.h"
+#include "collisions/engine/collision.h"
 
 #include <ros/console.h>
+#include <ros/node_handle.h>
 
 #include <chrono>
 #include <functional>
@@ -55,7 +57,7 @@ void CollisionsNode::m_run(const ros::TimerEvent&) {
             }
         }
         m_publishCollision(worstCollsision);
-        m_markersPublisher.publishCheckZones(m_robot);
+        m_markersPublisher.publishCheckZones(*m_robot);
     }
     
     m_markersPublisher.publishObstacles(m_obstacleStack->toList());
@@ -84,19 +86,21 @@ void CollisionsNode::m_publishCollision(const Collision& collision) {
         ROS_INFO_THROTTLE(1, "Found no collisions intersecting with the path.");
         break;
     }
-    auto obst = collision.getObstacle();
-    msg.obstacle_pos = obst->getPos().toPose2D();
-    
-    using ShapeType = CollisionsShapes::ShapeType;
-    switch (obst->getShape().getShapeType()) {
-    case ShapeType::RECTANGLE:
-        m_addRectInfosToPredictedCollision(msg, obst->getShape());
-        break;
-    case ShapeType::CIRCLE:
-        m_addCircInfosToPredictedCollision(msg, obst->getShape());
-        break;
-    default:
-        ROS_WARN_ONCE("Found collision has a special shape that cannot be reported. This message will print once.");
+    // obstacle can be null
+    if (auto obst = collision.getObstacle()) {
+        msg.obstacle_pos = obst->getPos().toPose2D();
+        
+        using ShapeType = CollisionsShapes::ShapeType;
+        switch (obst->getShape().getShapeType()) {
+        case ShapeType::RECTANGLE:
+            m_addRectInfosToPredictedCollision(msg, obst->getShape());
+            break;
+        case ShapeType::CIRCLE:
+            m_addCircInfosToPredictedCollision(msg, obst->getShape());
+            break;
+        default:
+            ROS_WARN_ONCE("Found collision has a special shape that cannot be reported. This message will print once.");
+        }
     }
     
     m_warnerPublisher.publish(msg);

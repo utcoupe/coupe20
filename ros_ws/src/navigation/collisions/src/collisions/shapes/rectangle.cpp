@@ -4,18 +4,18 @@
 
 using namespace CollisionsShapes;
 
-bool Rectangle::isCollidingWith(const CollisionsShapes::AbstractShape* otherShape) const
+bool Rectangle::isCollidingWith(const CollisionsShapes::AbstractShape& otherShape) const
 {
     bool collides;
-    switch (otherShape->getShapeType()) {
+    switch (otherShape.getShapeType()) {
     case ShapeType::SEGMENT:
-        collides = m_isCollidingWithSegment(dynamic_cast<const Segment*>(otherShape));
+        collides = m_isCollidingWithSegment(dynamic_cast<const Segment&>(otherShape));
         break;
     case ShapeType::RECTANGLE:
-        collides = m_isCollidingWithRectangle(dynamic_cast<const Rectangle*>(otherShape));
+        collides = m_isCollidingWithRectangle(dynamic_cast<const Rectangle&>(otherShape));
         break;
     default:
-        collides = otherShape->isCollidingWith(this);
+        collides = otherShape.isCollidingWith(*this);
     }
     return collides;
 }
@@ -68,9 +68,9 @@ std::vector<Point> CollisionsShapes::Rectangle::m_getCorners() const
     return corners;
 }
 
-bool Rectangle::m_isCollidingWithSegment(const CollisionsShapes::Segment* otherSeg) const
+bool Rectangle::m_isCollidingWithSegment(const CollisionsShapes::Segment& otherSeg) const
 {
-    if (isInRect(otherSeg->getPos()))
+    if (isInRect(otherSeg.getPos()))
         return true;
     for (const auto seg: toSegments())
         if (seg.isCollidingWith(otherSeg))
@@ -78,12 +78,12 @@ bool Rectangle::m_isCollidingWithSegment(const CollisionsShapes::Segment* otherS
     return false;
 }
 
-bool Rectangle::m_isCollidingWithRectangle(const CollisionsShapes::Rectangle* otherRect) const
+bool Rectangle::m_isCollidingWithRectangle(const CollisionsShapes::Rectangle& otherRect) const
 {
-    if (isInRect(otherRect->getPos()))
+    if (isInRect(otherRect.getPos()))
         return true;
-    for (const auto seg: otherRect->toSegments())
-        if (m_isCollidingWithSegment(&seg))
+    for (const auto seg: otherRect.toSegments())
+        if (m_isCollidingWithSegment(seg))
             return true;
     return false;
 }

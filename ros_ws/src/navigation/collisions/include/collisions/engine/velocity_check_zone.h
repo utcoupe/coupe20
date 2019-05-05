@@ -2,8 +2,9 @@
 #define COLLISIONS_ENGINE_VELOCITY_CHECK_ZONE_H
 
 #include "collisions/engine/check_zone.h"
+#include "collisions/obstacle_velocity.h"
 
-class ObstacleVelocity;
+class Obstacle;
 
 class VelocityCheckZone: public CheckZone {
 public:
@@ -17,7 +18,7 @@ public:
         return m_robotVelocity.getShapes(maxDist);
     }
     
-    std::vector<Collision> checkCollisions(const std::vector<ObstaclePtr>& obstacles) const override;
+    std::vector<Collision> checkCollisions(const std::vector<const Obstacle*>& obstacles) const override;
 
 private:
     const ObstacleVelocity& m_robotVelocity;

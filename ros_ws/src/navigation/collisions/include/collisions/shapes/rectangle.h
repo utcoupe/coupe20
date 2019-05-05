@@ -15,7 +15,7 @@ public:
     {}
     ~Rectangle() override = default;
     
-    bool isCollidingWith(const AbstractShape* otherShape) const override;
+    bool isCollidingWith(const AbstractShape& otherShape) const override;
     ShapeType getShapeType() const override { return ShapeType::RECTANGLE; }
     
     std::vector<Segment> toSegments() const;
@@ -28,8 +28,8 @@ private:
     double m_width, m_height;
     
     std::vector<Point> m_getCorners() const;
-    bool m_isCollidingWithSegment(const Segment* otherSeg) const;
-    bool m_isCollidingWithRectangle(const Rectangle* otherRect) const;
+    bool m_isCollidingWithSegment(const Segment& otherSeg) const;
+    bool m_isCollidingWithRectangle(const Rectangle& otherRect) const;
 };
     
 } // namespace CollisionsShapes

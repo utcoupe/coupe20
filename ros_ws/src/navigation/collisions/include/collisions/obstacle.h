@@ -51,7 +51,7 @@ public:
      * @param maxDist The maximum projection distance
      * @return The shapes describing the theroretical object velocity
      */
-    const std::vector<ShapePtr>& getVelocityShapes (double maxDist = -1.0);
+    const std::vector<ShapePtr>& getVelocityShapes (double maxDist = -1.0) const;
     
     /**
      * Retuns the object position

@@ -2,8 +2,6 @@
 #define COLLISIONS_CHECK_ZONE_H
 
 #include "collisions/engine/constants.h"
-#include "collisions/engine/engine.h"
-#include "collisions/obstacle.h"
 #include "collisions/engine/collision.h"
 #include "collisions/shapes/abstract_shape.h"
 
@@ -11,14 +9,13 @@
 #include <vector>
 
 class Position;
+class Obstacle;
 
 /**
  * Abstract collision checker.
  */
 class CheckZone {
 public:
-    /** Alias to represent an obstacle pointer. **/
-    using ObstaclePtr = std::shared_ptr<Obstacle>;
     /** Alias to represent a shape pointer. **/
     using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     
@@ -49,7 +46,7 @@ public:
      * @param obstacles A obstacle list to check.
      * @return A collision list.
      */
-    virtual std::vector<Collision> checkCollisions(const std::vector<ObstaclePtr>& obstacles) const = 0;
+    virtual std::vector<Collision> checkCollisions(const std::vector<const Obstacle*>& obstacles) const = 0;
     
     /**
      * Returns the default collision level applied on found collisions. It can differ from some collision values.

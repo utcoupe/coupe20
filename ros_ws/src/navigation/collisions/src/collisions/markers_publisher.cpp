@@ -1,12 +1,16 @@
 #include "collisions/markers_publisher.h"
 
-#include "geometry_tools/position.h"
 #include "collisions/shapes/segment.h"
 #include "collisions/shapes/rectangle.h"
 #include "collisions/shapes/circle.h"
+#include "collisions/obstacle.h"
+#include "collisions/robot.h"
+
+#include <geometry_tools/position.h>
 
 #include <geometry_msgs/Quaternion.h>
 #include <ros/console.h>
+#include <ros/node_handle.h>
 
 #include <cmath>
 
@@ -32,24 +36,24 @@ MarkersPublisher::MarkersPublisher(ros::NodeHandle& nhandle) {
     m_markersPubl = nhandle.advertise<visualization_msgs::Marker>(MARKERS_TOPIC, QUEUE_SIZE);
 }
 
-void MarkersPublisher::publishCheckZones(RobotPtr robot) {
+void MarkersPublisher::publishCheckZones(const Robot& robot) {
     if (!m_isConnected())
         return;
     int index = 0;
-    for (const auto& shape: robot->getMainShapes()) {
+    for (const auto& shape: robot.getMainShapes()) {
         m_publishMarker(NS_MARKERS_MAIN, index, *shape, 0.02, 0.01, COLOR_ROBOT_MAIN_SHAPES);
         index++;
     }
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " robot shapes.");
     index = 0;
-    for (const auto& shape: robot->getPathShapes()) {
+    for (const auto& shape: robot.getPathShapes()) {
         m_publishMarker(NS_MARKERS_PATH, index, *shape, 0.02, 0.01, COLOR_ROBOT_PATH_SHAPES);
         index++;
     }
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " path shapes.");
 }
 
-void MarkersPublisher::publishObstacles(const std::vector<ObstaclePtr>& obstacles) {
+void MarkersPublisher::publishObstacles(const std::vector<const Obstacle*>& obstacles) {
     if (!m_isConnected())
         return;
     int index = 0;

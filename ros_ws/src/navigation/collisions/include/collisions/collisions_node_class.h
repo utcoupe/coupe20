@@ -5,16 +5,22 @@
 #include "collisions/markers_publisher.h"
 #include "collisions/obstacles_stack.h"
 #include "collisions/robot.h"
-#include "collisions/engine/collision.h"
 #include "collisions/shapes/abstract_shape.h"
 
 #include "collisions/ActivateCollisions.h"
 #include "collisions/PredictedCollision.h"
 
-#include <ros/ros.h>
+#include <ros/publisher.h>
+#include <ros/service_server.h>
+#include <ros/timer.h>
 
 #include <atomic>
-#include <thread>
+
+namespace ros {
+    class NodeHandle;
+} // namespace ros
+
+class Collision;
 
 /**
  * Main class of the node.

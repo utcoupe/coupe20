@@ -1,5 +1,6 @@
 #include "collisions/robot.h"
 
+#include "collisions/engine/constants.h"
 #include "collisions/shapes/rectangle.h"
 
 #include <geometry_tools/position.h>
@@ -23,7 +24,7 @@ const std::vector<Robot::ShapePtr>& Robot::getMainShapes() const {
     return m_velocity->getShapes(getMaxMainDist());
 }
 
-std::vector<Collision> Robot::checkCollisions(const std::vector<ObstaclePtr>& obstacles) {
+std::vector<Collision> Robot::checkCollisions(const std::vector<const Obstacle*>& obstacles) {
     auto&& collisionsVel = m_velocityCheckZone.checkCollisions(obstacles);
     auto&& collisionsPath = m_pathCheckZone.checkCollisions(obstacles);
     collisionsVel.insert(collisionsVel.end(), collisionsPath.begin(), collisionsPath.end());

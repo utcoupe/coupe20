@@ -16,8 +16,8 @@ Obstacle::Obstacle(Obstacle::ShapePtr && shape):
 }
 
 
-const std::vector<Obstacle::ShapePtr>& Obstacle::getVelocityShapes (double maxDist) {
-    static std::vector<ShapePtr> s_empty_vector;
+const std::vector<Obstacle::ShapePtr>& Obstacle::getVelocityShapes (double maxDist) const {
+    static const std::vector<ShapePtr> s_empty_vector;
     if (m_velocity)
         return m_velocity->getShapes();
     return s_empty_vector;

@@ -4,6 +4,7 @@
 #include "collisions/shapes/circle.h"
 #include "collisions/engine/engine.h"
 #include "collisions/engine/constants.h"
+#include "collisions/obstacle.h"
 
 using namespace CollisionsShapes;
 
@@ -45,7 +46,7 @@ const std::vector<PathCheckZone::ShapePtr>& PathCheckZone::getShapes() const {
     return m_shapes;
 }
 
-std::vector<Collision> PathCheckZone::checkCollisions(const std::vector<ObstaclePtr>& obstacles) const {
+std::vector<Collision> PathCheckZone::checkCollisions(const std::vector<const Obstacle*>& obstacles) const {
     std::vector<Collision> collisions;
     for (const auto& obst: CollisionResolver::findCollisions(getShapes(), obstacles)) {
         double approxDist = m_robotPos.norm2Dist(obst->getPos());

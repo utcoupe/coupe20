@@ -1,12 +1,11 @@
 #ifndef COLLISIONS_ROBOT_H
 #define COLLISIONS_ROBOT_H
 
-#include "collisions/obstacle.h"
-#include "collisions/engine/constants.h"
 #include "collisions/engine/path_check_zone.h"
 #include "collisions/engine/collision.h"
 #include "collisions/engine/velocity_check_zone.h"
 #include "collisions/shapes/abstract_shape.h"
+#include "collisions/obstacle.h"
 
 #include <memory>
 #include <utility>
@@ -20,10 +19,6 @@ public:
      * Alias to manipulate shapes
      */
     using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
-    /**
-     * Alias to manipulate obstacles
-     */
-    using ObstaclePtr = std::shared_ptr<Obstacle>;
     
     /**
      * Status of the robot
@@ -97,7 +92,7 @@ public:
      * 
      * @return All found collisions.
      */
-    std::vector<Collision> checkCollisions(const std::vector<ObstaclePtr>& obstacles);
+    std::vector<Collision> checkCollisions(const std::vector<const Obstacle*>& obstacles);
     
 private:
     /** Robot status **/

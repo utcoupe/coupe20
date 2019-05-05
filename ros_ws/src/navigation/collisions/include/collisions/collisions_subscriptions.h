@@ -2,18 +2,17 @@
 #define COLLISIONS_COLLISIONS_SUBSCRIPTIONS
 
 #include "collisions/robot.h"
-#include "geometry_tools/position.h"
 #include "collisions/obstacles_stack.h"
 
 
 #include <game_manager/init_service.h>
+#include <geometry_tools/position.h>
 #include <ard_asserv/RobotSpeed.h>
 #include <navigator/Status.h>
 #include <objects_classifier/ClassifiedObjects.h>
 #include <ros/subscriber.h>
 #include <tf2/buffer_core.h>
 #include <tf2_ros/transform_listener.h>
-#include <tf/transform_listener.h>
 
 #include <memory>
 #include <mutex>
@@ -112,17 +111,10 @@ private:
      */
     void m_onObjects(const objects_classifier::ClassifiedObjects::ConstPtr& objects);
     /**
-     * Updates the robot pointer with the last known position of the robot
+     * Retrieves the lastest known position of the robot using tf.
+     * @return Updated robot position
      */
     Position m_updateRobotPos();
-    
-    /**
-     * Retrieve the robot's name from the parameters
-     * 
-     * @param nodeHandle The node handle used by the node
-     * @return The name of the robot
-     */
-    std::string fetchRobotName(ros::NodeHandle& nodeHandle);
 };
 
 #endif // COLLISIONS_COLLISIONS_SUBSCRIPTIONS

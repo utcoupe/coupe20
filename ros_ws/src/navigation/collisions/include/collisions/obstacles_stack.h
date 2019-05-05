@@ -5,7 +5,6 @@
 
 #include <chrono>
 #include <forward_list>
-#include <memory>
 #include <mutex>
 #include <vector>
 
@@ -14,9 +13,6 @@
  */
 class ObstaclesStack {
 public:
-    /** Alias to manipulate obstacle pointer */
-    using ObstaclePtr = std::shared_ptr<Obstacle>;
-    
     /**
      * Initialize obstacles stack.
      */
@@ -27,28 +23,28 @@ public:
      * 
      * @return A list of obstacle
      */
-    std::vector<ObstaclePtr> toList() const;
+    std::vector<const Obstacle*> toList() const;
     
     /**
      * Updates obstacles detected by the belt.
      * 
      * @param new_obstacles An obstacle list
      */
-    void updateBeltPoints(const std::vector<ObstaclePtr>& new_obstacles);
+    void updateBeltPoints(std::vector<Obstacle>&& new_obstacles);
     
     /**
      * Updates obstacles detected by the lidar.
      * 
      * @param new_obstacles An obstacle list
      */
-    void updateLidarObjects(const std::vector<ObstaclePtr>& new_obstacles);
+    void updateLidarObjects(std::vector<Obstacle>&& new_obstacles);
     
     /**
      * Updates enemies known positions (may contain our second robot).
      * 
      * @param new_obstacles An obstacle list
      */
-    void updateEnemies(const std::vector<ObstaclePtr>& new_obstacles);
+    void updateEnemies(std::vector<Obstacle>&& new_obstacles);
     
     /**
      * Removes expired obstacles according to their lifetime.
@@ -60,11 +56,11 @@ private:
     const std::chrono::duration<double> M_OBSTACLE_LIVESPAN;
     
     /** Contains belt last send obstacle */
-    std::forward_list<ObstaclePtr> m_beltPoints;
+    std::forward_list<Obstacle> m_beltPoints;
     /** Contains belt last send obstacle */
-    std::forward_list<ObstaclePtr> m_lidarObjects;
+    std::forward_list<Obstacle> m_lidarObjects;
     /** Contains belt last send obstacle */
-    std::forward_list<ObstaclePtr> m_enemies;
+    std::forward_list<Obstacle> m_enemies;
     
     mutable std::mutex m_mutex;
     
@@ -73,7 +69,7 @@ private:
      * 
      * @param list The list to clean.
      */
-    void garbageCollect(std::forward_list<ObstaclePtr>& list);
+    void garbageCollect(std::forward_list<Obstacle>& list);
 };
 
 #endif // COLLISIONS_OBSTACLES_STACK

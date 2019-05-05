@@ -6,6 +6,9 @@
 
 #include <memory>
 
+/**
+ * Stores information about a found collision.
+ */
 class Collision {
 public:
     /**

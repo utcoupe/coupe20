@@ -2,7 +2,7 @@
 
 CATKIN_CUSTOM_PARAMS="-DCMAKE_BUILD_TYPE=Release"
 
-if [ "$TRAVIS_BRANCH" == "devel"] || [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$TRAVIS_BRANCH" == "devel" ] || [ "$TRAVIS_BRANCH" == "master" ]; then
 	echo "Adding tests to catkin."
 	CATKIN_CUSTOM_PARAMS="-DUTCOUPE_BUILD_TESTS=true $CATKIN_CUSTOM_PARAMS"
 fi

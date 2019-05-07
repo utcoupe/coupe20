@@ -2,42 +2,42 @@
 
 using namespace CollisionsShapes;
 
-bool Circle::isCollidingWith(const AbstractShape* otherShape) const
+bool Circle::isCollidingWith(const AbstractShape& otherShape) const
 {
     bool collides = false;
-    switch (otherShape->getShapeType()) {
+    switch (otherShape.getShapeType()) {
         case ShapeType::SEGMENT:
-            collides = isCollidingWithSegment(dynamic_cast<const Segment*>(otherShape));
+            collides = m_isCollidingWithSegment(dynamic_cast<const Segment&>(otherShape));
             break;
         case ShapeType::RECTANGLE:
-            collides = isCollidingWithRectangle(dynamic_cast<const Rectangle*>(otherShape));
+            collides = m_isCollidingWithRectangle(dynamic_cast<const Rectangle&>(otherShape));
             break;
         case ShapeType::CIRCLE:
-            collides = isCollidingWithCircle(dynamic_cast<const Circle*>(otherShape));
+            collides = m_isCollidingWithCircle(dynamic_cast<const Circle&>(otherShape));
             break;
         default: // should not happen
-            collides = otherShape->isCollidingWith(this);
+            collides = otherShape.isCollidingWith(*this);
     }
     return collides;
 }
 
-bool Circle::isCollidingWithSegment(const Segment* otherSeg) const noexcept
+bool Circle::m_isCollidingWithSegment(const Segment& otherSeg) const noexcept
 {
     Rectangle newRect(
-        otherSeg->getPos(),
-        radius_ * 2,
-        otherSeg->getLength() + 2 * radius_
+        otherSeg.getPos(),
+        m_radius * 2,
+        otherSeg.getLength() + 2 * m_radius
     );
-    return isCollidingWithRectangle(&newRect);
+    return m_isCollidingWithRectangle(newRect);
 }
 
-bool Circle::isCollidingWithRectangle(const Rectangle* otherRect) const noexcept
+bool Circle::m_isCollidingWithRectangle(const Rectangle& otherRect) const noexcept
 {
     Rectangle newRect(
-        otherRect->getPos(),
-        otherRect->getWidth() + radius_ * 2,
-        otherRect->getHeight() + radius_ * 2
+        otherRect.getPos(),
+        otherRect.getWidth() + m_radius * 2,
+        otherRect.getHeight() + m_radius * 2
     );
-    return newRect.isInRect(pos_);
+    return newRect.isInRect(m_pos);
 }
 

@@ -30,22 +30,21 @@ add_compile_options(
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
-    rospy
+    ard_asserv
+    game_manager
+    geometry_msgs
+    geometry_tools
+    genmsg
+    navigator
+    objects_classifier
     roscpp
     roslib
+    rospy
+    static_map
     std_msgs
-    geometry_msgs
-    genmsg
-    game_manager
-    navigator
-    ard_asserv
-    objects_classifier
     tf2
     tf2_ros
-    tf
     visualization_msgs
-    static_map
-    geometry_tools
 )
 
 ##############

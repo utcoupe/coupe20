@@ -24,12 +24,14 @@ class CollisionsClient(object):
         self._connectToServers()
 
     def _warnerCallback (self, message):
-        if (message.danger_level <= PredictedCollision.LEVEL_DANGER):
+        if message.danger_level >= PredictedCollision.LEVEL_DANGER:
             self._last_collision = True
             if not self._collision_active:
                 self._collision_active = True
                 rospy.loginfo("Obstacle detected, stopping the robot")
             self._callbackStop()
+        elif message.danger_level == PredictedCollision.LEVEL_SAFE:
+            self._last_collision = False
 
     def _connectToServers (self):
         rospy.loginfo("Waiting for \"" + self.ACTIVATE_COLLISIONS_SERVICE_NAME + "\"")

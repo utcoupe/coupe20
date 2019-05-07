@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CATKIN_CUSTOM_PARAMS="-DCMAKE_BUILD_TYPE=Release"
+CATKIN_CUSTOM_PARAMS=""
 
 if [ "$TRAVIS_BRANCH" == "devel" ] || [ "$TRAVIS_BRANCH" == "master" ]; then
 	echo "Adding tests to catkin."

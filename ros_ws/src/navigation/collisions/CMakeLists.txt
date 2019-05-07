@@ -129,9 +129,9 @@ install(
 ## Testing ##
 #############
 
-SET(UTCOUPE_RUN_TESTS OFF CACHE STRING "true = enabled")
+SET(UTCOUPE_RUN_TESTS "false" CACHE STRING "true = enabled")
 
-if (${UTCOUPE_RUN_TESTS})
+if (${UTCOUPE_RUN_TESTS} EQUAL "true")
     ENABLE_TESTING ()
     SET(CATCH_FOLDER "$ENV{UTCOUPE_WORKSPACE}/libs/catch2")
     include_directories(

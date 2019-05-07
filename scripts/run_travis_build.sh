@@ -3,8 +3,11 @@
 CATKIN_CUSTOM_PARAMS="-DCMAKE_BUILD_TYPE=Release"
 
 if [ "$TRAVIS_BRANCH" == "devel"] || [ "$TRAVIS_BRANCH" == "master" ]; then
-    CATKIN_CUSTOM_PARAMS="-DUTCOUPE_BUILD_TESTS=true $CATKIN_CUSTOM_PARAMS"
+	echo "Adding tests to catkin."
+	CATKIN_CUSTOM_PARAMS="-DUTCOUPE_BUILD_TESTS=true $CATKIN_CUSTOM_PARAMS"
 fi
+
+echo "--> final command : catkin_make $CATKIN_CUSTOM_PARAMS"
 
 docker run \
     -i \

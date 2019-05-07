@@ -128,3 +128,26 @@ install(
 #############
 ## Testing ##
 #############
+
+if (${UTCOUPE_RUN_TESTS})
+    ENABLE_TESTING ()
+    SET(CATCH_FOLDER "$ENV{UTCOUPE_WORKSPACE}/libs/catch2")
+    include_directories(
+        ${CATCH_FOLDER}
+    )
+    add_executable(${PROJECT_NAME}_unit_tests ${source_files_collisions} tests/main_unit_tests.cpp)
+
+    target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${catkin_LIBRARIES}
+    )
+    add_dependencies(${PROJECT_NAME}_unit_tests
+        ${${PROJECT_NAME}_EXPORTED_TARGETS}
+        ${catkin_EXPORTED_TARGETS}
+    )
+    add_custom_command(
+        TARGET ${PROJECT_NAME}_unit_tests
+        POST_BUILD
+        COMMAND ${PROJECT_NAME}_unit_tests
+        COMMENT "Running ${PROJECT_NAME}_unit_tests..."
+    )
+endif ()

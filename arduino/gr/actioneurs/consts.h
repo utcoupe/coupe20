@@ -18,6 +18,7 @@
 #define SCALE_DOOR_CLOSE_POS 0 //TODO calibrate
 #define SCALE_DOOR_OPEN_POS 0
 
+
 //Atom tower
 #define TOWER_DOWN 0
 #define TOWER_UP 1
@@ -38,13 +39,24 @@
 #define SELECTOR_PILE_POS 128 //TODO: set this
 #define SELECTOR_TIME_TO_MOVE 1000 // in ms TODO:OPTIMIZE THIS
 //atom tower for PR's pickup
-#define TOWER_TOP_DELAY 1000
-#define TOWER_TOP_PWM 9
-#define TOWER_TOP_OPEN_POS 120
-#define TOWER_TOP_CLOSED_POS 100
-#define TOWER_CLOSURE_DELAY 5000
-#define TOWER_CLOSURE_PWM 10
-#define TOWER_CLOSURE_OPEN_POS 128
-#define TOWER_CLOSURE_CLOSED_POS 128
+#define TOWER_DELAY 5000 //TODO
+#define TOWER_STEP_PIN 9
+#define TOWER_DIR_PIN 10
+#define TOWER_EN_PIN 11
+#define TOWER_MIN_DELAY 1000 //TODO
+#define TOWER_LIMIT_SWITCH A3
+
+
 //atom tower for PR's pickup
-#define PUCKS_DOOR_PWM 11
+#define PUCKS_DOOR_STEP_PIN 12
+#define PUCKS_DOOR_DIR_PIN 13
+#define PUCKS_DOOR_EN_PIN 14 
+#define PUCKS_DOOR_MIN_DELAY 1000
+#define PUCKS_DOOR_ISUP_PIN A1 
+#define PUCKS_DOOR_ISDOWN_PIN A2
+
+//Scale door pins
+#define SCALE_DOOR_STEP_PIN 15
+#define SCALE_DOOR_DIR_PIN 16
+#define SCALE_DOOR_EN_PIN 17
+#define SCALE_DOOR_MIN_DELAY 1000

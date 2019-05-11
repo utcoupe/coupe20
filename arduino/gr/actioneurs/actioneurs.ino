@@ -1,5 +1,6 @@
 #include "consts.h"
-#include "AccelStepper.h"
+//#include "AccelStepper.h"
+#include "PoluluA4983.h"
 
 // Including rosserial
 #include <ros.h>
@@ -15,14 +16,15 @@
 
 ros::NodeHandle nh;
 
-
 int game_status = -1;
 int init_status = -1;
 bool puckGoesToScale[3];
 static int VENTS_TO_PUMPS[3] = {VENT1_TO_PUMP,VENT2_TO_PUMP,VENT3_TO_PUMP};
 static int VENTS_TO_AIR[3] = {VENT1_TO_AIR,VENT2_TO_AIR,VENT3_TO_AIR};
-//static AccelStepper PUCKS_DOOR_STEPPER =  AccelStepper(uint8_t interface = AccelStepper::FULL4WIRE, uint8_t pin1 = 2, uint8_t pin2 = 3, uint8_t pin3 = 4, 5,false);
-
+//Stepper motors
+PoluluA4983 stepper_tower = PoluluA4983(TOWER_STEP_PIN, TOWER_DIR_PIN, TOWER_EN_PIN, TOWER_MIN_DELAY)
+PoluluA4983 stepper_scale_door = PoluluA4983(SCALE_DOOR_STEP_PIN, SCALE_DOOR_DIR_PIN, 
+                                            SCALE_DOOR_EN_PIN, SCALE_DOOR_MIN_DELAY)
 
 void send_ros_msg(int msg) {
     if(msg==AWAITING_ORDER_MSG){
@@ -114,21 +116,32 @@ void on_take_pucks(const ard_gr_front::PucksTake& msg){
     send_ros_msg(PUCKS_SUCKED_UP_MSG);
 }
 
-//TODO these functions
 void on_move_scale_door(const ard_gr_front::MoveScaleDoor& msg){
-    if (msg.door_status == SCALE_DOOR_CLOSE) {}
-    if (msg.door_status == SCALE_DOOR_OPEN){}
-  
+    if (msg.door_status == SCALE_DOOR_CLOSE) {
+        stepper_scale_door.moveStep(SCALE_DOOR_CLOSE_POS, true);
+        while(stepper_scale_door.getRemainingStep() >0 ) {
+            stepper_scale_door.update() ; 
+    }
+    }
+    if (msg.door_status == SCALE_DOOR_OPEN){
+        stepper_scale_door.moveStep(SCALE_DOOR_OPEN_POS, true);
+        while(stepper_scale_door.getRemainingStep() >0 ) {
+            stepper_scale_door.update() ; 
+    }
 }
 
 void on_move_tower(const ard_gr_front::MoveTower& msg){
-    if (msg.tower_status == TOWER_DOWN) {}
-    if (msg.tower_status == TOWER_UP){}
-}
+    if (msg.tower_status == TOWER_DOWN) {
+        stepper_tower.moveStep(SCALE_DOOR_OPEN_POS, true);
+        while(stepper_tower.getRemainingStep() >0 ) {
+            stepper_tower.update() ; 
 
-void on_move_back_door(const ard_gr_front::MoveBackDoor& msg){
-    if (msg.door_status == BACK_DOOR_CLOSE) {}
-    if (msg.door_status == BACK_DOOR_OPEN){}
+    }
+    if (msg.tower_status == TOWER_UP){
+        stepper_tower.moveStep(SCALE_DOOR_OPEN_POS, true);
+        while(stepper_tower.getRemainingStep() >0 ) {
+            stepper_tower.update() ; 
+    }
 }
 
 ros::Subscriber<game_manager::GameStatus>     sub_game_status("ai/game_manager/status",&on_game_status);
@@ -137,7 +150,6 @@ ros::Subscriber<ard_gr_front::PucksRaiseSort> sub_raise_sort_pucks("actionneurs/
 ros::Subscriber<ard_gr_front::PucksDump>      sub_dump_pucks("actionneurs/dump_pucks",&on_dump_pucks);
 ros::Subscriber<ard_gr_front::PucksTake>      sub_take_pucks("actionneurs/take_pucks",&on_take_pucks);
 
-ros::Subscriber<ard_gr_front::MoveBackDoor>   sub_move_back_door("actionneurs/move_back_door", &on_move_back_door);
 ros::Subscriber<ard_gr_front::MoveScaleDoor>  sub_move_scale_door("actionneurs/move_scale_door", &on_move_scale_door);
 ros::Subscriber<ard_gr_front::MoveTower>      sub_move_tower("actionneurs/move_tower", &on_move_tower);
 
@@ -156,7 +168,6 @@ void setup() {
     nh.subscribe(sub_raise_sort_pucks);
 
     nh.subscribe(sub_move_scale_door);
-    nh.subscribe(sub_move_back_door);
     nh.subscribe(sub_move_tower);
     //nh.advertise(hmi_event_pub);
 

@@ -14,8 +14,6 @@ add_message_files(
     PucksTake.msg
     
     ArduinoToAI.msg
-
-    MoveBackDoor.msg
     MoveScaleDoor.msg
     MoveTower.msg
 )

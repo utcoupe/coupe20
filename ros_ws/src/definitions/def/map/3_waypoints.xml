@@ -13,6 +13,9 @@
 
     <waypoint name="way_approach_acc"      x="1.7"   y="1.7"   a="-1.57079632679"/>
 
+    <waypoint name="way_goldenium_approach" x="0.987"   y="1.778" a="-0.7853981634"/>
+    <waypoint name="way_goldenium"          x="0.775"   y="1.990" a="-0.7853981634"/>
+
 
     <!-- GR waypoints -->
     <waypoint name="way_spawn_gr"          x="0.225" y="1.25"  a="-1.57079632679"/>

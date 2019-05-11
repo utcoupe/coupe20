@@ -33,22 +33,41 @@
 		<actions exec="all" order="linear">
 			<orderref ref="navigator_goto_waypoint" name="first turn">
 				<waypoint_name>way_first_turn</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
 
 			<orderref ref="navigator_goto_waypoint" name="goto atom1">
 				<waypoint_name>way_atom1</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
-			<orderref ref="tower_load_atom" needsprevious="true"/>
+			<!-- <orderref ref="tower_load_atom" needsprevious="true"/> -->
+			<orderref ref="map_transfer" name="remove atom from map">
+				<mode>0</mode> <!-- select object only -->
+				<old_path>map/spawn_atoms/spawn_atoms_rd/atom1</old_path>
+				<new_path>robot/tower</new_path>
+			</orderref>
 
 			<orderref ref="navigator_goto_waypoint" name="goto atom2">
 				<waypoint_name>way_atom2</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
-			<orderref ref="tower_load_atom" needsprevious="true"/>
+			<!-- <orderref ref="tower_load_atom" needsprevious="true"/> -->
+			<orderref ref="map_transfer" name="remove atom from map">
+				<mode>0</mode> <!-- select object only -->
+				<old_path>map/spawn_atoms/spawn_atoms_gd/atom2</old_path>
+				<new_path>robot/tower</new_path>
+			</orderref>
 
 			<orderref ref="navigator_goto_waypoint" name="goto atom3">
 				<waypoint_name>way_atom3</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
-			<orderref ref="tower_load_atom" needsprevious="true"/>
+			<!-- <orderref ref="tower_load_atom" needsprevious="true"/> -->
+			<orderref ref="map_transfer" name="remove atom from map">
+				<mode>0</mode> <!-- select object only -->
+				<old_path>map/spawn_atoms/spawn_atoms_bd/atom3</old_path>
+				<new_path>robot/tower</new_path>
+			</orderref>
 		</actions>
 	</action>
 
@@ -84,7 +103,7 @@
 				<auto_stop>1</auto_stop>
 			</orderref>
 
-			<orderref ref="tower_unload_tower"/>
+			<!-- <orderref ref="tower_unload_tower"/> -->
 			<orderref ref="delay"> <!-- TODO remove -->
 				<duration>2</duration>
 			</orderref>
@@ -93,6 +112,32 @@
 				<waypoint_name>way_approach_acc</waypoint_name>
 				<direction>1</direction>
 			</orderref>
+		</actions>
+	</action>
+
+	<action ref="load_goldenium">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+				<waypoint_name>way_goldenium_approach</waypoint_name>
+				<disable_pathfinder>0</disable_pathfinder>
+			</orderref>
+			<orderref ref="navigator_goto_waypoint" name="touch goldenium et 45deg">
+				<waypoint_name>way_goldenium</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
+				<direction>0</direction> <!-- backwards -->
+			</orderref>
+			<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+				<waypoint_name>way_goldenium_approach</waypoint_name>
+				<disable_pathfinder>0</disable_pathfinder>
+			</orderref>
+		</actions>
+	</action>
+
+	<action ref="unload_goldenium">
+		<params></params>
+		<actions exec="all" order="linear">
+			
 		</actions>
 	</action>
 

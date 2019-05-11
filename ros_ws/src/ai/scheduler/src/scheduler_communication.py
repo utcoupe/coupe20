@@ -40,8 +40,7 @@ class RequestTypes(object):
             "/navigation/navigator/goto_action":         (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
             "/navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),
 
-            "/actuators/ard_tower/load":   (RequestTypes.PUB_MSG, ard_tower.msg.TowerLoad),
-            "/actuators/ard_tower/unload": (RequestTypes.PUB_MSG, ard_tower.msg.TowerUnload),
+            "/actuators/ard_tower":         (RequestTypes.PUB_MSG, ard_tower.msg.Tower),
 
             "/drivers/ard_asserv/set_pos":     (RequestTypes.SERVICE, ard_asserv.srv.SetPos),
             "/drivers/ard_asserv/pwm":         (RequestTypes.SERVICE, ard_asserv.srv.Pwm),

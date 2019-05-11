@@ -13,6 +13,8 @@
 				<actionref ref="load_side_atoms"/>
 				<actionref ref="load_chaos_atoms"/>
 				<actionref ref="unload_tower" name="Unload1"/>
+
+				<actionref ref="load_goldenium"/>
 			</tasklist>
 			
 			<tasklist name="Second cycle">
@@ -31,9 +33,7 @@
 		<actionref ref="game_start"/>
 
 		<tasklist name="Main actions">
-			<tasklist name="load_simple_atom">
 				<actionref ref="load_side_atoms"/>
-			</tasklist>
 		</tasklist>
 	</strategy>
 

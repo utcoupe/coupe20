@@ -32,47 +32,9 @@ void setup(){
 
 
 
-void test() {
-  
-  int i = 0 ; 
-  if (stepper.getRemainingStep()>0 ) {
-    
-  }
-  else {
-    delay(500); 
-    if ( i < 5 ) {
-      step_motor += 10 ; 
-      i += 1 ; 
-    }
-  }
-}
-
-
-
-void test_2() {
-   stepper.update();
-  if (stepper.getRemainingStep() !=0 ) {
-    //wait ; 
-  }
-  else {
-    delay(600) ; 
-    if (i==0) {
-      stepper.moveStep(1850,true); 
-    }
-    if (i==1) {
-      stepper.moveStep(1850,true); 
-    } 
-    if (i==1) {
-      stepper.moveStep(850,true); 
-    } 
-     i+=1 ; 
-   }
-}
-
-
 void test_3() {
   //stepper.moveRevolution(8,1);
-  stepper.moveStep(500,0); 
+  stepper.moveStep(1800,1) ; 
   while( stepper.getRemainingStep() !=0 ) {
     stepper.update() ; 
   }
@@ -81,10 +43,15 @@ void test_3() {
 
 
 
+int test = 0 ; 
+
 
 void loop(){
   //stepper.disable() ; 
-  test_3(); 
+  if (test==0 ) {
+      test_3();
+      test = 1 ;  
+  }
   
 
 }

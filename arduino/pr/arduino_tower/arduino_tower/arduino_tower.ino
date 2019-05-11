@@ -14,8 +14,8 @@
 #include <ard_tower/Tower.h> 
 #include <ard_tower/TowerResponses.h> 
 #include <ard_door/Door.h> 
-//#include <driver_ax12/Ax12Command.h> 
-#include <driver_
+#include <driver_ax12/Ax12Command.h> 
+
 
 
 ros :: NodeHandle nh ; 
@@ -41,7 +41,7 @@ PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay);
 // ---------------------------- ROS methods ----------------------- 
 // ----------------------------------------------------------------
 void on_game_status(const game_manager::GameStatus& msg){
-  game_status = msg.game_status;
+  //game_status = msg.game_status; // DANGER game status for test 
   //nh.loginfo("game_status_msg");
 }
 void on_tower(const ard_tower::Tower& msg){
@@ -61,11 +61,11 @@ ros::Subscriber<ard_tower::Tower>         sub_tower        ("actuators/ard_tower
 // ~ Publisher ~ 
 ard_tower::TowerResponses  event_msg ; 
 ard_door::Door door_msg ; 
-//driver_ax12::Ax12Command  ax12_event_msg ; 
+driver_ax12::Ax12Command  ax12_event_msg ; 
 
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
 ros::Publisher pub_door_action       ("actuators/ard_door/action",   &door_msg ); 
-ros::Publisher pub_ax12_responses    ("drivers//ax12/simple_command",    &ax12_event_msg); 
+ros::Publisher pub_ax12_responses    ("drivers/ax12/simple_command", &ax12_event_msg); 
 
 
 // --------------------------------------------------------------
@@ -74,10 +74,20 @@ ros::Publisher pub_ax12_responses    ("drivers//ax12/simple_command",    &ax12_e
 
 void tower_initialize() { 
   nh.loginfo("tower_initialize"); 
+  // Initialize servos 
   servo_unload_1.write(POS_UNLOAD_INIT_1) ;
   servo_unload_2.write(POS_UNLOAD_INIT_2) ;    
   // TODO initialize stepper with push buttom 
-  event_msg.init_success = 1 ; 
+  // Initialize stepper 
+  stepper_load.moveStep(150,true); // TODO number 
+  while( stepper_load.getRemainingStep() > 0 ) {
+    stepper_load.update() ; 
+  }
+  delay(500) ;
+  // Initialize AX12 
+  int success = move_ax12(1);  
+  // Message 
+  event_msg.init_success = success ; 
   pub_tower_responses.publish(&event_msg); 
   event_msg.init_success = 0 ; 
 }
@@ -87,13 +97,19 @@ void tower_initialize() {
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12 
-  nh.loginfo("move_ax12"); 
-  //ax12_event_msg.speed = 1000 ; 
-  //ax12_event_msg.mode = 0 ; 
-  //ax12_event_msg.motor_id = 2 ; 
-  //if ( open == 1 ) ax12_event_msg.position =135  ; // Open 
-  //if ( open == 0 ) ax12_event_msg.position =170 ;  // Close 
-  //pub_ax12_responses.publish(&ax12_event_msg) ; 
+  //nh.loginfo("move_ax12"); 
+  ax12_event_msg.speed = 1000 ; 
+  ax12_event_msg.mode = 0 ; 
+  ax12_event_msg.motor_id = 2 ; 
+  if ( open == 1 ) {
+    ax12_event_msg.position =135  ; // Open 
+    nh.loginfo("open_ax12"); 
+  }
+  if ( open == 0 ) {
+    ax12_event_msg.position =170 ;  // Close 
+    nh.loginfo("close_ax12"); 
+  }
+  pub_ax12_responses.publish(&ax12_event_msg) ; 
   return 1 ; 
 }
 
@@ -105,8 +121,8 @@ int move_lift(int wanted_position) {  // move lift to the correct floor
 nh.loginfo("move_lift"); 
 //char msg_wanted_position ; 
 //sprintf(msg_wanted_position, "%d", wanted_position); 
-nh.loginfo(wanted_position);   // understand error 
-nh.loginfo(lift_position);          // understand error 
+//nh.loginfo(wanted_position);   // understand error 
+//nh.loginfo(lift_position);          // understand error 
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
     stepper_load.moveStep(lift_position - wanted_position,true); 
@@ -168,7 +184,7 @@ int unload_atom_sas () {
 
 
 int load_atom_sas() {
-  nh.loginfo("load_atom_sas"); 
+  nh.loginfo("load_atom_sas");
   if (nb_atom_in<MAX_ATOM_SAS){
     nh.loginfo("not enough atom.s"); 
     return 1 ; 
@@ -293,7 +309,7 @@ void load_atom() {
 
 int load_atom_single() {
   nh.loginfo("load_atom_single") ; 
-  int success ; 
+  int success; 
   if (nb_atom_in-nb_atom_in_sas == 0){ //pliers empty 
     success = move_ax12(1) ; // open 
     if (success != 0 ) success = move_lift(H_GROUND) ; 
@@ -336,7 +352,7 @@ void setup() {
  
   nh.advertise(pub_tower_responses); 
   nh.advertise(pub_door_action); 
-//  nh.advertise(pub_ax12_responses); 
+  nh.advertise(pub_ax12_responses); 
 
   // Servo Actuator init 
   servo_unload_1.attach(servo_unload_pin_1) ; 

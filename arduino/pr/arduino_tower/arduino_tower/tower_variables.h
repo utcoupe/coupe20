@@ -19,22 +19,22 @@ int servo_unload_pin_2 = 24 ; //number 2 left side
 // ~ Stepper ~ Load Atom 
 int lift_position = 0 ; // no postion for now 
 #define H          300      // H_FLOOR_1 = 300 * 2 
-#define H_SAS_LOW  1800     // ? 
-#define H_FLOOR_5  1500     // ? 
-#define H_FLOOR_4  1200     // ? 
-#define H_FLOOR_3  900      // ? 
-#define H_FLOOR_2  600      // ? 
-#define H_FLOOR_1  300      // ? 
+#define H_SAS_LOW  2000     // 1800 avant 
+//#define H_FLOOR_5  1500   // ? 
+//#define H_FLOOR_4  1200   // ? 
+#define H_FLOOR_3  1200     // ? 
+#define H_FLOOR_2  1000     // ? 
+#define H_FLOOR_1  500      // ? 
 #define H_GROUND   0        // ? 
-#define H_ATOM     50       // ? 
-
+#define H_ATOM     200      // Verified 200~160
+#define H_ERREUR   200      // voir pour meilleure précision
 
 
 // ~ Number of atoms ~ 
-#define MAX_ATOM_SAS 2  
-float nb_atom_in_sas  = 0 ; //number of atom loaded in the sas (for slide)
-float nb_atom_in      = 0 ; //number of atom loaded in total 
-float nb_atom_out     = 0 ; 
+#define MAX_ATOM_SAS 3  
+int nb_atom_in_sas  = 0 ; //number of atom loaded in the sas (for slide)
+int nb_atom_in      = 0 ; //number of atom loaded in total 
+int nb_atom_out     = 0 ; 
 
 
 // ~ Status ~ 
@@ -44,8 +44,8 @@ int load_content_position = -1 ;
 int unload_content        = -1 ; // actions given to stepper  => 0 for nothing // 1 for unoload 
 int load_success          = -1 ; // info on stepper status 
 int unload_success        = -1 ; // info on stepper status 
-int game_status           = -1 ; // info on game status  // 1 ingame 
-
+int game_status           = 1 ; // info on game status  // 1 ingame 
+// DANGER game_status = 1 for test 
 
 // ------ Functions --------- 
 void tower_initialize() ; 

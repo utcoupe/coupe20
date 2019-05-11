@@ -188,7 +188,7 @@ int load_atom_sas() {
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 void unload_atom() {
-  int success ; 
+  int success ;
   if (unload_content == 1 && game_status == 1 ) { //unload atom with slider 
     success = unload_atom_slider() ; 
 
@@ -197,7 +197,7 @@ void unload_atom() {
       //TODO clarify message if no success 
       event_msg.unload_success = success ;
       event_msg.nb_atom_out    = nb_atom_out ; 
-      event_msg.nb_atom_in     = nb_atom_in ; 
+      event_msg.nb_atom_in     = nb_atom_in ;
       pub_tower_responses.publish(&event_msg) ; 
       unload_content = 0 ; 
       nb_atom_out    = 0 ; 

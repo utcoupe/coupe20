@@ -28,6 +28,10 @@ PololuA4983 stepper_scale_door = PololuA4983(SCALE_DOOR_STEP_PIN, SCALE_DOOR_DIR
 PololuA4983 stepper_pucks_door = PololuA4983(PUCKS_DOOR_STEP_PIN, PUCKS_DOOR_DIR_PIN,
                                             PUCKS_DOOR_EN_PIN, PUCKS_DOOR_MIN_DELAY);
 
+// ~ Publisher ~ 
+ard_gr_front::ArduinoToAI  event_msg ; 
+ros::Publisher pub_response  ("actuators/ard_gr_front/event", &event_msg); 
+
 
 void send_ros_msg(int msg) {
     if(msg==AWAITING_ORDER_MSG){
@@ -118,6 +122,9 @@ void on_take_pucks(const ard_gr_front::PucksTake& msg){
 }
 
 void on_move_scale_door(const ard_gr_front::MoveScaleDoor& msg){
+    event_msg.type = EVENT_MOVE_SCALE_DOOR;
+    event_msg.success = true;
+    pub_response.publish(&event_msg);
     if (msg.door_status == SCALE_DOOR_CLOSE) {
         stepper_scale_door.moveStep(SCALE_DOOR_CLOSE_POS, true);
         while(stepper_scale_door.getRemainingStep() >0 ) {
@@ -147,6 +154,7 @@ void on_move_tower(const ard_gr_front::MoveTower& msg){
     }
 }
 
+//Subscribers
 ros::Subscriber<game_manager::GameStatus>     sub_game_status("ai/game_manager/status",&on_game_status);
 
 ros::Subscriber<ard_gr_front::PucksRaiseSort> sub_raise_sort_pucks("actionneurs/raise_and_sort_pucks",&on_raise_and_sort_pucks);
@@ -155,11 +163,6 @@ ros::Subscriber<ard_gr_front::PucksTake>      sub_take_pucks("actionneurs/take_p
 
 ros::Subscriber<ard_gr_front::MoveScaleDoor>  sub_move_scale_door("actionneurs/move_scale_door", &on_move_scale_door);
 ros::Subscriber<ard_gr_front::MoveTower>      sub_move_tower("actionneurs/move_tower", &on_move_tower);
-
-//TODO créer event de feedback avec un champs msg.type et un msg.
-//drivers_ard_hmi::HMIEvent hmi_event_msg;
-//ros::Publisher hmi_event_pub("feedback/ard_actionneurs/", &hmi_event_msg);
-
 
 
 void setup(){
@@ -172,7 +175,7 @@ void setup(){
 
     nh.subscribe(sub_move_scale_door);
     nh.subscribe(sub_move_tower);
-    //nh.advertise(hmi_event_pub);
+    nh.advertise(pub_response);
 
 }
 

@@ -40,4 +40,14 @@
 		</tasklist>
 	</strategy>
 
+	<strategy name="test_goldenium">
+		<actionref ref="game_start"/>
+		<tasklist name="Main actions">
+				<tasklist name="Goldenium cycle">
+				<actionref ref="load_goldenium"/>
+				<actionref ref="unload_goldenium" needsprevious="true"/>
+			</tasklist>
+		</tasklist>
+	</strategy>
+
 </strategies>

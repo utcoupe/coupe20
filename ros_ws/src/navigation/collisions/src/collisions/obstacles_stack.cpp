@@ -1,11 +1,13 @@
 #include "collisions/obstacles_stack.h"
 
-std::vector<const Obstacle*> ObstaclesStack::toList() const {
+std::vector<Obstacle*> ObstaclesStack::toList() const {
     std::lock_guard<std::mutex> lock(m_mutex);
-    std::vector<const Obstacle*> obstacles;
+    std::vector<Obstacle*> obstacles;
+    // TODO C++17 transform_copy
     auto copyObstPtrs = [&obstacles](const auto& obstList) {
-        for (const auto& obst: obstList) {
-            obstacles.push_back(&obst);
+        for (auto& obst: obstList) {
+            // Ugly as hell =(
+            obstacles.push_back(const_cast<Obstacle*>(&obst));
         }
     };
     copyObstPtrs(m_beltPoints);
@@ -18,27 +20,21 @@ void ObstaclesStack::updateBeltPoints(std::vector<Obstacle>&& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_beltPoints.clear();
-    for (auto&& obst : new_obstacles) {
-        m_beltPoints.insert_after(m_beltPoints.before_begin(), std::move(obst));
-    }
+    std::move(begin(new_obstacles), end(new_obstacles), std::front_inserter(m_beltPoints));
 }
 
 void ObstaclesStack::updateLidarObjects(std::vector<Obstacle>&& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_lidarObjects.clear();
-    for (auto&& obst : new_obstacles) {
-        m_lidarObjects.insert_after(m_lidarObjects.before_begin(), std::move(obst));
-    }
+    std::move(begin(new_obstacles), end(new_obstacles), std::front_inserter(m_lidarObjects));
 }
 
 void ObstaclesStack::updateEnemies(std::vector<Obstacle>&& new_obstacles)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_enemies.clear();
-    for (auto&& obst : new_obstacles) {
-        m_enemies.insert_after(m_enemies.before_begin(), std::move(obst));
-    }
+    std::move(begin(new_obstacles), end(new_obstacles), std::front_inserter(m_enemies));
 }
 
 void ObstaclesStack::garbageCollect()

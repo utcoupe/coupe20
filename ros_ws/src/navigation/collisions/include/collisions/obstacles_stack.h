@@ -23,7 +23,7 @@ public:
      * 
      * @return A list of obstacle
      */
-    std::vector<const Obstacle*> toList() const;
+    std::vector<Obstacle*> toList() const;
     
     /**
      * Updates obstacles detected by the belt.

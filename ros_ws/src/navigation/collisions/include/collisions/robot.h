@@ -89,16 +89,17 @@ public:
     
     /**
      * Check all possible collisions between the robot and all other obstacles.
-     * 
-     * @return All found collisions.
+     *
+     * Obstacles are updated.
      */
-    std::vector<Collision> checkCollisions(const std::vector<const Obstacle*>& obstacles);
+    void checkCollisions(const std::vector<Obstacle*>& obstacles) const;
     
 private:
     /** Robot status **/
     NavStatus m_navStatus = NavStatus::IDLE;
     /** Collision path checker **/
     PathCheckZone m_pathCheckZone;
+    /** Velocity shapes checker **/
     VelocityCheckZone m_velocityCheckZone;
     
     /**

@@ -3,6 +3,7 @@
 
 #include "collisions/shapes/abstract_shape.h"
 #include "collisions/obstacle_velocity.h"
+#include "collisions/engine/collision.h"
 
 #include <chrono>
 #include <memory>
@@ -49,12 +50,12 @@ public:
      * The maxDist correspond to the maximum projection of the velocity shape. When maxDist = -1.0, it is deactivated.
      * 
      * @param maxDist The maximum projection distance
-     * @return The shapes describing the theroretical object velocity
+     * @return The shapes describing the theoretical object velocity
      */
     const std::vector<ShapePtr>& getVelocityShapes (double maxDist = -1.0) const;
     
     /**
-     * Retuns the object position
+     * Returns the object position
      * 
      * @return The object position
      */
@@ -66,14 +67,30 @@ public:
      * @return The object age
      */
     std::chrono::duration<double> getAge() const;
+
+    /**
+     * Returns the latest collison data
+     * @return Current collision data
+     */
+    Collision getCollisionData() const noexcept { return m_collisionData; }
+
+    /**
+     * Updates collision data.
+     * @param collisionData The new collision data
+     */
+    void setCollisionData(Collision collisionData) noexcept { m_collisionData = collisionData; }
     
 protected:
     /** The main shape of the object **/
     ShapePtr m_shape;
     /** The velocity of the object **/
     VelocityPtr m_velocity;
+
+private:
     /** The object birthtime **/
     const std::chrono::system_clock::time_point m_spawnTime = std::chrono::system_clock::now();
+    /** Collision data **/
+    Collision m_collisionData;
 };
 
 #endif // COLLISIONS_OBSTACLE_H

@@ -53,7 +53,7 @@ void MarkersPublisher::publishCheckZones(const Robot& robot) {
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " path shapes.");
 }
 
-void MarkersPublisher::publishObstacles(const std::vector<const Obstacle*>& obstacles) {
+void MarkersPublisher::publishObstacles(const std::vector<Obstacle*>& obstacles) {
     if (!m_isConnected())
         return;
     int index = 0;
@@ -73,7 +73,13 @@ bool MarkersPublisher::m_isConnected() const {
     return m_markersPubl.getNumSubscribers() > 0;
 }
 
-void MarkersPublisher::m_publishMarker(std::string ns, int index, const CollisionsShapes::AbstractShape& shape, double z_scale, double z_height, std_msgs::ColorRGBA color) {
+void MarkersPublisher::m_publishMarker(
+        std::string ns,
+        int index,
+        const CollisionsShapes::AbstractShape& shape,
+        double z_scale,
+        double z_height,
+        std_msgs::ColorRGBA color) {
     visualization_msgs::Marker marker;
     marker.header.frame_id = MARKER_FRAME_ID;
     marker.ns = ns;

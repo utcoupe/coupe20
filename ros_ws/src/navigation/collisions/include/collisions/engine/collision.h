@@ -3,7 +3,7 @@
 
 #include "collisions/engine/constants.h"
 
-class Obstacle;
+#include <limits>
 
 /**
  * Stores information about a found collision.
@@ -14,42 +14,47 @@ public:
      * Main constructor of Collision.
      * 
      * @param level The danger level of collision
-     * @param obstacle The corresponding Obstacle
      * @param approxDistance Distance between the robot and the obstacle
      */
-    Collision(CollisionLevel level, const Obstacle* obstacle, double approxDistance):
-        m_level(level), m_obstacle(obstacle), m_approxDistance(approxDistance) {}
+    constexpr Collision(
+            CollisionLevel level = CollisionLevel::SAFE,
+            double approxDistance = std::numeric_limits<double>::max());
     
     /**
      * Returns the danger level of collision
      * 
      * @return The level of collision
      */
-    CollisionLevel getLevel() const noexcept { return m_level; }
-    
+    constexpr CollisionLevel getLevel() const noexcept { return m_level; }
+
     /**
-     * Returns the corresponding obstacle
-     * 
-     * @return The corresponding obstacle
+     * Sets the danger level of collision.
+     * @param level
      */
-    const Obstacle* getObstacle() const noexcept { return m_obstacle; }
+    constexpr void setLevel(CollisionLevel level) noexcept { m_level = level; }
     
     /**
      * Returns the approximative distance between the robot and the obstacle.
      * 
      * @return The distance
      */
-    double getDistance() const noexcept { return m_approxDistance; }
+    constexpr double getDistance() const noexcept { return m_approxDistance; }
+
+    /**
+     *  Sets the distance between the robots and the obstacle.
+     * @param distance
+     */
+    constexpr void setDistance(double distance) noexcept { m_approxDistance = distance; }
     
 private:
     /** The danger level of collision **/
     CollisionLevel m_level;
     
-    /** The corresponding obstacle **/
-    const Obstacle* m_obstacle;
-    
     /** The distance between the robot and the obstacle **/
     double m_approxDistance;
 };
+
+constexpr Collision::Collision(CollisionLevel level, double approxDistance) :
+        m_level(level), m_approxDistance(approxDistance) {}
 
 #endif // COLLISIONS_ENGINE_COLLISION

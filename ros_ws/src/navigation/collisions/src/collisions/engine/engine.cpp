@@ -6,16 +6,18 @@
 
 using namespace CollisionResolver;
 
-std::vector<const Obstacle*> CollisionResolver::findCollisions(const std::vector<PtrShape>& robotShapes, const std::vector<const Obstacle*>& obstacleShapes) {
-    std::vector<const Obstacle*> collisions;
+std::vector<Obstacle*> CollisionResolver::findCollisions(
+        const std::vector<PtrShape>& robotShapes,
+        const std::vector<Obstacle*>& obstacles) {
+    std::vector<Obstacle*> collisions;
     for (const auto& robotShape: robotShapes) {
-        for (const auto* obstShape: obstacleShapes) {
-            if (robotShape->isCollidingWith(obstShape->getShape())) {
-                collisions.push_back(obstShape);
+        for (auto* obstacle: obstacles) {
+            if (robotShape->isCollidingWith(obstacle->getShape())) {
+                collisions.push_back(obstacle);
             } else {
-                for (const auto& velShape: obstShape->getVelocityShapes()) {
+                for (const auto& velShape: obstacle->getVelocityShapes()) {
                     if (robotShape->isCollidingWith(*velShape)) {
-                        collisions.push_back(obstShape);
+                        collisions.push_back(obstacle);
                     }
                 }
             }

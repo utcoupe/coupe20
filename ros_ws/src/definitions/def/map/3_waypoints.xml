@@ -13,10 +13,11 @@
 
     <waypoint name="way_approach_acc"      x="1.7"   y="1.7"   a="-1.57079632679"/>
 
-    <!-- <waypoint name="way_goldenium_approach" x="0.987"   y="1.778" a="-0.7853981634"/>
-    <waypoint name="way_goldenium"          x="0.775"   y="1.990" a="-0.7853981634"/> -->
-    <waypoint name="way_goldenium_approach" x="2.437"   y="1.778" a="-0.7853981634"/>
-    <waypoint name="way_goldenium"          x="2.225"   y="1.990" a="-0.7853981634"/>
+    <waypoint name="way_goldenium_approach_left"  x="2.437"   y="1.778" a="0.7853981634"/>
+    <waypoint name="way_goldenium_left"           x="2.225"   y="1.990" a="0.7853981634"/>
+    <waypoint name="way_goldenium_approach_right" x="2.437"   y="1.778" a="-0.7853981634"/>
+    <waypoint name="way_goldenium_right"          x="2.225"   y="1.990" a="-0.7853981634"/>
+
     <waypoint name="way_unload_goldenium_approach" x="1.35"   y="0.7" a="1.57079632679"/>
     <waypoint name="way_unload_goldenium"          x="1.35"   y="0.55" a="1.57079632679"/>
 

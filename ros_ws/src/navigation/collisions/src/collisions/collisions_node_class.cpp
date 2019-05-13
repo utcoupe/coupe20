@@ -44,7 +44,7 @@ CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
     m_warnerPublisher = nhandle.advertise<collisions::PredictedCollision>(WARNER_TOPIC, 1);
     
     m_robot = m_subscriptions.createRobot(nhandle);
-    
+
     m_subscriptions.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");
     m_timerRun = nhandle.createTimer(
@@ -59,6 +59,7 @@ void CollisionsNode::m_run(const ros::TimerEvent&) {
     std::chrono::system_clock::time_point startTime;
     startTime = std::chrono::system_clock::now();
     m_subscriptions.updateRobot();
+    m_obstacleStack->resetCollisionData();
     if (m_active) {
         auto obstacles = m_obstacleStack->toList();
         m_robot->checkCollisions(obstacles);

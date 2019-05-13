@@ -50,6 +50,8 @@ public:
      * Removes expired obstacles according to their lifetime.
      */
     void garbageCollect();
+
+    void resetCollisionData();
     
 private:
     /** Maximum lifetime of an obstacle */

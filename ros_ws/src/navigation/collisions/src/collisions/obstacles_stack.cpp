@@ -45,6 +45,18 @@ void ObstaclesStack::garbageCollect()
     garbageCollect(m_enemies);
 }
 
+void ObstaclesStack::resetCollisionData() {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto resetObstacles = [](auto& obstacles) {
+        for (auto& obstacle: obstacles) {
+            obstacle.setCollisionData( {} );
+        }
+    };
+    resetObstacles(m_beltPoints);
+    resetObstacles(m_lidarObjects);
+    resetObstacles(m_enemies);
+}
+
 void ObstaclesStack::garbageCollect(std::forward_list<Obstacle>& list)
 {
     auto lifespan = M_OBSTACLE_LIVESPAN; // C++ limitation (as of C++14) =(

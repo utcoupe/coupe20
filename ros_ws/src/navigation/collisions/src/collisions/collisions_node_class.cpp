@@ -60,13 +60,6 @@ void CollisionsNode::m_run(const ros::TimerEvent&) {
     startTime = std::chrono::system_clock::now();
     m_subscriptions.updateRobot();
     if (m_active) {
-//        bool firstRun = true;
-//        Collision worstCollsision(CollisionLevel::SAFE, nullptr, 0.0);
-//        for (auto&& collision: m_robot->checkCollisions(m_obstacleStack->toList())) {
-//            if (firstRun || worstCollsision.getLevel() < collision.getLevel()) {
-//                worstCollsision = std::move(collision);
-//            }
-//        }
         auto obstacles = m_obstacleStack->toList();
         m_robot->checkCollisions(obstacles);
         auto worstCollision = std::max_element(begin(obstacles), end(obstacles), compareObstacleDangerosity);

@@ -137,7 +137,19 @@
 	<action ref="unload_goldenium">
 		<params></params>
 		<actions exec="all" order="linear">
-			
+			<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+				<waypoint_name>way_unload_goldenium_approach</waypoint_name>
+				<disable_pathfinder>0</disable_pathfinder>
+			</orderref>
+			<orderref ref="navigator_goto_waypoint" name="touch goldenium et 45deg">
+				<waypoint_name>way_unload_goldenium</waypoint_name>
+				<disable_pathfinder>1</disable_pathfinder>
+				<direction>0</direction> <!-- backwards -->
+			</orderref>
+			<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+				<waypoint_name>way_unload_goldenium_approach</waypoint_name>
+				<disable_pathfinder>0</disable_pathfinder>
+			</orderref>
 		</actions>
 	</action>
 

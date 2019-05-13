@@ -3,7 +3,7 @@
 
 #include "protocol.h"
 
-#include "String.h"
+#include "string.hpp"
 
 void parseAndExecuteOrder(const String& order);
 

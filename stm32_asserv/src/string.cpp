@@ -1,8 +1,9 @@
-#include "String.h"
+#include "string.hpp"
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 
 #include "serial.h"
 

@@ -55,7 +55,7 @@
 #include "compat.h"
 #include "encoder.h"
 
-#include "String.h"
+#include "string.hpp"
 /* USER CODE END Includes */
 
 using namespace std;
@@ -170,7 +170,7 @@ int main(void)
   g_right_pwm.set_timer_freq(32000);
   g_left_pwm.set_timer_freq(32000);
 
-  uint32_t before = HAL_GetTick();
+//   uint32_t before = HAL_GetTick();
   asservLoopTimer.Start();
   asservStatusTimer.Start();  
   blinkTimer.Start();

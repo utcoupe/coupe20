@@ -16,7 +16,7 @@ typedef enum
 #endif
 
 #ifdef __cplusplus
-#include "String.h"
+#include "string.hpp"
 extern "C" void SerialSendWrap(SerialSendEnum level, const String& data);
 extern "C" void SerialSendWrapVar(SerialSendEnum level, const char* data, ...);
 #else

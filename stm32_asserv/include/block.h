@@ -4,9 +4,9 @@
 
 
 #ifdef __cplusplus
-extern "C" void ComputeIsBlocked(void);
-#else
-void ComputeIsBlocked(void);
+extern "C"
 #endif
+void ComputeIsBlocked(void);
+
 
 #endif

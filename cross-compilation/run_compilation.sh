@@ -2,41 +2,73 @@
 
 # TODO select architecture
 compile_arch="armv7"
+# TODO ask user
+build_image=O
+ros_version='kinetic'
 
-img_tag="utcoupe-ros-kinetic-${compile_arch}"
-img_dir="utcoupe-ros-kinetic-${compile_arch}"
+img_tag="utcoupe-ros-${ros_version}-${compile_arch}"
+img_dir="utcoupe-ros-${ros_version}-${compile_arch}"
 
 img_ws_root_dir="/utcoupe/coupe18"
 
 cross_compilation_dir="${UTCOUPE_WORKSPACE}/cross-compilation"
-cross_compilation_install_dir="${cross_compilation_dir}/generated_install/${compile_arch}"
+cross_compilation_install_dir="${cross_compilation_dir}/generated_install/${ros_version}/${compile_arch}"
 
-docker build -t ${img_tag} "${cross_compilation_dir}/${img_dir}"
+function green_echo() {
+	echo -e "\033[32m$1\033[0m"
+}
 
-mkdir -p "${cross_compilation_install_dir}"
+function red_echo() {
+	echo -e "\033[31m$1\033[0m"
+}
 
-# looks slower than the other method
-# docker run \
-#     -i \
-#     --mount type=bind,source="${UTCOUPE_WOKSPACE}",target="${img_ws_root_dir}" \
-#     ${img_tag}
+function build_image() {
+    green_echo "Started to build $img_tag..."
+    docker build -t ${img_tag} "${cross_compilation_dir}/${img_dir}"
+    green_echo "Done."
+}
 
-echo "Generating files in \"${cross_compilation_install_dir}\""
+function run_cross_compilation() {
+    if [[ -z "$(docker images --format='{{print .Tag}}' | grep ${img_tag})" ]]; then
+        red_echo "docker image ${img_tag} not found locally."
+        if [[ ${build_image} -eq 0 ]]; then
+            docker pull "utcoupe/coupe19:${img_tag}"
+        else
+            build_image
+        fi
+    fi
 
-docker run \
-    -i \
-    --mount type=bind,source="${UTCOUPE_WORKSPACE}"/ros_ws/src,target="${img_ws_root_dir}"/ros_ws/src,readonly \
-    --mount type=bind,source="${UTCOUPE_WORKSPACE}"/libs,target="${img_ws_root_dir}"/libs,readonly \
-    --mount type=bind,source="${cross_compilation_install_dir}",target="${img_ws_root_dir}"/ros_ws/install \
-    ${img_tag}
-# Makes cmake crash
-#    --tmpfs "${img_ws_root_dir}"/ros_ws/devel
-#    --tmpfs "${img_ws_root_dir}"/ros_ws/build
+    mkdir -p "${cross_compilation_install_dir}"
+    # looks slower than the other method
+    # docker run \
+    #     -i \
+    #     --mount type=bind,source="${UTCOUPE_WOKSPACE}",target="${img_ws_root_dir}" \
+    #     ${img_tag}
 
-echo "Creating archive..."
-last_directory=$(pwd)
-cd "${cross_compilation_install_dir}/../"
-tar -czf  "${compile_arch}.tgz" "${compile_arch}"
-cd "${last_directory}"
+    green_echo "Generating files in \"${cross_compilation_install_dir}\"..."
 
-echo "DONE, ENJOY THE CROSS-COMPILED BINARIES!"
+    docker run \
+        -i \
+        --mount type=bind,source="${UTCOUPE_WORKSPACE}"/ros_ws/src,target="${img_ws_root_dir}"/ros_ws/src \
+        --mount type=bind,source="${UTCOUPE_WORKSPACE}"/libs,target="${img_ws_root_dir}"/libs,readonly \
+        --mount type=bind,source="${cross_compilation_install_dir}",target="${img_ws_root_dir}"/ros_ws/install \
+        "utcoupe/coupe19:${img_tag}" \
+        /bin/bash -c "catkin_make install -DCMAKE_BUILD_TYPE=Release"
+    # Makes cmake crash
+    #    --tmpfs "${img_ws_root_dir}"/ros_ws/devel
+    #    --tmpfs "${img_ws_root_dir}"/ros_ws/build
+    green_echo "Done."
+}
+
+function create_archive() {
+    green_echo "Creating archive..."
+    pushd .
+    cd "${cross_compilation_install_dir}/../"
+    tar -czf  "${compile_arch}.tgz" "${compile_arch}"
+    popd
+}
+
+run_cross_compilation
+create_archive
+
+green_echo "DONE, ENJOY THE CROSS-COMPILED BINARIES!"

@@ -10,7 +10,6 @@
 #include "stm32f3xx_hal.h"
 #include "local_math.h"
 
-// #define my_abs(x)   ((x) > 0 ? (x) : -(x))
 
 #define MOTOR_LEFT 1
 #define MOTOR_RIGHT 2
@@ -21,7 +20,6 @@
 #define LEFT_READY (1<<LEFT_READY_SHIFT)
 #define RIGHT_READY (1<<RIGHT_READY_SHIFT)
 
-//#define abs(x)   ((x) > 0 ? (x) : -(x))
 
 
 #ifdef __cplusplus

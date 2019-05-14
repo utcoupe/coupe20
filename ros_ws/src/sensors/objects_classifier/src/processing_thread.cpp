@@ -38,11 +38,10 @@ void ProcessingThread::classify_points() {
 
             for (; point_idx <= min_idx; point_idx++) {
 
-                point_static_frame.point.x = points_[point_idx].x;
-                point_static_frame.point.y = points_[point_idx].y;
+                point_static_frame.point = points_[point_idx].toGeoPoint();
                 tf2::doTransform(point_static_frame, point_map_frame, pair.second);
 
-                points_[point_idx].is_map = map_.contains_point(point_map_frame.point.x, point_map_frame.point.y);
+                points_[point_idx].is_map = map_.contains_point({ point_map_frame.point });
             }
 
             if (pair.first >= start_idx_ + length_)

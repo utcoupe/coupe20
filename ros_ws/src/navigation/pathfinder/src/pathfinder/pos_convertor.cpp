@@ -2,63 +2,46 @@
 
 using namespace std;
 
-pair<double,double> PosConvertor::fromRosToMapPos (const pair<double,double>& rosPos) const
+Point PosConvertor::fromRosToMapPos (Point rosPos) const
 {
     double x, y;
-    x = rosPos.first * (_sizeMap.first / _sizeRos.first);
-    y = rosPos.second * (_sizeMap.second / _sizeRos.second);
+    x = rosPos.getX() * (_sizeMap.getX() / _sizeRos.getX());
+    y = rosPos.getY() * (_sizeMap.getY() / _sizeRos.getY());
     
     if (_invertedY)
-        y = _sizeMap.second - y;
+        y = _sizeMap.getY() - y;
     
-    return make_pair(x, y);
+    return Point(x, y).floor();
 }
 
 
-pair<double,double> PosConvertor::fromMapToRosPos (const pair<double,double>& mapPos) const
+Point PosConvertor::fromMapToRosPos (Point mapPos) const
 {
     double x, y;
-    x = mapPos.first * (_sizeRos.first / _sizeMap.first);
-    y = mapPos.second * (_sizeRos.second / _sizeMap.second);
+    x = mapPos.getX() * (_sizeRos.getX() / _sizeMap.getX());
+    y = mapPos.getY() * (_sizeRos.getY() / _sizeMap.getY());
     
     if (_invertedY)
-        y = _sizeRos.second - y;
+        y = _sizeRos.getY() - y;
     
-    return make_pair(x, y);
+    return {x, y};
 }
 
-double PosConvertor::fromMapToRosDistance(const double& dist) const
+double PosConvertor::fromMapToRosDistance(double dist) const
 {
-    double xCoef = _sizeMap.first/_sizeRos.first;
-    double yCoef = _sizeMap.second/_sizeRos.second;
+    double xCoef = _sizeMap.getX()/_sizeRos.getX();
+    double yCoef = _sizeMap.getY()/_sizeRos.getY();
     // We assume that the scale on x and y is the same, we take the linear average to have a better precision.
     double coef = (xCoef + yCoef)/2;
     return dist/coef;
 }
 
-double PosConvertor::fromRosToMapDistance(const double& dist) const
+double PosConvertor::fromRosToMapDistance(double dist) const
 {
-    double xCoef = _sizeMap.first/_sizeRos.first;
-    double yCoef = _sizeMap.second/_sizeRos.second;
+    double xCoef = _sizeMap.getX()/_sizeRos.getX();
+    double yCoef = _sizeMap.getY()/_sizeRos.getY();
     // We assume that the scale on x and y is the same, we take the linear average to have a better precision.
     double coef = (xCoef + yCoef)/2;
     return dist*coef;
-}
-
-
-void PosConvertor::setSizes(std::pair<double, double> sizeRos, std::pair<double, double> sizeMap)
-{
-    setRosSize(sizeRos);
-    setMapSize(sizeMap);
-}
-
-void PosConvertor::setMapSize(std::pair<double, double> sizeMap)
-{
-    _sizeMap = sizeMap;
-}
-
-void PosConvertor::setRosSize(std::pair<double, double> sizeRos)
-{
-    _sizeRos = sizeRos;
 }
 

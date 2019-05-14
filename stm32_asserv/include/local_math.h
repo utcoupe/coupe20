@@ -11,9 +11,9 @@
 #   define M_PI (3.14159265358979323846)
 #endif
 
-#ifndef ABS
-#define ABS(x)   ((x) > 0 ? (x) : -(x))
-#endif
+// #ifndef ABS
+// #define ABS(x)   ((x) > 0 ? (x) : -(x))
+// #endif
 
 float moduloTwoPI(float angle);
 float moduloPI(float angle);

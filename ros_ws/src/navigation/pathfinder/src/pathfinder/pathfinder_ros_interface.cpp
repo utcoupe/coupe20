@@ -9,17 +9,17 @@ PathfinderROSInterface::PathfinderROSInterface(const std::string& mapFileName, s
     convertor_ = convertor;
     
     auto mapSize = pathfinderPtr_->getMapSize();
-    if (mapSize.first == 0)
+    if (mapSize.getX() == 0)
         ROS_FATAL("Allowed positions empty. Cannot define a scale. Please restart the node, it may crash soon.");
     else
     {
-        if (mapSize.first * mapSize.second > 200000) {
+        if (mapSize.getX() * mapSize.getY() > 200000) {
             ROS_WARN("Map image is big, the pathfinder may be very slow ! (150x100px works fine)");
         }
 
-        convertor_->setMapSize(make_pair<double,double>(mapSize.first, mapSize.second));
+        convertor_->setMapSize(mapSize);
         dynBarriersMng_->setConvertor(convertor_);
-        dynBarriersMng_->fetchOccupancyDatas(mapSize.first, mapSize.second);
+        dynBarriersMng_->fetchOccupancyDatas(mapSize.getX(), mapSize.getY());
     }
 }
 
@@ -28,10 +28,10 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
 {
     Pathfinder::Path path;
     
-    ROS_INFO_STREAM("Received request from (" << req.posStart.x << "," << req.posStart.y << ") to (" << req.posEnd.x << ", " << req.posEnd.y << ")");
+    ROS_INFO_STREAM("Received request from " << Point(req.posStart) << " to " << Point(req.posEnd));
     
-    auto startPos = pose2DToPoint_(req.posStart);
-    auto endPos = pose2DToPoint_(req.posEnd);
+    auto startPos = convertor_->fromRosToMapPos(req.posStart);
+    auto endPos = convertor_->fromRosToMapPos(req.posEnd);
     
     auto statusCode = pathfinderPtr_->findPath(startPos, endPos, path);
     switch (statusCode) {
@@ -48,7 +48,7 @@ bool PathfinderROSInterface::findPathCallback(pathfinder::FindPath::Request& req
 
         case Pathfinder::FindPathStatus::NO_ERROR:
             for (const Point& pos : path)
-                rep.path.push_back(pointToPose2D_(pos));
+                rep.path.push_back(convertor_->fromMapToRosPos(pos).toPose2D());
             rep.return_code = rep.PATH_FOUND;
             rep.path.front() = req.posStart;
             rep.path.back() = req.posEnd;
@@ -73,28 +73,13 @@ void PathfinderROSInterface::addBarrierSubscriber(DynamicBarriersManager::Barrie
     dynBarriersMng_->addBarrierSubscriber(std::move(subscriber));
 }
 
-Point PathfinderROSInterface::pose2DToPoint_(const geometry_msgs::Pose2D& pos) const
-{
-    auto convertedPos = convertor_->fromRosToMapPos(pair<double, double>(pos.x, pos.y));
-    return Point(convertedPos.first, convertedPos.second);
-}
-
-geometry_msgs::Pose2D PathfinderROSInterface::pointToPose2D_(const Point& pos) const
-{
-    auto convertedPos = convertor_->fromMapToRosPos(pair<double, double>(pos.getX(), pos.getY()));
-    geometry_msgs::Pose2D newPos;
-    newPos.x = convertedPos.first;
-    newPos.y = convertedPos.second;
-    return newPos;
-}
-
 
 string PathfinderROSInterface::pathRosToStr_(const vector<geometry_msgs::Pose2D>& path)
 {
     ostringstream os;
     string str = "[";
     for (const geometry_msgs::Pose2D& pos : path)
-        os << "(" << pos.x << ", " << pos.y << ")" << ", ";
+        os << Point(pos) << ", ";
     str += os.str();
     if (str.length() > 2)
         str.erase(str.end()-2, str.end());

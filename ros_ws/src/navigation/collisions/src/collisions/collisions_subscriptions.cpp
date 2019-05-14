@@ -152,7 +152,7 @@ void CollisionsSubscriptions::onNavStatus(const navigator::Status::ConstPtr& sta
     
     robotPathWaypoints_.clear();
     for (auto point: status->currentPath)
-        robotPathWaypoints_.emplace_back(point.x, point.y, point.theta);
+        robotPathWaypoints_.emplace_back(point);
 }
 
 void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObjects::ConstPtr& objects)
@@ -181,8 +181,8 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
             continue;
         }
         auto segShape = std::make_shared<CollisionsShapes::Segment>(
-            Point(seg.segment.first_point.x, seg.segment.first_point.y),
-            Point(seg.segment.last_point.x, seg.segment.last_point.y)
+            seg.segment.first_point,
+            seg.segment.last_point
         );
         newLidar.emplace_back(std::make_shared<Obstacle>(segShape));
     }
@@ -194,7 +194,7 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
         double velDist = std::hypot(circ.circle.velocity.x, circ.circle.velocity.y);
         double velAngle = std::atan2(circ.circle.velocity.y, circ.circle.velocity.x);
         auto circShape = std::make_shared<CollisionsShapes::Circle>(
-            Position(circ.circle.center.x, circ.circle.center.y, velAngle),
+            Position(circ.circle.center, velAngle),
             circ.circle.radius
         );
         auto velocity = std::make_shared<ObstacleVelocity>(

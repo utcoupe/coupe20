@@ -63,7 +63,7 @@ public:
     /**
      * Return the sizes of the internal barrier map.
      */
-    std::pair<unsigned, unsigned> getMapSize();
+    Point getMapSize();
 
 private:
     /** Shortcut to define a 2D array of short. **/

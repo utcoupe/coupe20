@@ -16,8 +16,10 @@ RUN bash -c "source /opt/ros/kinetic/setup.sh && ./install_external_nodes.sh"
 RUN rm -rf /tmp/utcoupe*
 
 WORKDIR $UTCOUPE_WORKSPACE/ros_ws
+# Tests if the setup works
 RUN bash -c "source /opt/ros/kinetic/setup.sh && catkin_make"
+RUN rm -rf build devel
 
 
 WORKDIR $UTCOUPE_WORKSPACE/ros_ws
-CMD bash -c "echo $UTCOUPE_WORKSPACE && rm -rf build/* devel/* install/* && catkin_make install -DCMAKE_BUILD_TYPE=Release"
+CMD bash -c "echo 'Using' $UTCOUPE_WORKSPACE ' as ROS workspace."

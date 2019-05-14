@@ -62,7 +62,7 @@ void RobotStateUpdate() {
 	static int32_t left_total_ticks = 0, right_total_ticks = 0;
 	static float last_angle = 0;
 	float dd, dl, dr, d_angle;
-	int16_t lt, rt;
+// 	int16_t lt, rt;
 	wheels_spd_t old_wheels_spd = wheels_spd;
 
 	left_total_ticks  += get_left_encoder();
@@ -91,8 +91,9 @@ void RobotStateUpdate() {
 #endif
 
 	dd = (dr + dl) / 2.0;
-	current_pos.x += dd*cos((current_pos.angle + last_angle)/2.0);
-	current_pos.y += dd*sin((current_pos.angle + last_angle)/2.0);
+    float new_angle = (current_pos.angle + last_angle)/2.0;
+	current_pos.x += dd*cos(new_angle);
+	current_pos.y += dd*sin(new_angle);
 	// g_serial.print("|");
 	// g_serial.print(lt);
 	// g_serial.print("|");

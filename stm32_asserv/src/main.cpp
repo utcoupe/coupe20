@@ -55,7 +55,7 @@
 #include "compat.h"
 #include "encoder.h"
 
-#include "String.h"
+#include "string.hpp"
 /* USER CODE END Includes */
 
 using namespace std;

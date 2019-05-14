@@ -188,7 +188,7 @@
 	<action ref="activate_bee" name="Activate bee" reward="50">
 		<params></params>
 		<actions exec="all" order="linear">
-			<team name="green">
+			<team name="left">
 				<orderref ref="navigator_goto_waypoint" name="approach bee">
 					<waypoint_name>way_bee_approach_green</waypoint_name>
 				</orderref>
@@ -201,7 +201,7 @@
 
 				<actionref ref="close_arm_slow" name="close arm" />
 			</team>
-			<team name="orange">
+			<team name="right">
 				<orderref ref="navigator_goto_waypoint" name="approach bee">
 					<waypoint_name>way_bee_approach_orange</waypoint_name>
 				</orderref>

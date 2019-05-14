@@ -46,7 +46,7 @@ Pathfinder::FindPathStatus Pathfinder::findPath(const Point& startPos, const Poi
     if (!exploreGraph(mapDist, startPos, endPos)) // endPos not found or no paths exist between startPos and endPos
     {
         if (_renderAfterComputing)
-            _mapStorage.saveMapToFile(_renderFile, _allowedPositions, _dynBarriersMng, Path(), Path());
+            _mapStorage.saveMapToFile(_renderFile, _allowedPositions, _dynBarriersMng, { startPos }, { endPos });
         ROS_ERROR_STREAM("No path found !");
         return FindPathStatus::NO_PATH_FOUND;
     }
@@ -75,11 +75,14 @@ void Pathfinder::setPathToRenderOutputFile(std::string path)
     _renderFile = path;
 }
 
-std::pair<unsigned int, unsigned int> Pathfinder::getMapSize()
+Point Pathfinder::getMapSize()
 {
     if (_allowedPositions.size() == 0)
         return {0,0};
-    return { _allowedPositions.front().size(), _allowedPositions.size() };
+    return {
+        static_cast<double>(_allowedPositions.front().size()),
+        static_cast<double>(_allowedPositions.size())
+    };
 }
 
 
@@ -105,15 +108,17 @@ bool Pathfinder::exploreGraph(Vect2DShort& distMap, const Point& startPos, const
                 if (isValid(nextPos) && distMap[nextPos.getY()][nextPos.getX()] == -1)
                 {
                     distMap[nextPos.getY()][nextPos.getX()] = distFromEnd;
-                    if (nextPos == startPos)
+                    if (nextPos == startPos) {
+                        ROS_DEBUG("Goal Found!");
                         return true;
+                    }
                     nextPositions.push_back(nextPos);
                 }
             }
         }
         
-        previousPositions = std::move(nextPositions); // prevents use of temporary copy and nextPosition is now in undefined state
-        nextPositions.clear(); // Needed to make sure it is empty
+        previousPositions.swap(nextPositions); // Swap contents not to deallocate and then reallocate memory
+        nextPositions.clear();
         distFromEnd++;
     }
     

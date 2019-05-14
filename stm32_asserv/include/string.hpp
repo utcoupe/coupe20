@@ -1,8 +1,7 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
 
 class String {
 public:
@@ -15,7 +14,7 @@ public:
     
     char back() const;
     const char* c_str() const { return _str; };
-    size_t length() const;
+    std::size_t length() const;
     void pop_back();
     
     String& operator+= (const char* str);

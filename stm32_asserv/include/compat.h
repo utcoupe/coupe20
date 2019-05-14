@@ -10,9 +10,14 @@
 #include "encoder.h"
 #include "parameters.h"
 
-#define timeMillis() (HAL_GetTick());
+#define timeMillis() (HAL_GetTick())
 
 // TODO: check eventual buffer overflow issue
-#define timeMicros() (DWT->CYCCNT/(HAL_RCC_GetHCLKFreq()/1000000L))
+// #define timeMicros() (DWT->CYCCNT/(HAL_RCC_GetHCLKFreq()/1000000L))
+#ifdef __cplusplus
+extern "C"
+#endif // __cplusplus
+long timeMicros();
+
 
 #endif

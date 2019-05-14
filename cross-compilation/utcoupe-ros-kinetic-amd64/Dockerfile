@@ -1,7 +1,7 @@
-FROM arm32v7/ros:kinetic-ros-base
+FROM ros:kinetic-ros-base-xenial
 
-RUN mkdir -p /utcoupe/coupe18/ros_ws/src
-ENV UTCOUPE_WORKSPACE /utcoupe/coupe18
+ENV UTCOUPE_WORKSPACE /utcoupe/coupe19
+RUN mkdir -p $UTCOUPE_WORKSPACE/ros_ws/src
 ENV ROS_LANG_DISABLE=genlisp:geneus
 
 RUN apt-get update
@@ -22,4 +22,5 @@ RUN rm -rf build devel
 
 
 WORKDIR $UTCOUPE_WORKSPACE/ros_ws
-CMD bash -c "echo 'Using' $UTCOUPE_WORKSPACE ' as ROS workspace."
+CMD echo "Using $UTCOUPE_WORKSPACE as ROS workspace."
+

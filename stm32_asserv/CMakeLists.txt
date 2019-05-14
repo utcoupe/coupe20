@@ -32,13 +32,14 @@ file(
     src/*
 )
 
-set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+#set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS ${CMAKE_ASM_FLAGS})
 
 add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp
     ${source_files}
     ${STM32HAL_SOURCES}
-    startup_stm32f303x8.s
+    ${CMSIS_SOURCES}
+#    startup_stm32f303x8.s
 )
 
 STM32_SET_TARGET_PROPERTIES(${CMAKE_PROJECT_NAME})

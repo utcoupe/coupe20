@@ -97,12 +97,12 @@
 #define MOT_L_DIR_Pin GPIO_PIN_7
 #define MOT_L_DIR_GPIO_Port GPIOB
 
-// Right motor, PWM control: PB_4 (D12)
-#define MOT_R_EN_Pin GPIO_PIN_4
-#define MOT_R_EN_GPIO_Port GPIOB
+// Right motor, PWM control: PA_12 (D2)
+#define MOT_R_EN_Pin GPIO_PIN_12
+#define MOT_R_EN_GPIO_Port GPIOA
 
-// Right motor, direction of rotation: PB_6 (D5)
-#define MOT_R_DIR_Pin GPIO_PIN_6
+// Right motor, direction of rotation: PB_1 (D6)
+#define MOT_R_DIR_Pin GPIO_PIN_1
 #define MOT_R_DIR_GPIO_Port GPIOB
 
 // ******************* OTHERS *******************

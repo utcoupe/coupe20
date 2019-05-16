@@ -16,7 +16,7 @@ ros::NodeHandle nh;
 
 int game_status = -1;
 int init_status = -1;
-static int GAME_ON = 1;
+
 bool puckGoesToScale[3];
 static int VENTS_TO_PUMPS[3] = {VENT1_TO_PUMP,VENT2_TO_PUMP,VENT3_TO_PUMP};
 static int VENTS_TO_AIR[3] = {VENT1_TO_AIR,VENT2_TO_AIR,VENT3_TO_AIR};
@@ -32,20 +32,10 @@ PololuA4983 stepper_pucks_door = PololuA4983(PUCKS_DOOR_STEP_PIN, PUCKS_DOOR_DIR
 ard_gr_front::ArduinoToAI  event_msg ; 
 ros::Publisher pub_response  ("actuators/ard_gr_front/event", &event_msg); 
 
-
-void send_ros_msg(int msg) {
-    if(msg==AWAITING_ORDER_MSG){
-
-    }else if(msg==PUCKS_SUCKED_UP_MSG){
-
-    }else if(msg==PUCKS_SORTED_MSG){
-
-    }else if(msg==PUCKS_DOOR_RESET_MSG){
-
-    }//else if(msg==TOWER_PUSHED_OUT){
-
-    //}
-
+void publish_response (int event_type, bool success){
+    event_msg.type = event_type;
+    event_msg.success = success;
+    pub_response.publish(&event_msg);
 }
 
 // TO DO cartes ponts en H pour pompes
@@ -57,6 +47,7 @@ void suck_up_pucks() {
     }
     delay(PNEU_DELAY);  
 }
+
 void free_puck_to_sort(int index) {
     delay(SELECTOR_TIME_TO_MOVE);
     digitalWrite(VENTS_TO_PUMPS[index], LOW);
@@ -64,6 +55,7 @@ void free_puck_to_sort(int index) {
     delay(PUCK_TIME_TO_MOVE);
     digitalWrite(VENTS_TO_AIR[index], LOW);
 }
+
 void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
     if (game_status != GAME_ON) return;
     pucks_door_goes_up(true);
@@ -82,6 +74,8 @@ void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
     digitalWrite(PUMP, LOW);
     analogWrite(SELECTOR_PWM, SELECTOR_SCALE_POS);
     pucks_door_goes_up(false);
+    publish_response(EVENT_PUCKS_RAISE_SORT, true)
+
 }
 
 
@@ -97,6 +91,7 @@ void pucks_door_goes_up(bool goUp) {
     //delay(PUCKS_DOOR_TIME_TO_MOVE);
 
 }
+
 void on_dump_pucks(const ard_gr_front::PucksDump& msg) {
     if (game_status != GAME_ON) return;
 
@@ -105,12 +100,14 @@ void on_dump_pucks(const ard_gr_front::PucksDump& msg) {
       stepper_tower.update() ; 
     }
     stepper_tower.stop();
-    send_ros_msg(TOWER_OPEN);
+    publish_response(EVENT_PUCKS_DUMP, true)
 }
+
 void on_game_status(const game_manager::GameStatus& msg){
     game_status = msg.game_status;
     init_status = msg.init_status;
     //TODO maybe change ?
+    //TODO add interrupt if game status goes from GAME_ON to STOP
 }
 
 
@@ -118,13 +115,13 @@ void on_take_pucks(const ard_gr_front::PucksTake& msg){
     if (game_status != GAME_ON) return;
     int puckGoesToScale[3] = {msg.P1,msg.P2,msg.P3};
     suck_up_pucks();
-    send_ros_msg(PUCKS_SUCKED_UP_MSG);
+    publish_response(EVENT_PUCKS_TAKE, true)
+
 }
 
 void on_move_scale_door(const ard_gr_front::MoveScaleDoor& msg){
-    event_msg.type = EVENT_MOVE_SCALE_DOOR;
-    event_msg.success = true;
-    pub_response.publish(&event_msg);
+    if (game_status != GAME_ON) return;
+    
     if (msg.door_status == SCALE_DOOR_CLOSE) {
         stepper_scale_door.moveStep(SCALE_DOOR_CLOSE_POS, true);
         while(stepper_scale_door.getRemainingStep() >0 ) {
@@ -136,7 +133,9 @@ void on_move_scale_door(const ard_gr_front::MoveScaleDoor& msg){
         while(stepper_scale_door.getRemainingStep() >0 ) {
             stepper_scale_door.update() ; 
         }
+    
     }
+    publish_response(EVENT_MOVE_SCALE_DOOR, true)
 }   
 
 void on_move_tower(const ard_gr_front::MoveTower& msg){
@@ -152,7 +151,9 @@ void on_move_tower(const ard_gr_front::MoveTower& msg){
             stepper_tower.update() ; 
         }
     }
+    publish_response(EVENT_MOVE_TOWER, true)
 }
+
 
 //Subscribers
 ros::Subscriber<game_manager::GameStatus>     sub_game_status("ai/game_manager/status",&on_game_status);

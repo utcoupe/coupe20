@@ -67,3 +67,7 @@
 #define EVENT_PUCKS_DUMP 2
 #define EVENT_PUCKS_RAISE_SORT 3
 #define EVENT_PUCKS_TAKE 4
+
+//Game status
+#define GAME_OFF 0;
+#define GAME_ON 1;

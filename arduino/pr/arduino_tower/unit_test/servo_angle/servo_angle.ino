@@ -1,3 +1,9 @@
+//-----------------------------------------------
+// Arduino : Unite test 
+// Test : Servo uniquement 
+// Author : Floriane ALLAIRE May 2019 , UTCoupe 
+// Need nothing else 
+//------------------------------------------------
 
 #include <Servo.h> 
 Servo servo_1 ;

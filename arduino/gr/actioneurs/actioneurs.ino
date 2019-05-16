@@ -1,5 +1,6 @@
 #include "consts.h"
 #include "PololuA4983.h"
+#include <Servo.h> 
 
 // Including rosserial
 #include <ros.h>
@@ -23,11 +24,13 @@ static int VENTS_TO_AIR[3] = {VENT1_TO_AIR,VENT2_TO_AIR,VENT3_TO_AIR};
 //Stepper motors
 
 PololuA4983 stepper_tower = PololuA4983(TOWER_STEP_PIN, TOWER_DIR_PIN, TOWER_EN_PIN, TOWER_MIN_DELAY);
-PololuA4983 stepper_scale_door = PololuA4983(SCALE_DOOR_STEP_PIN, SCALE_DOOR_DIR_PIN, 
-                                            SCALE_DOOR_EN_PIN, SCALE_DOOR_MIN_DELAY);
+
 PololuA4983 stepper_pucks_door = PololuA4983(PUCKS_DOOR_STEP_PIN, PUCKS_DOOR_DIR_PIN,
                                             PUCKS_DOOR_EN_PIN, PUCKS_DOOR_MIN_DELAY);
-
+//Keep this in case we switch from servo to stepper
+//PololuA4983 stepper_scale_door = PololuA4983(SCALE_DOOR_STEP_PIN, SCALE_DOOR_DIR_PIN, 
+//                                            SCALE_DOOR_EN_PIN, SCALE_DOOR_MIN_DELAY);
+Servo servo_scale_door;
 // ~ Publisher ~ 
 ard_gr_front::ArduinoToAI  event_msg ; 
 ros::Publisher pub_response  ("actuators/ard_gr_front/event", &event_msg); 
@@ -74,7 +77,7 @@ void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
     digitalWrite(PUMP, LOW);
     analogWrite(SELECTOR_PWM, SELECTOR_SCALE_POS);
     pucks_door_goes_up(false);
-    publish_response(EVENT_PUCKS_RAISE_SORT, true)
+    publish_response(EVENT_PUCKS_RAISE_SORT, true);
 
 }
 
@@ -96,26 +99,27 @@ void on_dump_pucks(const ard_gr_front::PucksDump& msg) {
     if (game_status != GAME_ON) return;
 
     stepper_tower.moveStep(1000000, true);
-    while( stepper_tower.getRemainingStep() >0 && analogRead(TOWER_LIMIT_SWITCH)!=HIGH) {
+    while( stepper_tower.getRemainingStep() >0 && 
+        analogRead(TOWER_LIMIT_SWITCH)!=HIGH) {
       stepper_tower.update() ; 
     }
     stepper_tower.stop();
-    publish_response(EVENT_PUCKS_DUMP, true)
+    publish_response(EVENT_PUCKS_DUMP, true);
 }
 
 void on_game_status(const game_manager::GameStatus& msg){
+    //Warning : 'infinite' loop for hard stop
+    while (game_status == 1 && msg.game_status == 0) {}
     game_status = msg.game_status;
     init_status = msg.init_status;
-    //TODO maybe change ?
-    //TODO add interrupt if game status goes from GAME_ON to STOP
-}
+  }
 
 
 void on_take_pucks(const ard_gr_front::PucksTake& msg){
     if (game_status != GAME_ON) return;
     int puckGoesToScale[3] = {msg.P1,msg.P2,msg.P3};
     suck_up_pucks();
-    publish_response(EVENT_PUCKS_TAKE, true)
+    publish_response(EVENT_PUCKS_TAKE, true);
 
 }
 
@@ -123,19 +127,13 @@ void on_move_scale_door(const ard_gr_front::MoveScaleDoor& msg){
     if (game_status != GAME_ON) return;
     
     if (msg.door_status == SCALE_DOOR_CLOSE) {
-        stepper_scale_door.moveStep(SCALE_DOOR_CLOSE_POS, true);
-        while(stepper_scale_door.getRemainingStep() >0 ) {
-            stepper_scale_door.update() ; 
-        }
+        servo_scale_door.write(SCALE_DOOR_CLOSE_POS);
     }
     if (msg.door_status == SCALE_DOOR_OPEN){
-        stepper_scale_door.moveStep(SCALE_DOOR_OPEN_POS, true);
-        while(stepper_scale_door.getRemainingStep() >0 ) {
-            stepper_scale_door.update() ; 
-        }
-    
+        servo_scale_door.write(SCALE_DOOR_OPEN_POS);
     }
-    publish_response(EVENT_MOVE_SCALE_DOOR, true)
+    
+    publish_response(EVENT_MOVE_SCALE_DOOR, true);
 }   
 
 void on_move_tower(const ard_gr_front::MoveTower& msg){
@@ -151,7 +149,7 @@ void on_move_tower(const ard_gr_front::MoveTower& msg){
             stepper_tower.update() ; 
         }
     }
-    publish_response(EVENT_MOVE_TOWER, true)
+    publish_response(EVENT_MOVE_TOWER, true);
 }
 
 
@@ -167,6 +165,9 @@ ros::Subscriber<ard_gr_front::MoveTower>      sub_move_tower("actionneurs/move_t
 
 
 void setup(){
+
+    servo_scale_door.attach(SCALE_DOOR_STEP_PIN);
+
     nh.initNode();
     nh.subscribe(sub_game_status);
     

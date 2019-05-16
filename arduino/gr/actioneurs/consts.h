@@ -16,7 +16,7 @@
 #define SCALE_DOOR_CLOSE 0
 #define SCALE_DOOR_OPEN 1
 #define SCALE_DOOR_CLOSE_POS 0 //TODO calibrate
-#define SCALE_DOOR_OPEN_POS 0
+#define SCALE_DOOR_OPEN_POS 90
 
 
 //Atom tower
@@ -69,5 +69,5 @@
 #define EVENT_PUCKS_TAKE 4
 
 //Game status
-#define GAME_OFF 0;
-#define GAME_ON 1;
+#define GAME_OFF 0
+#define GAME_ON 1

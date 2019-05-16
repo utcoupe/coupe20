@@ -31,7 +31,7 @@ int lift_position = 0 ; // no postion for now
 
 
 // ~ Number of atoms ~ 
-#define MAX_ATOM_SAS 3  
+#define MAX_ATOM_SAS 5  
 int nb_atom_in_sas  = 0 ; //number of atom loaded in the sas (for slide)
 int nb_atom_in      = 0 ; //number of atom loaded in total 
 int nb_atom_out     = 0 ; 

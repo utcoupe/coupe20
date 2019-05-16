@@ -1,7 +1,7 @@
 //-----------------------------------------------
 // Arduino : PR tower 
 // Author : Floriane ALLAIRE Feb 2019 , UTCoupe 
-// Need AFMotor. h tower_variables.h and AFMotor.cpp in folder 
+// Need PololuA4984.h et PololuA4984.ino and tower_variables.h in folder 
 //------------------------------------------------
 
 // -----------------------------------------------------------
@@ -20,7 +20,7 @@
 
 ros :: NodeHandle nh ; 
 
-// Actuators includes 
+// Actuators includes &
 #include <Servo.h> 
 #include "PololuA4983.h"
 

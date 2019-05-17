@@ -2,6 +2,7 @@
 // Arduino : PR tower 
 // Author : Floriane ALLAIRE Feb 2019 , UTCoupe 
 // Need PololuA4984.h et PololuA4984.ino and tower_variables.h in folder 
+// search for : TODO , DANGER and URGENT 
 //------------------------------------------------
 
 // -----------------------------------------------------------
@@ -46,8 +47,9 @@ void on_game_status(const game_manager::GameStatus& msg){
 }
 void on_tower(const ard_tower::Tower& msg){
   nh.loginfo("tower_msg");
-  load_content    = msg.load_content ; 
-  load_content_nb = msg.load_content_nb ; 
+  load_content                  = msg.load_content ; 
+  load_content_nb_tower_wanted  = msg.load_content_nb_tower_wanted ; 
+  load_content_nb_tower         = msg.load_content_nb_tower ; 
   unload_content  = msg.unload_content ; 
   if (msg.init_status == 1 && game_status == 1) {
     tower_initialize(); 
@@ -77,13 +79,8 @@ void tower_initialize() {
   // Initialize servos 
   servo_unload_1.write(POS_UNLOAD_INIT_1) ;
   servo_unload_2.write(POS_UNLOAD_INIT_2) ;    
-  // TODO initialize stepper with push buttom 
-  // Initialize stepper 
-  stepper_load.moveStep(150,true); // TODO number 
-  while( stepper_load.getRemainingStep() > 0 ) {
-    stepper_load.update() ; 
-  }
-  delay(500) ;
+  // Initialize stepper to the ground 
+  lift_ground(); 
   // Initialize AX12 
   int success = move_ax12(1);  
   // Message 
@@ -106,30 +103,79 @@ int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12
     nh.loginfo("open_ax12"); 
   }
   if ( open == 0 ) {
-    ax12_event_msg.position =170 ;  // Close 
+    ax12_event_msg.position =175 ;  // Close 
     nh.loginfo("close_ax12"); 
   }
   pub_ax12_responses.publish(&ax12_event_msg) ; 
+  delay(500) ; 
   return 1 ; 
 }
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~ Door  ~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~
+
+void open_door( bool open ) { // send msg to open or close the doors 
+  nh.loginfo("open_doors"); 
+  door_msg.door_status = open ; // 1 : open and 0 : close 
+  door_msg.flipper_status = 0 ; 
+  door_msg.init_status = 0 ; 
+  door_msg.side_status = side_status ; // TODO get side_status URGENT  
+  pub_door_action.publish(&door_msg); 
+}
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~ Lift  ~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~
 
+void lift_sas() { // bring the lift to the sas where it unloads the atoms 
+  while ( digitalRead(button_up_pin) == LOW && game_status == 1) {
+      stepper_load.moveStep(5,false); 
+
+      while( stepper_load.getRemainingStep() !=0 && game_status == 1) {
+        stepper_load.update() ; 
+    }
+  }
+  delay(100) ; 
+  lift_position = H_SAS_LOW ; 
+
+}
+
+void lift_ground() { // bring the lift to the ground ready to grab atom.s
+  while ( digitalRead(button_down_pin) == LOW && game_status == 1 ) {
+      stepper_load.moveStep(5,true); 
+
+      while( stepper_load.getRemainingStep() !=0 && game_status == 1 ) {
+        stepper_load.update() ; 
+    }
+  }
+  delay(100) ; 
+  lift_position = H_GROUND ; 
+}
+
+
 int move_lift(int wanted_position) {  // move lift to the correct floor 
 nh.loginfo("move_lift"); 
-//char msg_wanted_position ; 
-//sprintf(msg_wanted_position, "%d", wanted_position); 
-//nh.loginfo(wanted_position);   // understand error 
-//nh.loginfo(lift_position);          // understand error 
+
+  if (wanted_position == H_GROUND && game_status == 1 ) { // exact position with switch 
+    lift_ground() ; 
+    return 1 ; 
+  }
+
+  if (wanted_position == H_SAS_LOW && game_status == 1) { // exact positioin with switch 
+    lift_sas() ; 
+    return 1 ; 
+  }
+
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
     stepper_load.moveStep(lift_position - wanted_position,true); 
     while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
-    delay(500) ; 
+    delay(100) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
@@ -140,7 +186,7 @@ nh.loginfo("move_lift");
     while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
-    delay(500) ; 
+    delay(100) ; 
     lift_position = wanted_position ; 
     return 1 ; 
   }
@@ -168,7 +214,7 @@ int unload_atom_sas () {
     if (success != 0 ) success = move_lift(H_SAS_LOW) ; //bring to sas 
     if (success != 0) nb_atom_in_sas = MAX_ATOM_SAS  ; 
     if (success != 0 ) success = move_ax12(1);  // open AX12 
-    if (success != 0) success = move_lift(H_FLOOR_1) ; 
+    if (success != 0) success = move_lift(H_GROUND) ; 
     if (success != 0)  success = load_atom_tower(nb_atom_out_wrong, nb_atom_out_wrong) ; 
   }
   else { // enough space for all the atoms 
@@ -176,7 +222,7 @@ int unload_atom_sas () {
     if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
     if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
     if (success != 0) success = move_ax12(1) ; // open AX12 
-    if (success != 0 ) success = move_lift(H_FLOOR_1) ; 
+    if (success != 0 ) success = move_lift(H_GROUND) ; 
   }
   
   return success ; 
@@ -295,7 +341,7 @@ void load_atom() {
     success = load_atom_single() ;  //load one atom and ingame 
   }  
   if (load_content == 2 && game_status == 1) {  // TODO Specify size of tower the whole with messages (See with AI)
-    success = load_atom_tower(load_content_nb,load_content_nb) ;   //load tower of atoms and ingame
+    success = load_atom_tower(load_content_nb_tower,load_content_nb_tower_wanted) ;   //load tower of atoms and ingame
   }
   if (success != -1 ) {
     event_msg.load_success = success ; 
@@ -357,6 +403,10 @@ void setup() {
   // Servo Actuator init 
   servo_unload_1.attach(servo_unload_pin_1) ; 
   servo_unload_2.attach(servo_unload_pin_2) ; 
+
+  // Switch init 
+  pinMode(button_up_pin, INPUT); 
+  pinMode(button_down_pin, INPUT); 
   
 }
 

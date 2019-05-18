@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include "PID.h"
 #include "parameters.h"
-// #include "motor.h"
 
 #define PAUSE_BIT (1<<0)
 #define EMERGENCY_BIT (1<<1)
@@ -17,6 +16,7 @@
 #define TIME_ORDER_BIT (1<<3)
 
 #define ANY 0
+// TODO never Used ????
 #define FORWARD 1
 #define BACKWARD -1
 
@@ -40,7 +40,7 @@ extern "C" {
 #endif
 
 void ControlPrepareNewGoal(void);
-void ControlReset(void);
+void ControlReset(void); // TODO unused ?
 void ControlSetStop(int mask);
 void ControlUnsetStop(int mask);
 

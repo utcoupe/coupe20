@@ -27,7 +27,6 @@ extern "C" {
 #endif
 
 void BrushlessMotorsInit();
-int BrushlessMotorsReady();
 void BrushlessMotorSetPwm(int motor_side, int pwm);
 
 #ifdef __cplusplus

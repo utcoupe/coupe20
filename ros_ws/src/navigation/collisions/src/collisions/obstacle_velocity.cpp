@@ -4,42 +4,42 @@
 #include "collisions/shapes/rectangle.h"
 
 ObstacleVelocity::ObstacleVelocity(double width, double height, double velLinear, double velAngular, Position objectPos) noexcept:
-    width_(width), height_(height), velLinear_(velLinear), velAngular_(velAngular),
-    objectPos_(objectPos)
+    m_width(width), m_height(height), m_velLinear(velLinear), m_velAngular(velAngular),
+    m_objectPos(objectPos)
 {
 }
 
-std::vector<ObstacleVelocity::ShapePtr> ObstacleVelocity::getShapes(double maxDist)
-{
-    if (needUpdate_ || lastMaxDist_ != maxDist) {
-        generateVelShapes(maxDist);
-        lastMaxDist_ = maxDist;
-        needUpdate_ = false;
+const std::vector<ObstacleVelocity::ShapePtr>& ObstacleVelocity::getShapes(double maxDist) const {
+    if (m_needUpdate || m_lastMaxDist != maxDist) {
+        m_generateVelShapes(maxDist);
+        m_lastMaxDist = maxDist;
+        m_needUpdate = false;
     }
-    return velShapes_;
+    return m_velShapes;
 }
 
-void ObstacleVelocity::generateVelShapes(double maxDist)
-{
-    velShapes_.clear();
-    if (abs(velLinear_) < CollisionThresholds::VEL_MIN) {
+void ObstacleVelocity::m_generateVelShapes(double maxDist) const {
+    m_velShapes.clear();
+    if (abs(m_velLinear) < CollisionThresholds::VEL_MIN) {
         return;
     }
     
-    auto expansionDist = CollisionThresholds::getStopDistance(velLinear_);
-    if (maxDist != -1) {
+    auto expansionDist = CollisionThresholds::getStopDistance(m_velLinear);
+    if (maxDist != EXPANSION_DIST_DISABLED) {
         // if set, reduce the expansion to the provided limit
         expansionDist = std::min(expansionDist, maxDist);
     }
     
-    double width = height_ + expansionDist;
-    double height = width_;
-    double len = width / 2.0 - height_ / 2.0;
-    double sideAngle = velLinear_ < 0 ? M_PI : 0;
+    double width = m_height + expansionDist;
+    double height = m_width;
+    double len = width / 2.0 - m_height / 2.0;
+    double sideAngle = m_velLinear < 0 ? M_PI : 0;
     Position pos(
-        objectPos_.getX() + len * std::cos(objectPos_.getAngle() + sideAngle),
-        objectPos_.getY() + len * std::sin(objectPos_.getAngle() + sideAngle),
-        objectPos_.getAngle()
+        m_objectPos.getX() + len * std::cos(m_objectPos.getAngle() + sideAngle),
+        m_objectPos.getY() + len * std::sin(m_objectPos.getAngle() + sideAngle),
+        m_objectPos.getAngle()
     );
-    velShapes_.emplace_back( std::make_shared<CollisionsShapes::Rectangle>(pos, width, height) );
+    m_velShapes.emplace_back(
+        std::make_unique<CollisionsShapes::Rectangle>(pos, width, height)
+    );
 }

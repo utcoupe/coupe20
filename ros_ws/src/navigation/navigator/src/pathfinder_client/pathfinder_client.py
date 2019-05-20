@@ -23,10 +23,10 @@ class PathfinderClient(object):
             error_str += " : " + str(e)
             rospy.logfatal (error_str)
     
-    def FindPath (self, startPos, endPos):
+    def FindPath (self, startPos, endPos, ignoreTags):
         response = ""
         try:
-            response = self.pathfinderFindPathService(startPos, endPos)
+            response = self.pathfinderFindPathService(startPos, endPos, ignoreTags)
         except rospy.ServiceException, e:
             error_str = "Error when trying to use "
             error_str += self.PATHFINDER_FINDPATH_SERVICE_NAME

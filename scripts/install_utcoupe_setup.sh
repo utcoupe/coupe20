@@ -46,7 +46,7 @@ function install_apt() {
 
 ### Install ros-desktop-full
 function install_ros() {
-	if [ "$(lsb_release -sc)" = "xenial" ] || [ "$(lsb_release -sc)" = "willy" ]; then
+	if [ "$(lsb_release -sc)" = "xenial" ] || [ "$(lsb_release -sc)" = "willy" ] || [ "$(lsb_release -sc)" = "bionic" ]; then
 		sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 		sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 		sudo apt-get update
@@ -59,15 +59,20 @@ function install_ros() {
 		sudo rosdep init
 		rosdep update
 	else
-		red_echo "Your OS is not Ubuntu Willy or Xenial, ROS will not been installed..."
+		red_echo "Your OS is not Ubuntu Willy, Xenial or Bionic, ROS will not been installed..."
 	fi
 }
 
 function install_ros_depencies() {
+	if [ "$(lsb_release -sc)" = "xenial" ] || [ "$(lsb_release -sc)" = "willy" ]; then
+		ROS_VER="kinetic"
+	else
+		ROS_VER="melodic"
+	fi
 	if [ "$ARCH" = "x86_64" ]; then
-		sudo apt-get install ros-kinetic-desktop-full ros-kinetic-rosserial-arduino ros-kinetic-rosbridge-suite ros-kinetic-tf2-web-republisher ros-kinetic-serial ros-kinetic-dynamixel-sdk ros-kinetic-rosserial-python ros-kinetic-urg-c ros-kinetic-urg-node
+		sudo apt-get install ros-$ROS_VER-desktop-full ros-$ROS_VER-rosserial-arduino ros-$ROS_VER-rosbridge-suite ros-$ROS_VER-tf2-web-republisher ros-$ROS_VER-serial ros-$ROS_VER-dynamixel-sdk ros-$ROS_VER-rosserial-python ros-$ROS_VER-urg-c ros-$ROS_VER-urg-node
 	elif [ "$ARCH" = "armv7l" ]; then
-		sudo apt-get install ros-kinetic-ros-base ros-kinetic-tf2 ros-kinetic-tf2-ros ros-kinetic-rviz ros-kinetic-diagnostic-updater ros-kinetic-roslint ros-kinetic-camera-info-manager ros-kinetic-rosserial-arduino ros-kinetic-rosbridge-suite ros-kinetic-tf2-web-republisher ros-kinetic-serial ros-kinetic-dynamixel-sdk ros-kinetic-rosserial-python ros-kinetic-urg-c ros-kinetic-urg-node
+		sudo apt-get install ros-$ROS_VER-ros-base ros-$ROS_VER-tf2 ros-$ROS_VER-tf2-ros ros-$ROS_VER-rviz ros-$ROS_VER-diagnostic-updater ros-$ROS_VER-roslint ros-$ROS_VER-camera-info-manager ros-$ROS_VER-rosserial-arduino ros-$ROS_VER-rosbridge-suite ros-$ROS_VER-tf2-web-republisher ros-$ROS_VER-serial ros-$ROS_VER-dynamixel-sdk ros-$ROS_VER-rosserial-python ros-$ROS_VER-urg-c ros-$ROS_VER-urg-node
 	fi
 }
 

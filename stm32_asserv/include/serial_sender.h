@@ -10,9 +10,9 @@
 #define STM32_SENDER_H
 
 #include "serial.h"
-#include "String.h"
+#include "string.hpp"
 
-#include <stdarg.h>
+#include <cstdarg>
 #include <QueueList.h>
 
 #ifndef SENDER_ENUM

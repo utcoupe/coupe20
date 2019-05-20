@@ -1,25 +1,55 @@
 #ifndef COLLISIONS_ENGINE_COLLISION
 #define COLLISIONS_ENGINE_COLLISION
 
-#include "collisions/obstacle.h"
 #include "collisions/engine/constants.h"
 
-#include <memory>
+class Obstacle;
 
+/**
+ * Stores information about a found collision.
+ */
 class Collision {
 public:
-    using PtrObstacle = std::shared_ptr<Obstacle>;
+    /**
+     * Main constructor of Collision.
+     * 
+     * @param level The danger level of collision
+     * @param obstacle The corresponding Obstacle
+     * @param approxDistance Distance between the robot and the obstacle
+     */
+    Collision(CollisionLevel level, const Obstacle* obstacle, double approxDistance):
+        m_level(level), m_obstacle(obstacle), m_approxDistance(approxDistance) {}
     
-    Collision(CollisionLevel level, PtrObstacle obstacle, double approxDistance);
+    /**
+     * Returns the danger level of collision
+     * 
+     * @return The level of collision
+     */
+    CollisionLevel getLevel() const noexcept { return m_level; }
     
-    CollisionLevel  getLevel()      const noexcept { return level_; }
-              PtrObstacle     getObstacle()   const noexcept { return obstacle_; }
-    double          getDistance()   const noexcept { return approxDistance_; }
+    /**
+     * Returns the corresponding obstacle
+     * 
+     * @return The corresponding obstacle
+     */
+    const Obstacle* getObstacle() const noexcept { return m_obstacle; }
+    
+    /**
+     * Returns the approximative distance between the robot and the obstacle.
+     * 
+     * @return The distance
+     */
+    double getDistance() const noexcept { return m_approxDistance; }
     
 private:
-    CollisionLevel level_;
-    double approxDistance_;
-    PtrObstacle obstacle_;
+    /** The danger level of collision **/
+    CollisionLevel m_level;
+    
+    /** The corresponding obstacle **/
+    const Obstacle* m_obstacle;
+    
+    /** The distance between the robot and the obstacle **/
+    double m_approxDistance;
 };
 
 #endif // COLLISIONS_ENGINE_COLLISION

@@ -80,7 +80,7 @@ class NavigatorNode(object):
             else:
                 rospy.loginfo("Goal successful")
             self._currentStatus = NavigatorStatuses.NAV_IDLE
-            self._collisionsClient.setEnabled(False)
+            self._collisionsClient.setEnabled(False, [])
             self._updateStatus()
             self._currentGoal.set_succeeded(DoGotoResult(result))
         else:
@@ -109,23 +109,24 @@ class NavigatorNode(object):
         
         disablePathfinder = handledGoal.get_goal().disable_pathfinder
         slowGo = handledGoal.get_goal().slow_go
-        self._executeGoto(posStart, posEnd, hasAngle, handledGoal, disablePathfinder, slowGo)
+        tags = handledGoal.get_goal().ignore_tags
+        self._executeGoto(posStart, posEnd, hasAngle, handledGoal, disablePathfinder, slowGo, tags)
 
     def _handleDoGotoWaypointRequest(self, handledGoal):
         rospy.logdebug("request waypoint")
         startPos = self._localizerClient.getLastKnownPos()
-        endPos = self._mapClient.getPosFromWaypoint(handledGoal.get_goal().waypoint_name)
-        hasAngle = False
-        if handledGoal.get_goal().mode == handledGoal.get_goal().GOTOA:
+        endPos, hasAngle = self._mapClient.getPosFromWaypoint(handledGoal.get_goal().waypoint_name)
+        if handledGoal.get_goal().mode == handledGoal.get_goal().GOTOA: # Force GOTOA if asked to
             hasAngle = True
+        
         disablePathfinder = handledGoal.get_goal().disable_pathfinder
         slowGo = handledGoal.get_goal().slow_go
-        self._executeGoto(startPos, endPos, hasAngle, handledGoal, disablePathfinder, slowGo)
+        tags = handledGoal.get_goal().ignore_tags
+        self._executeGoto(startPos, endPos, hasAngle, handledGoal, disablePathfinder, slowGo, tags)
 
-
-    def _executeGoto (self, startPos, endPos, hasAngle, handledGoal, disablePathfinder, slowGo):
+    def _executeGoto (self, startPos, endPos, hasAngle, handledGoal, disablePathfinder, slowGo, ignoreTags):
         self._currentStatus = NavigatorStatuses.NAV_NAVIGATING
-        self._collisionsClient.setEnabled(not handledGoal.get_goal().disable_collisions)
+        self._collisionsClient.setEnabled(not handledGoal.get_goal().disable_collisions, ignoreTags)
         handledGoal.set_accepted()
 
         if hasAngle:
@@ -137,11 +138,13 @@ class NavigatorNode(object):
             rospy.loginfo("Pathfinder will NOT be used.")
         if slowGo:
             rospy.loginfo("SlowGo activated.")
+        if ignoreTags:
+            rospy.loginfo("Ignoring tags {}.".format(str(ignoreTags)))
 
         self._currentGoal = handledGoal
         self._idCurrentTry = 1
         rospy.loginfo("Try 1")
-        self._currentPlan.newPlan(startPos, endPos, hasAngle, handledGoal.get_goal().direction, disablePathfinder, slowGo)
+        self._currentPlan.newPlan(startPos, endPos, hasAngle, handledGoal.get_goal().direction, disablePathfinder, slowGo, ignoreTags)
 
     def _callbackEmergencyStop (self):
         """
@@ -160,7 +163,7 @@ class NavigatorNode(object):
     def _callbackAsservResume(self):
         self._currentStatus = NavigatorStatuses.NAV_NAVIGATING
         self._isCanceling = False
-        #self._collisionsClient.setEnabled(True)
+        #self._collisionsClient.setEnabled(True, todo_ignoretags)
         self._asservClient.resumeAsserv()
         self._updateStatus()
 

@@ -14,17 +14,17 @@
     </param>
   </params>
   <sensors>
-    <sensor id="sensor1" type="pololu"> <!-- x, y in meters, a in rad -->
+    <sensor id="sensor1" type="pololu" layer="belt"> <!-- x, y in meters, a in rad -->
       <x>-0.06</x>
       <y>0.091</y>
       <a>3.14159</a>
     </sensor>
-    <sensor id="sensor2" type="pololu"> <!-- x, y in meters, a in rad -->
+    <sensor id="sensor2" type="pololu" layer="belt"> <!-- x, y in meters, a in rad -->
       <x>-0.06</x>
       <y>-0.104</y>
       <a>3.14159</a>
     </sensor>
-    <sensor id="sensor_tera1" type="teraranger"> <!-- x, y in meters, a in rad -->
+    <sensor id="sensor_tera1" type="teraranger" layer="belt"> <!-- x, y in meters, a in rad -->
       <x>0</x>
       <y>0</y>
       <a>0</a>

@@ -30,6 +30,15 @@ class Robot(object):
         orientation.attrib["z"] = 0.0
         self.Marker = Marker(m)
 
+    def get_container(self, path):
+        return self.Container.get_container(path)
+
+    def add_object(self, path, obj):
+        return self.Container.add_object(path, obj)
+    
+    def remove_object(self, path):
+        return self.Container.remove_object(path)
+
 
 
 class Terrain(object):
@@ -78,6 +87,9 @@ class Waypoint(object):
             LoadingHelpers.checkAttribExist(xml, "name")
             self.Name = xml.get("name")
             self.Position = Position2D(xml, validate)
+    
+    def transform(self, codes):
+        return self.Position.transform(codes)
 
 
 class Container(object):
@@ -117,6 +129,7 @@ class Container(object):
         return False
     
     def remove_object(self, path):
+        print "remove object, path = " + str(path)
         if len(path) > 2:
             for e in self.Elements:
                 if isinstance(e, Container) and e.Name == path[1]:
@@ -133,6 +146,12 @@ class Container(object):
             rospy.logerr("    RMV Request failed : no object with name '{}' found in container '{}'.".format(path[1], self.Name))
         return None
 
+    def transform(self, codes):
+        for e in self.Elements:
+            if not e.transform(codes):
+                return False
+        return True
+
 
 class Object(object):
     def __init__(self, xml, obj_classes, check_valid = True):
@@ -140,7 +159,7 @@ class Object(object):
         self.Name = xml.get("name")
         self.Position = Position2D(xml.find("position")) if xml.find("position") is not None else None
         self.Shape    = Shape2D(xml.find("shape"))       if xml.find("shape")    is not None else None
-        self.Labels   = [l.get("name") for l in xml.find("labels").findall("label")] if xml.find("labels") else []
+        self.Tags   = [l.text for l in xml.find("tags").findall("tag")] if xml.find("tags") is not None else []
 
         self.Color = Color(xml.find("color")) if xml.find("color") is not None else None
 
@@ -150,7 +169,7 @@ class Object(object):
             self.Position = self.Position if self.Position is not None else other.Position
             self.Shape    = self.Shape    if self.Shape    is not None else other.Shape
             self.Color    = self.Color    if self.Color    is not None else other.Color
-            self.Labels += other.Labels
+            self.Tags += other.Tags
             
             self.Marker = copy.deepcopy(other.Marker)
             if xml.find("marker") is not None:
@@ -160,6 +179,7 @@ class Object(object):
         
         if check_valid is True:
             self.check_valid() # disabled when manually creating a class through code
+        print self.Tags #TODO remove
 
     def check_valid(self): # Checks if all values are not None (in case of class merges)
         if None in [self.Position, self.Shape]:
@@ -167,8 +187,8 @@ class Object(object):
         if self.Marker is not None and self.Color is None:
             raise ValueError("ERROR : Even after merge object '{}' still has a marker but no color.".format(self.Name))
     
-    def transform(codes):
-        pass #TODO
+    def transform(self, codes):
+        return self.Position.transform(codes)
 
 class Class(Object):
     def __init__(self, xml, obj_classes):

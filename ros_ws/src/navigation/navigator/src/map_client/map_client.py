@@ -20,7 +20,8 @@ class MapClient(object):
 
     def getPosFromWaypoint(self, waypointName):
         waypoint = Waypoint(name = waypointName, has_angle = True)
-        return self._fillWaypointSrv.call(waypoint = waypoint).filled_waypoint.pose
+        response = self._fillWaypointSrv.call(waypoint = waypoint).filled_waypoint
+        return response.pose, response.has_angle
     
     def _connectToServer(self):
         rospy.loginfo("Waiting for \"" + self.FILLWAYPOINTS_SERVICE_NAME + "\"")

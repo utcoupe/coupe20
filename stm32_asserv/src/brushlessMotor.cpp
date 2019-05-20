@@ -6,7 +6,9 @@
 
 #include "pwm.h"
 
-#define NO_PWM 0
+#include <cmath>
+
+const uint8_t NO_PWM = 0;
 extern Pwm g_right_pwm;
 extern Pwm g_left_pwm;
 /******************************************
@@ -43,18 +45,11 @@ void BrushlessMotorsInit() {
 
 void BrushlessMotorSetPwm(int motor_side, int pwm) {
 	static int last_pwms[2] = {NO_PWM, NO_PWM};
-	int *last_pwm;
-	if (motor_side == MOTOR_LEFT) {
-		last_pwm = &last_pwms[0];
-	} else {
-		last_pwm = &last_pwms[1];
-	}
-	if (pwm == *last_pwm) {
+	int& last_pwm = last_pwms[motor_side -1];
+	if (pwm == last_pwm) {
 		return;
 	}
-	else {
-		*last_pwm = pwm;
-	}
+    last_pwm = pwm;
 	switch (motor_side) {
 		case MOTOR_LEFT:{
 			if (pwm == NO_PWM) {
@@ -65,7 +60,7 @@ void BrushlessMotorSetPwm(int motor_side, int pwm) {
 			else
 			{
 				//TODO:
-				g_left_pwm.set_duty_cycle( ABS(pwm));
+				g_left_pwm.set_duty_cycle( std::abs(pwm) );
 				// digitalWrite(MOTOR1_BRK, HIGH);
 			}
 			if (pwm > 0) {
@@ -86,7 +81,7 @@ void BrushlessMotorSetPwm(int motor_side, int pwm) {
 			else
 			{
 				//TODO:
-				g_right_pwm.set_duty_cycle( ABS(pwm));
+				g_right_pwm.set_duty_cycle( std::abs(pwm) );
 				// digitalWrite(MOTOR2_BRK, HIGH);
 			}
 			if (pwm > 0) {

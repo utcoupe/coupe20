@@ -62,7 +62,12 @@
 	<action ref="load_gr_tower">
 		<params></params>
 		<actions exec="all" order="linear">
-			<orderref ref="delay"/>
+			<orderref ref="navigator_goto_waypoint" name="approach acc">
+				<waypoint_name>way_tower</waypoint_name>
+			</orderref>
+			<orderref ref="delay"> <!-- TODO remove -->
+				<duration>2</duration>
+			</orderref>
 		</actions>
 	</action>
 
@@ -75,11 +80,19 @@
 			<orderref ref="asserv_pwm" name="smat pwm on acc (reversed)">
 				<left>-150</left>
 				<right>-150</right>
-				<duration>2</duration>
-				<!-- <auto_stop>1</auto_stop> -->
+				<duration>3</duration>
+				<auto_stop>1</auto_stop>
 			</orderref>
 
 			<orderref ref="tower_unload_tower"/>
+			<orderref ref="delay"> <!-- TODO remove -->
+				<duration>2</duration>
+			</orderref>
+
+			<orderref ref="navigator_goto_waypoint" name="approach acc">
+				<waypoint_name>way_approach_acc</waypoint_name>
+				<direction>1</direction>
+			</orderref>
 		</actions>
 	</action>
 

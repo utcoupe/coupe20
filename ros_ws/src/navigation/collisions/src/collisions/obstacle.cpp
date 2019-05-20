@@ -1,19 +1,28 @@
 #include "collisions/obstacle.h"
 
-Obstacle::Obstacle(ShapePtr shape, VelocityPtr velocity):
-    shape_(shape), velocity_(velocity)
+#include <utility>
+
+Obstacle::Obstacle(ShapePtr&& shape, VelocityPtr&& velocity):
+    m_shape(std::move(shape)), m_velocity(std::move(velocity))
 {
-    if (velocity_) {
-        velocity_->setObjectPos(shape->getPos());
+    if (m_velocity) {
+        m_velocity->setObjectPos(m_shape->getPos());
     }
 }
 
-std::vector<Obstacle::ShapePtr> Obstacle::getVelocityShapes (double maxDist) {
-    if (velocity_)
-        return velocity_->getShapes();
-    return {};
+Obstacle::Obstacle(Obstacle::ShapePtr && shape):
+    m_shape(std::move(shape))
+{
+}
+
+
+const std::vector<Obstacle::ShapePtr>& Obstacle::getVelocityShapes (double maxDist) const {
+    static const std::vector<ShapePtr> s_empty_vector;
+    if (m_velocity)
+        return m_velocity->getShapes();
+    return s_empty_vector;
 }
 
 std::chrono::duration<double> Obstacle::getAge() const {
-    return std::chrono::system_clock::now() - spawnTime_;
+    return std::chrono::system_clock::now() - m_spawnTime;
 }

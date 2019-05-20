@@ -14,7 +14,7 @@ from static_map.srv import MapGetWaypoint
 from static_map.msg import Waypoint
 import tf
 import tf2_ros
-import tf2_geometry_msgs # DO NOT REMOVE, declares geometry_msgs conversions (yes that's uggly)
+import tf2_geometry_msgs  # DO NOT REMOVE, declares geometry_msgs conversions (yes that's uggly)
 
 __author__ = "Thomas Fuhrmann"
 __date__ = 21 / 10 / 2017
@@ -366,7 +366,7 @@ class Asserv:
                     except (tf2_ros.TypeException, tf2_ros.LookupException) as e:
                         rospy.logerr("Failed to convert tf: " + repr(e))
                         rospy.logerr("=> Will not convert tf.")
-                pos = Asserv._poseToPose2D(target_pose)
+                pos = Asserv._pose_to_pose2D(target_pose)
             else:
                 rospy.logdebug(
                     "[ASSERV] Received a request (dogoto action), using waypoint"
@@ -385,13 +385,13 @@ class Asserv:
                     return
 
             if self._process_goto_order(
-                self._goal_id_counter,
-                goal_handled.get_goal().mode,
-                pos.x,
-                pos.y,
-                pos.theta,
-                goal_handled.get_goal().direction,
-                goal_handled.get_goal().slow_go,
+                    self._goal_id_counter,
+                    goal_handled.get_goal().mode,
+                    pos.x,
+                    pos.y,
+                    pos.theta,
+                    goal_handled.get_goal().direction,
+                    goal_handled.get_goal().slow_go,
             ):
                 goal_handled.set_accepted()
                 self._goals_dictionary[self._goal_id_counter] = goal_handled
@@ -477,10 +477,10 @@ class Asserv:
                 self._asserv_instance.set_emergency_stop(False)
 
     @staticmethod
-    def _poseToPose2D(pose):
+    def _pose_to_pose2D(pose):
         _, _, theta = Asserv._quaternion_to_euler_angle(pose.orientation)
         return Pose2D(pose.position.x, pose.position.y, theta)
-    
+
     @staticmethod
     def _quaternion_to_euler_angle(quaternion):
         # https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles

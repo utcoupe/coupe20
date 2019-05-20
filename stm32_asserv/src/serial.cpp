@@ -1,6 +1,7 @@
 #include "serial.h"
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <cstring>
 
 
 const size_t BUFFER_READ = 100;

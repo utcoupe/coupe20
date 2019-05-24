@@ -45,7 +45,7 @@ void ComputeIsBlocked(void) {
 	// last calculation was at least BLOCK_TIME ms ago
 
 	dist = sqrt(pow(current_pos.x - last_pos.x, 2) + pow(current_pos.y - last_pos.y, 2));
-	dist += (float)(fabs(current_pos.angle - last_pos.angle)) * ENTRAXE_ENC / 2.0;
+	dist += (float)(fabsf(current_pos.angle - last_pos.angle)) * ENTRAXE_ENC / 2.0;
 	if (dist < BLOCK_MIN_DIST) {
 		// we did not move enough, we are probably blocked, 
 		// consider the goal reached

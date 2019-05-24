@@ -46,10 +46,10 @@ void BrushlessMotorSetPwm(int motor_side, int pwm) {
         // Hight => forward, LOW => backward
         auto pin_status = (pwm > 0 ? HIGH : LOW);
         if (motor_side == MOTOR_LEFT) {
-            g_left_pwm.set_duty_cycle(std::abs(pwm));
+            g_left_pwm.set_duty_cycle(pwm >= 0 ? pwm : -pwm);
             HAL_GPIO_WritePin(MOT_L_DIR_GPIO_Port, MOT_L_DIR_Pin, pin_status);
         } else {
-            g_right_pwm.set_duty_cycle(std::abs(pwm));
+            g_right_pwm.set_duty_cycle(pwm >= 0 ? pwm : -pwm);
             HAL_GPIO_WritePin(MOT_R_DIR_GPIO_Port, MOT_R_DIR_Pin, pin_status);
         }
     }

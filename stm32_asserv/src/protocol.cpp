@@ -30,7 +30,7 @@ void autoSendStatus() {
         control.last_finished_id,
         static_cast<int>(current_pos.x),
         static_cast<int>(current_pos.y),
-        static_cast<int>(current_pos.angle*FLOAT_PRECISION),
+        static_cast<int>(current_pos.angle*static_cast<float>(FLOAT_PRECISION)),
         control.speeds.pwm_left,
         control.speeds.pwm_right,
         static_cast<int>(control.speeds.linear_speed),
@@ -167,7 +167,7 @@ void parseAndExecuteOrder(const String& order) {
             else
                 ControlUnsetStop(SLOWGO_BIT);   
 
-            a = static_cast<float>(a_int) / FLOAT_PRECISION;
+            a = static_cast<float>(a_int) / static_cast<float>(FLOAT_PRECISION);
             goal_data_t goal;
             goal.pos_data = {x, y, direction};
             FifoPushGoal(order_id, TYPE_POS, goal);
@@ -180,7 +180,7 @@ void parseAndExecuteOrder(const String& order) {
             int a_int;
             float a;
             sscanf(receivedOrderPtr, "%i", &a_int);
-            a = static_cast<float>(a_int) / FLOAT_PRECISION;
+            a = static_cast<float>(a_int) / static_cast<float>(FLOAT_PRECISION);
             goal_data_t goal;
             goal.ang_data = {a, 1};
             FifoPushGoal(order_id, TYPE_ANG, goal);
@@ -191,7 +191,7 @@ void parseAndExecuteOrder(const String& order) {
             long a_int;
             float a;
             sscanf(receivedOrderPtr, "%li", &a_int);
-            a = static_cast<float>(a_int) / FLOAT_PRECISION;
+            a = static_cast<float>(a_int) / static_cast<float>(FLOAT_PRECISION);
             goal_data_t goal;
             goal.ang_data = {a, 0};
             FifoPushGoal(order_id, TYPE_ANG, goal);
@@ -274,7 +274,7 @@ void parseAndExecuteOrder(const String& order) {
             int x, y, a_int;
             x = static_cast<int>(round(current_pos.x));
             y = static_cast<int>(round(current_pos.y));
-            a_int = static_cast<int>(current_pos.angle * FLOAT_PRECISION);
+            a_int = static_cast<int>(current_pos.angle * static_cast<float>(FLOAT_PRECISION));
             g_serialSender.serialSend(SERIAL_INFO, "%d;%d;%d;%d;", order_id, x, y, a_int);
             break;
         }
@@ -299,7 +299,7 @@ void parseAndExecuteOrder(const String& order) {
             int x, y, a_int;
             x = static_cast<int>(round(current_pos.x));
             y = static_cast<int>(round(current_pos.y));
-            a_int = static_cast<int>(current_pos.angle * FLOAT_PRECISION);
+            a_int = static_cast<int>(current_pos.angle * static_cast<float>(FLOAT_PRECISION));
             g_serialSender.serialSend(SERIAL_INFO, "%d;%d;%d;%d;", order_id, x, y, a_int, control.last_finished_id);
             break;
         }

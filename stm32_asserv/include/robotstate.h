@@ -43,7 +43,7 @@ extern "C" {
 void RobotStateInit();
 void RobotStateUpdate();
 void RobotStateSetPos(float x, float y, float angle);
-inline void RobotStateReset(void) { RobotStateInit(); };
+inline void RobotStateReset(void) { RobotStateInit(); }
 
 #ifdef __cplusplus
 }

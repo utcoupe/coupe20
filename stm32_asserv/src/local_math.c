@@ -8,21 +8,21 @@
 #include <math.h>
 
 float moduloTwoPI(float angle){
-    while(angle > M_PI) {
-        angle -= 2.0*M_PI;
+    while(angle > (float)M_PI) {
+        angle -= (float)(2.0 * M_PI);
     }
-    while(angle <= -M_PI) {
-        angle += 2.0*M_PI;
+    while(angle <= (float)-M_PI) {
+        angle += (float)(2.0 * M_PI);
     }
     return angle;
 }
 
 float moduloPI(float angle){
-    while(angle > M_PI/2) {
-        angle -= M_PI;
+    while(angle > (float)(M_PI / 2.0)) {
+        angle -= (float)M_PI;
     }
-    while(angle <= -M_PI/2) {
-        angle += M_PI;
+    while(angle <= (float)(-M_PI/2.0)) {
+        angle += (float)M_PI;
     }
     return angle;
 }

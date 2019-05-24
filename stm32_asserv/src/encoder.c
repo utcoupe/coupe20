@@ -22,13 +22,18 @@ void right_encoder_reset(void) {
 }
 
 int16_t uint32_to_int16(uint32_t val) {
-    uint16_t newVal = val;
-    if (val >= 0)
-        return newVal & 0x7FFFu;
-    return newVal | 0x8000u;
-    // equivalent to :
+    return (
+            (val & 0x00007FFFu) |      // last 15 bits
+            ((val & 0x80000000u) >> 16u) // sign bit
+    );
+    // Equivalent to :
+    //  ldr r3, .L2
+    //  and r3, r3, r0, lsr #16
     //  lsl r0, r0, #17
     //  lsr r0, r0, #17
+    //  orr r0, r3, r0
+    //  lsl r0, r0, #16
+    //  asr r0, r0, #16
     //  bx lr
 }
 

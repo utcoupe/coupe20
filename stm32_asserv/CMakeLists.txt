@@ -16,7 +16,7 @@ FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
 FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc pwr cortex flash REQUIRED)
 
-add_compile_options(-fno-exceptions) # prevents huge overflow
+add_compile_options(-fno-exceptions -Wall -Wextra) # prevents huge overflow
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}

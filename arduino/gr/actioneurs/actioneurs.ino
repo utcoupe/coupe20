@@ -1,37 +1,29 @@
 #include "consts.h"
 #include "PololuA4983.h"
-#include <Servo.h> 
+#include <Servo.h>
 
-// Including rosserial
 #include <ros.h>
-#include <game_manager/GameStatus.h>      // ROS sends game and init status (to  determine when RPi ready).
+#include <game_manager/GameStatus.h> 
 #include <ard_gr_front/PucksTake.h>
-#include <ard_gr_front/PucksDump.h>
 #include <ard_gr_front/PucksRaiseSort.h>
+#include <ard_gr_front/RaiseScaleDoor.h>
+#include <ard_gr_front/RaiseTower.h>
 #include <ard_gr_front/ArduinoToAI.h>
 
-#include <ard_gr_front/MoveScaleDoor.h>
-#include <ard_gr_front/MoveTower.h>
 
 ros::NodeHandle nh;
-
-int game_status = -1;
-int init_status = -1;
-
-bool puckGoesToScale[3];
-static int VENTS_TO_PUMPS[3] = {VENT1_TO_PUMP,VENT2_TO_PUMP,VENT3_TO_PUMP};
-static int VENTS_TO_AIR[3] = {VENT1_TO_AIR,VENT2_TO_AIR,VENT3_TO_AIR};
-//Stepper motors
-
-PololuA4983 stepper_tower = PololuA4983(TOWER_STEP_PIN, TOWER_DIR_PIN, TOWER_EN_PIN, TOWER_MIN_DELAY);
-
 PololuA4983 stepper_pucks_door = PololuA4983(PUCKS_DOOR_STEP_PIN, PUCKS_DOOR_DIR_PIN,
                                             PUCKS_DOOR_EN_PIN, PUCKS_DOOR_MIN_DELAY);
-//Keep this in case we switch from servo to stepper
-//PololuA4983 stepper_scale_door = PololuA4983(SCALE_DOOR_STEP_PIN, SCALE_DOOR_DIR_PIN, 
-//                                            SCALE_DOOR_EN_PIN, SCALE_DOOR_MIN_DELAY);
-Servo servo_scale_door;
-// ~ Publisher ~ 
+Servo selector;
+
+int game_status = GAME_OFF;
+int pucks_door_steps_taken = 0;
+
+bool puck_to_scale[3];
+static int PUMP[3] = {PUMP_1,PUMP_2,PUMP_3};
+
+
+// Publisher 
 ard_gr_front::ArduinoToAI  event_msg ; 
 ros::Publisher pub_response  ("actuators/ard_gr_front/event", &event_msg); 
 
@@ -41,149 +33,163 @@ void publish_response (int event_type, bool success){
     pub_response.publish(&event_msg);
 }
 
-// TO DO cartes ponts en H pour pompes
-void suck_up_pucks() {
-    digitalWrite(PUMP, HIGH);
-    delay(PNEU_DELAY);
-    for(int i = 0; i < 3; i++){
-        digitalWrite(VENTS_TO_PUMPS[i], HIGH);
-    }
-    delay(PNEU_DELAY);  
-}
-
-void free_puck_to_sort(int index) {
-    delay(SELECTOR_TIME_TO_MOVE);
-    digitalWrite(VENTS_TO_PUMPS[index], LOW);
-    digitalWrite(VENTS_TO_AIR[index], HIGH);
-    delay(PUCK_TIME_TO_MOVE);
-    digitalWrite(VENTS_TO_AIR[index], LOW);
-}
-
-void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
-    if (game_status != GAME_ON) return;
-    pucks_door_goes_up(true);
-    analogWrite(SELECTOR_PWM, SELECTOR_SCALE_POS);
-    for(int i = 0; i < 3; i++){
-         if(puckGoesToScale[i]){
-           free_puck_to_sort(i);
-        }
-    }
-    analogWrite(SELECTOR_PWM, SELECTOR_PILE_POS);
-    for(int i = 0; i < 3; i++){
-        if(!puckGoesToScale[i]){
-            free_puck_to_sort(i);
-        }
-    }
-    digitalWrite(PUMP, LOW);
-    analogWrite(SELECTOR_PWM, SELECTOR_SCALE_POS);
+void initialize(){
+    selector.write(SELECTOR_TO_SCALE);
     pucks_door_goes_up(false);
+}
+
+void on_game_status(const game_manager::GameStatus& msg){
+    game_status = msg.game_status;
+
+    while (game_status == GAME_OFF) {
+        // 'infinite' loop for hard stop until msg.game_status == 1 again
+    }
+
+    if (msg.init_status == 1 && game_status == GAME_ON)
+        initialize(); 
+  }
+  
+void suck_up_pucks() {
+    digitalWrite(PUMP_ENABLE, HIGH);
+    delay(PUMP_DELAY);
+    for(int i = 0; i < 3; i++){
+        digitalWrite(PUMP[i], HIGH);
+    }
+    delay(PUMP_DELAY);  
+}
+
+void on_take_pucks(const ard_gr_front::PucksTake& msg){
+    int puck_to_scale[3] = {msg.P1,msg.P2,msg.P3};
+    suck_up_pucks();
+    publish_response(EVENT_PUCKS_TAKE, true);
+}
+
+void free_puck_to_sort(int i) {
+    delay(SELECTOR_TIME_TO_MOVE);
+    digitalWrite(PUMP[i], LOW);
+    delay(PUCK_TIME_TO_MOVE);
+}
+
+void pucks_door_goes_up(bool go_up) {
+    if (go_up)
+        stepper_pucks_door.moveStep(PUCKS_DOOR_STEP_NB, true);
+    else
+        stepper_pucks_door.moveStep(- pucks_door_steps_taken, true);
+    
+    while(stepper_pucks_door.getRemainingStep()>0) {
+        stepper_pucks_door.update();
+        if (go_up)
+            pucks_door_steps_taken++;
+        else
+            pucks_door_steps_taken--;
+        
+    }
+    stepper_pucks_door.stop();
+}
+
+void dump_in_scale(){
+    selector.write(SELECTOR_TO_SCALE);
+    for(int i = 0; i < 3; i++){
+        if(puck_to_scale[i] == 1)
+           free_puck_to_sort(i);  
+    }
+}
+
+void dump_in_tower(){
+    selector.write(SELECTOR_TO_TOWER);
+    for(int i = 0; i < 3; i++){
+        if(puck_to_scale[i] == 0)
+            free_puck_to_sort(i);
+    }
+}
+void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
+    pucks_door_goes_up(true);
+    
+    dump_in_scale();
+    dump_in_tower();
+
+    digitalWrite(PUMP_ENABLE, LOW);
+    selector.write(SELECTOR_TO_SCALE);
+
+    pucks_door_goes_up(false);
+
     publish_response(EVENT_PUCKS_RAISE_SORT, true);
 
 }
 
 
-void pucks_door_goes_up(bool goUp) {
-    //front pucks_door_goes_up that raise to take puks to sorting
-    bool limitSwitch = goUp?PUCKS_DOOR_ISUP_PIN:PUCKS_DOOR_ISDOWN_PIN;
-    stepper_pucks_door.moveStep(1000000, goUp);
-    while( stepper_pucks_door.getRemainingStep() >0 && analogRead(limitSwitch)!=HIGH) {
-      stepper_pucks_door.update() ; 
+void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){    
+    digitalWrite(SCALE_DOOR_PIN, HIGH);
+    while (digitalRead(SCALE_DOOR_LIMIT_PIN)!= HIGH) {
+        // Wait
     }
-    stepper_pucks_door.stop();
-
-    //delay(PUCKS_DOOR_TIME_TO_MOVE);
-
-}
-
-void on_dump_pucks(const ard_gr_front::PucksDump& msg) {
-    if (game_status != GAME_ON) return;
-
-    stepper_tower.moveStep(1000000, true);
-    while( stepper_tower.getRemainingStep() >0 && 
-        analogRead(TOWER_LIMIT_SWITCH)!=HIGH) {
-      stepper_tower.update() ; 
-    }
-    stepper_tower.stop();
-    publish_response(EVENT_PUCKS_DUMP, true);
-}
-
-void on_game_status(const game_manager::GameStatus& msg){
-    //Warning : 'infinite' loop for hard stop
-    while (game_status == 1 && msg.game_status == 0) {}
-    game_status = msg.game_status;
-    init_status = msg.init_status;
-  }
-
-
-void on_take_pucks(const ard_gr_front::PucksTake& msg){
-    if (game_status != GAME_ON) return;
-    int puckGoesToScale[3] = {msg.P1,msg.P2,msg.P3};
-    suck_up_pucks();
-    publish_response(EVENT_PUCKS_TAKE, true);
-
-}
-
-void on_move_scale_door(const ard_gr_front::MoveScaleDoor& msg){
-    if (game_status != GAME_ON) return;
+    digitalWrite(SCALE_DOOR_PIN, LOW);
     
-    if (msg.door_status == SCALE_DOOR_CLOSE) {
-        servo_scale_door.write(SCALE_DOOR_CLOSE_POS);
-    }
-    if (msg.door_status == SCALE_DOOR_OPEN){
-        servo_scale_door.write(SCALE_DOOR_OPEN_POS);
-    }
-    
-    publish_response(EVENT_MOVE_SCALE_DOOR, true);
+    publish_response(EVENT_RAISE_SCALE_DOOR, true);
 }   
 
-void on_move_tower(const ard_gr_front::MoveTower& msg){
-    if (msg.tower_status == TOWER_DOWN) {
-        stepper_tower.moveStep(SCALE_DOOR_OPEN_POS, true);
-        while(stepper_tower.getRemainingStep() >0 ) {
-            stepper_tower.update() ; 
-        }
+void on_raise_tower(const ard_gr_front::RaiseTower& msg){
+    digitalWrite(TOWER_PIN, HIGH);
+    while (digitalRead(TOWER_LIMIT_PIN)!= HIGH) {
+        // Wait
     }
-    if (msg.tower_status == TOWER_UP){
-        stepper_tower.moveStep(SCALE_DOOR_OPEN_POS, true);
-        while(stepper_tower.getRemainingStep() >0 ) {
-            stepper_tower.update() ; 
-        }
-    }
-    publish_response(EVENT_MOVE_TOWER, true);
+    digitalWrite(TOWER_PIN, LOW);
+    
+    publish_response(EVENT_RAISE_TOWER, true);
 }
 
 
 //Subscribers
 ros::Subscriber<game_manager::GameStatus>     sub_game_status("ai/game_manager/status",&on_game_status);
 
-ros::Subscriber<ard_gr_front::PucksRaiseSort> sub_raise_sort_pucks("actionneurs/raise_and_sort_pucks",&on_raise_and_sort_pucks);
-ros::Subscriber<ard_gr_front::PucksDump>      sub_dump_pucks("actionneurs/dump_pucks",&on_dump_pucks);
-ros::Subscriber<ard_gr_front::PucksTake>      sub_take_pucks("actionneurs/take_pucks",&on_take_pucks);
+ros::Subscriber<ard_gr_front::PucksRaiseSort> sub_raise_sort_pucks("actuators/raise_and_sort_pucks",&on_raise_and_sort_pucks);
+ros::Subscriber<ard_gr_front::PucksTake>      sub_take_pucks("actuators/take_pucks",&on_take_pucks);
 
-ros::Subscriber<ard_gr_front::MoveScaleDoor>  sub_move_scale_door("actionneurs/move_scale_door", &on_move_scale_door);
-ros::Subscriber<ard_gr_front::MoveTower>      sub_move_tower("actionneurs/move_tower", &on_move_tower);
+ros::Subscriber<ard_gr_front::RaiseScaleDoor>  sub_raise_scale_door("actuators/raise_scale_door", &on_raise_scale_door);
+ros::Subscriber<ard_gr_front::RaiseTower>      sub_raise_tower("actuators/raise_tower", &on_raise_tower);
 
 
-void setup(){
+void connectPins(){
 
-    servo_scale_door.attach(SCALE_DOOR_STEP_PIN);
+    pinMode(PUMP_ENABLE, OUTPUT);
+    pinMode(PUMP_1, OUTPUT);
+    pinMode(PUMP_2, OUTPUT);
+    pinMode(PUMP_3, OUTPUT);
 
+    pinMode(PUCKS_DOOR_DIR_PIN, OUTPUT);
+    pinMode(PUCKS_DOOR_STEP_PIN, OUTPUT);
+    pinMode(PUCKS_DOOR_EN_PIN, OUTPUT);
+
+    pinMode(SCALE_DOOR_PIN, OUTPUT);
+    pinMode(TOWER_PIN, OUTPUT);
+
+    pinMode(SCALE_DOOR_LIMIT_PIN, INPUT);
+    pinMode(TOWER_LIMIT_PIN, INPUT);
+
+    selector.attach(SELECTOR_PIN);
+
+}
+
+void connectROS(){
     nh.initNode();
+
     nh.subscribe(sub_game_status);
     
     nh.subscribe(sub_take_pucks);
-    nh.subscribe(sub_dump_pucks);
     nh.subscribe(sub_raise_sort_pucks);
 
-    nh.subscribe(sub_move_scale_door);
-    nh.subscribe(sub_move_tower);
+    nh.subscribe(sub_raise_scale_door);
+    nh.subscribe(sub_raise_tower);
     nh.advertise(pub_response);
 
+}
+void setup(){
+    connectPins();
+    connectROS();
 }
 
 
 void loop(){
-
     nh.spinOnce();
     delay(5); // seen on a blog to not overwhelm master
 }

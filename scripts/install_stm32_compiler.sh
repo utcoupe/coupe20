@@ -20,7 +20,7 @@ function install_stlink_utils () {
     cd $TMP_INSTALL
     git clone https://github.com/texane/stlink
     cd stlink
-    make realease && cd build/Release && sudo make install
+    make release && cd build/Release && sudo make install
     sudo udevadm control --reload-rules
     sudo udevadm trigger
     

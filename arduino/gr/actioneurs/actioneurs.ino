@@ -41,13 +41,13 @@ void initialize(){
 void on_game_status(const game_manager::GameStatus& msg){
     game_status = msg.game_status;
 
-    while (game_status == GAME_OFF) {
+    while (game_status != GAME_ON) {
         // 'infinite' loop for hard stop until msg.game_status == 1 again
     }
 
     if (msg.init_status == 1 && game_status == GAME_ON)
         initialize(); 
-  }
+}
   
 void suck_up_pucks() {
     digitalWrite(PUMP_ENABLE, HIGH);
@@ -59,9 +59,13 @@ void suck_up_pucks() {
 }
 
 void on_take_pucks(const ard_gr_front::PucksTake& msg){
+    if (game_status != GAME_ON){
+        publish_response(EVENT_PUCKS_TAKE, true);
+        return;
+    }
+    
     int puck_to_scale[3] = {msg.P1,msg.P2,msg.P3};
     suck_up_pucks();
-    publish_response(EVENT_PUCKS_TAKE, true);
 }
 
 void free_puck_to_sort(int i) {
@@ -103,6 +107,12 @@ void dump_in_tower(){
     }
 }
 void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
+    if (game_status != GAME_ON){
+        publish_response(EVENT_PUCKS_RAISE_SORT, true);
+        return;
+    }
+
+
     pucks_door_goes_up(true);
     
     dump_in_scale();
@@ -118,7 +128,11 @@ void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
 }
 
 
-void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){    
+void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){
+    if (game_status != GAME_ON){
+        publish_response(EVENT_RAISE_SCALE_DOOR, false);
+        return; 
+    }
     digitalWrite(SCALE_DOOR_PIN, HIGH);
     while (digitalRead(SCALE_DOOR_LIMIT_PIN)!= HIGH) {
         // Wait
@@ -129,6 +143,11 @@ void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){
 }   
 
 void on_raise_tower(const ard_gr_front::RaiseTower& msg){
+    if (game_status != GAME_ON){
+        publish_response(EVENT_RAISE_TOWER, false);
+        return;
+    }
+
     digitalWrite(TOWER_PIN, HIGH);
     while (digitalRead(TOWER_LIMIT_PIN)!= HIGH) {
         // Wait

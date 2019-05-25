@@ -69,7 +69,7 @@ void test_button() {
 
 void test_up_down() {
   up() ; 
-  down() ; 
+  //down() ; 
 }
 
 
@@ -148,6 +148,6 @@ void up_down(int wanted_position) {
 void loop(){
   //simple_test_up(); 
   //test_button() ; 
-  test_up_down() ; 
+  //test_up_down() ; 
 
 }

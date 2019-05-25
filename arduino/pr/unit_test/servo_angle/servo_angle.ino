@@ -13,16 +13,16 @@ Servo servo_2 ;
 #define POS_UNLOAD_INIT  130 //90   
 #define POS_UNLOAD       74  //store servo position
 
-#define POS_INIT_1 100 // 95 
-#define POS_1      15 // 0 
+#define POS_1       0 // 95 
+#define POS_INIT_1  50 // 0 
 
-#define POS_INIT_2 25   //15  // 50 
-#define POS_2      100 //80  //170 
+#define POS_2       200   //15  // 50 
+#define POS_INIT_2  125 //80  //170 
 
 
 void setup() {
-  servo_1.attach(12);   //22 // number 1 //pins to control servo 
-  servo_2.attach(13);  // number 2 
+  servo_1.attach(12);  // number 1 left motor 
+  servo_2.attach(13);  // number 2  right motor 
 }
 
 void loop() {

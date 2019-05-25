@@ -66,9 +66,8 @@ ard_door::Door door_msg ;
 driver_ax12::Ax12Command  ax12_event_msg ; 
 
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
-ros::Publisher pub_door_action       ("actuators/ard_door/action",   &door_msg ); 
+ros::Publisher pub_door_action       ("actuators/ard_door/",   &door_msg ); 
 ros::Publisher pub_ax12_responses    ("drivers/ax12/simple_command", &ax12_event_msg); 
-
 
 // --------------------------------------------------------------
 // --------------------- FUNCTIONS ------------------------------ 
@@ -83,6 +82,11 @@ void tower_initialize() {
   lift_ground(); 
   // Initialize AX12 
   int success = move_ax12(1);  
+  // Initialize door and flipper 
+  nh.loginfo("door and flipper init"); 
+  door_msg.init_status = 1 ; 
+  pub_door_action.publish(&door_msg); 
+  door_msg.init_status = 0 ; 
   // Message 
   event_msg.init_success = success ; 
   pub_tower_responses.publish(&event_msg); 
@@ -103,7 +107,7 @@ int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12
     nh.loginfo("open_ax12"); 
   }
   if ( open == 0 ) {
-    ax12_event_msg.position =175 ;  // Close 
+    ax12_event_msg.position = 175 ; // Close 
     nh.loginfo("close_ax12"); 
   }
   pub_ax12_responses.publish(&ax12_event_msg) ; 
@@ -121,7 +125,6 @@ void open_door( bool open ) { // send msg to open or close the doors
   door_msg.door_status = open ; // 1 : open and 0 : close 
   door_msg.flipper_status = 0 ; 
   door_msg.init_status = 0 ; 
-  door_msg.side_status = side_status ; // TODO get side_status URGENT  
   pub_door_action.publish(&door_msg); 
 }
 
@@ -131,6 +134,7 @@ void open_door( bool open ) { // send msg to open or close the doors
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 void lift_sas() { // bring the lift to the sas where it unloads the atoms 
+  nh.loginfo("lift_sas"); 
   while ( digitalRead(button_up_pin) == LOW && game_status == 1) {
       stepper_load.moveStep(5,false); 
 
@@ -144,6 +148,7 @@ void lift_sas() { // bring the lift to the sas where it unloads the atoms
 }
 
 void lift_ground() { // bring the lift to the ground ready to grab atom.s
+  nh.loginfo("lift_sas"); 
   while ( digitalRead(button_down_pin) == LOW && game_status == 1 ) {
       stepper_load.moveStep(5,true); 
 
@@ -203,7 +208,7 @@ nh.loginfo("move_lift");
 
 int unload_atom_sas () {
   nh.loginfo("unload_atom_sas"); 
-  int success ; 
+  int success = 0 ; 
   if (nb_atom_in > MAX_ATOM_SAS && nb_atom_in_sas == 0 && game_status == 1 ) { // not enough space in sas for all atoms 
     nh.loginfo("not enough space"); 
     int nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
@@ -219,10 +224,10 @@ int unload_atom_sas () {
   }
   else { // enough space for all the atoms 
     nh.loginfo(" enough space"); 
-    if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
+    success = move_lift(H_SAS_LOW) ; 
     if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
     if (success != 0) success = move_ax12(1) ; // open AX12 
-    if (success != 0 ) success = move_lift(H_GROUND) ; 
+    if (success != 0 ) success = move_lift(H_FLOOR_1) ; 
   }
   
   return success ; 
@@ -256,7 +261,7 @@ int load_atom_sas() {
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 void unload_atom() {
-  int success ; 
+  int success = 1 ; 
   if (unload_content == 1 && game_status == 1 ) { //unload atom with slider 
     success = unload_atom_slider() ; 
 
@@ -300,11 +305,14 @@ int unload_atom_slider() {
     servo_unload_1.write(POS_UNLOAD_INIT_1); 
     servo_unload_2.write(POS_UNLOAD_INIT_2); 
     //open  
-    delay(500) ; 
+    delay(1000) ; 
     nb_atom_in     -= 1 ; 
     nb_atom_in_sas -= 1 ; 
     nb_atom_out    += 1 ; 
     success = 1 ; 
+    door_msg.flipper_status = 1 ; 
+    pub_door_action.publish(&door_msg); 
+    door_msg.flipper_status = 1 ; 
   }
 
   if (nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
@@ -316,7 +324,7 @@ int unload_atom_slider() {
 
 int unload_atom_pliers() { 
   nh.loginfo("unload_atom_pliers") ; 
-  int success ; 
+  int success = 1 ; 
   if ( nb_atom_in - nb_atom_in_sas != 0 ) {
     nh.loginfo("atoms drop"); 
     success = move_ax12(1) ; // AX12 open 
@@ -355,7 +363,7 @@ void load_atom() {
 
 int load_atom_single() {
   nh.loginfo("load_atom_single") ; 
-  int success; 
+  int success = 1 ; 
   if (nb_atom_in-nb_atom_in_sas == 0){ //pliers empty 
     success = move_ax12(1) ; // open 
     if (success != 0 ) success = move_lift(H_GROUND) ; 
@@ -374,7 +382,7 @@ int load_atom_single() {
 
 int load_atom_tower(float nb_atom_tower, float nb_atom_wanted) {
   nh.loginfo("load_atom_tower") ; 
-  int success ; 
+  int success = 1 ; 
   if (nb_atom_in - nb_atom_in_sas == 0 ) {  // will only do this case !! 
     success = move_lift((nb_atom_tower-nb_atom_wanted)*H) ; // TODO replace 300 with constante 
     if (success != 0 ) success = move_ax12(0) ; //close

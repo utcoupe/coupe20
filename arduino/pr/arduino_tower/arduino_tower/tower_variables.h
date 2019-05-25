@@ -7,17 +7,17 @@ int step_pin       = 9 ;
 int en_pin         = 11; 
 uint16_t min_delay = 1000 ; 
 
-int servo_unload_pin_1 = 12 ; //number 1 right side 
-int servo_unload_pin_2 = 13 ; //number 2 left side 
+int servo_unload_pin_2 = 13 ; //number 2 right side 
+int servo_unload_pin_1 = 12 ; //number 1 left side 
 
 const int button_up_pin = 2 ;   // button up for lift 
 const int button_down_pin = 3 ; // button down for lift  
  
 // ~ Servo ~ Unload Atom 
-#define POS_UNLOAD_INIT_1   15 //90   
-#define POS_UNLOAD_1        100  //store servo position
-#define POS_UNLOAD_INIT_2   100
-#define POS_UNLOAD_2        25
+#define POS_UNLOAD_INIT_2   125//90   
+#define POS_UNLOAD_2        200  //store servo position
+#define POS_UNLOAD_INIT_1   50
+#define POS_UNLOAD_1        0
 
 // ~ Stepper ~ Load Atom 
 int lift_position = 0 ; // no postion for now 
@@ -46,8 +46,7 @@ int unload_content                      = -1 ; // actions given to stepper  => 0
 int load_success                        = -1 ; // info on stepper status 
 int unload_success                      = -1 ; // info on stepper status 
 int game_status                         = 1 ; // info on game status  // 1 ingame 
-// DANGER game_status = 1 for test 
-int side_status                         = -1 ; // side of the game 0:left 1:right 
+// DANGER game_status = 1 for test but should be -1 
 
 // ------ Functions --------- 
 void tower_initialize() ; 

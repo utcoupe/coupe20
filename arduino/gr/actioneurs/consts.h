@@ -23,9 +23,12 @@
 #define SELECTOR_TIME_TO_MOVE 200 // in ms TODO:OPTIMIZE THIS
 
 //Calibrations
-#define SELECTOR_TO_TOWER 127 
-#define SELECTOR_TO_SCALE 35 
-#define PUCKS_DOOR_STEP_NB 100
+#define SELECTOR_TO_TOWER 130
+#define SELECTOR_TO_SCALE 40
+#define PUCKS_DOOR_STEP_NB 1000
+
+#define PUCK_GOES_TO_TOWER false
+#define PUCK_GOES_TO_SCALE true
 
 //Reponse event type 
 #define EVENT_PUCKS_TAKE 0

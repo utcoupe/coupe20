@@ -48,7 +48,7 @@ class PortFinder:
         hokuyo_subprocess = None
         hokuyo_port = self.get_port("hokuyo")
         if hokuyo_port is not "":
-            hokuyo_subprocess = subprocess.Popen(["rosrun", "urg_node", "urg_node", "_serial_port:=" + hokuyo_port, "__ns:=sensors", "scan:=processing/lidar_objects/scan"])
+            hokuyo_subprocess = subprocess.Popen(["rosrun", "urg_node", "urg_node", "_serial_port:=" + hokuyo_port, "__ns:=sensors", "scan:=/processing/lidar_objects/scan"])
             StatusServices("drivers", "port_finder").ready(True)
         else:
             rospy.logwarn("Couldn't start urg_node")

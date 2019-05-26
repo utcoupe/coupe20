@@ -66,22 +66,36 @@ void on_take_pucks(const ard_gr_front::PucksTake& msg){
     suck_up_pucks();
 }
 
+void camion_poubelle(){
+    int compensate = 35;
+    for(int i = 0; i < 10; i++){
+        pucks_door_goes_up(CAMION_POUBELLE_STEP, false);
+        delay(10);
+        pucks_door_goes_up(CAMION_POUBELLE_STEP + compensate, true);
+        delay(10);
+        compensate -= 6;
+    }
+    
+    stepper_pucks_door.disable();
+}
+
 void free_puck_to_sort(int i) {
     digitalWrite(PUMP[i], LOW);
+    delay(PUMP_DELAY);
+    camion_poubelle();
     delay(PUCK_TIME_TO_MOVE);
 }
 
-void pucks_door_goes_up(bool go_up) {
+void pucks_door_goes_up(int steps, bool go_up) {
     //nh.loginfo("Pucks door going up/down...");
     stepper_pucks_door.enable();
     if (go_up)
-        stepper_pucks_door.moveStep(PUCKS_DOOR_STEP_NB, true);
+        stepper_pucks_door.moveStep(steps, true);
     else
-        stepper_pucks_door.moveStep(PUCKS_DOOR_STEP_NB, false);
+        stepper_pucks_door.moveStep(steps, false);
     
     while(stepper_pucks_door.getRemainingStep() != 0 && game_status == GAME_ON) {
         stepper_pucks_door.update();
-
     }
     
     stepper_pucks_door.disable();
@@ -115,15 +129,15 @@ void raise_and_sort_pucks() {
         return;
     }
 
-    pucks_door_goes_up(true);
-    
+    pucks_door_goes_up(PUCKS_DOOR_STEP_NB, true);
+
     dump_in_tower();
     dump_in_scale();
     
 
     digitalWrite(PUMP_ENABLE, LOW);
 
-    pucks_door_goes_up(false);
+    pucks_door_goes_up(PUCKS_DOOR_STEP_NB, false);
 
     publish_response(EVENT_PUCKS_RAISE_SORT, true);
 }
@@ -136,8 +150,10 @@ void raise_scale_door(){
         return; 
     }
     digitalWrite(SCALE_DOOR_PIN, HIGH);
-    while (digitalRead(SCALE_DOOR_LIMIT_PIN)!= HIGH) {
+    int time_counter = 0;
+    while (digitalRead(SCALE_DOOR_LIMIT_PIN)!= HIGH && time_counter <= 40) {
         delay(50);
+        time_counter++;
     }
     digitalWrite(SCALE_DOOR_PIN, LOW);
     

@@ -55,7 +55,7 @@ void suck_up_pucks() {
 }
 
 void on_take_pucks(const ard_gr_front::PucksTake& msg){
-    nh.loginfo("Taking pucks...");
+    //nh.loginfo("Taking pucks...");
     if (game_status != GAME_ON){
         publish_response(EVENT_PUCKS_TAKE, true);
         return;
@@ -74,21 +74,20 @@ void free_puck_to_sort(int i) {
 }
 
 void pucks_door_goes_up(bool go_up) {
-    nh.loginfo("Pucks door going up/down...");
+    //nh.loginfo("Pucks door going up/down...");
     stepper_pucks_door.enable();
     if (go_up)
         stepper_pucks_door.moveStep(PUCKS_DOOR_STEP_NB, true);
     else
-        stepper_pucks_door.moveStep(-PUCKS_DOOR_STEP_NB, true);
+        stepper_pucks_door.moveStep(PUCKS_DOOR_STEP_NB, false);
     
-    while(stepper_pucks_door.getRemainingStep()>0) {
+    while(stepper_pucks_door.getRemainingStep() != 0 && game_status == GAME_ON) {
         stepper_pucks_door.update();
 
     }
     
-    stepper_pucks_door.stop();
     stepper_pucks_door.disable();
-    nh.loginfo("Pucks door has moved");
+    //nh.loginfo("Pucks door has moved");
 }
 
 void dump_in_scale(){
@@ -111,7 +110,7 @@ void dump_in_tower(){
 }
 
 void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
-    nh.loginfo("Raising and sorting...");
+    //nh.loginfo("Raising and sorting...");
 
     if (game_status != GAME_ON){
         publish_response(EVENT_PUCKS_RAISE_SORT, true);
@@ -133,7 +132,7 @@ void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
 
 
 void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){
-    nh.loginfo("Raising scale door...");
+    //nh.loginfo("Raising scale door...");
     if (game_status != GAME_ON){
         publish_response(EVENT_RAISE_SCALE_DOOR, false);
         return; 
@@ -148,7 +147,7 @@ void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){
 }   
 
 void on_raise_tower(const ard_gr_front::RaiseTower& msg){
-    nh.loginfo("Raising tower....");
+    //nh.loginfo("Raising tower....");
     if (game_status != GAME_ON){
         publish_response(EVENT_RAISE_TOWER, false);
         return;

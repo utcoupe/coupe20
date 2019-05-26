@@ -5,9 +5,7 @@
 #include <ros.h>
 #include <game_manager/GameStatus.h> 
 #include <ard_gr_front/PucksTake.h>
-#include <ard_gr_front/PucksRaiseSort.h>
-#include <ard_gr_front/RaiseScaleDoor.h>
-#include <ard_gr_front/RaiseTower.h>
+#include <ard_gr_front/RaiseThing.h>
 #include <ard_gr_front/ArduinoToAI.h>
 
 
@@ -109,7 +107,7 @@ void dump_in_tower(){
     }
 }
 
-void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
+void raise_and_sort_pucks() {
     //nh.loginfo("Raising and sorting...");
 
     if (game_status != GAME_ON){
@@ -131,7 +129,7 @@ void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
 }
 
 
-void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){
+void raise_scale_door(){
     //nh.loginfo("Raising scale door...");
     if (game_status != GAME_ON){
         publish_response(EVENT_RAISE_SCALE_DOOR, false);
@@ -146,7 +144,7 @@ void on_raise_scale_door(const ard_gr_front::RaiseScaleDoor& msg){
     publish_response(EVENT_RAISE_SCALE_DOOR, true);
 }   
 
-void on_raise_tower(const ard_gr_front::RaiseTower& msg){
+void raise_tower(){
     //nh.loginfo("Raising tower....");
     if (game_status != GAME_ON){
         publish_response(EVENT_RAISE_TOWER, false);
@@ -162,16 +160,30 @@ void on_raise_tower(const ard_gr_front::RaiseTower& msg){
     publish_response(EVENT_RAISE_TOWER, true);
 }
 
-
+void on_raise_thing(const ard_gr_front::RaiseThing& msg){
+  switch(msg.thing_to_raise)
+  {
+    case RAISE_AND_SORT_ORDER:
+      raise_and_sort_pucks();
+      break;
+      
+    case RAISE_TOWER_ORDER:
+      raise_tower();
+      break;
+      
+    case RAISE_SCALE_DOOR_ORDER:
+      raise_scale_door();
+      break;
+      
+    default:
+      nh.logwarn("WARNING : incorrect raise msg :must be 0,1,2");
+  }
+}
 //Subscribers
 ros::Subscriber<game_manager::GameStatus>      sub_game_status("ai/game_manager/status",&on_game_status);
 
-ros::Subscriber<ard_gr_front::PucksRaiseSort>  sub_raise_sort_pucks("actionneurs/raise_and_sort_pucks",&on_raise_and_sort_pucks);
+ros::Subscriber<ard_gr_front::RaiseThing>      sub_raise_thing("actionneurs/raise_thing", &on_raise_thing);
 ros::Subscriber<ard_gr_front::PucksTake>       sub_take_pucks("actionneurs/take_pucks",&on_take_pucks);
-
-ros::Subscriber<ard_gr_front::RaiseScaleDoor>  sub_raise_scale_door("actionneurs/raise_scale_door", &on_raise_scale_door);
-ros::Subscriber<ard_gr_front::RaiseTower>      sub_raise_tower("actionneurs/raise_tower", &on_raise_tower);
-
 
 void connectPins(){
 
@@ -200,10 +212,8 @@ void connectROS(){
     nh.subscribe(sub_game_status);
     
     nh.subscribe(sub_take_pucks);
-    nh.subscribe(sub_raise_sort_pucks);
+    nh.subscribe(sub_raise_thing);
 
-    nh.subscribe(sub_raise_scale_door);
-    nh.subscribe(sub_raise_tower);
     nh.advertise(pub_response);
 
 }

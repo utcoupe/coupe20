@@ -33,6 +33,11 @@
 #define EVENT_RAISE_TOWER 2
 #define EVENT_RAISE_SCALE_DOOR 3
 
+//Things to raise
+#define RAISE_AND_SORT_ORDER 0
+#define RAISE_TOWER_ORDER 1
+#define RAISE_SCALE_DOOR_ORDER 2
+
 //Game status
 #define GAME_OFF 0
 #define GAME_ON 1

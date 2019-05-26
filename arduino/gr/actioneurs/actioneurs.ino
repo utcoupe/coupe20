@@ -55,7 +55,7 @@ void suck_up_pucks() {
 }
 
 void on_take_pucks(const ard_gr_front::PucksTake& msg){
-    nh.loginfo("Received take pucks");
+    nh.loginfo("Taking pucks...");
     if (game_status != GAME_ON){
         publish_response(EVENT_PUCKS_TAKE, true);
         return;
@@ -69,13 +69,12 @@ void on_take_pucks(const ard_gr_front::PucksTake& msg){
 }
 
 void free_puck_to_sort(int i) {
-    nh.loginfo("Freeing puck...");
     digitalWrite(PUMP[i], LOW);
     delay(PUCK_TIME_TO_MOVE);
 }
 
 void pucks_door_goes_up(bool go_up) {
-    nh.loginfo("Pucks going up/down...");
+    nh.loginfo("Pucks door going up/down...");
     stepper_pucks_door.enable();
     if (go_up)
         stepper_pucks_door.moveStep(PUCKS_DOOR_STEP_NB, true);
@@ -89,11 +88,10 @@ void pucks_door_goes_up(bool go_up) {
     
     stepper_pucks_door.stop();
     stepper_pucks_door.disable();
-    nh.loginfo("Pucks have gone up/down");
+    nh.loginfo("Pucks door has moved");
 }
 
 void dump_in_scale(){
-    nh.loginfo("Dumping in scale...");
     selector.write(SELECTOR_TO_SCALE);
     delay(SELECTOR_TIME_TO_MOVE);
 
@@ -102,27 +100,19 @@ void dump_in_scale(){
            free_puck_to_sort(i);  
 
     }
-    nh.loginfo("Dumped in scale");
 }
 
 void dump_in_tower(){
-    nh.loginfo("Dumping in tower...");
     selector.write(SELECTOR_TO_TOWER);
     for(int i = 0; i < 3; i++){
         if(!puck_to_scale[i])
             free_puck_to_sort(i);
     }
-    nh.loginfo("Dumped in tower");
 }
 
 void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
-    nh.loginfo("Received raise and sort pucks");
-    for(int i = 0; i < 3; i++){
-      if (puck_to_scale[i])
-        nh.loginfo("To scale");
-      else
-        nh.loginfo("To tower");
-    }
+    nh.loginfo("Raising and sorting...");
+
     if (game_status != GAME_ON){
         publish_response(EVENT_PUCKS_RAISE_SORT, true);
         return;
@@ -139,7 +129,6 @@ void on_raise_and_sort_pucks(const ard_gr_front::PucksRaiseSort& msg) {
     pucks_door_goes_up(false);
 
     publish_response(EVENT_PUCKS_RAISE_SORT, true);
-    nh.loginfo("Rose and sorted pucks");
 }
 
 
@@ -227,5 +216,4 @@ void setup(){
 
 void loop(){
     nh.spinOnce();
-    publish_response(1, true);
 }

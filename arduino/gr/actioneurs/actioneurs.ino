@@ -48,7 +48,8 @@ void stop(){
 }
 
 void on_game_status(const game_manager::GameStatus& msg){
-    game_status = GAME_ON;//msg.game_status;
+    //Hardcoded to GAME_ON FOR TESTING
+    game_status = GAME_ON;//msg.game_status; 
     if (game_status != GAME_ON)
         stop();
 
@@ -96,6 +97,8 @@ void free_puck_to_sort(int i) {
     digitalWrite(PUMP[i], LOW);
     delay(PUMP_DELAY);
     camion_poubelle();
+    pucks_door_all_the_way_up();
+    pucks_door_goes_up(2 * CAMION_POUBELLE_STEP, false);
     delay(PUCK_TIME_TO_MOVE);
 }
 
@@ -124,6 +127,7 @@ void dump_in_scale(){
     for(int i = 0; i < 3; i++){
         if(puck_to_scale[i] && game_status == GAME_ON)
            free_puck_to_sort(i);
+
     }
 }
 
@@ -133,6 +137,20 @@ void dump_in_tower(){
         if(!puck_to_scale[i] && game_status == GAME_ON)
             free_puck_to_sort(i);
     }
+}
+
+void pucks_door_all_the_way_up(){
+    if (digitalRead(PUCKS_DOOR_UP_SWITCH_PIN) == HIGH)
+        //security
+        return;
+
+    stepper_pucks_door.enable();
+    while (digitalRead(PUCKS_DOOR_UP_SWITCH_PIN) != HIGH && game_status == GAME_ON){
+        stepper_pucks_door.moveStep(1, true);
+        stepper_pucks_door.update();
+        nh.spinOnce();
+    }
+    stepper_pucks_door.disable();
 }
 
 void raise_and_sort_pucks() {
@@ -148,7 +166,7 @@ void raise_and_sort_pucks() {
     dump_in_scale();
 
     digitalWrite(PUMP_ENABLE, LOW);
-
+    pucks_door_all_the_way_up();
     pucks_door_goes_up(PUCKS_DOOR_STEP_NB, false);
 
     publish_response(EVENT_PUCKS_RAISE_SORT, true);

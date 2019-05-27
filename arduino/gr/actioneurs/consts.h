@@ -15,6 +15,9 @@
 #define PUCKS_DOOR_EN_PIN 11 
 
 #define SELECTOR_PIN 13
+
+#define PUCKS_DOOR_UP_SWITCH_PIN 14
+
 //delays
 #define PUCKS_DOOR_MIN_DELAY 1000 //stepper
 #define PUMP_DELAY 150 

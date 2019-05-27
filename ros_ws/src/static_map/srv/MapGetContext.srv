@@ -1,0 +1,5 @@
+---
+bool success
+static_map/MapObject robot_shape
+static_map/MapObject terrain_shape
+static_map/MapLayer[] terrain_layers

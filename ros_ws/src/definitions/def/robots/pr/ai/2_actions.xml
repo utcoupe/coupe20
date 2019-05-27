@@ -28,202 +28,76 @@
 	</action>
 
 	<!-- Game actions -->
-	<action ref="activate_button" name="Go and activate Home Button" reward="25">
+	<action ref="load_side_atoms">
 		<params></params>
 		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach button">
-				<waypoint_name>way_button_approach</waypoint_name>
+			<orderref ref="navigator_goto_waypoint" name="first turn">
+				<waypoint_name>way_first_turn</waypoint_name>
 			</orderref>
 
-			<orderref ref="navigator_goto_waypoint" name="accost button">
-				<waypoint_name>way_button_accost</waypoint_name>
-				<direction>0</direction>
+			<orderref ref="navigator_goto_waypoint" name="goto atom1">
+				<waypoint_name>way_atom1</waypoint_name>
 			</orderref>
+			<orderref ref="tower_load_atom" needsprevious="true"/>
 
-			<orderref ref="navigator_goto_waypoint" name="go back to approach">
-				<waypoint_name>way_button_approach</waypoint_name>
+			<orderref ref="navigator_goto_waypoint" name="goto atom2">
+				<waypoint_name>way_atom2</waypoint_name>
+			</orderref>
+			<orderref ref="tower_load_atom" needsprevious="true"/>
+
+			<orderref ref="navigator_goto_waypoint" name="goto atom3">
+				<waypoint_name>way_atom3</waypoint_name>
+			</orderref>
+			<orderref ref="tower_load_atom" needsprevious="true"/>
+		</actions>
+	</action>
+
+	<action ref="load_chaos_atoms">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="delay"/>
+		</actions>
+	</action>
+
+	<action ref="load_gr_tower">
+		<params></params>
+		<actions exec="all" order="linear">
+			<orderref ref="navigator_goto_waypoint" name="approach acc">
+				<waypoint_name>way_tower</waypoint_name>
+			</orderref>
+			<orderref ref="delay"> <!-- TODO remove -->
+				<duration>2</duration>
 			</orderref>
 		</actions>
 	</action>
 
-	<action ref="load_unicolor_distributor" name="Load unicolor distributor">
+	<action ref="unload_tower">
 		<params></params>
 		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach distributor">>
-				<waypoint_name>way_uni_distrib_approach</waypoint_name>
+			<orderref ref="navigator_goto_waypoint" name="approach acc">
+				<waypoint_name>way_approach_acc</waypoint_name>
+			</orderref>
+			<orderref ref="asserv_pwm" name="smat pwm on acc (reversed)">
+				<left>-150</left>
+				<right>-150</right>
+				<duration>3</duration>
+				<auto_stop>1</auto_stop>
+			</orderref>
+
+			<orderref ref="tower_unload_tower"/>
+			<orderref ref="delay"> <!-- TODO remove -->
+				<duration>2</duration>
+			</orderref>
+
+			<orderref ref="navigator_goto_waypoint" name="approach acc">
+				<waypoint_name>way_approach_acc</waypoint_name>
 				<direction>1</direction>
 			</orderref>
-
-			<orderref ref="actuator_set" name="prepare servo">
-				<name>servo_lock</name>
-				<preset>RIGHT</preset>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="accost distributor">
-				<waypoint_name>way_uni_distrib_accost</waypoint_name>
-				<direction>0</direction>
-				<disable_collisions>1</disable_collisions>
-			</orderref>
-
-			<orderref ref="actuator_set" name="open distributor with servo" reward="10">
-				<name>servo_lock</name>
-				<preset>LEFT</preset>
-			</orderref>
-
-			<orderref ref="delay">
-				<duration>0.5</duration>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="go back to approach">
-				<waypoint_name>way_uni_distrib_approach</waypoint_name>
-				<direction>0</direction>
-			</orderref>
 		</actions>
 	</action>
 
-	<action ref="load_multicolor_distributor" name="Load multicolor distributor">
-		<params></params>
-		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach distributor">
-				<waypoint_name>way_multi_distrib_approach</waypoint_name>
-			</orderref>
-
-			<orderref ref="actuator_set" name="prepare servo">
-				<name>servo_lock</name>
-				<preset>RIGHT</preset>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="accost distributor">
-				<waypoint_name>way_multi_distrib_accost</waypoint_name>
-				<direction>0</direction>
-				<disable_collisions>1</disable_collisions>
-			</orderref>
-
-			<orderref ref="actuator_set" name="open distributor with servo" reward="10">
-				<name>servo_lock</name>
-				<preset>LEFT</preset>
-			</orderref>
-
-			<orderref ref="delay">
-				<duration>0.5</duration>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="go back to approach">
-				<waypoint_name>way_multi_distrib_approach</waypoint_name>
-				<direction>0</direction>
-			</orderref>
-		</actions>
-	</action>
-
-	<action ref="fire_unicolor_balls" name="Fire uni balls to water tower">
-		<params></params>
-		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="goto fire position">
-				<waypoint_name>way_fire_unicolor</waypoint_name>
-				<direction>1</direction>
-			</orderref>
-
-			<orderref ref="do_canon_action" name="activate canon">
-				<fire_distance>0.9</fire_distance>
-			</orderref>
-
-			<tasklist repeat="10" exec="+" reward="40">
-				<orderref ref="do_barrel_action">
-					<sort>0</sort>
-				</orderref>
-				<orderref ref="delay">
-					<duration>0.5</duration>
-				</orderref>
-			</tasklist>
-
-			<orderref ref="do_canon_action" name="deactivate canon">
-				<fire_distance>-1</fire_distance>
-			</orderref>
-		</actions>
-	</action>
-
-
-	<action ref="unload_dirty_balls" name="Unload dirty balls to station" reward="40">
-		<params></params>
-		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach station">
-				<waypoint_name>way_station_approach</waypoint_name>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="accost station">
-				<waypoint_name>way_station_accost</waypoint_name>
-				<direction>0</direction>
-			</orderref>
-
-			<orderref ref="actuator_set" name="lift bin">
-				<name>servo_front_lift</name>
-				<preset>OPEN</preset>
-			</orderref>
-
-			<orderref ref="actuator_set" name="lift bin">
-				<name>servo_front_lift</name>
-				<preset>OPEN</preset>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="approach station">
-				<waypoint_name>way_station_approach</waypoint_name>
-			</orderref>
-		</actions>
-	</action>
-
-	<action ref="unload_multicolor_distributor" name="Unload balls to station">
-		<params></params>
-		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach station">
-				<waypoint_name>way_station_approach</waypoint_name>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="accost station">
-				<waypoint_name>way_station_accost</waypoint_name>
-				<direction>1</direction>
-			</orderref>
-
-			<tasklist name="unload balls" repeat="8" exec="+" reward="40">
-				<orderref ref="do_barrel_action">
-					<sort>1</sort>
-				</orderref>
-			</tasklist>
-		</actions>
-	</action>
-
-	<action ref="activate_bee" name="Activate bee" reward="50">
-		<params></params>
-		<actions exec="all" order="linear">
-			<orderref ref="navigator_goto_waypoint" name="approach bee">
-				<waypoint_name>way_bee_approach</waypoint_name>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="accost bee">
-				<waypoint_name>way_bee_accost</waypoint_name>
-			</orderref>
-
-			<orderref ref="actuator_set" name="activate button with servo">
-				<name>servo_button</name>
-				<preset>OPEN</preset>
-			</orderref>
-
-			<orderref ref="delay">
-				<duration>1</duration>
-			</orderref>
-
-			<orderref ref="actuator_set" name="close servo">
-				<name>servo_button</name>
-				<preset>CLOSE</preset>
-			</orderref>
-
-			<orderref ref="navigator_goto_waypoint" name="approach bee">
-				<waypoint_name>way_bee_approach</waypoint_name>
-				<direction>0</direction>
-			</orderref>
-		</actions>
-	</action>
-
-	<action ref="goto_spawn" name="Go to spawn">
+	<!-- Helpers actions -->
+	<action ref="goto_spawn" name="Goto spawn">
 		<params></params>
 		<actions exec="all" order="linear">
 			<!--orderref ref="navigator_goto_waypoint" name="approach spawn">
@@ -231,7 +105,7 @@
 			</orderref-->
 
 			<orderref ref="navigator_goto_waypoint" name="goto spawn" timeout="40">
-				<waypoint_name>way_spawn</waypoint_name>
+				<waypoint_name>way_spawn_pr</waypoint_name>
 			</orderref>
 		</actions>
 	</action>

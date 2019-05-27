@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(objects_classifier)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
     tf2
     tf2_ros
     dynamic_reconfigure
+    geometry_tools
 )
 
 ################################################
@@ -49,11 +50,8 @@ catkin_package(
     #LIBRARIES ${PROJECT_NAME}
 )
 
-set(NLOHMANN_JSON_HEADER_LOCATION "$ENV{UTCOUPE_WORKSPACE}/libs/json/single_include/")
-
 include_directories(
     include
-    ${NLOHMANN_JSON_HEADER_LOCATION}
     ${catkin_INCLUDE_DIRS}
 )
 

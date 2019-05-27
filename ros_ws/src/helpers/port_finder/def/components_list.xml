@@ -7,4 +7,5 @@
     <component name = "ard_leo"     vendor_id = "2341" product_id = "0036" port_type = "ttyACM" rosserialable = "true" />
     <component name = "ard_nano"    vendor_id = "0403" product_id = "6001" port_type = "ttyUSB" rosserialable = "true" />
     <component name = "wemos_d1_mini"     vendor_id = "1a86" product_id = "7523" port_type = "ttyUSB" rosserialable = "true" />
+    <component name = "Nucleo-F103RB"     vendor_id = "0483" product_id = "374b" port_type = "ttyACM" rosserialable = "true" />
 </component_list>

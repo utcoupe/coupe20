@@ -2,7 +2,7 @@
 #define COLLISIONS_CHECK_ZONE_H
 
 #include "collisions/engine/constants.h"
-#include "collisions/position.h"
+#include "geometry_tools/position.h"
 #include "collisions/engine/engine.h"
 #include "collisions/obstacle.h"
 #include "collisions/engine/collision.h"

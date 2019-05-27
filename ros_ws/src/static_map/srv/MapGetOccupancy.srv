@@ -1,5 +1,6 @@
-uint16 img_width # img width in pixels. Height will be calculated based on the aspect ratio.
-float32 margin   # margin in meters the shapes are going to be expanded at.
+# TODO NOT IMPLEMENTED YET
+uint16 img_width  # img width in pixels. Height will be calculated based on the aspect ratio.
+float32 margin    # margin in meters the shapes are going to be expanded at.
 string layer_name
 ---
 string img_path

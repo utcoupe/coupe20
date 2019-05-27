@@ -98,7 +98,9 @@ function env_setup() {
 	# Untar all libraries (the copy is done in install_ros function)
 	for f in $PWD/libs/*; do
 		if [ ! -d $f ]; then
-			tar -C $PWD/libs -xzf $f
+            if [[ "$f" == "*.tgz" ]]; then
+                tar -C $PWD/libs -xzf $f
+            fi
 		fi
 	done
 	# Add the Ethernet IP address of raspberry pi to have a shortcut
@@ -133,22 +135,22 @@ function launch_script() {
 		fi
 		install_ros_depencies
 	fi
-	printf "Install UTCoupe ROS workspace (ROS must to be installed) ? [Y/n]?"
+	printf "Install UTCoupe ROS workspace (ROS must be installed) ? [Y/n]?"
 	read answer
 	if [ "$answer" = "" ] || [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
 		install_ros_workspace
 	fi
 }
 
-# Check that the folder has been cloned from git and not downloaded, because submodules won't work...
-if [ ! -d ".git" ]; then
-	red_echo "You have to clone this repository from git, not download it."
-	exit 1
-fi
-
 # Verify that the script is launched from the right place
 if [ ! "${PWD##*/}" = "coupe19" ]; then
 	red_echo "You have to launch this script from UTCoupe main directory : ./script/${0##*/} or to rename this folder in coupe19."
+	exit 1
+fi
+
+# Check that the folder has been cloned from git and not downloaded, because submodules won't work...
+if [ ! -d ".git" ]; then
+	red_echo "You have to clone this repository from git, not download it."
 	exit 1
 fi
 

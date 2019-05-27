@@ -2,16 +2,14 @@
 #ifndef PROJECT_MAP_OBJECTS_H
 #define PROJECT_MAP_OBJECTS_H
 
-#include <string>
-#include <vector>
-
 #include <ros/ros.h>
 
 #include "shapes.h"
 
+#include <geometry_tools/point.h>
 
-const std::string MAP_GET_SERVICE = "memory/map/get";
-const std::string MAP_OBJECTS = "/terrain/walls/layer_belt/*";
+#include <string>
+#include <vector>
 
 class MapObjects {
 protected:
@@ -23,7 +21,7 @@ public:
 
     void fetch_map_objects();
 
-    bool contains_point(float x, float y);
+    bool contains_point(Point point) const;
 
     MapObjects(ros::NodeHandle &nh) :
             nh_(nh) {}

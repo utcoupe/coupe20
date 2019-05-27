@@ -1,7 +1,7 @@
 #ifndef COLLISIONS_ROBOT_H
 #define COLLISIONS_ROBOT_H
 
-#include "collisions/position.h"
+#include "geometry_tools/position.h"
 #include "collisions/obstacle.h"
 #include "collisions/engine/velocity.h"
 #include "collisions/engine/constants.h"

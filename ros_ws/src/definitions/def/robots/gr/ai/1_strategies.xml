@@ -1,47 +1,39 @@
 <strategies>
 	<teams>
-		<team name="green"/>
-		<team name="orange"/>
+		<team name="left"/>
+		<team name="right"/>
 	</teams>
 
 	<!-- Real game strategies -->
-	<strategy name="button_bee_cube">
+	<strategy name="main_gr">
 		<actionref ref="game_setup"/>
 		<actionref ref="game_start"/>
 
-		<tasklist name="Main actions">
-			<actionref ref="activate_button"/>
-			<actionref ref="activate_bee"/>
-			<actionref ref="get_cubes"/>
-		</tasklist>
-	</strategy>
+		<tasklist main="Main actions">
+			<orderref ref="map_transfer" name="remove atom1 from map">
+				<mode>0</mode>
+				<old_path>map/spawn_atoms/spawn_atoms_rd/atom1</old_path>
+				<new_path>robot</new_path> <!-- TODO maniere moche de retirer de la map-->
+			</orderref>
+			<orderref ref="map_transfer" name="remove atom2 from map">
+				<mode>0</mode>
+				<old_path>map/spawn_atoms/spawn_atoms_gd/atom2</old_path>
+				<new_path>robot</new_path> <!-- TODO maniere moche de retirer de la map-->
+			</orderref>
+			<orderref ref="map_transfer" name="remove atom3 from map">
+				<mode>0</mode>
+				<old_path>map/spawn_atoms/spawn_atoms_bd/atom3</old_path>
+				<new_path>robot</new_path> <!-- TODO maniere moche de retirer de la map-->
+			</orderref>
 
-	<!-- Test strategies -->
-	<strategy name="test_button">
-		<actionref ref="game_setup"/>
-		<actionref ref="game_start"/>
+			<actionref ref="load_distrib1"/>
 
-		<tasklist name="Main actions">
-			<actionref ref="activate_button" reward="25"/>
-		</tasklist>
-	</strategy>
+			<actionref ref="load_distrib2"/>
+			
+			<actionref ref="load_distrib3"/>
 
-	<strategy name="test_button_bee">
-		<actionref ref="game_setup"/>
-		<actionref ref="game_start"/>
-
-		<tasklist name="Main actions">
-			<actionref ref="activate_button" reward="25"/>
-			<actionref ref="activate_bee" reward="50"/>
-		</tasklist>
-	</strategy>
-
-	<strategy name="cube">
-		<actionref ref="game_setup"/>
-		<actionref ref="game_start"/>
-
-		<tasklist name="Main actions">
-			<actionref ref="get_cubes" reward="5"/>
+			<actionref ref="unload_tower"/>
+			<actionref ref="unload_weight"/>
 		</tasklist>
 	</strategy>
 </strategies>

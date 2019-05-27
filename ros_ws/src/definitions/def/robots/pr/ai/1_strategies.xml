@@ -1,21 +1,25 @@
 <strategies>
 	<teams>
-		<team name="green"/>
-		<team name="orange"/>
+		<team name="left"/>
+		<team name="right"/>
 	</teams>
 
 	<!-- Real Game strategies -->
-	<strategy name="load_fire_bin_then_load_fire">
+	<strategy name="main_pr">
 		<actionref ref="game_start"/>
 		<tasklist name="Main actions">
-			<tasklist name="Do unicolor distributor">
-				<actionref ref="load_unicolor_distributor"/>
-				<actionref ref="fire_unicolor_balls" needsprevious="true"/>
+			<!-- Load the 3 side atoms and chaos atoms, and unload them in the accelerator -->
+			<tasklist name="First Cycle">
+				<actionref ref="load_side_atoms"/>
+				<actionref ref="load_chaos_atoms"/>
+				<actionref ref="unload_tower" name="Unload1"/>
 			</tasklist>
-			<tasklist name="Do multicolor distributor">
-				<actionref ref="load_multicolor_distributor"/>
-				<actionref ref="unload_multicolor_distributor" needsprevious="true"/>
+			
+			<tasklist name="Second cycle">
+				<actionref ref="load_gr_tower"/>
+				<actionref ref="unload_tower" name="Unload2"/>
 			</tasklist>
+
 			<orderref ref="delay" name="10 points no game over" reward="10"/>
 			<actionref ref="goto_spawn"/>
 		</tasklist>
@@ -23,31 +27,12 @@
 
 
 	<!-- Test strategies -->
-	<strategy name="canon_tests">
+	<strategy name="test_load_simple">
 		<actionref ref="game_start"/>
 
 		<tasklist name="Main actions">
-			<tasklist name="Do unicolor distributor">
-				<!--actionref ref="load_unicolor_distributor"/-->
-				<actionref ref="fire_full_clean_balls"/>
-			</tasklist>
-		</tasklist>
-	</strategy>
-
-	<strategy name="Load unidistrib =)">
-		<actionref ref="game_start"/>
-		<tasklist name="Main actions">
-			<tasklist name="Do unicolor distributor">
-				<actionref ref="load_unicolor_distributor"/>
-			</tasklist>
-		</tasklist>
-	</strategy>
-
-	<strategy name="bin_test">
-		<actionref ref="game_start"/>
-		<tasklist name="Main actions">
-			<tasklist name="Do unload a ball in bin">
-				<actionref ref="unload_ball_in_station"/>
+			<tasklist name="load_simple_atom">
+				<actionref ref="load_side_atoms"/>
 			</tasklist>
 		</tasklist>
 	</strategy>

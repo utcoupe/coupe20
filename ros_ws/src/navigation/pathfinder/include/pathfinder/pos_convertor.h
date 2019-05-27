@@ -1,7 +1,7 @@
 #ifndef POS_CONVERTOR_H
 #define POS_CONVERTOR_H
 
-#include <algorithm>
+#include <geometry_tools/point.h>
 
 /**
  * @brief This class provide functions to convert coordinates between ROS system and the pathfinding one 
@@ -19,30 +19,30 @@ public:
      * @param rosPos The coodinate in ROS system
      * @return The coordinate in pathfinder system
      */
-    std::pair<double,double> fromRosToMapPos (const std::pair<double,double>& rosPos) const;
+    Point fromRosToMapPos(const Point& rosPos) const;
     
     /**
      * @brief Converts a coodinate from pathfinding system to ROS system using the scales.
      * @param mapPos The coodinate in pathfinder system
      * @return The coordinate in ROS system
      */
-    std::pair<double,double> fromMapToRosPos (const std::pair<double,double>& mapPos) const;
+    Point fromMapToRosPos(const Point& mapPos) const;
     
-    double fromMapToRosDistance (const double& dist) const;
+    double fromMapToRosDistance (double dist) const;
     
-    double fromRosToMapDistance (const double& dist) const;
+    double fromRosToMapDistance (double dist) const;
     
     // Getters & Setters
-    void setSizes (std::pair<double,double> sizeRos, std::pair<double,double> sizeMap);
+    void setSizes (const Point& sizeRos, const Point& sizeMap) noexcept { setRosSize(sizeRos); setMapSize(sizeMap); }
     
-    void setRosSize(std::pair<double,double> sizeRos);
-    void setMapSize(std::pair<double,double> sizeMap);
+    void setRosSize(const Point& sizeRos) noexcept { _sizeRos = sizeRos; }
+    void setMapSize(const Point& sizeMap) noexcept { _sizeMap = sizeMap; }
     
-    void setInvertedY(bool invertedY) { _invertedY = invertedY; }
+    void setInvertedY(bool invertedY) noexcept { _invertedY = invertedY; }
     
 private:
     bool _invertedY;
-    std::pair<double,double> _sizeRos, _sizeMap;
+    Point _sizeRos, _sizeMap;
 };
 
 #endif // POS_CONVERTOR_H

@@ -1,4 +1,0 @@
-# No entry, if success return True, False if not
----
-string frame_id
-geometry_msgs/Pose2D position

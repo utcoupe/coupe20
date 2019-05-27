@@ -15,7 +15,7 @@ bool Ax12Driver::initialize(const std::string &port_name) {
         return false;
     }
 
-    int baud_rate = 2000000 / (BAUD_RATE_INDEX + 1);
+    int baud_rate = 2000000 / (BAUD_RATE_INDEX + 1); //see documentation
     if (!port_handler->setBaudRate(baud_rate)) {
         ROS_ERROR_STREAM("SDK could not set the baud rate at " << baud_rate);
         return false;

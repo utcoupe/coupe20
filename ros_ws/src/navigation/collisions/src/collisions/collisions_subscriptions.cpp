@@ -5,33 +5,30 @@
 #include "collisions/shapes/segment.h"
 #include "collisions/obstacle_velocity.h"
 
-#include "static_map/MapGet.h"
+#include "static_map/MapGetContainer.h"
 
-#include <nlohmann/json.hpp>
 #include <ros/duration.h>
 
 #include <cmath>
 #include <string>
 
-using namespace nlohmann;
-
-const double CACHE_TIME_TF2_BUFFER = 5.0;
-const std::size_t SIZE_MAX_QUEUE = 10;
+const double      CACHE_TIME_TF2_BUFFER  = 5.0;
+const std::size_t SIZE_MAX_QUEUE         = 10;
 
 const std::string NAVIGATOR_STATUS_TOPIC = "navigation/navigator/status";
 const std::string OBJECTS_TOPIC          = "recognition/objects_classifier/objects";
 const std::string ASSERV_SPEED_TOPIC     = "drivers/ard_asserv/speed";
 const std::string MAP_GET_SERVER         = "memory/map/get";
 
-const std::string NODE_NAME      = "collisions";
-const std::string NAMESPACE_NAME = "navigation";
+const std::string NODE_NAME              = "collisions";
+const std::string NAMESPACE_NAME         = "navigation";
 
-const std::string MAP_TF_FRAME          = "map";
-const std::string ROBOT_TF_FRAME        = "robot";
-const std::string PARAM_ROBOT_TYPE      = "/robot";
-const std::string DEFAULT_ROBOT_NAME    = "gr";
-const double      DEFAULT_ROBOT_WIDTH   = 0.4;
-const double      DEFAULT_ROBOT_HEIGHT  = 0.25;
+const std::string MAP_TF_FRAME           = "map";
+const std::string ROBOT_TF_FRAME         = "robot";
+const std::string PARAM_ROBOT_TYPE       = "/robot";
+const std::string DEFAULT_ROBOT_NAME     = "gr";
+const double      DEFAULT_ROBOT_WIDTH    = 0.4;
+const double      DEFAULT_ROBOT_HEIGHT   = 0.25;
 
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion) noexcept;
 
@@ -79,19 +76,22 @@ CollisionsSubscriptions::RobotPtr CollisionsSubscriptions::createRobot(ros::Node
     double width, height;
     std::string robotName = fetchRobotName(nhandle);
     try {
-        auto mapGetClient = nhandle.serviceClient<static_map::MapGet>(MAP_GET_SERVER);
-        static_map::MapGet msg;
-        msg.request.request_path = "/entities/" + robotName + "/shape/*";
-        ROS_INFO_STREAM("Waiting for service \"" << MAP_GET_SERVER << "\"");
-        mapGetClient.waitForExistence();
-        ROS_INFO_STREAM("Service found or timed out");
-        if (!mapGetClient.call(msg) || !msg.response.success)
-            throw ros::Exception("Call failed.");
-        json shape = json::parse(msg.response.response);
-        if (shape["type"] != "rect")
-            throw ros::Exception("Shape '" + shape.at("type").get<std::string>() + "' not allowed.");
-        width = shape["width"];
-        height = shape["height"];
+        // TODO
+//         auto mapGetClient = nhandle.serviceClient<static_map::MapGetContainer>(MAP_GET_SERVER);
+//         static_map::MapGetContainer msg;
+//         msg.request.path = "/entities/" + robotName + "/shape/*";
+//         ROS_INFO_STREAM("Waiting for service \"" << MAP_GET_SERVER << "\"");
+//         mapGetClient.waitForExistence();
+//         ROS_INFO_STREAM("Service found or timed out");
+//         if (!mapGetClient.call(msg) || !msg.response.success)
+//             throw ros::Exception("Call failed.");
+//         json shape = json::parse(msg.response.response);
+//         if (shape["type"] != "rect")
+//             throw ros::Exception("Shape '" + shape.at("type").get<std::string>() + "' not allowed.");
+//         width = shape["width"];
+//         height = shape["height"];
+        width = DEFAULT_ROBOT_WIDTH;
+        height = DEFAULT_ROBOT_HEIGHT;
     } catch(const ros::Exception& e) {
         ROS_WARN_STREAM(
             "Error when trying to contact '" << MAP_GET_SERVER << "' : " << e.what() 
@@ -152,7 +152,7 @@ void CollisionsSubscriptions::onNavStatus(const navigator::Status::ConstPtr& sta
     
     robotPathWaypoints_.clear();
     for (auto point: status->currentPath)
-        robotPathWaypoints_.emplace_back(point.x, point.y, point.theta);
+        robotPathWaypoints_.emplace_back(point);
 }
 
 void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObjects::ConstPtr& objects)
@@ -181,8 +181,8 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
             continue;
         }
         auto segShape = std::make_shared<CollisionsShapes::Segment>(
-            Point(seg.segment.first_point.x, seg.segment.first_point.y),
-            Point(seg.segment.last_point.x, seg.segment.last_point.y)
+            seg.segment.first_point,
+            seg.segment.last_point
         );
         newLidar.emplace_back(std::make_shared<Obstacle>(segShape));
     }
@@ -194,7 +194,7 @@ void CollisionsSubscriptions::onObjects(const objects_classifier::ClassifiedObje
         double velDist = std::hypot(circ.circle.velocity.x, circ.circle.velocity.y);
         double velAngle = std::atan2(circ.circle.velocity.y, circ.circle.velocity.x);
         auto circShape = std::make_shared<CollisionsShapes::Circle>(
-            Position(circ.circle.center.x, circ.circle.center.y, velAngle),
+            Position(circ.circle.center, velAngle),
             circ.circle.radius
         );
         auto velocity = std::make_shared<ObstacleVelocity>(
@@ -219,7 +219,8 @@ Position CollisionsSubscriptions::updateRobotPos()
         ty = transform.transform.translation.y;
         rz = quaternionToEuler(transform.transform.rotation).getAngle();
     } catch (tf2::TransformException &ex) {
-        ROS_WARN_STREAM(
+        ROS_WARN_STREAM_THROTTLE(
+                1,
                 "Error when trying to get " << ROBOT_TF_FRAME << " tf from "
                 << MAP_TF_FRAME << " tf: " << ex.what()
         );

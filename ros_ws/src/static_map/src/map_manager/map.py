@@ -2,15 +2,19 @@
 import time
 import rospy
 from map_loader import MapLoader, LoadingHelpers
-from map_bases import DictManager, RequestPath
 from map_attributes import Color
-from map_classes import Terrain, Zone, Waypoint, Entity, Container, Object
+from map_classes import Robot, Terrain, Waypoint, Container, Object, Class
 from map_teams import Team
 
-class Map():
-    MAP_DICT = None
+class MapDict():
     Dirty = True # Whether a service changed the dict since the last RViz Marker publish.
 
+    Terrain   = None # future Terrain instance
+    Objects   = None # future Container instance
+    Waypoints = []   # List of Waypoint instances
+    Robot     = None # future Container instance
+
+class MapManager():
     # Internal global variables
     Colors = []
     Teams = []
@@ -18,50 +22,49 @@ class Map():
 
     @staticmethod
     def load():
+        # Loading XML files
         starttime = time.time() * 1000
-        initdict_config    = MapLoader.loadFile("1_Config.yml")["config"]
-        initdict_terrain   = MapLoader.loadFile("2_Terrain.yml")["terrain"]
-        initdict_zones     = MapLoader.loadFile("3_Zones.yml")["zones"]
-        initdict_waypoints = MapLoader.loadFile("4_Waypoints.yml")["waypoints"]
-        initdict_entities  = MapLoader.loadFile("5_Entities.yml")["entities"]
-        initdict_objects   = MapLoader.loadFile("6_Objects.yml")
-        obj_classes = initdict_objects["classes"]
+        xml_config    = MapLoader.loadFile("1_config.xml")
+        xml_terrain   = MapLoader.loadFile("2_terrain.xml")
+        xml_waypoints = MapLoader.loadFile("3_waypoints.xml")
+        xml_objects   = MapLoader.loadFile("4_objects.xml")
+        xml_robot     = MapLoader.loadFile("5_robot.xml")
         rospy.loginfo("Loaded files in {0:.2f}ms.".format(time.time() * 1000 - starttime))
 
         # Setting current team to the default set one.
-        for team in initdict_config["teams"]:
-            if bool(initdict_config["teams"][team]["default"]) is True:
-                if Map.CurrentTeam != '':
+        for xml_team in xml_config.find("teams").findall("team"):
+            if "default" in xml_team.attrib and bool(xml_team.attrib["default"]):
+                if MapManager.CurrentTeam != "":
                     raise ValueError("ERROR Two or more teams have been set to default.")
-                Map.CurrentTeam = team
-            Map.Teams.append(Team(team, initdict_config["teams"][team]))
+                MapManager.CurrentTeam = xml_team.attrib["name"]
+            MapManager.Teams.append(Team(xml_team))
+        if MapManager.CurrentTeam == "":
+            raise ValueError("ERROR One team has to be set as default.")
 
         # Loading the color palette
-        for color in initdict_config["colors"]:
-            Map.Colors.append(Color(color, initdict_config["colors"][color]))
+        for xml_color in xml_config.find("colors").findall("color"):
+            MapManager.Colors.append(Color(xml_color))
 
-        # Instantiate objects before creating the map dict
-        for zone in initdict_zones:
-            initdict_zones[zone] = Zone(initdict_zones[zone])
-        for waypoint in initdict_waypoints:
-            initdict_waypoints[waypoint] = Waypoint(initdict_waypoints[waypoint])
-        for entity in initdict_entities:
-            initdict_entities[entity] = Entity(initdict_entities[entity], obj_classes)
+        # Constructing object classes
+        if not xml_objects.findall("classes"):
+            raise KeyError("Objects file must have a 'classes' tag.")
+        obj_classes = []
+        for c in xml_objects.find("classes").findall("class"):
+            obj_classes.append(Class(c, obj_classes))
 
-        # Create main Map dict
-        Map.MAP_DICT = DictManager({
-            "terrain":   Terrain(initdict_terrain),
-            "zones":     DictManager(initdict_zones),
-            "waypoints": DictManager(initdict_waypoints),
-            "entities":  DictManager(initdict_entities),
-            "objects":   Container(initdict_objects["objects"], obj_classes)
-        })
+        # Instantiate objects and create the map dict
+        MapDict.Terrain   = Terrain(xml_terrain)
+        xml_objects.attrib["name"] = "map"
+        MapDict.Objects   = Container(xml_objects, obj_classes)
+        MapDict.Waypoints = [Waypoint(w) for w in xml_waypoints.findall("waypoint")]
+        MapDict.Robot     = Robot(xml_robot, obj_classes)
+
         rospy.loginfo("Loaded map in {0:.2f}ms.".format(time.time() * 1000 - starttime))
 
     @staticmethod
     def swap_team(team_name):
-        if team_name != Map.CurrentTeam:
-            for team in Map.Teams:
+        if team_name != MapManager.CurrentTeam:
+            for team in MapManager.Teams:
                 if team.name == team_name:
                     team.swap()
                     return
@@ -69,28 +72,70 @@ class Map():
 
     @staticmethod
     def is_dirty():
-        dirty = Map.Dirty
-        Map.Dirty = False
+        dirty = MapManager.Dirty
+        MapManager.Dirty = False
         return dirty
+    
+    @staticmethod
+    def get_waypoint(name, position):
+        if name is not None and name is not '':
+            for w in MapDict.Waypoints:
+                if w.Name == name:
+                    return w
+        elif position is not None:
+            for w in MapDict.Waypoints:
+                if w.Position.X == position.X and w.Position.Y == position.Y:
+                    if position.HasAngle is True:
+                        if w.Position.A == position.A:
+                            return w
+                    else:
+                        return w
+        else:
+            rospy.logerr("    GET Request failed : incomplete waypoint must have a name or position already.")
+        return None
+    
+    @staticmethod
+    def get_container(path):
+        if path[0] == "map":
+            return MapDict.Objects.get_container(path[1:])
+        elif path[0] == "robot":
+            return MapDict.Robot.get_container(path[1:])
+        else:
+            rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
 
     @staticmethod
-    def get(requestpath):
-        if requestpath[0] != "/":
-            rospy.logerr("    GET Request failed : global search needs to start with '/'.")
-            return None
-        return Map.MAP_DICT.get(requestpath)
+    def get_context():
+        return MapDict.Terrain, MapDict.Robot.Shape
 
     @staticmethod
-    def get_objects(collisions_only = False):
-        return Map.MAP_DICT.Dict["objects"].get_objects(collisions_only)
-
+    def add_object(path, obj):
+        if path[0] == "map":
+            return MapDict.Objects.add_object(path, obj)
+        elif path[0] == "robot":
+            return MapDict.Robot.add_object(path, obj)
+        else:
+            rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
+    
     @staticmethod
-    def set(requestpath, mode, instance = None):
-        if requestpath[0] != "/":
-            rospy.logerr("    SET Request failed : global search needs to start with '/'.")
-            return None
-        return Map.MAP_DICT.set(requestpath, mode, instance)
+    def remove_object(path):
+        if path[0] == "map":
+            return MapDict.Objects.remove_object(path)
+        elif path[0] == "robot":
+            return MapDict.Robot.remove_object(path)
+        else:
+            rospy.logerr("   GET Request failed: first path element must be 'map' or 'robot'.")
+    
+    @staticmethod
+    def merge_object(path, obj):
+        pass
+        
 
     @staticmethod
     def transform(codes):
-        return Map.MAP_DICT.transform(codes)
+        if not MapDict.Objects.transform(codes):
+            return False
+        for w in MapDict.Waypoints:
+            if not w.transform(codes):
+                return False
+        return True
+        

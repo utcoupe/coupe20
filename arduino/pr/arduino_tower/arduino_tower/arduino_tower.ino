@@ -78,8 +78,6 @@ void tower_initialize() {
   // Initialize servos 
   servo_unload_1.write(POS_UNLOAD_INIT_1) ;
   servo_unload_2.write(POS_UNLOAD_INIT_2) ;    
-  // Initialize stepper to the ground 
-  lift_ground(); 
   // Initialize AX12 
   int success = move_ax12(1);  
   // Initialize door and flipper 
@@ -87,6 +85,8 @@ void tower_initialize() {
   door_msg.init_status = 1 ; 
   pub_door_action.publish(&door_msg); 
   door_msg.init_status = 0 ; 
+  // Initialize stepper to the ground 
+  lift_ground(); 
   // Message 
   event_msg.init_success = success ; 
   pub_tower_responses.publish(&event_msg); 
@@ -135,6 +135,7 @@ void open_door( bool open ) { // send msg to open or close the doors
 
 void lift_sas() { // bring the lift to the sas where it unloads the atoms 
   nh.loginfo("lift_sas"); 
+  stepper_load.enable(); 
   while ( digitalRead(button_up_pin) == LOW && game_status == 1) {
       stepper_load.moveStep(5,false); 
 
@@ -143,12 +144,14 @@ void lift_sas() { // bring the lift to the sas where it unloads the atoms
     }
   }
   delay(100) ; 
+  stepper_load.disable(); 
   lift_position = H_SAS_LOW ; 
 
 }
 
 void lift_ground() { // bring the lift to the ground ready to grab atom.s
   nh.loginfo("lift_sas"); 
+  stepper_load.enable(); 
   while ( digitalRead(button_down_pin) == LOW && game_status == 1 ) {
       stepper_load.moveStep(5,true); 
 
@@ -157,6 +160,7 @@ void lift_ground() { // bring the lift to the ground ready to grab atom.s
     }
   }
   delay(100) ; 
+  stepper_load.disable(); 
   lift_position = H_GROUND ; 
 }
 
@@ -176,23 +180,27 @@ nh.loginfo("move_lift");
 
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
+    stepper_load.enable(); 
     stepper_load.moveStep(lift_position - wanted_position,true); 
     while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
     delay(100) ; 
     lift_position = wanted_position ; 
+    stepper_load.disable(); 
     return 1 ; 
   }
 
   if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
     nh.loginfo("goes up"); 
+    stepper_load.enable() ; 
     stepper_load.moveStep(wanted_position-lift_position,false); 
     while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
     delay(100) ; 
     lift_position = wanted_position ; 
+    stepper_load.disable(); 
     return 1 ; 
   }
 
@@ -227,7 +235,7 @@ int unload_atom_sas () {
     success = move_lift(H_SAS_LOW) ; 
     if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
     if (success != 0) success = move_ax12(1) ; // open AX12 
-    if (success != 0 ) success = move_lift(H_FLOOR_1) ; 
+    if (success != 0 ) success = move_lift(H_GROUND) ; 
   }
   
   return success ; 
@@ -245,7 +253,7 @@ int load_atom_sas() {
       nh.loginfo("enough atoms"); 
       int success = move_lift(H_SAS_LOW); 
       if (success != 0 ) success = move_ax12(1) ; // open AX12 
-      if (success != 0) success = move_lift(H_FLOOR_1) ; 
+      if (success != 0) success = move_lift(H_GROUND) ; 
       nb_atom_in_sas = nb_atom_in ; 
       return success ; 
     }

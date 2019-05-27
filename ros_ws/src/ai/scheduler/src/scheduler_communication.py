@@ -17,6 +17,7 @@ import driver_ax12.msg
 
 #coupe19-specific
 import ard_tower.msg
+import ard_gr_front.msg
 
 class RequestTypes(object):
     PUB_MSG = 0
@@ -40,7 +41,10 @@ class RequestTypes(object):
             "/navigation/navigator/goto_action":         (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
             "/navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),
 
-            "/actuators/ard_tower":         (RequestTypes.PUB_MSG, ard_tower.msg.Tower),
+            #"/actuators/ard_tower/load":           (RequestTypes.PUB_MSG, ard_tower.msg.TowerLoad),
+            #"/actuators/ard_tower/unload":         (RequestTypes.PUB_MSG, ard_tower.msg.TowerUnload),
+            "/actuators/ard_gr_front/raise_thing":  (RequestTypes.PUB_MSG, ard_gr_front.msg.RaiseThing),
+            "/actuators/ard_gr_front/take_pucks":   (RequestTypes.PUB_MSG, ard_gr_front.msg.PucksTake),
 
             "/drivers/ard_asserv/set_pos":     (RequestTypes.SERVICE, ard_asserv.srv.SetPos),
             "/drivers/ard_asserv/pwm":         (RequestTypes.SERVICE, ard_asserv.srv.Pwm),

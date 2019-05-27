@@ -95,13 +95,28 @@
 				<auto_stop>1</auto_stop>
 			</orderref>
 
-			<!-- TODO move actuators : load 3 atoms and set colors -->
+			<team name="left">
+				<orderref ref="take_pucks"> <!-- p1 a gauche vu de face du GR-->
+					<p1>1</p1> <!-- B --> <!-- 1: to scale, 0: to tower-->
+					<p2>0</p2> <!-- G -->
+					<p3>0</p3> <!-- R -->
+				</orderref>
+			</team>
+			<team name="right">
+				<orderref ref="take_pucks">
+					<p1>0</p1> <!-- R -->
+					<p2>0</p2> <!-- G -->
+					<p3>1</p3> <!-- B -->
+				</orderref>
+			</team>
 
 			<orderref ref="navigator_goto_waypoint" name="exit distrib1">
 				<waypoint_name>way_distrib1_exit</waypoint_name>
 				<direction>0</direction> <!-- Backwards -->
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
+
+			<orderref ref="sort_atoms"/>
 		</actions>
 	</action>
 
@@ -119,13 +134,19 @@
 				<auto_stop>1</auto_stop>
 			</orderref>
 
-			<!-- TODO move actuators : load 3 atoms and set colors -->
+			<orderref ref="take_pucks"> <!-- p1 a gauche vu de face du GR-->
+				<p1>0</p1> <!-- R --> <!-- 1: to scale, 0: to tower-->
+				<p2>1</p2> <!-- G -->
+				<p3>0</p3> <!-- R -->
+			</orderref>
 
 			<orderref ref="navigator_goto_waypoint" name="go back">
 				<waypoint_name>way_distrib2_approach</waypoint_name>
 				<direction>0</direction> <!-- Backwards -->
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
+
+			<orderref ref="sort_atoms"/>
 		</actions>
 	</action>
 
@@ -143,13 +164,19 @@
 				<auto_stop>1</auto_stop>
 			</orderref>
 
-			<!-- TODO move actuators : load 3 atoms and set colors -->
+			<orderref ref="take_pucks"> <!-- p1 a gauche vu de face du GR-->
+				<p1>1</p1> <!-- B --> <!-- 1: to scale, 0: to tower-->
+				<p2>0</p2> <!-- R -->
+				<p3>1</p3> <!-- G -->
+			</orderref>
 
 			<orderref ref="navigator_goto_waypoint" name="go back">
 				<waypoint_name>way_distrib3_approach</waypoint_name>
 				<direction>0</direction> <!-- Backwards -->
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
+
+			<orderref ref="sort_atoms"/>
 		</actions>
 	</action>
 
@@ -165,7 +192,7 @@
 				<direction>1</direction> <!-- Forward -->
 			</orderref>
 
-			<!-- TODO move actuators : open tower doors -->
+			<orderref ref="open_tower"/>
 
 			<orderref ref="navigator_goto_waypoint" name="go back">
 				<waypoint_name>way_tower_approach</waypoint_name>
@@ -190,7 +217,7 @@
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
 
-			<!-- TODO move actuators : unload weight atoms -->
+			<orderref ref="open_door"/>
 		</actions>
 	</action>
 </actions>

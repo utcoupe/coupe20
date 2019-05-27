@@ -23,4 +23,30 @@
 			<param name="success" type="bool" condition="==">1</param>
 		</response>
 	</order>
+
+	<order ref="take_pucks" duration="1">
+		<message dest="/actuators/ard_gr_front/take_pucks">
+			<param name="p1" type="bool"/>
+			<param name="p2" type="bool"/>
+			<param name="p3" type="bool"/>
+		</message>
+	</order>
+
+	<order ref="sort_atoms" duration="1">
+		<message dest="/actuators/ard_gr_front/raise_thing">
+			<param name="thing_to_raise" type="int" preset="true">0</param>
+		</message>
+	</order>
+
+	<order ref="open_tower" duration="1">
+		<message dest="/actuators/ard_gr_front/raise_thing">
+			<param name="thing_to_raise" type="int" preset="true">1</param>
+		</message>
+	</order>
+
+	<order ref="open_door" duration="1">
+		<message dest="/actuators/ard_gr_front/raise_thing">
+			<param name="thing_to_raise" type="int" preset="true">2</param>
+		</message>
+	</order>
 </orders>

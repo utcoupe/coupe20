@@ -34,7 +34,6 @@ void publish_response (int event_type, bool success){
 
 void initialize(){
     selector.write(SELECTOR_TO_TOWER);
-    stepper_pucks_door.disable();
 }
 
 void stop(){
@@ -229,10 +228,10 @@ void on_raise_thing(const ard_gr_front::RaiseThing& msg){
     busy = false;
 }
 //Subscribers
-ros::Subscriber<game_manager::GameStatus>      sub_game_status("ai/game_manager/status",&on_game_status);
+ros::Subscriber<game_manager::GameStatus>      sub_game_status("/ai/game_manager/status",&on_game_status);
 
-ros::Subscriber<ard_gr_front::RaiseThing>      sub_raise_thing("actionneurs/raise_thing", &on_raise_thing);
-ros::Subscriber<ard_gr_front::PucksTake>       sub_take_pucks("actionneurs/take_pucks",&on_take_pucks);
+ros::Subscriber<ard_gr_front::RaiseThing>      sub_raise_thing("/actionneurs/ard_gr_front/raise_thing", &on_raise_thing);
+ros::Subscriber<ard_gr_front::PucksTake>       sub_take_pucks("/actionneurs/ard_gr_front/take_pucks",&on_take_pucks);
 
 void connectPins(){
 

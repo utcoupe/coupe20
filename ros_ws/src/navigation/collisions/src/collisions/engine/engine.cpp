@@ -1,24 +1,20 @@
 #include "collisions/engine/engine.h"
 
-#include <ros/console.h>
+#include "collisions/obstacle.h"
 
 #include <cmath>
 
 using namespace CollisionResolver;
 
-std::vector<PtrObstacle> CollisionResolver::findCollisions(const std::vector<PtrShape>& robotShapes, const std::vector<PtrObstacle>& obstacleShapes) {
-    std::vector<PtrObstacle> collisions;
-    for (auto& robotShape: robotShapes) {
-        for (auto& obstShape: obstacleShapes) {
-            bool intersecting = false;
-            if (robotShape->isCollidingWith(obstShape->getShape().get())) {
+std::vector<const Obstacle*> CollisionResolver::findCollisions(const std::vector<PtrShape>& robotShapes, const std::vector<const Obstacle*>& obstacleShapes) {
+    std::vector<const Obstacle*> collisions;
+    for (const auto& robotShape: robotShapes) {
+        for (const auto* obstShape: obstacleShapes) {
+            if (robotShape->isCollidingWith(obstShape->getShape())) {
                 collisions.push_back(obstShape);
-                intersecting = true;
-            }
-            auto obstVelShapes = obstShape->getVelocityShapes();
-            if (!intersecting) {
-                for (auto velShape: obstVelShapes) {
-                    if (robotShape->isCollidingWith(velShape.get())) {
+            } else {
+                for (const auto& velShape: obstShape->getVelocityShapes()) {
+                    if (robotShape->isCollidingWith(*velShape)) {
                         collisions.push_back(obstShape);
                     }
                 }

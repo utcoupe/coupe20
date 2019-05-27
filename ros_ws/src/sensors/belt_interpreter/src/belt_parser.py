@@ -52,6 +52,10 @@ class BeltParser(object):
             if "type" not in sensor.attrib:
                 rospy.logerr("Can't parse sensor definition: a 'type' attribute is required. Skipping this sensor.")
                 continue
+            
+            if "layer" not in sensor.attrib:
+                rospy.logerr("Can't parse sensor definition: a 'layer' attribute is required. Skipping this sensor.")
+                continue
 
             if sensor.attrib["type"] not in self.Params:
                 rospy.logerr("Can't parse sensor definition: {} sensor type is not defined. Skipping this sensor."
@@ -63,7 +67,8 @@ class BeltParser(object):
                 "x": float(sensor.find("x").text),
                 "y": float(sensor.find("y").text),
                 "a": float(sensor.find("a").text),
-                "type": sensor.attrib["type"]
+                "type": sensor.attrib["type"],
+                "layer": sensor.attrib["layer"]
             })
 
 

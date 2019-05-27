@@ -47,19 +47,18 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  TowerLoadResponse.msg
-  TowerLoad.msg
-  TowerUnload.msg
-  TowerUnloadResponse.msg
-)
+ add_message_files(
+   FILES
+   Tower.msg 
+   TowerResponses.msg
+   AX12Responses.msg 
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
 #   Service1.srv
-#   Service2.srv 
+#   Service2.srv
 # )
 
 ## Generate actions in the 'action' folder

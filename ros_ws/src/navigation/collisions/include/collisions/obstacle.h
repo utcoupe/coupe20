@@ -9,23 +9,71 @@
 
 class Obstacle {
 public:
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
-    using VelocityPtr = std::shared_ptr<ObstacleVelocity>;
+    /**
+     * Alias to manipulate shapes
+     */
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
     
-    Obstacle(ShapePtr shape, VelocityPtr velocity = nullptr);
+    /**
+     * Alias to manipulate obstacle velocity
+     */
+    using VelocityPtr = std::unique_ptr<ObstacleVelocity>;
     
-    ShapePtr getShape() const noexcept { return shape_; }
+    /**
+     * Main constructor of Obstacle
+     * 
+     * @param shape The shape of the obstacle
+     * @param velocity The velocity of the obstacle
+     */
+    Obstacle(ShapePtr&& shape, VelocityPtr&& velocity);
     
-    std::vector<ShapePtr> getVelocityShapes (double maxDist = -1.0);
+    /**
+     * Main constructor of Obstacle
+     * 
+     * @param shape The shape of the obstacle
+     */
+    Obstacle(ShapePtr&& shape);
     
-    Position getPos() const { return shape_->getPos(); }
+    /**
+     * Returns the static shape of the obstacle
+     * 
+     * TODO As const reference
+     * 
+     * @return The shape
+     */
+    const CollisionsShapes::AbstractShape& getShape() const noexcept { return *m_shape; }
     
+    /**
+     * Returns the velocity shapes of the obstacle.
+     * 
+     * The maxDist correspond to the maximum projection of the velocity shape. When maxDist = -1.0, it is deactivated.
+     * 
+     * @param maxDist The maximum projection distance
+     * @return The shapes describing the theroretical object velocity
+     */
+    const std::vector<ShapePtr>& getVelocityShapes (double maxDist = -1.0) const;
+    
+    /**
+     * Retuns the object position
+     * 
+     * @return The object position
+     */
+    const Position& getPos() const { return m_shape->getPos(); }
+    
+    /**
+     * Returns the object lifetime since its creation
+     * 
+     * @return The object age
+     */
     std::chrono::duration<double> getAge() const;
     
 protected:
-    ShapePtr shape_;
-    VelocityPtr velocity_;
-    std::chrono::system_clock::time_point spawnTime_ = std::chrono::system_clock::now();
+    /** The main shape of the object **/
+    ShapePtr m_shape;
+    /** The velocity of the object **/
+    VelocityPtr m_velocity;
+    /** The object birthtime **/
+    const std::chrono::system_clock::time_point m_spawnTime = std::chrono::system_clock::now();
 };
 
 #endif // COLLISIONS_OBSTACLE_H

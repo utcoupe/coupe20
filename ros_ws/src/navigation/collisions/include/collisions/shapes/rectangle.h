@@ -10,26 +10,26 @@ namespace CollisionsShapes {
     
 class Rectangle: public AbstractShape {
 public:
-    Rectangle(Position pos, double width, double height) noexcept:
-        AbstractShape(pos), width_(width), height_(height)
+    Rectangle(const Position& pos, double width, double height) noexcept:
+        AbstractShape(pos), m_width(width), m_height(height)
     {}
     ~Rectangle() override = default;
     
-    bool isCollidingWith(const AbstractShape* otherShape) const override;
+    bool isCollidingWith(const AbstractShape& otherShape) const override;
     ShapeType getShapeType() const override { return ShapeType::RECTANGLE; }
     
     std::vector<Segment> toSegments() const;
     bool isInRect(Position pos) const;
     
-    double getWidth()  const noexcept { return width_; }
-    double getHeight() const noexcept { return height_; }
+    double getWidth()  const noexcept { return m_width; }
+    double getHeight() const noexcept { return m_height; }
     
 private:
-    double width_, height_;
+    double m_width, m_height;
     
-    std::vector<Point> getCorners() const;
-    bool isCollidingWithSegment(const Segment* otherSeg) const;
-    bool isCollidingWithRectangle(const Rectangle* otherRect) const;
+    std::vector<Point> m_getCorners() const;
+    bool m_isCollidingWithSegment(const Segment& otherSeg) const;
+    bool m_isCollidingWithRectangle(const Rectangle& otherRect) const;
 };
     
 } // namespace CollisionsShapes

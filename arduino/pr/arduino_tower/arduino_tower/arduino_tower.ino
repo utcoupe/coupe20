@@ -1,7 +1,8 @@
 //-----------------------------------------------
 // Arduino : PR tower 
 // Author : Floriane ALLAIRE Feb 2019 , UTCoupe 
-// Need AFMotor. h tower_variables.h and AFMotor.cpp in folder 
+// Need PololuA4984.h et PololuA4984.ino and tower_variables.h in folder 
+// search for : TODO , DANGER and URGENT 
 //------------------------------------------------
 
 // -----------------------------------------------------------
@@ -14,17 +15,20 @@
 #include <ard_tower/Tower.h> 
 #include <ard_tower/TowerResponses.h> 
 #include <ard_door/Door.h> 
-//#include <driver_ax12/Ax12Command.h> 
+#include <driver_ax12/Ax12Command.h> 
+
 
 
 ros :: NodeHandle nh ; 
 
-// Actuators includes 
+// Actuators includes &
 #include <Servo.h> 
 #include "PololuA4983.h"
 
 // Code includes 
 #include "tower_variables.h" 
+#include "stdio.h"
+#include "string.h" 
 
 // Servo motor 
 Servo servo_unload_1 ; // create servo object to control a servo
@@ -38,13 +42,14 @@ PololuA4983 stepper_load = PololuA4983(step_pin, dir_pin, en_pin, min_delay);
 // ---------------------------- ROS methods ----------------------- 
 // ----------------------------------------------------------------
 void on_game_status(const game_manager::GameStatus& msg){
-  game_status = msg.game_status;
+  //game_status = msg.game_status; // DANGER game status for test 
   //nh.loginfo("game_status_msg");
 }
 void on_tower(const ard_tower::Tower& msg){
   nh.loginfo("tower_msg");
-  load_content    = msg.load_content ; 
-  load_content_nb = msg.load_content_nb ; 
+  load_content                  = msg.load_content ; 
+  load_content_nb_tower_wanted  = msg.load_content_nb_tower_wanted ; 
+  load_content_nb_tower         = msg.load_content_nb_tower ; 
   unload_content  = msg.unload_content ; 
   if (msg.init_status == 1 && game_status == 1) {
     tower_initialize(); 
@@ -55,16 +60,14 @@ void on_tower(const ard_tower::Tower& msg){
 ros::Subscriber<game_manager::GameStatus> sub_game_status  ("ai/game_manager/status", &on_game_status)  ;
 ros::Subscriber<ard_tower::Tower>         sub_tower        ("actuators/ard_tower",    &on_tower)   ;  
 
-
 // ~ Publisher ~ 
 ard_tower::TowerResponses  event_msg ; 
 ard_door::Door door_msg ; 
-//driver_ax12::Ax12Command  ax12_event_msg ; 
+driver_ax12::Ax12Command  ax12_event_msg ; 
 
 ros::Publisher pub_tower_responses   ("actuators/ard_tower/event",   &event_msg); 
-ros::Publisher pub_door_action       ("actuators/ard_door/action",   &door_msg ); 
-//ros::Publisher pub_ax12_responses    ("actuators/ard_tower/ax12",    &ax12_event_msg); 
-
+ros::Publisher pub_door_action       ("actuators/ard_door/",   &door_msg ); 
+ros::Publisher pub_ax12_responses    ("drivers/ax12/simple_command", &ax12_event_msg); 
 
 // --------------------------------------------------------------
 // --------------------- FUNCTIONS ------------------------------ 
@@ -72,10 +75,20 @@ ros::Publisher pub_door_action       ("actuators/ard_door/action",   &door_msg )
 
 void tower_initialize() { 
   nh.loginfo("tower_initialize"); 
+  // Initialize servos 
   servo_unload_1.write(POS_UNLOAD_INIT_1) ;
   servo_unload_2.write(POS_UNLOAD_INIT_2) ;    
-  // initialize stepper 
-  event_msg.init_success = 1 ; 
+  // Initialize AX12 
+  int success = move_ax12(1);  
+  // Initialize door and flipper 
+  nh.loginfo("door and flipper init"); 
+  door_msg.init_status = 1 ; 
+  pub_door_action.publish(&door_msg); 
+  door_msg.init_status = 0 ; 
+  // Initialize stepper to the ground 
+  lift_ground(); 
+  // Message 
+  event_msg.init_success = success ; 
   pub_tower_responses.publish(&event_msg); 
   event_msg.init_success = 0 ; 
 }
@@ -85,41 +98,109 @@ void tower_initialize() {
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 int move_ax12(bool open ) { // 1 : open AX12 and 0 : close AX12 
-  nh.loginfo("move_ax12"); 
-  //ax12_event_msg.speed = 1000 ; 
-  //ax12_event_msg.mode = 0 ; 
-  //ax12_event_msg.motor_id = 2 ; 
-  //if ( open == 1 ) ax12_event_msg.position =135  ; // Open 
-  //if ( open == 0 ) ax12_event_msg.position =170 ;  // Close 
-  //pub_ax12_responses.publish(&ax12_event_msg) ; 
+  //nh.loginfo("move_ax12"); 
+  ax12_event_msg.speed = 1000 ; 
+  ax12_event_msg.mode = 0 ; 
+  ax12_event_msg.motor_id = 2 ; 
+  if ( open == 1 ) {
+    ax12_event_msg.position =135  ; // Open 
+    nh.loginfo("open_ax12"); 
+  }
+  if ( open == 0 ) {
+    ax12_event_msg.position = 175 ; // Close 
+    nh.loginfo("close_ax12"); 
+  }
+  pub_ax12_responses.publish(&ax12_event_msg) ; 
+  delay(500) ; 
   return 1 ; 
 }
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~ Door  ~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~
+
+void open_door( bool open ) { // send msg to open or close the doors 
+  nh.loginfo("open_doors"); 
+  door_msg.door_status = open ; // 1 : open and 0 : close 
+  door_msg.flipper_status = 0 ; 
+  door_msg.init_status = 0 ; 
+  pub_door_action.publish(&door_msg); 
+}
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~ Lift  ~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~
 
+void lift_sas() { // bring the lift to the sas where it unloads the atoms 
+  nh.loginfo("lift_sas"); 
+  stepper_load.enable(); 
+  while ( digitalRead(button_up_pin) == LOW && game_status == 1) {
+      stepper_load.moveStep(5,false); 
+
+      while( stepper_load.getRemainingStep() !=0 && game_status == 1) {
+        stepper_load.update() ; 
+    }
+  }
+  delay(100) ; 
+  stepper_load.disable(); 
+  lift_position = H_SAS_LOW ; 
+
+}
+
+void lift_ground() { // bring the lift to the ground ready to grab atom.s
+  nh.loginfo("lift_sas"); 
+  stepper_load.enable(); 
+  while ( digitalRead(button_down_pin) == LOW && game_status == 1 ) {
+      stepper_load.moveStep(5,true); 
+
+      while( stepper_load.getRemainingStep() !=0 && game_status == 1 ) {
+        stepper_load.update() ; 
+    }
+  }
+  delay(100) ; 
+  stepper_load.disable(); 
+  lift_position = H_GROUND ; 
+}
+
+
 int move_lift(int wanted_position) {  // move lift to the correct floor 
 nh.loginfo("move_lift"); 
+
+  if (wanted_position == H_GROUND && game_status == 1 ) { // exact position with switch 
+    lift_ground() ; 
+    return 1 ; 
+  }
+
+  if (wanted_position == H_SAS_LOW && game_status == 1) { // exact positioin with switch 
+    lift_sas() ; 
+    return 1 ; 
+  }
+
   if ( lift_position > wanted_position && wanted_position >= H_GROUND && game_status == 1 ){  // go down 
     nh.loginfo("goes down"); 
+    stepper_load.enable(); 
     stepper_load.moveStep(lift_position - wanted_position,true); 
-    while( stepper_load.getRemainingStep() >0 ) {
+    while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
-    delay(500) ; 
+    delay(100) ; 
     lift_position = wanted_position ; 
+    stepper_load.disable(); 
     return 1 ; 
   }
 
   if (lift_position < wanted_position && wanted_position <= H_SAS_LOW && game_status == 1 ) { // go up 
     nh.loginfo("goes up"); 
+    stepper_load.enable() ; 
     stepper_load.moveStep(wanted_position-lift_position,false); 
-    while( stepper_load.getRemainingStep() >0 ) {
+    while( stepper_load.getRemainingStep() > 0 ) {
       stepper_load.update() ; 
     }
-    delay(500) ; 
+    delay(100) ; 
     lift_position = wanted_position ; 
+    stepper_load.disable(); 
     return 1 ; 
   }
 
@@ -135,26 +216,26 @@ nh.loginfo("move_lift");
 
 int unload_atom_sas () {
   nh.loginfo("unload_atom_sas"); 
-  int success ; 
+  int success = 0 ; 
   if (nb_atom_in > MAX_ATOM_SAS && nb_atom_in_sas == 0 && game_status == 1 ) { // not enough space in sas for all atoms 
     nh.loginfo("not enough space"); 
-    float nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
+    int nb_atom_out_right = nb_atom_out ; // difference between out with slider or with pliers 
     success = unload_atom_pliers() ;   // nb_atom_in = 0 at this point and nb_atom_out will change 
-    float nb_atom_out_wrong = nb_atom_out - nb_atom_out_right ; 
+    int nb_atom_out_wrong = nb_atom_out - nb_atom_out_right ; 
     if (success != 0 ) success = load_atom_tower(nb_atom_out_wrong,MAX_ATOM_SAS) ; 
     if (success != 0 ) nb_atom_out_wrong = nb_atom_out_wrong - nb_atom_in ; // with nb_atom_in = MAX_ATOM_SAS
-    if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
+    if (success != 0 ) success = move_lift(H_SAS_LOW) ; //bring to sas 
     if (success != 0) nb_atom_in_sas = MAX_ATOM_SAS  ; 
     if (success != 0 ) success = move_ax12(1);  // open AX12 
-    if (success != 0) success = move_lift(H_FLOOR_1) ; 
+    if (success != 0) success = move_lift(H_GROUND) ; 
     if (success != 0)  success = load_atom_tower(nb_atom_out_wrong, nb_atom_out_wrong) ; 
   }
   else { // enough space for all the atoms 
     nh.loginfo(" enough space"); 
-    if (success != 0 ) success = move_lift(H_SAS_LOW) ; 
+    success = move_lift(H_SAS_LOW) ; 
     if (success != 0 ) nb_atom_in_sas = nb_atom_in ; 
     if (success != 0) success = move_ax12(1) ; // open AX12 
-    if (success != 0 ) success = move_lift(H_FLOOR_1) ; 
+    if (success != 0 ) success = move_lift(H_GROUND) ; 
   }
   
   return success ; 
@@ -162,7 +243,7 @@ int unload_atom_sas () {
 
 
 int load_atom_sas() {
-  nh.loginfo("load_atom_sas"); 
+  nh.loginfo("load_atom_sas");
   if (nb_atom_in<MAX_ATOM_SAS){
     nh.loginfo("not enough atom.s"); 
     return 1 ; 
@@ -172,7 +253,7 @@ int load_atom_sas() {
       nh.loginfo("enough atoms"); 
       int success = move_lift(H_SAS_LOW); 
       if (success != 0 ) success = move_ax12(1) ; // open AX12 
-      if (success != 0) success = move_lift(H_FLOOR_1) ; 
+      if (success != 0) success = move_lift(H_GROUND) ; 
       nb_atom_in_sas = nb_atom_in ; 
       return success ; 
     }
@@ -188,7 +269,7 @@ int load_atom_sas() {
 // ~~~~~~~~~~~~~~~~~~~~~~
 
 void unload_atom() {
-  int success ; 
+  int success = 1 ; 
   if (unload_content == 1 && game_status == 1 ) { //unload atom with slider 
     success = unload_atom_slider() ; 
 
@@ -232,11 +313,14 @@ int unload_atom_slider() {
     servo_unload_1.write(POS_UNLOAD_INIT_1); 
     servo_unload_2.write(POS_UNLOAD_INIT_2); 
     //open  
-    delay(500) ; 
+    delay(1000) ; 
     nb_atom_in     -= 1 ; 
     nb_atom_in_sas -= 1 ; 
     nb_atom_out    += 1 ; 
     success = 1 ; 
+    door_msg.flipper_status = 1 ; 
+    pub_door_action.publish(&door_msg); 
+    door_msg.flipper_status = 1 ; 
   }
 
   if (nb_atom_in_sas == 0 && nb_atom_in > 0 && game_status == 1) {
@@ -248,11 +332,11 @@ int unload_atom_slider() {
 
 int unload_atom_pliers() { 
   nh.loginfo("unload_atom_pliers") ; 
-  int success ; 
+  int success = 1 ; 
   if ( nb_atom_in - nb_atom_in_sas != 0 ) {
     nh.loginfo("atoms drop"); 
     success = move_ax12(1) ; // AX12 open 
-    nb_atom_out =  nb_atom_in - nb_atom_in_sas ; 
+    nb_atom_out +=  nb_atom_in - nb_atom_in_sas ; 
     nb_atom_in  = nb_atom_in_sas ; 
     return 1 ; 
   }
@@ -273,7 +357,7 @@ void load_atom() {
     success = load_atom_single() ;  //load one atom and ingame 
   }  
   if (load_content == 2 && game_status == 1) {  // TODO Specify size of tower the whole with messages (See with AI)
-    success = load_atom_tower(load_content_nb,load_content_nb) ;   //load tower of atoms and ingame
+    success = load_atom_tower(load_content_nb_tower,load_content_nb_tower_wanted) ;   //load tower of atoms and ingame
   }
   if (success != -1 ) {
     event_msg.load_success = success ; 
@@ -287,7 +371,7 @@ void load_atom() {
 
 int load_atom_single() {
   nh.loginfo("load_atom_single") ; 
-  int success ; 
+  int success = 1 ; 
   if (nb_atom_in-nb_atom_in_sas == 0){ //pliers empty 
     success = move_ax12(1) ; // open 
     if (success != 0 ) success = move_lift(H_GROUND) ; 
@@ -306,9 +390,9 @@ int load_atom_single() {
 
 int load_atom_tower(float nb_atom_tower, float nb_atom_wanted) {
   nh.loginfo("load_atom_tower") ; 
-  int success ; 
+  int success = 1 ; 
   if (nb_atom_in - nb_atom_in_sas == 0 ) {  // will only do this case !! 
-    success = move_lift(nb_atom_tower-nb_atom_wanted*300) ; // TODO replace 300 with constante 
+    success = move_lift((nb_atom_tower-nb_atom_wanted)*H) ; // TODO replace 300 with constante 
     if (success != 0 ) success = move_ax12(0) ; //close
     if (success != 0) nb_atom_in = nb_atom_wanted ; 
     nh.loginfo("tower taken"); 
@@ -330,11 +414,15 @@ void setup() {
  
   nh.advertise(pub_tower_responses); 
   nh.advertise(pub_door_action); 
-//  nh.advertise(pub_ax12_responses); 
+  nh.advertise(pub_ax12_responses); 
 
   // Servo Actuator init 
   servo_unload_1.attach(servo_unload_pin_1) ; 
   servo_unload_2.attach(servo_unload_pin_2) ; 
+
+  // Switch init 
+  pinMode(button_up_pin, INPUT); 
+  pinMode(button_down_pin, INPUT); 
   
 }
 

@@ -4,24 +4,25 @@ This code was developed with a Wemos D1 Mini (ESP8266) and a 128x64 i2c OLED.
 Author: Pierre LACLAU, December 2017, UTCoupe.
 */
 
+//Set pins 
 #include "pins.h"
 
 // Including rosserial
 #include <ros.h>
-#include <drivers_ard_hmi/SetStrategies.h>  // ROS sets strategy names for displaying on hmi.
-#include <drivers_ard_hmi/SetTeams.h>       // ROS sets teams names for displaying on hmi.
-#include <drivers_ard_hmi/HMIEvent.h>       // HMI sends events : JACK, GAME_STOP
-#include <drivers_ard_hmi/ROSEvent.h>       // ROS sends events : ASK_JACK, GAME_STOP
-#include <ai_game_manager/GameStatus.h>      // ROS sends game and init status (to  determine when RPi ready).
-#include <ai_game_manager/GameTime.h>              // ROS sends the timer status (for the ingame progress bar).
-#include <ai_scheduler/AIScore.h>           // ROS sends the timer status (for the ingame progress bar).
+#include <ard_hmi/SetStrategies.h>  // ROS sets strategy names for displaying on hmi.
+#include <ard_hmi/SetTeams.h>       // ROS sets teams names for displaying on hmi.
+#include <ard_hmi/HMIEvent.h>       // HMI sends events : JACK, GAME_STOP
+#include <ard_hmi/ROSEvent.h>       // ROS sends events : ASK_JACK, GAME_STOP
+#include <game_manager/GameStatus.h>      // ROS sends game and init status (to  determine when RPi ready).
+#include <game_manager/GameTime.h>              // ROS sends the timer status (for the ingame progress bar).
+#include <scheduler/AIScore.h>           // ROS sends the timer status (for the ingame progress bar).
 ros::NodeHandle nh;
 
 //Creating OLED display instances
 #include <Wire.h>    // Only needed for Arduino 1.6.5 and earlier
 #include "SSD1306.h" // alias for `#include "SSD1306Wire.h"`
 #include "OLEDDisplayUi.h"
-SSD1306  display(0x3c, LCD_SDA, LCD_SCK);
+(SSD1306  display(0x3c, LCD_SDA, LCD_SCK);)
 OLEDDisplayUi ui(&display);
 
 //Component variables
@@ -69,12 +70,15 @@ float elapsed_time = -1;
 bool _is_arming = false;
 bool _is_launching = false;
 
+bool _is_emergency = true  ; // not use while no pin for emergency
+
 //Input
 #define PIN_BTN_VCC_1 BTN_L2
 #define PIN_BTN_VCC_2 BTN_L1
 #define PIN_BTN_IN_1  BTN_R1
 #define PIN_BTN_IN_2  BTN_R2
 #define PIN_JACK      JACK
+//#define PIN_EMERGENCY EMERGENCY  not enough pin on the arduino
 
 bool _prev_up_state    = false;
 bool _prev_down_state  = false;
@@ -109,7 +113,7 @@ void check_input() {
     digitalWrite(PIN_BTN_VCC_1, LOW);
     digitalWrite(PIN_BTN_VCC_2, HIGH);
     delay(2);
-    left_pressed = digitalRead(PIN_BTN_IN_1) && !_prev_left_state;
+    left_pressed = digitalRead(PIN_BTN_IN_1) && !_prev_left_state;   //compare the one now and the one before 
     _prev_left_state = digitalRead(PIN_BTN_IN_1);
     right_pressed = digitalRead(PIN_BTN_IN_2) && !_prev_right_state;
     _prev_right_state = digitalRead(PIN_BTN_IN_2);
@@ -135,21 +139,21 @@ void update_leds() {
 
 
 //ROS methods
-void on_set_strategies(const drivers_ard_hmi::SetStrategies& msg){
+void on_set_strategies(const ard_hmi::SetStrategies& msg){
   strats_count = msg.strategies_names_length;
   for(int i=0; i < msg.strategies_names_length; i++) {
     strats[i] = msg.strategies_names[i];
   }
 }
 
-void on_set_teams(const drivers_ard_hmi::SetTeams& msg){
+void on_set_teams(const ard_hmi::SetTeams& msg){
   teams_count = msg.teams_names_length;
   for(int i=0; i < msg.teams_names_length; i++) {
     teams[i] = msg.teams_names[i];
   }
 }
 
-void on_game_status(const ai_game_manager::GameStatus& msg){
+void on_game_status(const game_manager::GameStatus& msg){
     game_status = msg.game_status;
     init_status = msg.init_status;
 
@@ -157,30 +161,30 @@ void on_game_status(const ai_game_manager::GameStatus& msg){
         ui.switchToFrame(5);
 }
 
-void on_game_timer(const ai_game_manager::GameTime& msg){
+void on_game_timer(const game_manager::GameTime& msg){
     if(msg.is_active) {
         game_duration = msg.game_time_duration;
         elapsed_time = msg.game_elapsed_time;
     }
 }
 
-void on_score(const ai_scheduler::AIScore& msg){
+void on_score(const scheduler::AIScore& msg){
     current_score = msg.score;
 }
 
-void on_ros_event(const drivers_ard_hmi::ROSEvent& msg){
+void on_ros_event(const ard_hmi::ROSEvent& msg){
     if(msg.event == 0) //asked to respond for JACK
         ui.switchToFrame(4);
 }
 
-ros::Subscriber<drivers_ard_hmi::SetStrategies> sub_strats     ("feedback/ard_hmi/set_strategies", &on_set_strategies);
-ros::Subscriber<drivers_ard_hmi::SetTeams>      sub_teams      ("feedback/ard_hmi/set_teams", &on_set_teams);
-ros::Subscriber<drivers_ard_hmi::ROSEvent>      sub_ros_events ("feedback/ard_hmi/ros_event", &on_ros_event);
-ros::Subscriber<ai_game_manager::GameStatus>    sub_game_status("ai/game_manager/status",     &on_game_status);
-ros::Subscriber<ai_game_manager::GameTime>             sub_game_timer ("ai/game_manager/time",       &on_game_timer);
-ros::Subscriber<ai_scheduler::AIScore>          sub_score      ("ai/scheduler/score",         &on_score);
+ros::Subscriber<ard_hmi::SetStrategies> sub_strats     ("feedback/ard_hmi/set_strategies", &on_set_strategies);
+ros::Subscriber<ard_hmi::SetTeams>      sub_teams      ("feedback/ard_hmi/set_teams", &on_set_teams);
+ros::Subscriber<ard_hmi::ROSEvent>      sub_ros_events ("feedback/ard_hmi/ros_event", &on_ros_event);
+ros::Subscriber<game_manager::GameStatus>    sub_game_status("ai/game_manager/status",     &on_game_status);
+ros::Subscriber<game_manager::GameTime>             sub_game_timer ("ai/game_manager/time",       &on_game_timer);
+ros::Subscriber<scheduler::AIScore>          sub_score      ("ai/scheduler/score",         &on_score);
 
-drivers_ard_hmi::HMIEvent hmi_event_msg;
+ard_hmi::HMIEvent hmi_event_msg;
 ros::Publisher hmi_event_pub("feedback/ard_hmi/hmi_event", &hmi_event_msg);
 
 
@@ -240,14 +244,53 @@ void drawHelloFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, 
     if(init_status == -1) drawBigCentralMessageComponent(display, state, x, y, "WAIT");
     else drawBigCentralMessageComponent(display, state, x, y, "READY");
 
-    if(game_status == 0 && init_status != 0 && strats_count && teams_count)
-        ui.nextFrame();
-    if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
-        ui.nextFrame();
+     if(game_status == 0 && init_status != 0 && strats_count && teams_count)
+            ui.nextFrame();
+     if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
+            ui.nextFrame();
+    
+    /*  not use while no pin for emergency
+    if (digitalread(PIN_EMERGENCY) == 0 ){  
+        _is_emergency = true ; 
+        ui.nextFrame() ; 
+    }
+    else {   //if emergency off skip the frame of check_emergency 
+        _is_emergency = false ; 
+        if(game_status == 0 && init_status != 0 && strats_count && teams_count)
+            ui.switchToFrame(uint8_t 2);
+            //ui.nextFrame();
+        if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
+            ui.switchToFrame(uint8_t 2);
+            //ui.nextFrame();
+    }
+    */
+    
+}
+
+void check_emergency (OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y){ // make sure the emergency bottom isn't put on 
+    current_frame = 1 ; 
+    drawFrameTitleComponent(display, state, x, y, "Emergency check ");
+
+    drawBigCentralMessageComponent(display, state, x, y, " Untrigger the emergency "); 
+    
+    /* not use while no pin for emergency
+    if ( _is_emergency ){  // pass the frame only if emergency off 
+        if (digitalread(PIN_EMERGENCY) == 1 ){  // 1 if their is 5V or 0 if not 
+            _is_emergency = false ; 
+            if(game_status == 0 && init_status != 0 && strats_count && teams_count)
+                ui.nextFrame();
+            if(right_pressed && game_status != -1) // go to next screen if rpi is alive only. 
+                ui.nextFrame();
+        }
+        else {
+           drawStringMaxWidth(int16_t x, int16_t y, int16_t 20 , "Untrigger the emergency");
+        }
+    }
+    */
 }
 
 void drawTeamFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 1;
+    current_frame = 2;
     drawFrameTitleComponent(display, state, x, y, "Team select");
     drawMCQComponent(display, state, x, y, teams, teams_count);
 
@@ -270,7 +313,7 @@ void drawTeamFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, i
 }
 
 void drawStrategyFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 2;
+    current_frame = 3;
     drawFrameTitleComponent(display, state, x, y, "Strat select");
     drawMCQComponent(display, state, x, y, strats, strats_count);
 
@@ -293,7 +336,7 @@ void drawStrategyFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t 
 }
 
 void drawArmFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 3;
+    current_frame = 4;
     drawFrameTitleComponent(display, state, x, y, "Calibration");
     if(!_is_arming) drawBigCentralMessageComponent(display, state, x, y, "ARM?");
     else drawBigCentralMessageComponent(display, state, x, y, "ARMING...");
@@ -314,7 +357,7 @@ void drawArmFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, in
 }
 
 void drawJackFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 4;
+    current_frame = 5;
     drawFrameTitleComponent(display, state, x, y, "Jack");
     if(!_is_launching) {
         if(_prev_jack_state) drawBigCentralMessageComponent(display, state, x, y, "JACK?");
@@ -338,7 +381,7 @@ void drawJackFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, i
 }
 
 void drawInGameFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    current_frame = 5;
+    current_frame = 6;
     ui.disableIndicator();
     drawFrameTitleComponent(display, state, x, y, "In Game...");
     
@@ -356,8 +399,8 @@ void drawInGameFrame(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x,
 }
 
 // frames are the single views that slide in
-FrameCallback frames[] = {drawHelloFrame, drawTeamFrame, drawStrategyFrame, drawArmFrame, drawJackFrame, drawInGameFrame};
-int frameCount = 6;
+FrameCallback frames[] = {drawHelloFrame, check_emergency , drawTeamFrame, drawStrategyFrame, drawArmFrame, drawJackFrame, drawInGameFrame};
+int frameCount = 7;
 
 void setup() {
     pinMode(PIN_BTN_VCC_1, OUTPUT); // init input buttons
@@ -368,7 +411,9 @@ void setup() {
 
     pinMode(PIN_LED_ALIVE, OUTPUT);
     pinMode(PIN_LED_INIT, OUTPUT);
-
+     
+    //nh.getHardware()->setBaud(57600); //test : set baud rate 
+  
     nh.initNode();
     nh.subscribe(sub_strats);
     nh.subscribe(sub_teams);
@@ -380,7 +425,7 @@ void setup() {
     
     ui.setTargetFPS(30);
     
-    ui.setActiveSymbol(activeSymbol);
+    ui.setActiveSymbol(activeSymbol); 
     ui.setInactiveSymbol(inactiveSymbol);
     ui.setFrameAnimation(SLIDE_LEFT);
     ui.setFrames(frames, frameCount);

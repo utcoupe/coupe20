@@ -30,8 +30,8 @@ class String;
 // BEGIN_ORDERS - Do not remove this comment
 #define START       'S'     //no args, start the program
 #define HALT        'H'     //no args, halt the program
-#define	GOTOA 		'c' 	// x(int);y(int);a(decimal);direction(int) - (mm and radian), direction is optionnal : 1 is forward, -1 is backward, 0 is any; slow_go(bool)
-#define	GOTO 		'd' 	// x(int);y(int);direction(int) - (mm), direction is optionnal : 1 is forward, -1 is backward, 0 is any; slow_go(bool)
+#define	GOTOA 		'c' 	// x(int);y(int);a(decimal);direction(int),slow_go(bool) - (mm and radian), direction is optionnal : 1 is forward, -1 is backward, 0 is any; slow_go(bool)
+#define	GOTO 		'd' 	// x(int);y(int);direction(int),slow_go(bool) - (mm), direction is optionnal : 1 is forward, -1 is backward, 0 is any; slow_go(bool)
 #define	ROT 		'e' 	// a(decimal) - (radian), can't turn more than 1 turn
 #define ROTNOMODULO	'a' 	// a(decimal) - radian, can turn more than 1 turn
 #define	KILLG 		'f' 	// no args, go to next order
@@ -40,7 +40,7 @@ class String;
 #define	PIDRIGHT	'i' 	// p(decimal);i(decimal);d(decimal) - set right PID
 #define PIDALL 		'u' 	// p(decimal);i(decimal);d(decimal) - set both PID
 #define	GET_CODER 	'j' 	// no args, response : l(long);r(long)
-#define	PWM 		'k' 	// l(int);r(int);duration(int) - set left and right pwm for duration ms
+#define	PWM 		'k' 	// l(int);r(int);duration(int);auto_stop(bool) - set left and right pwm for duration ms
 #define	SPD 		'b' 	// l(int);a(int);duration(int) - set linear and angular spd for duration ms
 #define	ACCMAX 		'l' 	// a(int) - set max acceleration (mm/s-2)
 #define	SPDMAX 		'x' 	// v(int),r(decimal) - set max spd (mm/s) and rotation ratio

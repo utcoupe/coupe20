@@ -4,6 +4,10 @@
 		<params/>
 		<actions exec="all" order="linear">
 			<tasklist repeat="3">
+				<orderref ref="delay">
+					<duration>1</duration>
+				</orderref>
+
 				<orderref ref="ask_for_jack"/>
 			</tasklist>
 			<orderref ref="wait_for_jack"/>

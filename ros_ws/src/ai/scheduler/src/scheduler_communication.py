@@ -41,8 +41,7 @@ class RequestTypes(object):
             "/navigation/navigator/goto_action":         (RequestTypes.ACTION,  navigator.msg.DoGotoAction, navigator.msg.DoGotoGoal),
             "/navigation/navigator/gotowaypoint_action": (RequestTypes.ACTION,  navigator.msg.DoGotoWaypointAction, navigator.msg.DoGotoWaypointGoal),
 
-            #"/actuators/ard_tower/load":           (RequestTypes.PUB_MSG, ard_tower.msg.TowerLoad),
-            #"/actuators/ard_tower/unload":         (RequestTypes.PUB_MSG, ard_tower.msg.TowerUnload),
+            #"/actuators/ard_tower":                 (RequestTypes.PUB_MSG, ard_tower.msg.TowerLoad),
             "/actuators/ard_gr_front/raise_thing":  (RequestTypes.PUB_MSG, ard_gr_front.msg.RaiseThing),
             "/actuators/ard_gr_front/take_pucks":   (RequestTypes.PUB_MSG, ard_gr_front.msg.PucksTake),
 
@@ -98,7 +97,7 @@ class AICommunication():
             if dest not in self._cached_publishers:
                 rospy.loginfo("Creating and caching new publisher to '{}'.".format(dest))
                 self._cached_publishers[dest] = rospy.Publisher(dest, msg_class, queue_size=10)
-                time.sleep(0.05)
+                time.sleep(0.2)
 
             pub = self._cached_publishers[dest]
             pub.publish(**params)

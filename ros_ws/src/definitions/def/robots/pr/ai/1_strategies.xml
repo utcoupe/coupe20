@@ -7,6 +7,7 @@
 	<!-- Real Game strategies -->
 	<strategy name="main_pr">
 		<actionref ref="game_start"/>
+		
 		<tasklist name="Main actions">
 			<!-- Load the 3 side atoms and chaos atoms, and unload them in the accelerator -->
 			<tasklist name="First atoms cycle">

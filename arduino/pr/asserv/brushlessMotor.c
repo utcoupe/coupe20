@@ -48,25 +48,26 @@ void BrushlessMotorSetPwm(int motor_side, int pwm) {
 	else {
 		*last_pwm = pwm;
 	}
-	switch (motor_side) {
+	
+	switch (motor_side) { // black brushless controller
 		case MOTOR_LEFT:{
+			if(pwm < 0) { 
+				digitalWrite(MOTOR1_EN, LOW);
+				pwm = -1 * pwm;
+			}
+			else digitalWrite(MOTOR1_EN, HIGH);
+
 			analogWrite(MOTOR1_SPD, pwm);
-			if (pwm == NO_PWM) {
-				digitalWrite(MOTOR1_EN,LOW);
-			}
-			else {
-				digitalWrite(MOTOR1_EN,HIGH);
-			}
             break;
 		}
 		case MOTOR_RIGHT:{
+			if(pwm < 0) {
+				digitalWrite(MOTOR2_EN, LOW);
+				pwm = -1 * pwm;
+			}
+			else digitalWrite(MOTOR2_EN, HIGH);
+
 			analogWrite(MOTOR2_SPD, pwm);
-			if (pwm == NO_PWM) {
-				digitalWrite(MOTOR2_EN,LOW); 
-			}
-			else {
-				digitalWrite(MOTOR2_EN,HIGH);
-			}
 			break;
 		}
 	}

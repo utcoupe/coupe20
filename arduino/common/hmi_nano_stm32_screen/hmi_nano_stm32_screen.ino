@@ -1,7 +1,8 @@
 //-----------------------------------------------
 // Arduino : PR tower 
 // Author : Floriane ALLAIRE MAY 2019 , UTCoupe 
-// Need PololuA4984.h et PololuA4984.ino and tower_variables.h in folder 
+// STM32 : Nucleo 32  Nucleo F303K8 
+// Screen : SSD1306 
 // search for : TODO , DANGER and URGENT 
 //------------------------------------------------
 // include for scrren 
@@ -70,8 +71,10 @@ void on_game_status(const game_manager::GameStatus& msg){
 
 
  void on_ros_event(const ard_hmi::ROSEvent& msg){
-    if(msg.event == 0) //asked to respond for JACK
+    if(msg.event == 0) {//asked to respond for JACK
         ask_jack_status = 1 ; 
+        nh.loginfo("jack msg");  
+    }
 }
 
 void on_scheduler_score(const scheduler::AIScore& msg ){
@@ -84,10 +87,10 @@ void on_time_left (const game_manager::GameTime& msg ){
 
 
 // ~ Subscriber ~ 
-ros::Subscriber<game_manager::GameStatus>   sub_game_status  ("ai/game_manager/status", &on_game_status)  ;
-ros::Subscriber<ard_hmi::ROSEvent>          sub_ros_events   ("feedback/ard_hmi/ros_event", &on_ros_event);
-ros::Subscriber<scheduler::AIScore>         sub_scheduler_score   ("ai/scheduler/score", &on_scheduler_score);
-ros::Subscriber<game_manager::GameTime>         sub_time_left   ("ai/game_manager/time", &on_time_left);
+ros::Subscriber<game_manager::GameStatus>   sub_game_status  ("/ai/game_manager/status", &on_game_status)  ;
+ros::Subscriber<ard_hmi::ROSEvent>          sub_ros_events   ("/feedback/ard_hmi/ros_event", &on_ros_event); 
+ros::Subscriber<scheduler::AIScore>         sub_scheduler_score   ("/ai/scheduler/score", &on_scheduler_score);
+ros::Subscriber<game_manager::GameTime>         sub_time_left   ("/ai/game_manager/time", &on_time_left);
 
 
 // --------------------------------------------------------------
@@ -108,7 +111,7 @@ void msg_intialize() {
     first_msg = 1 ; 
     hmi_event_msg.event = 0 ;   
     hmi_event_pub.publish(&hmi_event_msg);  // send msg to tell that it's been initialize with ROS
-    delay(1000); 
+    delay(500); 
 }
 
 
@@ -139,7 +142,7 @@ void update_leds() {
 }
 
 void ask_jack() {
-    if (  digitalRead(jackPin) == HIGH ) { 
+    if (  digitalRead(jackPin) == LOW ) { 
         received_jack_screen(); 
         ask_jack_status = 0 ; // jack received 
         jack_state = 1 ; 
@@ -152,7 +155,7 @@ void ask_jack() {
 }
 
 void jack_pulled() {
-     if ( digitalRead(jackPin) == 0) { // jack pulled 
+     if ( digitalRead(jackPin) == HIGH) { // jack pulled 
         hmi_event_msg.event = 2 ;   
         hmi_event_pub.publish(&hmi_event_msg);
         jack_state = 1 ; 
@@ -181,8 +184,6 @@ void draw_score_screen () {
   display.print(timeLeft);   //float 
   display.print(" sec"); 
   display.display();
-  delay(2000); 
-
 }
 
 
@@ -197,8 +198,6 @@ void hello_screen () {
   display.println("ROS initialize ^^");
   display.println("Good luck :) ");
   display.display();
-  delay(2000); 
-
 }
 
 void ask_jack_screen () {
@@ -210,9 +209,12 @@ void ask_jack_screen () {
   display.setTextSize(1);   
   display.setTextColor(WHITE);
   display.println("Besoin du Jack ");
+  display.print("Strategy : "); 
+  if (chosen_team_id == 0 ) 
+    display.print("gauche"); 
+  else if (chosen_team_id == 1 ) 
+    display.print("droite"); 
   display.display();
-  delay(2000); 
-
 }
 
 void received_jack_screen () {
@@ -224,9 +226,12 @@ void received_jack_screen () {
   display.setTextSize(1);   
   display.setTextColor(WHITE);
   display.println("Merci, j'ai la Jack ");
+  display.print("Strategy : "); 
+  if (chosen_team_id == 0 ) 
+    display.print("gauche"); 
+  else if (chosen_team_id == 1 ) 
+    display.print("droite"); 
   display.display();
-  delay(2000); 
-
 }
 
 
@@ -265,7 +270,6 @@ void setup() {
     // Show initial display buffer contents on the screen --
     // the library initializes this with an Adafruit splash screen.
     display.display();
-    delay(2000); // Pause for 2 seconds
 
 }
 
@@ -276,8 +280,8 @@ void loop() {
     if (game_status == 1 )  draw_score_screen() ; 
     if (first_msg == -1 && game_status != -1 ) msg_intialize() ; 
     if (first_msg ==  1 && game_status != -1 ) chosen_stratety_team() ; 
-    if (ask_jack_status == 1 && game_status != -1 ) ask_jack() ; 
-    if (ask_jack_status == 0 && game_status != -1)  jack_pulled() ; 
+    if (ask_jack_status == 1 && game_status == 0 ) ask_jack() ; 
+    if (ask_jack_status == 0 && game_status ==0)  jack_pulled() ; 
     nh.spinOnce() ; 
 }
   

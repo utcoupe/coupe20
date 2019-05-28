@@ -1,6 +1,6 @@
 
 // Buttons Pins 
-const int button_team     = A2;     // pushbutton pin
+const int button_team     = A1;     // pushbutton pin
 
 // Led Pins 
 const int PIN_LED_ALIVE  =  10 ;     // green light of game status 
@@ -8,7 +8,9 @@ const int PIN_LED_INIT   =  12 ;     // blue light for init
 const int PIN_LED_JACK   =  11 ;     // red light for jack 
 
 // Jack Pins 
-const int jackPin = A1 ; 
+const int jackPin = A2 ; // high when jack not in and low when jack in 
+// SCK is D5 for STM32 
+// SDA is D4 for STM32 
 
 // Screen Pins 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels

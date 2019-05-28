@@ -116,7 +116,7 @@
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
 
-			<orderref ref="sort_atoms"/>
+			<!-- <orderref ref="sort_atoms"/> --> <!-- TODO -->
 		</actions>
 	</action>
 

@@ -51,4 +51,49 @@
 		</tasklist>
 	</strategy>
 
+	<strategy name="homologations">
+		<actionref ref="game_start"/>
+
+		<tasklist name="Main actions">
+			<orderref ref="asserv_pwm" name="forward">
+				<left>150</left>
+				<right>150</right>
+				<duration>1</duration>
+			</orderref>
+
+			<!-- take the atom -->
+			<orderref ref="tower_load_atom"/>
+
+			<orderref ref="asserv_pwm" name="flip">
+				<left>-150</left>
+				<right>150</right>
+				<duration>1</duration>
+			</orderref>
+
+			<orderref ref="asserv_pwm" name="forward (return)">
+				<left>150</left>
+				<right>150</right>
+				<duration>2</duration>
+			</orderref>
+
+			<!-- leave the atom -->
+			<orderref ref="tower_unload_pliers"/> <!-- pince -->
+		</tasklist>
+	</strategy>
+
+	<strategy name="homologations_slider">
+		<actionref ref="game_start"/>
+
+		<tasklist name="Main actions">
+			<orderref ref="asserv_pwm" name="forward">
+				<left>150</left>
+				<right>150</right>
+				<duration>1</duration>
+			</orderref>
+
+			<orderref ref="tower_load_atom"/> <!-- take  atom -->
+			<orderref ref="tower_unload_slider"/> <!-- unload toboggan -->
+		</tasklist>
+	</strategy>
+	
 </strategies>

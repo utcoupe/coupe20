@@ -107,7 +107,6 @@
 				<auto_stop>1</auto_stop>
 			</orderref>
 
-			<!-- <orderref ref="tower_unload_tower"/> -->
 			<orderref ref="delay"> <!-- TODO remove -->
 				<duration>2</duration>
 			</orderref>

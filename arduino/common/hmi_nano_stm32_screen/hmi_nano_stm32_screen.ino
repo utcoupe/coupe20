@@ -101,7 +101,10 @@ void chosen_stratety_team() {
     first_msg = 2 ; 
     hmi_event_msg.event = 1 ; 
     hmi_event_msg.chosen_strategy_id = chosen_strategy_id ; 
-    chosen_team_id = digitalRead(button_team); 
+    if ( digitalRead(button_team) == LOW ) 
+      chosen_team_id = 0 ; 
+    else 
+      chosen_team_id = 1 ;
     hmi_event_msg.chosen_team_id     = chosen_team_id ; 
     hmi_event_pub.publish(&hmi_event_msg);
 }

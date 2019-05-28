@@ -22,7 +22,7 @@ ros::NodeHandle nh;
 #include <Wire.h>    // Only needed for Arduino 1.6.5 and earlier
 #include "SSD1306.h" // alias for `#include "SSD1306Wire.h"`
 #include "OLEDDisplayUi.h"
-SSD1306  display(0x3c, LCD_SDA, LCD_SCK);
+(SSD1306  display(0x3c, LCD_SDA, LCD_SCK);)
 OLEDDisplayUi ui(&display);
 
 //Component variables

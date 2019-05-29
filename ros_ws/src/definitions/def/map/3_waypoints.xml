@@ -33,4 +33,7 @@
     <waypoint name="way_distrib3_approach" x="0.9"   y="0.7"   a="-1.57079632679"/>
 
     <waypoint name="way_weight_approach"   x="1.0"   y="0.2"   a="3.141592"/>
+
+
+    <waypoint name="homo1"   x="0.025"   y="0.25"   a="0.0"/>
 </waypoints>

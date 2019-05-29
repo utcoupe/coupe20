@@ -36,5 +36,15 @@
 		</message>
 	</order>
 
+	<order ref="sucker_on">
+		<message dest="/actuators/ard_door" timeout="8">
+			<param name="sucker_status" type="int" preset="true">1</param>
+		</message>
+	</order>
 
+	<order ref="sucker_off">
+		<message dest="/actuators/ard_door" timeout="8">
+			<param name="sucker_status" type="int" preset="true">0</param>
+		</message>
+	</order>
 </orders>

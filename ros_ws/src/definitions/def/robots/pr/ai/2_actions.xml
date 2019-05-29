@@ -136,7 +136,7 @@
 					<direction>0</direction> <!-- backwards -->
 				</orderref>
 
-				<!-- <orderref ref="load_goldenium"> TODO -->
+				<orderref ref="sucker_on"/>
 
 				<orderref ref="navigator_goto_waypoint" name="approach goldenium">
 					<waypoint_name>way_goldenium_approach_left</waypoint_name>

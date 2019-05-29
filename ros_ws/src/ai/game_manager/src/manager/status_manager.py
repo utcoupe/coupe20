@@ -7,7 +7,7 @@ from ard_hmi.msg import HMIEvent
 from status_config import Status
 
 class StatusManager():
-    INIT_TIMEOUT = 40 # seconds to wait for the nodes to send their init response before timeout.
+    INIT_TIMEOUT = 10 # seconds to wait for the nodes to send their init response before timeout.
 
     def __init__(self):
         self._node_ready_notif = rospy.Service("ai/game_manager/node_ready", NodeReady, self.on_node_ready)

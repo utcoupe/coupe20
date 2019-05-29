@@ -10,9 +10,11 @@
 		
 		<tasklist name="Main actions">
 			<!-- Load the 3 side atoms and chaos atoms, and unload them in the accelerator -->
+			<orderref ref="delay" name="10 points no game over" reward="10"/>
+
 			<tasklist name="First atoms cycle">
 				<actionref ref="load_side_atoms"/>
-				<actionref ref="load_chaos_atoms"/>
+				<!-- <actionref ref="load_chaos_atoms"/> -->
 				<actionref ref="unload_tower" name="Unload1"/>
 			</tasklist>
 			
@@ -21,13 +23,12 @@
 				<actionref ref="unload_goldenium" needsprevious="true"/>
 			</tasklist>
 
-			<tasklist name="Second atoms cycle">
+			<!-- <tasklist name="Second atoms cycle">
 				<actionref ref="load_gr_tower"/>
 				<actionref ref="unload_tower" name="Unload2"/>
-			</tasklist>
-
-			<orderref ref="delay" name="10 points no game over" reward="10"/>
-			<actionref ref="goto_spawn"/>
+			</tasklist> -->
+			
+			<!-- <actionref ref="goto_spawn"/> -->
 		</tasklist>
 	</strategy>
 

@@ -44,7 +44,9 @@
 				<waypoint_name>way_atom1</waypoint_name>
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
-			<!-- <orderref ref="tower_load_atom" needsprevious="true"/> -->
+			
+			<!-- load-->
+			<orderref ref="tower_load_atom" needsprevious="true"/>
 			<orderref ref="map_transfer" name="remove atom from map">
 				<mode>0</mode> <!-- select object only -->
 				<old_path>map/spawn_atoms/spawn_atoms_rd/atom1</old_path>
@@ -55,7 +57,9 @@
 				<waypoint_name>way_atom2</waypoint_name>
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
-			<!-- <orderref ref="tower_load_atom" needsprevious="true"/> -->
+
+			<!-- load -->
+			<orderref ref="tower_load_atom" needsprevious="true"/>
 			<orderref ref="map_transfer" name="remove atom from map">
 				<mode>0</mode> <!-- select object only -->
 				<old_path>map/spawn_atoms/spawn_atoms_gd/atom2</old_path>
@@ -66,7 +70,9 @@
 				<waypoint_name>way_atom3</waypoint_name>
 				<disable_pathfinder>1</disable_pathfinder>
 			</orderref>
-			<!-- <orderref ref="tower_load_atom" needsprevious="true"/> -->
+
+			<!-- load -->
+			<orderref ref="tower_load_atom" needsprevious="true"/>
 			<orderref ref="map_transfer" name="remove atom from map">
 				<mode>0</mode> <!-- select object only -->
 				<old_path>map/spawn_atoms/spawn_atoms_bd/atom3</old_path>
@@ -75,24 +81,24 @@
 		</actions>
 	</action>
 
-	<action ref="load_chaos_atoms">
+	<!-- <action ref="load_chaos_atoms">
 		<params></params>
 		<actions exec="all" order="linear">
 			<orderref ref="delay"/>
 		</actions>
-	</action>
+	</action> -->
 
-	<action ref="load_gr_tower">
+	<!-- <action ref="load_gr_tower">
 		<params></params>
 		<actions exec="all" order="linear">
 			<orderref ref="navigator_goto_waypoint" name="approach acc">
 				<waypoint_name>way_tower</waypoint_name>
 			</orderref>
-			<orderref ref="delay"> <!-- TODO remove -->
+			<orderref ref="delay"> 
 				<duration>2</duration>
 			</orderref>
 		</actions>
-	</action>
+	</action> -->
 
 	<action ref="unload_tower">
 		<params></params>
@@ -104,12 +110,10 @@
 				<left>-150</left>
 				<right>-150</right>
 				<duration>3</duration>
-				<auto_stop>1</auto_stop>
+				<!-- <auto_stop>1</auto_stop> -->
 			</orderref>
 
-			<orderref ref="delay"> <!-- TODO remove -->
-				<duration>2</duration>
-			</orderref>
+			<orderref ref="tower_unload_slider"/>
 
 			<orderref ref="navigator_goto_waypoint" name="approach acc">
 				<waypoint_name>way_approach_acc</waypoint_name>
@@ -122,32 +126,38 @@
 		<params></params>
 		<actions exec="all" order="linear">
 			<team name="left">
-				<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+				<orderref ref="navigator_goto_waypoint" name="approach goldenium">
 					<waypoint_name>way_goldenium_approach_left</waypoint_name>
 					<disable_pathfinder>0</disable_pathfinder>
 				</orderref>
-				<orderref ref="navigator_goto_waypoint" name="touch goldenium et 45deg">
+				<orderref ref="navigator_goto_waypoint" name="touch goldenium">
 					<waypoint_name>way_goldenium_left</waypoint_name>
 					<disable_pathfinder>1</disable_pathfinder>
 					<direction>0</direction> <!-- backwards -->
 				</orderref>
-				<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+
+				<!-- <orderref ref="load_goldenium"> TODO -->
+
+				<orderref ref="navigator_goto_waypoint" name="approach goldenium">
 					<waypoint_name>way_goldenium_approach_left</waypoint_name>
 					<disable_pathfinder>0</disable_pathfinder>
 				</orderref>
 			</team>
 
 			<team name="right">
-				<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+				<orderref ref="navigator_goto_waypoint" name="approach goldenium">
 					<waypoint_name>way_goldenium_approach_right</waypoint_name>
 					<disable_pathfinder>0</disable_pathfinder>
 				</orderref>
-				<orderref ref="navigator_goto_waypoint" name="touch goldenium et 45deg">
+				<orderref ref="navigator_goto_waypoint" name="touch goldenium">
 					<waypoint_name>way_goldenium_right</waypoint_name>
 					<disable_pathfinder>1</disable_pathfinder>
 					<direction>0</direction> <!-- backwards -->
 				</orderref>
-				<orderref ref="navigator_goto_waypoint" name="approach goldenium at 45deg">
+
+				<!-- <orderref ref="load_goldenium"> TODO -->
+
+				<orderref ref="navigator_goto_waypoint" name="approach goldenium">
 					<waypoint_name>way_goldenium_approach_right</waypoint_name>
 					<disable_pathfinder>0</disable_pathfinder>
 				</orderref>

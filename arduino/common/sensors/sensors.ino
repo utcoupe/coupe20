@@ -1,4 +1,5 @@
 //ROS includes
+#define USE_USBCON
 #include <ros.h>
 
 //Arduino includes

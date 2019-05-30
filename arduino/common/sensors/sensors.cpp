@@ -4,8 +4,8 @@
 
 #include "sensors.h"
 #include "VL53L0X.h"
-#include <drivers_ard_others/Color.h>
-#include <drivers_ard_others/BeltRange.h>
+#include <ard_others/Color.h>
+#include <ard_others/BeltRange.h>
 
 //********************************************************************************************************************//
 //
@@ -22,7 +22,7 @@ extern uint8_t belt_sensors_addresses[];
 extern  String belt_sensors_names[];
 VL53L0X belt_sensors[NUM_BELT_SENSORS];
 
-drivers_ard_others::BeltRange belt_range_msg;
+ard_others::BeltRange belt_range_msg;
 ros::Publisher belt_ranges_pub("drivers/ard_others/belt_ranges", &belt_range_msg);
 
 void init_belt_sensors(ros::NodeHandle* nh) {

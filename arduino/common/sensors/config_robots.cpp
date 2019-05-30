@@ -17,7 +17,7 @@
 
 #if defined(PR_ROBOT) && !defined(GR_ROBOT)
 
-uint8_t pins_belt_sensors_shut[NUM_BELT_SENSORS]        = {5, 6};
+uint8_t pins_belt_sensors_shut[NUM_BELT_SENSORS]        = {1, 3};
 uint8_t belt_sensors_addresses[NUM_BELT_SENSORS]        = {22, 24};
 String belt_sensors_names[NUM_BELT_SENSORS]             = {"sensor1", "sensor2"};
 
@@ -31,7 +31,7 @@ String belt_sensors_names[NUM_BELT_SENSORS]             = {"sensor1", "sensor2"}
 
 #if defined(GR_ROBOT) && !defined(PR_ROBOT)
 
-uint8_t pins_belt_sensors_shut[NUM_BELT_SENSORS]        = {40, 42};
+uint8_t pins_belt_sensors_shut[NUM_BELT_SENSORS]        = {1, 3};
 uint8_t belt_sensors_addresses[NUM_BELT_SENSORS]        = {22, 24};
 String belt_sensors_names[NUM_BELT_SENSORS]             = {"sensor1", "sensor2"};
 

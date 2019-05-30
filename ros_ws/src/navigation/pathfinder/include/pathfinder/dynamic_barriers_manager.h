@@ -41,7 +41,11 @@ public:
      * @param newMargin The new margin to apply on barriers.
      */
     void updateSafetyMargin(const double& newMargin);
-    void fetchOccupancyDatas(const uint& widthGrid, const uint& heightGrid) const;
+    void fetchOccupancyDatas(
+        const uint& widthGrid,
+        const uint& heightGrid,
+        const std::vector<std::string>& ignoredTags
+    ) const;
     
 private:
     std::vector< BarriersSubscriber > subscribers;

@@ -11,21 +11,22 @@
 using namespace Memory;
 using namespace std;
 
-MapSubscriber::MapSubscriber(double safetyMargin, const PosConvertor& convertor)
+MapSubscriber::MapSubscriber(double safetyMargin, const PosConvertor &convertor)
     : AbstractBarriersSubscriber(safetyMargin), _occupancyGrid(convertor)
 {
 }
 
-bool Memory::MapSubscriber::hasBarrier(const Point& pos) const {
+bool Memory::MapSubscriber::hasBarrier(const Point &pos) const
+{
     return !_occupancyGrid.isAllowed(pos);
 }
 
-void MapSubscriber::subscribe(ros::NodeHandle& nodeHandle, std::size_t sizeMaxQueue, std::string topic)
+void MapSubscriber::subscribe(ros::NodeHandle &nodeHandle, std::size_t sizeMaxQueue, std::string topic)
 {
     _srvGetMapObjects = nodeHandle.serviceClient<static_map::MapGetContainer>(topic);
 }
 
-void MapSubscriber::fetchOccupancyData(uint widthGrid, uint heightGrid)
+void MapSubscriber::fetchOccupancyData(const uint &widthGrid, const uint &heightGrid, const std::vector<std::string> &ignoredTags)
 {
     _occupancyGrid.resize(heightGrid, widthGrid);
     static_map::MapGetContainer srv;
@@ -36,6 +37,5 @@ void MapSubscriber::fetchOccupancyData(uint widthGrid, uint heightGrid)
         ROS_ERROR("Error when trying to call static_map/get_container");
         return;
     }
-    _occupancyGrid.setOccupancyFromMap(srv.response.container.objects, true, _safetyMargin);
+    _occupancyGrid.setOccupancyFromMap(srv.response.container.objects, true, _safetyMargin, ignoredTags);
 }
-

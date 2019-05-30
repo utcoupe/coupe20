@@ -1,48 +1,111 @@
 #ifndef COLLISIONS_ROBOT_H
 #define COLLISIONS_ROBOT_H
 
-#include "geometry_tools/position.h"
-#include "collisions/obstacle.h"
-#include "collisions/engine/velocity.h"
-#include "collisions/engine/constants.h"
 #include "collisions/engine/path_check_zone.h"
 #include "collisions/engine/collision.h"
+#include "collisions/engine/velocity_check_zone.h"
 #include "collisions/shapes/abstract_shape.h"
+#include "collisions/obstacle.h"
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-class Robot {
+class Position;
+
+class Robot: protected Obstacle {
 public:
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
-    using ObstaclePtr = std::shared_ptr<Obstacle>;
+    /**
+     * Alias to manipulate shapes
+     */
+    using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
+    
+    /**
+     * Status of the robot
+     */
     enum class NavStatus { IDLE, NAVIGATING };
     
+    /**
+     * Initialize the shapes of the robot.
+     * 
+     * Only Rectangle shape is available for now, it may change in the future.
+     * 
+     * @param width The biggest width of the robot
+     * @param height The biggest height of the robot
+     */
     Robot(double width, double height);
     
-    void setPos(Position pos) noexcept { pos_ = pos; }
-    Position getPos() const   noexcept { return pos_; }
-    
-    void updateVelocity(double velLinear, double velAngular) noexcept {
-        velocity_.setVelLinear(velLinear);
-        velocity_.setVelAngular(velAngular);
+    /**
+     * Updates robot position.
+     * 
+     * @param pos The new position
+     */
+    void setPos(const Position& pos) noexcept {
+        m_shape->setPos(pos);
+        m_velocity->setObjectPos(pos);
     }
     
-    void updateStatus(NavStatus status) noexcept { navStatus_ = status; }
-    void updateWaypoints(const std::vector<Position>& newWaypoints) { pathCheckZone_.updateWaypoints(newWaypoints); }
+    /**
+     * Updates robot velocity.
+     * 
+     * @param velLinear The linear velocity
+     * @param velAngular The angular velovity
+     */
+    void updateVelocity(double velLinear, double velAngular) noexcept {
+        m_velocity->setVelocity(velLinear, velAngular);
+    }
     
-    std::vector<ShapePtr> getMainShapes();
-    std::vector<ShapePtr> getPathShapes();
-    std::vector<Collision> checkCollisions(std::vector<ObstaclePtr> obstacles);
+    /**
+     * Updates robot status.
+     * 
+     * @param status The new status
+     */
+    void updateStatus(NavStatus status) noexcept { m_navStatus = status; }
+    
+    /**
+     * Updates robot path waypoints.
+     * 
+     * @param newWaypoints The new waypoints
+     */
+    void updateWaypoints(const std::vector<Position>& newWaypoints) {
+        m_pathCheckZone.updateWaypoints(newWaypoints);
+    }
+    
+    /**
+     * Computes and returns robot velocity shapes.
+     * 
+     * @return The computed shapes.
+     */
+    const std::vector<ShapePtr>& getMainShapes() const;
+    
+    /**
+     * Computes and returns robot path shapes.
+     * 
+     * @return The computed shapes.
+     */
+    const std::vector<ShapePtr>& getPathShapes() const {
+        return m_pathCheckZone.getShapes();
+    }
+    
+    /**
+     * Check all possible collisions between the robot and all other obstacles.
+     * 
+     * @return All found collisions.
+     */
+    std::vector<Collision> checkCollisions(const std::vector<const Obstacle*>& obstacles);
     
 private:
-    double width_, height_;
-    Position pos_;
-    Velocity velocity_;
-    NavStatus navStatus_ = NavStatus::IDLE;
-    PathCheckZone pathCheckZone_;
+    /** Robot status **/
+    NavStatus m_navStatus = NavStatus::IDLE;
+    /** Collision path checker **/
+    PathCheckZone m_pathCheckZone;
+    VelocityCheckZone m_velocityCheckZone;
     
+    /**
+     * Returns the distance between the robot and the path first waypoint if it exists, else return -1.0. Its role is to set the maximum distance to check in front of the robot.
+     * 
+     * @return The maximum distance
+     */
     double getMaxMainDist() const;
 };
 

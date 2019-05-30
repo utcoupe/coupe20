@@ -1,34 +1,41 @@
 #include "collisions/robot.h"
 
+#include "collisions/engine/constants.h"
+#include "collisions/shapes/rectangle.h"
+
+#include <geometry_tools/position.h>
+
+#include <memory>
+
+using namespace std;
+
 Robot::Robot(double width, double height):
-    width_(width), height_(height), velocity_(width, height), pathCheckZone_(width, height, CollisionLevel::LEVEL_DANGER)
+    Obstacle(
+        make_unique<CollisionsShapes::Rectangle>(Position(), width, height),
+        make_unique<ObstacleVelocity>(width, height)
+    ),
+    m_pathCheckZone(CollisionLevel::POTENTIAL, m_shape->getPos(), width, height),
+    m_velocityCheckZone(CollisionLevel::STOP, m_shape->getPos(), *m_velocity)
 {
 }
 
-std::vector<Robot::ShapePtr> Robot::getMainShapes()
-{
-    return velocity_.getShapes(pos_, getMaxMainDist());
+const std::vector<Robot::ShapePtr>& Robot::getMainShapes() const {
+    // TODO + static shape ?
+    return m_velocity->getShapes(getMaxMainDist());
 }
 
-
-std::vector<Robot::ShapePtr> Robot::getPathShapes()
-{
-    return pathCheckZone_.getShapes(pos_);
-}
-
-std::vector<Collision> Robot::checkCollisions(std::vector<ObstaclePtr> obstacles)
-{
-    auto collisionsVel = velocity_.checkCollisions(pos_, obstacles);
-    auto collisionsPath = pathCheckZone_.checkCollisions(pos_, obstacles);
+std::vector<Collision> Robot::checkCollisions(const std::vector<const Obstacle*>& obstacles) {
+    auto&& collisionsVel = m_velocityCheckZone.checkCollisions(obstacles);
+    auto&& collisionsPath = m_pathCheckZone.checkCollisions(obstacles);
     collisionsVel.insert(collisionsVel.end(), collisionsPath.begin(), collisionsPath.end());
     return collisionsVel;
 }
 
 
-double Robot::getMaxMainDist() const
-{
-    if (pathCheckZone_.hasWaypoints())
-        return pos_.norm2Dist(pathCheckZone_.getFirstWaypoint());
-    else
-        return -1.0;
+double Robot::getMaxMainDist() const {
+    return (
+        m_pathCheckZone.hasWaypoints()
+        ? m_shape->getPos().norm2Dist(m_pathCheckZone.getFirstWaypoint())
+        : -1.0
+    );
 }

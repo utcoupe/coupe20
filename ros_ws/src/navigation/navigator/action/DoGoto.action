@@ -13,6 +13,7 @@ geometry_msgs/Pose2D target_pos
 
 bool disable_collisions
 bool disable_pathfinder
+string[] ignore_tags
 ---
 bool success
 ---

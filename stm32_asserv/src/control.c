@@ -11,6 +11,7 @@
 #include "compat.h"
 #include "motor.h"
 #include "local_math.h"
+#include "compat.h"
 
 #include <math.h>
 
@@ -18,7 +19,11 @@
 #define POS_REACHED (0x2)
 #define REACHED (ANG_REACHED | POS_REACHED)
 
-#define sign(x) ((x)>=0?1:-1)
+// #define sign(x) ((x)>=0?1:-1)
+
+char fsign(float x) {
+    return (x >= 0 ? 1 : -1);
+}
 
 uint16_t lastReachedID = 0;
 
@@ -217,7 +222,7 @@ void goalPos(goal_t *goal) {
 	dd = sqrt(pow(dx, 2.0)+pow(dy, 2.0));
 
 	if (goal->data.pos_data.d == ANY) {
-		if (ABS(da) > CONE_ALIGNEMENT) {
+		if (fabs(da) > CONE_ALIGNEMENT) {
 			da = moduloPI(da);
 			dd = - dd;
 		}
@@ -238,7 +243,7 @@ int controlPos(float dd, float da) {
 	float ang_spd, lin_spd;
 
 	dda = da * (ENTRAXE_ENC/2);
-	ddd = dd * exp(-ABS(K_DISTANCE_REDUCTION*da));
+	ddd = dd * exp(-fabs(K_DISTANCE_REDUCTION*da));
 
 	max_speed = control.max_spd;
 	if (control.status_bits & SLOWGO_BIT) {
@@ -254,10 +259,10 @@ int controlPos(float dd, float da) {
 			max_speed, 0);
 
 	ret = 0;
-	if (ABS(dd) < ERROR_POS) {
+	if (fabs(dd) < ERROR_POS) {
 		ret |= POS_REACHED;
 	}
-	if (ABS(da) < ERROR_ANGLE) {
+	if (fabs(da) < ERROR_ANGLE) {
 		ret |= ANG_REACHED;
 	}
 
@@ -267,8 +272,8 @@ int controlPos(float dd, float da) {
 float calcSpeed(float init_spd, float dd, float max_spd, float final_speed) {
 	float dd_abs, acc_spd, dec_spd, target_spd;
 	int d_sign;
-	dd_abs = ABS(dd);
-	d_sign = sign(dd);
+	dd_abs = fabs(dd);
+	d_sign = fsign(dd);
 
 	init_spd *= d_sign;
 	acc_spd = init_spd + (control.max_acc*DT);
@@ -278,10 +283,10 @@ float calcSpeed(float init_spd, float dd, float max_spd, float final_speed) {
 }
 
 void stopRobot(void) {
-	int sign;
+	char sign;
 	float speed;
 
-    speed = ABS(control.speeds.angular_speed);
+    speed = fabs(control.speeds.angular_speed);
     if (BRK_COEFF != 0.0) {
         speed -= control.max_acc * DT * BRK_COEFF;
     } else {
@@ -290,8 +295,8 @@ void stopRobot(void) {
     speed = fmax(0.0f, speed);
     control.speeds.angular_speed = speed;
 
-    sign = sign(control.speeds.linear_speed);
-    speed = ABS(control.speeds.linear_speed);
+    sign = fsign(control.speeds.linear_speed);
+    speed = fabs(control.speeds.linear_speed);
     if (BRK_COEFF != 0.0) {
         speed -= control.max_acc * DT * BRK_COEFF;
     } else {
@@ -300,7 +305,7 @@ void stopRobot(void) {
     speed = fmax(0.0f, speed);
     control.speeds.linear_speed = sign*speed;
 
-	if (ABS(wheels_spd.left) + ABS(wheels_spd.right) < SPD_TO_STOP) {
+	if (fabs(wheels_spd.left) + fabs(wheels_spd.right) < SPD_TO_STOP) {
 		allStop();
 	} else {
 		applyPID();

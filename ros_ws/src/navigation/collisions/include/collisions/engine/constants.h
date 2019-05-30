@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-enum class CollisionLevel { LEVEL_DANGER, LEVEL_STOP, LEVEL_POTENTIAL };
+enum class CollisionLevel { SAFE, POTENTIAL, STOP, DANGER };
 
 enum class CollisionType {TYPE_STATIC, TYPE_DYNAMIC };
 

@@ -13,6 +13,7 @@ string waypoint_name
 
 bool disable_collisions
 bool disable_pathfinder
+string[] ignore_tags
 ---
 bool success
 ---

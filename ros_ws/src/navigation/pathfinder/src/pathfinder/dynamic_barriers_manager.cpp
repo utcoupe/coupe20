@@ -33,9 +33,12 @@ void DynamicBarriersManager::updateSafetyMargin(const double& newMargin)
         subscriber->setSafetyMargin(newMargin);
 }
 
-void DynamicBarriersManager::fetchOccupancyDatas(const uint& widthGrid, const uint& heightGrid) const
-{
+void DynamicBarriersManager::fetchOccupancyDatas(
+    const uint& widthGrid,
+    const uint& heightGrid,
+    const std::vector<std::string>& ignoredTags
+) const {
     for (const auto& subscriber : subscribers)
-        subscriber->fetchOccupancyData(widthGrid, heightGrid);
+        subscriber->fetchOccupancyData(widthGrid, heightGrid, ignoredTags);
 }
 

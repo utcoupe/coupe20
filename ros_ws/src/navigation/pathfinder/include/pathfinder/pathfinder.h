@@ -35,7 +35,7 @@ public:
     /**
      * Defines return statuses for the find path algorithm.
      */
-    enum class FindPathStatus {NO_ERROR, NO_PATH_FOUND, MAP_NOT_LOADED, START_END_POS_NOT_VALID};
+    enum class FindPathStatus { NO_ERROR, NO_PATH_FOUND, MAP_NOT_LOADED, START_END_POS_NOT_VALID };
 
     /**
      * Initialize the pathfinder by loading given image file containing static barriers positions, and the size of a rectangle containing all input positions (here the table).
@@ -48,9 +48,15 @@ public:
      * Try to find a path between the two given positions. The coordinates are directly used in inside referential. It returns false if no paths where found.
      * @param startPos Start position.
      * @param endPos End position.
+     * @param ignoredTags Tags to ignore when fetching barriers
      * @param path Will contain the shortest path between startPos and endPos if a path was found.
      */
-    FindPathStatus findPath(const Point& startPos, const Point& endPos, Path& path);
+    FindPathStatus findPath(
+        const Point& startPos,
+        const Point& endPos,
+        const std::vector<std::string>& ignoredTags,
+        Path& path
+    );
     
     /**
      * Set to true to generate a debug image after all searches

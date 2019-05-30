@@ -1,36 +1,39 @@
 #ifndef COLLISIONS_MARKERS_PUBLISHER_H
 #define COLLISIONS_MARKERS_PUBLISHER_H
 
-#include "collisions/obstacle.h"
-#include "collisions/robot.h"
-
-#include <ros/node_handle.h>
+#include <ros/publisher.h>
 #include <std_msgs/ColorRGBA.h>
 #include <visualization_msgs/Marker.h>
 
 #include <string>
 #include <vector>
 
+namespace ros {
+    class NodeHandle;
+} // namespace ros
+
+namespace CollisionsShapes {
+class AbstractShape;
+} // namespace CollisionsShapes
+class Obstacle;
+class Robot;
+
 class MarkersPublisher {
 public:
-    using RobotPtr = std::shared_ptr<Robot>;
-    using ObstaclePtr = std::shared_ptr<Obstacle>;
-    using ShapePtr = std::shared_ptr<CollisionsShapes::AbstractShape>;
-    
     MarkersPublisher(ros::NodeHandle& nhandle);
     
-    void publishCheckZones(RobotPtr robot);
-    void publishObstacles(const std::vector<ObstaclePtr>& obstacles);
+    void publishCheckZones(const Robot& robot);
+    void publishObstacles(const std::vector<const Obstacle*>& obstacles);
     
 private:
-    ros::Publisher markersPubl_;
+    ros::Publisher m_markersPubl;
     
-    bool isConnected() const;
-    void publishMarker(std::string ns, int index, ShapePtr shape, double z_scale, double z_height, std_msgs::ColorRGBA color);
+    bool m_isConnected() const;
+    void m_publishMarker(std::string ns, int index, const CollisionsShapes::AbstractShape& shape, double z_scale, double z_height, std_msgs::ColorRGBA color);
     
-    void addSegmentInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
-    void addRectangleInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
-    void addCircleInfoToMarker(ShapePtr shape, visualization_msgs::Marker& marker);
+    void m_addSegmentInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const;
+    void m_addRectangleInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const;
+    void m_addCircleInfoToMarker(const CollisionsShapes::AbstractShape& shape, visualization_msgs::Marker& marker) const;
 };
 
 #endif // COLLISIONS_MARKERS_PUBLISHER_H

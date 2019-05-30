@@ -1,3 +1,4 @@
 bool active # True to start checking for collisions, False for standby mode.
+string[] ignore_tags # ignore objects (from map or sensors) that have one of these tags or more
 ---
 bool success

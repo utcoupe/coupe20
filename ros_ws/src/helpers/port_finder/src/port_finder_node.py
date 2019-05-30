@@ -34,7 +34,7 @@ class PortFinder:
         # List of file descriptor for calls to rosserial
         self._rosserial_call_list = []
         # Init ROS stuff
-        rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.INFO)
+        rospy.init_node(NODE_NAME, anonymous=False, log_level=rospy.DEBUG)
         def_dir = rospkg.RosPack().get_path(NODE_NAME) + "/def"
         self._parse_xml_file(def_dir + "/components_list.xml")
         self._parse_dmesg()
@@ -168,56 +168,74 @@ class PortFinder:
                 serial_port_disconnected = False
                 arduino_node_flag = False
                 teraranger_flag = False
+                rosserial_flag = False
                 loop_counter = 0
-                try:
-                    while (read_data == "") and (loop_counter < ARDUINO_LOOP_MAX_TRY):
-                        # TODO find a better way than using loop_counter...
-                        if loop_counter == 1 and element[0] in ("ard_nano", "teraranger"):
-                            com_line = serial.Serial(element[1], 115200, timeout=2)
-                        else:
-                            com_line = serial.Serial(element[1], 57600, timeout=2)
-                        read_data = com_line.read(SERIAL_READ_SIZE)
-                        com_line.close()
-                        # Received a null character, close and open again the port
-                        if len(read_data) != 0 and read_data[0] == '\x00':
-                            read_data = ""
-                        # TODO fin a better way to do it...
-                        if loop_counter == 1 and element[0] in ("ard_nano", "teraranger"):
-                            # Check for the teraranger protocol header
-                            if read_data.find('\x54') != -1:
-                                rospy.loginfo("Found a teraranger sensor !")
-                                teraranger_flag = True
+                for _ in range(1, 10):
+                    com_line = None
+                    serial_port_disconnected = False
+                    try:
+                        while (read_data == "") and (loop_counter < ARDUINO_LOOP_MAX_TRY):
+                            # TODO find a better way than using loop_counter...
+                            if loop_counter == 1 and element[0] in ("ard_nano", "teraranger"):
+                                com_line = serial.Serial(element[1], 115200, timeout=2)
                             else:
+                                com_line = serial.Serial(element[1], 57600, timeout=2)
+                            read_data = com_line.read(SERIAL_READ_SIZE)
+                            com_line.close()
+                            # Received a null character, close and open again the port
+                            if len(read_data) != 0 and read_data[0] == '\x00':
                                 read_data = ""
-                        rospy.logdebug("Try number {} for {}, data = {}".format(loop_counter, element[1], read_data))
-                        # Always skip the first try, this is because sometimes serial data are present, sometimes not
-                        # Do not remove this because it's the ugly way found to start a serial line with an other baudrate and keep a "correct" detection
-                        if loop_counter == 0:
-                            read_data = ""
-                        # rospy.loginfo(read_data.encode('hex'))
-                        loop_counter += 1
-                except serial.SerialException:
-                    rospy.logerr("Try to open port {} but it fails...".format(element[1]))
-                    serial_port_disconnected = True
-                if not serial_port_disconnected:
-                    if teraranger_flag:
-                        final_port_list.append(("teraranger", element[1]))
-                    # Check if it's an arduino using UTCoupe protocol
-                    for arduino_node in ARDUINO_NODE_LIST:
-                        if read_data.find(arduino_node) != -1:
-                            final_port_list.append((arduino_node, element[1]))
-                            rospy.loginfo("Found a real arduino named " + arduino_node)
-                            arduino_node_flag = True
-                    # Otherwise, in any case, start rosserial
-                    # TODO try to check with rosserial protocol (0xFF0xFE)
-                    if not (arduino_node_flag or teraranger_flag):
-                        rospy.loginfo("Found an arduino to start with rosserial : " + element[1] + ", start it.")
-                        self._rosserial_call_list.append(subprocess.Popen(["rosrun", "rosserial_python", "serial_node.py", element[1], "__name:=serial_node_" + str(counter)]))
-                        # Replace the tuple in list to keep a track that the port is used by rosserial
-                        # Add an arbitrary id to rosserial to avoid having 2 components with the same name
-                        final_port_list.append(("rosserial_node_" + str(counter), element[1]))
-            else:
-                final_port_list.append((element[0], element[1]))
+                            # TODO fin a better way to do it...
+                            if loop_counter == 1 and element[0] in ("ard_nano", "teraranger"):
+                                # Check for the teraranger protocol header
+                                if read_data.find('\x54') != -1:
+                                    rospy.loginfo("Found a teraranger sensor !")
+                                    teraranger_flag = True
+                                else:
+                                    read_data = ""
+                            elif loop_counter == 1 and element[0] in ("Nucleo-F103RB"):
+                                rospy.loginfo("Found a nucleo!")
+                                rosserial_flag = True
+                                serial_port_disconnected = False
+
+                            rospy.logdebug("Try number {} for {}, data = {}".format(loop_counter, element[1], read_data))
+                            # Always skip the first try, this is because sometimes serial data are present, sometimes not
+                            # Do not remove this because it's the ugly way found to start a serial line with an other baudrate and keep a "correct" detection
+                            if loop_counter == 0:
+                                read_data = ""
+                            # rospy.loginfo(read_data.encode('hex'))
+                            loop_counter += 1
+                    except serial.SerialException:
+                        rospy.logerr("Try to open port {} but it fails...".format(element[1]))
+                        serial_port_disconnected = True
+                        try:
+                            if com_line is not None:
+                                com_line.close()
+                            rospy.sleep(2)
+                        except serial.SerialException:
+                            rospy.logfatal("Port {} will not be openned because it cannot be closed!".format(element[1]))
+                            break
+                        
+                    if not serial_port_disconnected:
+                        if teraranger_flag:
+                            final_port_list.append(("teraranger", element[1]))
+                        # Check if it's an arduino using UTCoupe protocol
+                        for arduino_node in ARDUINO_NODE_LIST:
+                            if read_data.find(arduino_node) != -1:
+                                final_port_list.append((arduino_node, element[1]))
+                                rospy.loginfo("Found a real arduino named " + arduino_node)
+                                arduino_node_flag = True
+                        # Otherwise, in any case, start rosserial
+                        # TODO try to check with rosserial protocol (0xFF0xFE)
+                        if not (arduino_node_flag or teraranger_flag):
+                            rospy.loginfo("Found an arduino to start with rosserial : " + element[1] + ", start it.")
+                            self._rosserial_call_list.append(subprocess.Popen(["rosrun", "rosserial_python", "serial_node.py", element[1], "__name:=serial_node_" + str(counter)]))
+                            # Replace the tuple in list to keep a track that the port is used by rosserial
+                            # Add an arbitrary id to rosserial to avoid having 2 components with the same name
+                            final_port_list.append(("rosserial_node_" + str(counter), element[1]))
+                        break
+                else:
+                    final_port_list.append((element[0], element[1]))
         self._associated_port_list = final_port_list
 
     def _check_rosseriable(self, component_name):

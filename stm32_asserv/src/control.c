@@ -19,11 +19,21 @@
 #define POS_REACHED (0x2)
 #define REACHED (ANG_REACHED | POS_REACHED)
 
-// #define sign(x) ((x)>=0?1:-1)
+#define sign(x) ((x)>=0?1:-1)
 
-char fsign(float x) {
-    return (x >= 0 ? 1 : -1);
-}
+inline float fabsf(float x) { return (x >= 0 ? x : -x); }
+
+//inline float fminf(float x, float y) {
+//    return (x < y ? x: y);
+//}
+//
+//inline float fmaxf(float x, float y) {
+//    return (x > y ? x : y);
+//}
+
+//char sign(float x) {
+//    return (x >= 0 ? 1 : -1);
+//}
 
 uint16_t lastReachedID = 0;
 
@@ -149,13 +159,9 @@ void goalPwm(goal_t *goal) {
 		start_time = now;
 		control.order_started = 1;
 	}
-	if ((now - start_time)/1000.0 <= goal->data.pwm_data.time){
-		float pwmR, pwmL;
-		pwmL = goal->data.pwm_data.pwm_l;
-		pwmR = goal->data.pwm_data.pwm_r;
-
-		control.speeds.pwm_left = pwmL;
-		control.speeds.pwm_right = pwmR;
+	if ((float)((now - start_time)/1000.0) <= goal->data.pwm_data.time){
+		control.speeds.pwm_left = goal->data.pwm_data.pwm_l;
+		control.speeds.pwm_right = goal->data.pwm_data.pwm_r;
 	}
 	else {
 		control.speeds.pwm_left = 0;
@@ -171,17 +177,17 @@ void goalSpd(goal_t *goal) {
 		start_time = now;
 		control.order_started = 1;
 	}
-	if ((now - start_time)/1000.0 <= goal->data.spd_data.time){
+	if ((float)((now - start_time)/1000.0) <= goal->data.spd_data.time){
 		float time_left, v_dec;
-		time_left = (goal->data.spd_data.time - ((now - start_time)/1000.0)) / 1000.0;
+		time_left = (goal->data.spd_data.time - (float)(((now - start_time)/1000.0))) / (float)1000.0;
 		v_dec = time_left * control.max_acc;
 
-		control.speeds.linear_speed = fmin(fmin(
-			control.speeds.linear_speed+DT*control.max_acc,
+		control.speeds.linear_speed = fminf(fminf(
+			control.speeds.linear_speed + (float)DT * control.max_acc,
 			goal->data.spd_data.lin),
 			v_dec);
-		control.speeds.angular_speed = fmin(fmin(
-			control.speeds.angular_speed+DT*control.max_acc,
+		control.speeds.angular_speed = fminf(fminf(
+			control.speeds.angular_speed + (float)(DT) * control.max_acc,
 			goal->data.spd_data.ang),
 			v_dec);
 	}
@@ -216,19 +222,19 @@ void goalPos(goal_t *goal) {
 	y = goal->data.pos_data.y;
 	dx = x - current_pos.x;
 	dy = y - current_pos.y;
-	goal_a = atan2(dy, dx);
+	goal_a = atan2f(dy, dx);
 	da = (goal_a - current_pos.angle);
 	da = moduloTwoPI(da);
-	dd = sqrt(pow(dx, 2.0)+pow(dy, 2.0));
+	dd = sqrtf(powf(dx, 2.0)+powf(dy, 2.0));
 
 	if (goal->data.pos_data.d == ANY) {
-		if (fabs(da) > CONE_ALIGNEMENT) {
+		if (fabsf(da) > (float)(CONE_ALIGNEMENT)) {
 			da = moduloPI(da);
 			dd = - dd;
 		}
 	} else if (goal->data.pos_data.d == BACKWARD) {
 		dd = - dd;
-		da = moduloTwoPI(da+M_PI);
+		da = moduloTwoPI(da + (float)(M_PI));
 	}
 
 	if (controlPos(dd, da) & POS_REACHED) {
@@ -242,12 +248,12 @@ int controlPos(float dd, float da) {
 	float dda, ddd, max_speed;
 	float ang_spd, lin_spd;
 
-	dda = da * (ENTRAXE_ENC/2);
-	ddd = dd * exp(-fabs(K_DISTANCE_REDUCTION*da));
+	dda = da * (float)(ENTRAXE_ENC / 2.0);
+	ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
 
 	max_speed = control.max_spd;
 	if (control.status_bits & SLOWGO_BIT) {
-		max_speed *= EMERGENCY_SLOW_GO_RATIO;
+		max_speed *= (float)EMERGENCY_SLOW_GO_RATIO;
 	}
 
 	ang_spd = control.speeds.angular_speed;
@@ -259,10 +265,10 @@ int controlPos(float dd, float da) {
 			max_speed, 0);
 
 	ret = 0;
-	if (fabs(dd) < ERROR_POS) {
+	if (fabsf(dd) < ERROR_POS) {
 		ret |= POS_REACHED;
 	}
-	if (fabs(da) < ERROR_ANGLE) {
+	if (fabsf(da) < (float)ERROR_ANGLE) {
 		ret |= ANG_REACHED;
 	}
 
@@ -272,13 +278,13 @@ int controlPos(float dd, float da) {
 float calcSpeed(float init_spd, float dd, float max_spd, float final_speed) {
 	float dd_abs, acc_spd, dec_spd, target_spd;
 	int d_sign;
-	dd_abs = fabs(dd);
-	d_sign = fsign(dd);
+	dd_abs = fabsf(dd);
+	d_sign = sign(dd);
 
 	init_spd *= d_sign;
-	acc_spd = init_spd + (control.max_acc*DT);
-	dec_spd = sqrt(pow(final_speed, 2) + 2*control.max_acc*dd_abs);
-	target_spd = fmin(max_spd, fmin(acc_spd, dec_spd))*d_sign;
+	acc_spd = init_spd + control.max_acc * (float)DT;
+	dec_spd = sqrtf(powf(final_speed, 2) + 2*control.max_acc*dd_abs);
+	target_spd = fminf(max_spd, fminf(acc_spd, dec_spd))*d_sign;
 	return target_spd;
 }
 
@@ -286,26 +292,26 @@ void stopRobot(void) {
 	char sign;
 	float speed;
 
-    speed = fabs(control.speeds.angular_speed);
+    speed = fabsf(control.speeds.angular_speed);
     if (BRK_COEFF != 0.0) {
-        speed -= control.max_acc * DT * BRK_COEFF;
+        speed -= control.max_acc * (float)(DT * BRK_COEFF);
     } else {
         speed = 0.0;
     }
-    speed = fmax(0.0f, speed);
+    speed = fmaxf(0.0f, speed);
     control.speeds.angular_speed = speed;
 
-    sign = fsign(control.speeds.linear_speed);
-    speed = fabs(control.speeds.linear_speed);
+    sign = sign(control.speeds.linear_speed);
+    speed = fabsf(control.speeds.linear_speed);
     if (BRK_COEFF != 0.0) {
-        speed -= control.max_acc * DT * BRK_COEFF;
+        speed -= control.max_acc * (float)(DT * BRK_COEFF);
     } else {
         speed = 0.0;
     }
-    speed = fmax(0.0f, speed);
+    speed = fmaxf(0.0f, speed);
     control.speeds.linear_speed = sign*speed;
 
-	if (fabs(wheels_spd.left) + fabs(wheels_spd.right) < SPD_TO_STOP) {
+	if (fabsf(wheels_spd.left) + fabsf(wheels_spd.right) < (float)SPD_TO_STOP) {
 		allStop();
 	} else {
 		applyPID();
@@ -325,9 +331,11 @@ void applyPwm(void) {
 }
 
 float speedToPwm(float speed) {
-    float pwm = SPD_TO_PWM_A*speed;
-    if     (speed > 0.001) pwm += SPD_TO_PWM_B;
-    else if(speed < -0.001) pwm -= SPD_TO_PWM_B;
+    float pwm = (float)SPD_TO_PWM_A * speed;
+    if     (speed > (float)0.001)
+        pwm += SPD_TO_PWM_B;
+    else if(speed < (float)(-0.001))
+        pwm -= SPD_TO_PWM_B;
     return pwm;
 }
 
@@ -341,6 +349,6 @@ void applyPID(void) {
 	// Control feed forward
     //control.speeds.pwm_left = speedToPwm(left_spd) + PIDCompute(&PID_left, left_ds);
     //control.speeds.pwm_right = speedToPwm(right_spd) + PIDCompute(&PID_right, right_ds);
-	control.speeds.pwm_left = PIDCompute(&PID_left, left_ds);
-    control.speeds.pwm_right = PIDCompute(&PID_right, right_ds);
+	control.speeds.pwm_left = (int)ceilf(PIDCompute(&PID_left, left_ds));
+    control.speeds.pwm_right = (int)ceilf(PIDCompute(&PID_right, right_ds));
 }

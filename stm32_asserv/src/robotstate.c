@@ -10,19 +10,19 @@
 #include <math.h>
 
 #define FC (10)
-#define RC (1/(2*M_PI*FC))
+#define RC (1.0 / (2.0 * M_PI * FC))
 #define ALPHA (DT / (RC + DT))
 
 pos_t current_pos;
 wheels_spd_t wheels_spd;
 
 void PosUpdateAngle() {
-	if (current_pos.angle > M_PI) {
-		current_pos.angle -= 2.0*M_PI;
+	if (current_pos.angle > (float)M_PI) {
+		current_pos.angle -= (float)(2.0 * M_PI);
 		current_pos.modulo_angle++;
 	}
-	else if (current_pos.angle <= -M_PI) {
-		current_pos.angle += 2.0*M_PI;
+	else if (current_pos.angle <= (float) -M_PI) {
+		current_pos.angle += (float)(2.0 * M_PI);
 		current_pos.modulo_angle--;
 	}
 }
@@ -84,16 +84,16 @@ void RobotStateUpdate() {
 	lowPass(&old_wheels_spd, &wheels_spd, ALPHA);
 
 	//d_angle = atan2((dr - dl), ENTRAXE_ENC); //sans approximation tan
-	d_angle = (dr - dl)/ENTRAXE_ENC; // approximation tan
+	d_angle = (dr - dl) / (float)ENTRAXE_ENC; // approximation tan
 	current_pos.angle += d_angle;
 #if MODULO_TWOPI
 	PosUpdateAngle();
 #endif
 
-	dd = (dr + dl) / 2.0;
-    float new_angle = (current_pos.angle + last_angle)/2.0;
-	current_pos.x += dd*cos(new_angle);
-	current_pos.y += dd*sin(new_angle);
+	dd = (dr + dl) / (float)2.0;
+    float new_angle = (current_pos.angle + last_angle) / (float)2.0;
+	current_pos.x += dd*cosf(new_angle);
+	current_pos.y += dd*sinf(new_angle);
 	// g_serial.print("|");
 	// g_serial.print(lt);
 	// g_serial.print("|");

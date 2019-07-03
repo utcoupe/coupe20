@@ -38,6 +38,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
+#include "pins.h"
 
 extern void _Error_Handler(char *, int);
 /* USER CODE BEGIN 0 */
@@ -93,12 +94,14 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* htim_encoder)
     PA0     ------> TIM2_CH1
     PA1     ------> TIM2_CH2 
     */
-    GPIO_InitStruct.Pin = ENC_R_A_Pin|ENC_R_B_Pin;
+    GPIO_InitStruct.Pin = ENC_R_A_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(ENC_R_A_GPIO_Port, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = ENC_R_B_Pin;
+    HAL_GPIO_Init(ENC_R_B_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM2_MspInit 1 */
 
@@ -116,12 +119,14 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* htim_encoder)
     PA4     ------> TIM3_CH2
     PA6     ------> TIM3_CH1 
     */
-    GPIO_InitStruct.Pin = ENC_L_B_Pin|ENC_L_A_Pin;
+    GPIO_InitStruct.Pin = ENC_L_A_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(ENC_L_A_GPIO_Port, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = ENC_L_B_Pin;
+    HAL_GPIO_Init(ENC_L_B_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM3_MspInit 1 */
 
@@ -219,7 +224,7 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* htim_encoder)
     PA0     ------> TIM2_CH1
     PA1     ------> TIM2_CH2 
     */
-    HAL_GPIO_DeInit(GPIOA, ENC_R_A_Pin|ENC_R_B_Pin);
+      HAL_GPIO_DeInit(ENC_R_A_GPIO_Port, ENC_R_A_Pin | ENC_R_B_Pin);
 
   /* USER CODE BEGIN TIM2_MspDeInit 1 */
 
@@ -237,7 +242,7 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* htim_encoder)
     PA4     ------> TIM3_CH2
     PA6     ------> TIM3_CH1 
     */
-    HAL_GPIO_DeInit(GPIOA, ENC_L_B_Pin|ENC_L_A_Pin);
+      HAL_GPIO_DeInit(ENC_L_A_GPIO_Port, ENC_L_A_Pin | ENC_L_B_Pin);
 
   /* USER CODE BEGIN TIM3_MspDeInit 1 */
 

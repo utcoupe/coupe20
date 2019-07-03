@@ -11,14 +11,14 @@
 #define DEBUG_MAINLOOP 0
 #define DEBUG_LEVEL 2
 
-#define ENCODER_EVAL 1
+#define ENCODER_EVAL 4
 
 #define USE_SHARP 0
 #define EMERGENCY_STOP_DISTANCE 0.3 // m
 
 #define HZ 200
 #define DT (1.0/HZ)
-#define AUTO_STATUS_HZ 2 // must be a divider a HZ or 0 to disable
+#define AUTO_STATUS_HZ 5 // must be a divider a HZ or 0 to disable
 #define AUTO_STATUS_DT (int)1000.0*(1.0/AUTO_STATUS_HZ)
 
 #define SPD_MAX 1000 //mm/s 1000

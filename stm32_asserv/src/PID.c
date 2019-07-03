@@ -27,10 +27,10 @@ void PIDReset(PID_t *pid) {
 }
 
 void PIDSet(PID_t *pid, float P, float I, float D, float bias) {
-		I *= PID_I_RATIO;
-		D *= PID_D_RATIO;
-		I /= HZ;
-		D *= HZ;
+		I *= (float)PID_I_RATIO;
+		D *= (float)PID_D_RATIO;
+		I /= (float)HZ;
+		D *= (float)HZ;
 		pid->P = P;
 		pid->I = I;
 		pid->D = D;
@@ -85,7 +85,7 @@ float PIDCompute(PID_t *pid, float error) {
 	return pid->output;
 }
 
-long map(long x, long in_min, long in_max, long out_min, long out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+//long map(long x, long in_min, long in_max, long out_min, long out_max)
+//{
+//  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+//}

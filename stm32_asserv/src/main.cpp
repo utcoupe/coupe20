@@ -77,20 +77,17 @@ SerialSender g_serialSender(&g_serial);
 Pwm g_right_pwm(&htim16);
 Pwm g_left_pwm(&htim17);
 
-
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
-// static void MX_CAN_Init(void);
-static void MX_TIM2_Init(void);
-static void MX_TIM16_Init(void);
-static void MX_TIM17_Init(void);
-static void MX_TIM3_Init(void);
-static void MX_NVIC_Init(void);
+void SystemClock_Config();
+static void MX_GPIO_Init();
+static void MX_USART2_UART_Init();
+static void MX_TIM2_Init();
+static void MX_TIM16_Init();
+static void MX_TIM17_Init();
+static void MX_TIM3_Init();
+static void MX_NVIC_Init();
 
 extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -99,21 +96,21 @@ extern "C" void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN PFP */
 // }
 /* Private function prototypes -----------------------------------------------*/
-void asservLoop(void);
-void asservStatus(void);
+void asservLoop();
+void asservStatus();
 void serialRead();
-void readOrder(void);
-void DWT_CounterEnable(void);
-void blink(void);
+//void readOrder();
+void DWT_CounterEnable();
+void blink();
 void pingSerial();
 
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-Timer asservLoopTimer = Timer((int) 1000.0*DT, &asservLoop);
-Timer asservStatusTimer = Timer(AUTO_STATUS_DT, &asservStatus);
-Timer blinkTimer = Timer(100, &blink);
-Timer pingSerialTimer {1000, &pingSerial};
+Timer asservLoopTimer {static_cast<unsigned long>(1000.0*DT), &asservLoop};
+Timer asservStatusTimer {static_cast<unsigned long>(AUTO_STATUS_DT), &asservStatus};
+Timer blinkTimer { 100, &blink };
+Timer pingSerialTimer { 1000, &pingSerial };
 /* USER CODE END 0 */
 
 /**
@@ -121,7 +118,7 @@ Timer pingSerialTimer {1000, &pingSerial};
   *
   * @retval None
   */
-int main(void)
+int main()
 {
   /* USER CODE BEGIN 1 */
 
@@ -170,7 +167,7 @@ int main(void)
   g_right_pwm.set_timer_freq(32000);
   g_left_pwm.set_timer_freq(32000);
 
-  uint32_t before = HAL_GetTick();
+//  uint32_t before = HAL_GetTick();
   asservLoopTimer.Start();
   asservStatusTimer.Start();  
   blinkTimer.Start();
@@ -207,7 +204,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void)
+void SystemClock_Config()
 {
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
@@ -256,7 +253,7 @@ void SystemClock_Config(void)
   * @brief NVIC Configuration.
   * @retval None
   */
-static void MX_NVIC_Init(void)
+static void MX_NVIC_Init()
 {
   /* USART2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(USART2_IRQn, 14, 0);
@@ -264,7 +261,7 @@ static void MX_NVIC_Init(void)
 }
 
 /* TIM2 init function */
-static void MX_TIM2_Init(void)
+static void MX_TIM2_Init()
 {
 
   TIM_Encoder_InitTypeDef sConfig;
@@ -300,7 +297,7 @@ static void MX_TIM2_Init(void)
 }
 
 /* TIM3 init function */
-static void MX_TIM3_Init(void)
+static void MX_TIM3_Init()
 {
 
   TIM_Encoder_InitTypeDef sConfig;
@@ -336,7 +333,7 @@ static void MX_TIM3_Init(void)
 }
 
 /* TIM16 init function */
-static void MX_TIM16_Init(void)
+static void MX_TIM16_Init()
 {
 
   TIM_OC_InitTypeDef sConfigOC;
@@ -389,7 +386,7 @@ static void MX_TIM16_Init(void)
 }
 
 /* TIM17 init function */
-static void MX_TIM17_Init(void)
+static void MX_TIM17_Init()
 {
 
   TIM_OC_InitTypeDef sConfigOC;
@@ -442,7 +439,7 @@ static void MX_TIM17_Init(void)
 }
 
 /* USART2 init function */
-static void MX_USART2_UART_Init(void)
+static void MX_USART2_UART_Init()
 {
 
   huart2.Instance = USART2;
@@ -470,7 +467,7 @@ static void MX_USART2_UART_Init(void)
         * EVENT_OUT
         * EXTI
 */
-static void MX_GPIO_Init(void)
+static void MX_GPIO_Init()
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;
@@ -553,11 +550,11 @@ void pingSerial()
 void _Error_Handler(/*char *file, int line*/)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  HAL_GPIO_WritePin(GPIOB,TEST_LED_Pin,GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(TEST_LED_GPIO_Port,TEST_LED_Pin,GPIO_PIN_RESET);
   /* User can add his own implementation to report the HAL error return state */
   while(1)
   {
-    HAL_GPIO_TogglePin(GPIOB, TEST_LED_Pin);
+    HAL_GPIO_TogglePin(TEST_LED_GPIO_Port, TEST_LED_Pin);
     HAL_Delay(3000);
   }
   /* USER CODE END Error_Handler_Debug */

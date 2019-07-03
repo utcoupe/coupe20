@@ -23,7 +23,7 @@ public:
     MarkersPublisher(ros::NodeHandle& nhandle);
     
     void publishCheckZones(const Robot& robot);
-    void publishObstacles(const std::vector<const Obstacle*>& obstacles);
+    void publishObstacles(const std::vector<Obstacle*>& obstacles);
     
 private:
     ros::Publisher m_markersPubl;

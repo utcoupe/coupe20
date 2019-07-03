@@ -68,9 +68,9 @@ private:
     void m_run(const ros::TimerEvent&);
     /**
      * Publishes a collision on the topic warner
-     * @param collision The collision to publish in the topic.
+     * @param obstacle The most dangerous obstacle to publish.
      */
-    void m_publishCollision(const Collision& collision);
+    void m_publishCollision(const Obstacle* obstacle);
     /**
      * Callback for the set_status service.
      * @param req The received request

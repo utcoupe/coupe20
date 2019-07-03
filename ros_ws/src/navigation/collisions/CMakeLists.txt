@@ -129,7 +129,7 @@ install(
 ## Testing ##
 #############
 
-SET(UTCOUPE_RUN_TESTS 0 CACHE INTERNAL BOOL "Enable tests compilation and run")
+SET(UTCOUPE_RUN_TESTS 0 CACHE BOOL "Enable tests compilation and run")
 
 if (UTCOUPE_RUN_TESTS)
     ENABLE_TESTING ()
@@ -137,7 +137,14 @@ if (UTCOUPE_RUN_TESTS)
     include_directories(
         ${CATCH_FOLDER}
     )
-    add_executable(${PROJECT_NAME}_unit_tests ${source_files_collisions} tests/main_unit_tests.cpp)
+    
+    file(
+        GLOB_RECURSE
+        source_files_collisions_test
+        tests/*
+    )
+    
+    add_executable(${PROJECT_NAME}_unit_tests ${source_files_collisions} ${source_files_collisions_test})
 
     target_link_libraries(${PROJECT_NAME}_unit_tests
         ${catkin_LIBRARIES}

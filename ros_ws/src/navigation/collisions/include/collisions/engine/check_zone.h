@@ -2,7 +2,6 @@
 #define COLLISIONS_CHECK_ZONE_H
 
 #include "collisions/engine/constants.h"
-#include "collisions/engine/collision.h"
 #include "collisions/shapes/abstract_shape.h"
 
 #include <memory>
@@ -41,12 +40,11 @@ public:
     virtual const std::vector<ShapePtr>& getShapes() const = 0;
     
     /**
-     * Returns a list of found collisions according to the obstacle list passed by parameter.
+     * Updates obstacles' collision data if they are dangerous.
      * 
-     * @param obstacles A obstacle list to check.
-     * @return A collision list.
+     * @param obstacles An obstacle list to check.
      */
-    virtual std::vector<Collision> checkCollisions(const std::vector<const Obstacle*>& obstacles) const = 0;
+    virtual void checkCollisions(const std::vector<Obstacle*>& obstacles) const = 0;
     
     /**
      * Returns the default collision level applied on found collisions. It can differ from some collision values.

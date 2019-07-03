@@ -25,7 +25,7 @@ void PIDInit(PID_t *pid);
 void PIDReset(PID_t *pid);
 void PIDSet(PID_t *pid, float P, float I, float D, float bias);
 float PIDCompute(PID_t *pid, float error);
-long map(long x, long in_min, long in_max, long out_min, long out_max);
+//long map(long x, long in_min, long in_max, long out_min, long out_max);
 #ifdef __cplusplus
 }
 #endif

@@ -9,6 +9,7 @@
 #include <ros/console.h>
 #include <ros/node_handle.h>
 
+#include <algorithm>
 #include <chrono>
 #include <functional>
 #include <string>
@@ -18,6 +19,16 @@ const std::string SET_ACTIVE_SERVICE    = "navigation/collisions/set_active";
 const std::string WARNER_TOPIC          = "navigation/collisions/warner";
 
 const double RATE_RUN_HZ = 20.0;
+
+bool compareObstacleDangerosity(const Obstacle* obstacle1, const Obstacle* obstacle2) {
+    auto collision1 = obstacle1->getCollisionData();
+    auto collision2 = obstacle2->getCollisionData();
+    if (collision1.getLevel() == collision2.getLevel()) {
+        return  collision1.getDistance() > collision2.getDistance();
+    } else {
+        return collision1.getLevel() < collision2.getLevel();
+    }
+}
 
 CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
     m_subscriptions(nhandle),
@@ -33,7 +44,7 @@ CollisionsNode::CollisionsNode(ros::NodeHandle& nhandle):
     m_warnerPublisher = nhandle.advertise<collisions::PredictedCollision>(WARNER_TOPIC, 1);
     
     m_robot = m_subscriptions.createRobot(nhandle);
-    
+
     m_subscriptions.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");
     m_timerRun = nhandle.createTimer(
@@ -48,15 +59,14 @@ void CollisionsNode::m_run(const ros::TimerEvent&) {
     std::chrono::system_clock::time_point startTime;
     startTime = std::chrono::system_clock::now();
     m_subscriptions.updateRobot();
+    m_obstacleStack->resetCollisionData();
     if (m_active) {
-        bool firstRun = true;
-        Collision worstCollsision(CollisionLevel::SAFE, nullptr, 0.0);
-        for (auto&& collision: m_robot->checkCollisions(m_obstacleStack->toList())) {
-            if (firstRun || worstCollsision.getLevel() < collision.getLevel()) {
-                worstCollsision = std::move(collision);
-            }
+        auto obstacles = m_obstacleStack->toList();
+        m_robot->checkCollisions(obstacles);
+        auto worstCollision = std::max_element(begin(obstacles), end(obstacles), compareObstacleDangerosity);
+        if (worstCollision != end(obstacles)) {
+            m_publishCollision(*worstCollision);
         }
-        m_publishCollision(worstCollsision);
         m_markersPublisher.publishCheckZones(*m_robot);
     }
     
@@ -68,8 +78,9 @@ void CollisionsNode::m_run(const ros::TimerEvent&) {
     ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
 }
 
-void CollisionsNode::m_publishCollision(const Collision& collision) {
+void CollisionsNode::m_publishCollision(const Obstacle* obstacle) {
     collisions::PredictedCollision msg;
+    auto collision = obstacle->getCollisionData();
     msg.danger_level = static_cast<unsigned char>(collision.getLevel());
     
     switch(collision.getLevel()) {
@@ -86,21 +97,19 @@ void CollisionsNode::m_publishCollision(const Collision& collision) {
         ROS_INFO_THROTTLE(1, "Found no collisions intersecting with the path.");
         break;
     }
-    // obstacle can be null
-    if (auto obst = collision.getObstacle()) {
-        msg.obstacle_pos = obst->getPos().toPose2D();
-        
-        using ShapeType = CollisionsShapes::ShapeType;
-        switch (obst->getShape().getShapeType()) {
-        case ShapeType::RECTANGLE:
-            m_addRectInfosToPredictedCollision(msg, obst->getShape());
-            break;
-        case ShapeType::CIRCLE:
-            m_addCircInfosToPredictedCollision(msg, obst->getShape());
-            break;
-        default:
-            ROS_WARN_ONCE("Found collision has a special shape that cannot be reported. This message will print once.");
-        }
+    msg.obstacle_pos = obstacle->getPos().toPose2D();
+
+    using ShapeType = CollisionsShapes::ShapeType;
+    const auto& shape = obstacle->getShape();
+    switch (shape.getShapeType()) {
+    case ShapeType::RECTANGLE:
+        m_addRectInfosToPredictedCollision(msg, shape);
+        break;
+    case ShapeType::CIRCLE:
+        m_addCircInfosToPredictedCollision(msg, shape);
+        break;
+    default:
+        ROS_WARN_ONCE("Found collision has a special shape that cannot be reported. This message will print once.");
     }
     
     m_warnerPublisher.publish(msg);

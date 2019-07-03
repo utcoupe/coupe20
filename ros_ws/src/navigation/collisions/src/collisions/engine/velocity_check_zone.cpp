@@ -9,11 +9,13 @@
 
 using namespace CollisionsShapes;
 
-std::vector<Collision> VelocityCheckZone::checkCollisions(const std::vector<const Obstacle*>& obstacles) const {
-    std::vector<Collision> collisions;
-    for (auto obst: CollisionResolver::findCollisions(m_robotVelocity.getShapes(), obstacles)) {
-        double approxDist = m_robotPos.norm2Dist(obst->getPos());
-        collisions.emplace_back(m_level, obst, approxDist);
+void VelocityCheckZone::checkCollisions(const std::vector<Obstacle*>& obstacles) const {
+    for (auto* obstacle: CollisionResolver::findCollisions(m_robotVelocity.getShapes(), obstacles)) {
+        if (obstacle->getCollisionData().getLevel() > m_level) {
+            obstacle->setCollisionData({
+                                               m_level,
+                                               m_robotPos.norm2Dist(obstacle->getPos())
+                                       });
+        }
     }
-    return collisions;
 }

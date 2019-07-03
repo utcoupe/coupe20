@@ -86,7 +86,7 @@ bool Timer::Tick(){
 		return false;
 	if(LastTime > HAL_GetTick()*2)//HAL_GetTick restarted
 		LastTime = 0;
-	if ((unsigned long int)(HAL_GetTick() - LastTime) >= msInterval) {
+	if ((HAL_GetTick() - LastTime) >= msInterval) {
 		LastTime = HAL_GetTick();
 		if(isSingleShot())
 			setEnabled(false);
@@ -101,7 +101,7 @@ unsigned long int Timer::getInterval(){
 }
 
 unsigned long int Timer::getCurrentTime(){
-	return (unsigned long int)(HAL_GetTick() - LastTime);
+	return HAL_GetTick() - LastTime;
 }
 CallBackType Timer::getOnTimerCallback(){
 	return onRun;

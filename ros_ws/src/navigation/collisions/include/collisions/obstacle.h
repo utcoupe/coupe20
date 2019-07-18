@@ -14,27 +14,27 @@ public:
      * Alias to manipulate shapes
      */
     using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
-    
+
     /**
      * Alias to manipulate obstacle velocity
      */
     using VelocityPtr = std::unique_ptr<ObstacleVelocity>;
-    
+
     /**
      * Main constructor of Obstacle
      * 
      * @param shape The shape of the obstacle
      * @param velocity The velocity of the obstacle
      */
-    Obstacle(ShapePtr&& shape, VelocityPtr&& velocity);
-    
+    Obstacle(ShapePtr &&shape, VelocityPtr &&velocity);
+
     /**
      * Main constructor of Obstacle
      * 
      * @param shape The shape of the obstacle
      */
-    Obstacle(ShapePtr&& shape);
-    
+    Obstacle(ShapePtr &&shape);
+
     /**
      * Returns the static shape of the obstacle
      * 
@@ -42,8 +42,8 @@ public:
      * 
      * @return The shape
      */
-    const CollisionsShapes::AbstractShape& getShape() const noexcept { return *m_shape; }
-    
+    const CollisionsShapes::AbstractShape &getShape() const noexcept { return *m_shape; }
+
     /**
      * Returns the velocity shapes of the obstacle.
      * 
@@ -52,15 +52,15 @@ public:
      * @param maxDist The maximum projection distance
      * @return The shapes describing the theoretical object velocity
      */
-    const std::vector<ShapePtr>& getVelocityShapes (double maxDist = -1.0) const;
-    
+    const std::vector<ShapePtr> &getVelocityShapes(double maxDist = -1.0) const;
+
     /**
      * Returns the object position
      * 
      * @return The object position
      */
-    const Position& getPos() const { return m_shape->getPos(); }
-    
+    const Position &getPos() const { return m_shape->getPos(); }
+
     /**
      * Returns the object lifetime since its creation
      * 
@@ -79,7 +79,7 @@ public:
      * @param collisionData The new collision data
      */
     void setCollisionData(Collision collisionData) noexcept { m_collisionData = collisionData; }
-    
+
 protected:
     /** The main shape of the object **/
     ShapePtr m_shape;

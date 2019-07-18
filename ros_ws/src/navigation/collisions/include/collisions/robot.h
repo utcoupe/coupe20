@@ -13,18 +13,20 @@
 
 class Position;
 
-class Robot: protected Obstacle {
+class Robot : protected Obstacle {
 public:
     /**
      * Alias to manipulate shapes
      */
     using ShapePtr = std::unique_ptr<CollisionsShapes::AbstractShape>;
-    
+
     /**
      * Status of the robot
      */
-    enum class NavStatus { IDLE, NAVIGATING };
-    
+    enum class NavStatus {
+        IDLE, NAVIGATING
+    };
+
     /**
      * Initialize the shapes of the robot.
      * 
@@ -34,17 +36,17 @@ public:
      * @param height The biggest height of the robot
      */
     Robot(double width, double height);
-    
+
     /**
      * Updates robot position.
      * 
      * @param pos The new position
      */
-    void setPos(const Position& pos) noexcept {
+    void setPos(const Position &pos) noexcept {
         m_shape->setPos(pos);
         m_velocity->setObjectPos(pos);
     }
-    
+
     /**
      * Updates robot velocity.
      * 
@@ -54,46 +56,46 @@ public:
     void updateVelocity(double velLinear, double velAngular) noexcept {
         m_velocity->setVelocity(velLinear, velAngular);
     }
-    
+
     /**
      * Updates robot status.
      * 
      * @param status The new status
      */
     void updateStatus(NavStatus status) noexcept { m_navStatus = status; }
-    
+
     /**
      * Updates robot path waypoints.
      * 
      * @param newWaypoints The new waypoints
      */
-    void updateWaypoints(const std::vector<Position>& newWaypoints) {
+    void updateWaypoints(const std::vector<Position> &newWaypoints) {
         m_pathCheckZone.updateWaypoints(newWaypoints);
     }
-    
+
     /**
      * Computes and returns robot velocity shapes.
      * 
      * @return The computed shapes.
      */
-    const std::vector<ShapePtr>& getMainShapes() const;
-    
+    const std::vector<ShapePtr> &getMainShapes() const;
+
     /**
      * Computes and returns robot path shapes.
      * 
      * @return The computed shapes.
      */
-    const std::vector<ShapePtr>& getPathShapes() const {
+    const std::vector<ShapePtr> &getPathShapes() const {
         return m_pathCheckZone.getShapes();
     }
-    
+
     /**
      * Check all possible collisions between the robot and all other obstacles.
      *
      * Obstacles are updated.
      */
-    void checkCollisions(const std::vector<Obstacle*>& obstacles) const;
-    
+    void checkCollisions(const std::vector<Obstacle *> &obstacles) const;
+
 private:
     /** Robot status **/
     NavStatus m_navStatus = NavStatus::IDLE;
@@ -101,9 +103,11 @@ private:
     PathCheckZone m_pathCheckZone;
     /** Velocity shapes checker **/
     VelocityCheckZone m_velocityCheckZone;
-    
+
     /**
-     * Returns the distance between the robot and the path first waypoint if it exists, else return -1.0. Its role is to set the maximum distance to check in front of the robot.
+     * Returns the distance between the robot and the path first waypoint if it exists, else return -1.0.
+     *
+     * Its role is to set the maximum distance to check in front of the robot.
      * 
      * @return The maximum distance
      */

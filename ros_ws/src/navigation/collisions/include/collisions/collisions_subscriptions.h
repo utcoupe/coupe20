@@ -43,10 +43,10 @@ public:
     /**
      * Create a pointer on a Robot object that will be shared between the subscription class
      * and the main class.
-     * @param nhandle A valid ros::NodeHandle
+     * @param nodeHandle A valid ros::NodeHandle
      * @return A shared pointer on the newly-created Robot
      */
-    RobotPtr createRobot(ros::NodeHandle& nhandle);
+    RobotPtr createRobot(ros::NodeHandle& nodeHandle);
     /**
      * @return A shared pointer on the ObstaclesStack object regularly updated
      */

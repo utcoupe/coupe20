@@ -16,10 +16,10 @@ public:
      * @param level The danger level of collision
      * @param approxDistance Distance between the robot and the obstacle
      */
-    constexpr Collision(
+    explicit constexpr Collision(
             CollisionLevel level = CollisionLevel::SAFE,
             double approxDistance = std::numeric_limits<double>::max());
-    
+
     /**
      * Returns the danger level of collision
      * 
@@ -32,9 +32,9 @@ public:
      * @param level
      */
     constexpr void setLevel(CollisionLevel level) noexcept { m_level = level; }
-    
+
     /**
-     * Returns the approximative distance between the robot and the obstacle.
+     * Returns the approximate distance between the robot and the obstacle.
      * 
      * @return The distance
      */
@@ -45,11 +45,11 @@ public:
      * @param distance
      */
     constexpr void setDistance(double distance) noexcept { m_approxDistance = distance; }
-    
+
 private:
     /** The danger level of collision **/
     CollisionLevel m_level;
-    
+
     /** The distance between the robot and the obstacle **/
     double m_approxDistance;
 };

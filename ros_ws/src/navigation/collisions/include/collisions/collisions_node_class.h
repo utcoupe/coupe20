@@ -31,24 +31,24 @@ public:
     using RobotPtr = std::shared_ptr<Robot>;
     /** Represents a shared pointer on an ObstacleStack object. */
     using ObstaclesStackPtr = std::shared_ptr<ObstaclesStack>;
-    
+
     /**
      * Initialize the services and topics owned by the node.
      * @param nhandle A valid ros::NodeHandle that will be used to create or connect to services and topics.
      */
-    CollisionsNode(ros::NodeHandle& nhandle);
-    
+    CollisionsNode(ros::NodeHandle &nodeHandle);
+
     /** Default destructor. */
     ~CollisionsNode() = default;
 
 private:
     /** Activate collision checks in the main loop. It is edited through the service set_active */
-    std::atomic_bool m_active { false };
+    std::atomic_bool m_active{false};
     /**
      * Timer that will invoke at a regular rate the main loop.
      */
     ros::Timer m_timerRun;
-    
+
     /** Contains all informations about the robot. */
     RobotPtr m_robot;
     /** Contains all informations about the current obstacles. */
@@ -61,36 +61,41 @@ private:
     ros::Publisher m_warnerPublisher;
     /** Manager that publishes dangerous objects and check zones in rviz */
     MarkersPublisher m_markersPublisher;
-    
+
     /**
      * Main loop
      */
-    void m_run(const ros::TimerEvent&);
+    void m_run(const ros::TimerEvent &);
+
     /**
      * Publishes a collision on the topic warner
      * @param obstacle The most dangerous obstacle to publish.
      */
-    void m_publishCollision(const Obstacle* obstacle);
+    void m_publishCollision(const Obstacle *obstacle);
+
     /**
      * Callback for the set_status service.
      * @param req The received request
      * @param res The response (res.success = true)
      * @return always true
      */
-    bool m_onSetActive(collisions::ActivateCollisions::Request& req, collisions::ActivateCollisions::Response& res);
-    
+    bool m_onSetActive(collisions::ActivateCollisions::Request &req, collisions::ActivateCollisions::Response &res);
+
     /**
      * Adds CollisionShapes::Rectangle properties on the warner topic's message.
      * @param msg Pre-constructed message that will be completed
      * @param shape A pointer on a CollisionShapes::Rectangle (will throw if it isn't one)
      */
-    void m_addRectInfosToPredictedCollision(collisions::PredictedCollision& msg, const CollisionsShapes::AbstractShape& shape) const;
+    void m_addRectInfosToPredictedCollision(collisions::PredictedCollision &msg,
+                                            const CollisionsShapes::AbstractShape &shape) const;
+
     /**
      * Adds CollisionShapes::Circle properties on the warner topic's message.
      * @param msg Pre-constructed message that will be completed
      * @param shape A pointer on a CollisionShapes::Circle (will throw if it isn't one)
      */
-    void m_addCircInfosToPredictedCollision(collisions::PredictedCollision& msg, const CollisionsShapes::AbstractShape& shape) const;
+    void m_addCircInfosToPredictedCollision(collisions::PredictedCollision &msg,
+                                            const CollisionsShapes::AbstractShape &shape) const;
 };
 
 #endif // COLLISIONS_NODE_CLASS_H

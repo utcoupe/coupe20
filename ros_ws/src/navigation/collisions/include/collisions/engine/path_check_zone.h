@@ -6,8 +6,7 @@
 /**
  * Checks collision on a path.
  */
-class PathCheckZone: public CheckZone
-{
+class PathCheckZone : public CheckZone {
 public:
     /**
      * Initializes the checker.
@@ -17,66 +16,65 @@ public:
      * @param width The width of the collision box, likely robot width.
      * @param height The hight of the collision box, likely robot height.
      */
-    PathCheckZone(CollisionLevel collisionLevel, const Position& robotPos, double width, double height):
-        CheckZone(collisionLevel, robotPos),
-        m_width(width), m_height(height)
-    {}
-    
+    PathCheckZone(CollisionLevel collisionLevel, const Position &robotPos, double width, double height) :
+            CheckZone(collisionLevel, robotPos),
+            m_width(width), m_height(height) {}
+
     /**
      * Default destructor.
      */
     ~PathCheckZone() override = default;
-    
+
     /**
      * Returns a list of collision box shapes.
      * 
      * @return The shape list.
      */
-    const std::vector<ShapePtr>& getShapes() const override;
-    
+    const std::vector<ShapePtr> &getShapes() const override;
+
     /**
      * Returns a list of found collision according to the obstacle list passed by argument.
      * 
      * @param obstacles An obstacle list to check collision.
      * @return The collision list.
      */
-    void checkCollisions(const std::vector<Obstacle*>& obstacles) const override;
-    
+    void checkCollisions(const std::vector<Obstacle *> &obstacles) const override;
+
     /**
      * Updates internal list of waypoints constituting the current path.
      * 
      * @param newWaypoints The current path
      */
-    void updateWaypoints(const std::vector<Position>& newWaypoints) { m_waypoints = newWaypoints; }
-    
+    void updateWaypoints(const std::vector<Position> &newWaypoints) { m_waypoints = newWaypoints; }
+
     /**
      * Returns true if there is at least one waypoint in the path, false else.
      * 
      * @return True if path not empty.
      */
     bool hasWaypoints() const noexcept { return !m_waypoints.empty(); }
-    
+
     /**
      * Returns the first waypoint of the path. It may crash if the path is empty.
      * 
      * @return The first waypoint of the path.
      */
-    const Position& getFirstWaypoint() const { return m_waypoints.front(); }
-    
+    const Position &getFirstWaypoint() const { return m_waypoints.front(); }
+
     /**
      * Returns the height of the collision box.
      * 
      * @return The height.
      */
     double getHeight() const noexcept { return m_height; }
-    
+
     /**
      * Returns the width of the collision box.
      * 
      * @return The width.
      */
-    double getWidth()  const noexcept { return m_width; }
-    
+    double getWidth() const noexcept { return m_width; }
+
 private:
     /** The width of the collision box **/
     double m_width;

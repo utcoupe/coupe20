@@ -9,22 +9,21 @@
 
 using namespace std;
 
-Robot::Robot(double width, double height):
-    Obstacle(
-        make_unique<CollisionsShapes::Rectangle>(Position(), width, height),
-        make_unique<ObstacleVelocity>(width, height)
-    ),
-    m_pathCheckZone(CollisionLevel::POTENTIAL, m_shape->getPos(), width, height),
-    m_velocityCheckZone(CollisionLevel::STOP, m_shape->getPos(), *m_velocity)
-{
+Robot::Robot(double width, double height) :
+        Obstacle(
+                make_unique<CollisionsShapes::Rectangle>(Position(), width, height),
+                make_unique<ObstacleVelocity>(width, height)
+        ),
+        m_pathCheckZone(CollisionLevel::POTENTIAL, m_shape->getPos(), width, height),
+        m_velocityCheckZone(CollisionLevel::STOP, m_shape->getPos(), *m_velocity) {
 }
 
-const std::vector<Robot::ShapePtr>& Robot::getMainShapes() const {
+const std::vector<Robot::ShapePtr> &Robot::getMainShapes() const {
     // TODO + static shape ?
     return m_velocity->getShapes(getMaxMainDist());
 }
 
-void Robot::checkCollisions(const std::vector<Obstacle*>& obstacles) const {
+void Robot::checkCollisions(const std::vector<Obstacle *> &obstacles) const {
     m_velocityCheckZone.checkCollisions(obstacles);
     m_pathCheckZone.checkCollisions(obstacles);
 }
@@ -32,8 +31,8 @@ void Robot::checkCollisions(const std::vector<Obstacle*>& obstacles) const {
 
 double Robot::getMaxMainDist() const {
     return (
-        m_pathCheckZone.hasWaypoints()
-        ? m_shape->getPos().norm2Dist(m_pathCheckZone.getFirstWaypoint())
-        : -1.0
+            m_pathCheckZone.hasWaypoints()
+            ? m_shape->getPos().norm2Dist(m_pathCheckZone.getFirstWaypoint().toPoint())
+            : -1.0
     );
 }

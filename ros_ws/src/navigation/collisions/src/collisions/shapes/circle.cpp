@@ -23,7 +23,7 @@ bool Circle::isCollidingWith(const AbstractShape& otherShape) const
 
 bool Circle::m_isCollidingWithSegment(const Segment& otherSeg) const noexcept
 {
-    Rectangle newRect(
+    const Rectangle newRect(
         otherSeg.getPos(),
         m_radius * 2,
         otherSeg.getLength() + 2 * m_radius
@@ -33,7 +33,7 @@ bool Circle::m_isCollidingWithSegment(const Segment& otherSeg) const noexcept
 
 bool Circle::m_isCollidingWithRectangle(const Rectangle& otherRect) const noexcept
 {
-    Rectangle newRect(
+    const Rectangle newRect(
         otherRect.getPos(),
         otherRect.getWidth() + m_radius * 2,
         otherRect.getHeight() + m_radius * 2

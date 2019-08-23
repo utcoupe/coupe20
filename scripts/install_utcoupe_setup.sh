@@ -17,11 +17,12 @@ ARCH=$(uname -m)
 ### Install the linux packages
 function install_apt() {
 	green_echo "Install missing packages..."
-	sudo apt-get install git build-essential python python-pip cmake libboost-dev libsdl1.2-dev gcc-avr avrdude avr-libc libsfml-dev libarmadillo-dev libavcodec-dev libswscale-dev
+	sudo apt-get install git build-essential python python-pip cmake libboost-dev libsdl1.2-dev gcc-avr avrdude avr-libc libsfml-dev libarmadillo-dev libavcodec-dev libswscale-dev arduino
 
 	# Check if it's a PC or a raspi
 	if [ "$ARCH" = "x86_64" ]; then
 		green_echo "x86 architecture detected."
+		# TODO Fix nodejs issue on Ubuntu >= 17.04 (maybe removed it since  actively not used).
 		sudo apt-get install nodejs npm nodejs-legacy linux-headers-$(uname -r)
 	elif [ "$ARCH" = "armv7l" ]; then
 		green_echo "Raspberry Pi 3 system detected, remove previous npm installation to setup the used version."
@@ -48,7 +49,7 @@ function install_apt() {
 function install_ros() {
 	if [ "$(lsb_release -sc)" = "xenial" ] || [ "$(lsb_release -sc)" = "willy" ] || [ "$(lsb_release -sc)" = "bionic" ]; then
 		sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-		sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+		sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 		sudo apt-get update
 		# "Install" Arduino libs needed by us
 		if [ -d "/usr/share/arduino" ] && [ -d "$PWD/libs/arduino-libraries" ]; then

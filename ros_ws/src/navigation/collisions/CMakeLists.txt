@@ -63,7 +63,13 @@ catkin_package(
 add_library(${PROJECT_NAME}_warnings INTERFACE)
 add_library(${PROJECT_NAME}_options INTERFACE)
 
-target_compile_features(${PROJECT_NAME}_options INTERFACE cxx_std_14)
+# For modern cmake
+# target_compile_features(${PROJECT_NAME}_options INTERFACE cxx_std_14)
+# But is not available for this version (3.0)
+target_compile_options(${PROJECT_NAME}_options INTERFACE
+    -std=c++14
+)
+
 target_include_directories(${PROJECT_NAME}_options INTERFACE
     include
     ${catkin_INCLUDE_DIRS}

@@ -48,7 +48,7 @@ class PortFinder:
         hokuyo_subprocess = None
         hokuyo_port = self.get_port("hokuyo")
         if hokuyo_port is not "":
-            hokuyo_subprocess = subprocess.Popen(["rosrun", "urg_node", "urg_node", "_serial_port:=" + hokuyo_port, "__ns:=sensors", "scan:=processing/lidar_objects/scan"])
+            hokuyo_subprocess = subprocess.Popen(["rosrun", "urg_node", "urg_node", "_serial_port:=" + hokuyo_port, "__ns:=sensors", "scan:=/processing/lidar_objects/scan"])
             StatusServices("drivers", "port_finder").ready(True)
         else:
             rospy.logwarn("Couldn't start urg_node")
@@ -234,8 +234,8 @@ class PortFinder:
                             # Add an arbitrary id to rosserial to avoid having 2 components with the same name
                             final_port_list.append(("rosserial_node_" + str(counter), element[1]))
                         break
-                else:
-                    final_port_list.append((element[0], element[1]))
+            else:
+                final_port_list.append((element[0], element[1]))
         self._associated_port_list = final_port_list
 
     def _check_rosseriable(self, component_name):

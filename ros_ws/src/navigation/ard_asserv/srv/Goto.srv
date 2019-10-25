@@ -4,6 +4,8 @@ uint8 GOTOA = 1
 uint8 ROT = 2
 uint8 ROTNOMODULO = 3
 uint8 mode
+bool slow_go
+
 geometry_msgs/Pose2D position
 ---
 bool response

@@ -1,6 +1,6 @@
 FROM ros:kinetic-ros-base-xenial
 
-ENV UTCOUPE_WORKSPACE /utcoupe/coupe19
+ENV UTCOUPE_WORKSPACE /utcoupe/coupe20
 RUN mkdir -p $UTCOUPE_WORKSPACE/ros_ws/src
 ENV ROS_LANG_DISABLE=genlisp:geneus
 

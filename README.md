@@ -2,13 +2,13 @@ Source code of UTCoupe 2020
 =======
 |master|devel|
 |------|-----|
-| [![Build Status](https://travis-ci.org/utcoupe/coupe19.svg?branch=master)](https://travis-ci.org/utcoupe/coupe19) | [![Build Status](https://travis-ci.org/utcoupe/coupe19.svg?branch=devel)](https://travis-ci.org/utcoupe/coupe19) |
+| [![Build Status](https://travis-ci.org/utcoupe/coupe20.svg?branch=master)](https://travis-ci.org/utcoupe/coupe20) | [![Build Status](https://travis-ci.org/utcoupe/coupe20.svg?branch=devel)](https://travis-ci.org/utcoupe/coupe20) |
 
 # Configuration
 
 First clone the repo to your PC :
 ```
-git clone git@github.com:utcoupe/coupe19.git
+git clone git@github.com:utcoupe/coupe20.git
 ```
 
 ### Development environment configuration
@@ -24,7 +24,7 @@ If it is your first installation, answer "y" to all questions.
 
 The whole system relies on ROS (http://www.ros.org/). Therefore you need to compile the system after having fetched it :
 ```
-cd coupe19/ros_ws
+cd coupe20/ros_ws
 catkin_make
 ```
 

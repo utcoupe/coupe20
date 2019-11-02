@@ -11,7 +11,7 @@ services:
   - docker
 
 install:
-  - docker pull utcoupe/coupe19:utcoupe-ros-kinetic-amd64
+  - docker pull utcoupe/coupe20:utcoupe-ros-kinetic-amd64
 
 script:
   - source scripts/run_travis_build.sh

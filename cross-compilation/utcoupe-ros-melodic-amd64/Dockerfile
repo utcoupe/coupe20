@@ -1,6 +1,6 @@
 FROM ros:melodic-ros-base-bionic
 
-ENV UTCOUPE_WORKSPACE /utcoupe/coupe19
+ENV UTCOUPE_WORKSPACE /utcoupe/coupe20
 RUN mkdir -p $UTCOUPE_WORKSPACE/ros_ws/src
 ENV ROS_LANG_DISABLE=genlisp:geneus
 
@@ -11,7 +11,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /temp/utcoupe_install
 WORKDIR /temp/utcoupe_install
-RUN wget https://github.com/utcoupe/coupe19/raw/master/scripts/install_external_nodes.sh && chmod +x install_external_nodes.sh
+RUN wget https://github.com/utcoupe/coupe20/raw/master/scripts/install_external_nodes.sh && chmod +x install_external_nodes.sh
 RUN bash -c "source /opt/ros/melodic/setup.sh && ./install_external_nodes.sh"
 RUN rm -rf /tmp/utcoupe*
 

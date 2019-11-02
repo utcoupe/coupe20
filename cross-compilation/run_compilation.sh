@@ -32,7 +32,7 @@ function run_cross_compilation() {
     if [[ -z "$(docker images --format='{{print .Tag}}' | grep ${img_tag})" ]]; then
         red_echo "docker image ${img_tag} not found locally."
         if [[ ${build_image} -eq 0 ]]; then
-            docker pull "utcoupe/coupe19:${img_tag}"
+            docker pull "utcoupe/coupe20:${img_tag}"
         else
             build_image
         fi
@@ -52,7 +52,7 @@ function run_cross_compilation() {
         --mount type=bind,source="${UTCOUPE_WORKSPACE}"/ros_ws/src,target="${img_ws_root_dir}"/ros_ws/src \
         --mount type=bind,source="${UTCOUPE_WORKSPACE}"/libs,target="${img_ws_root_dir}"/libs,readonly \
         --mount type=bind,source="${cross_compilation_install_dir}",target="${img_ws_root_dir}"/ros_ws/install \
-        "utcoupe/coupe19:${img_tag}" \
+        "utcoupe/coupe20:${img_tag}" \
         /bin/bash -c "catkin_make install -DCMAKE_BUILD_TYPE=Release"
     # Makes cmake crash
     #    --tmpfs "${img_ws_root_dir}"/ros_ws/devel

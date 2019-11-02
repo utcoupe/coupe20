@@ -1,4 +1,4 @@
- Code source des robots d'UTCoupe 2019
+Source code of UTCoupe 2020
 =======
 |master|devel|
 |------|-----|
@@ -6,74 +6,86 @@
 
 # Configuration
 
-Avant toute chose, il faut cloner le répertoire sur votre ordinateur :
+First clone the repo to your PC :
 ```
 git clone git@github.com:utcoupe/coupe19.git
 ```
 
-### Configurer l'environnement de développement
+### Development environment configuration
 
-Un script d'installation automatique est disponible. Allez dans le dossier `coupe19`, et lancer simplement :
+An automated installation script is available. Go in the 'coupe20' folder and launch :
 ```
 ./scripts/install_utcoupe_setup.sh
 ```
 
-Si c'est votre première installation, répondez "y" à toutes les questions.
+If it is your first installation, answer "y" to all questions.
 
-### Compiler le système
+### Compile the system
 
-Tout le système de cette année repose sur ROS (http://www.ros.org/), il faut donc compiler le système après l'avoir récupéré et configuré :
+The whole system relies on ROS (http://www.ros.org/). Therefore you need to compile the system after having fetched it :
 ```
 cd coupe19/ros_ws
 catkin_make
 ```
 
-# Règles et Guidelines
+### Source the system
 
-Afin d'avoir un projet organisé et fonctionnel, voici quelques règles (par convention ou importantes pour le 
-fonctionnement du projet) à suivre pour la création de branches git, paquets, noeuds ros, etc :
+Do not forget to source it !
+If you are using bash : 
+'''
+source devel/setup.bash
+'''
+
+If you are using zsh : 
+'''
+source devel/setup.zsh
+'''
+
+You can add the source command with the absolute path to setup.bash in ~/.bashrc (or ~/.zshrc) to automate this process.
+
+# Project guidelines
+
+Here are some rules we follow to keep project consistency :
 
 ### Git
 
-- Créer des branches sur git de la forme `namespace/package` si la branche correspond à un paquet ROS. (e.g. `ai/scheduler`, `memory/map`, etc)
+- Create git branches of format `namespace/package` for ROS packages (e.g. `ai/scheduler`, `memory/map`, etc).
 
-### Paquets ROS
+### ROS packages
 
-- Créer des paquets ROS nommés de la forme `namespace_package` (utile une fois qu'ils seront tous ensemble, ils seront ordonnés par
-ordre alphabétique : plus visuel)
+- Create ROS packages of format `namespace_package` (for alphabetic order sorting purposes)
 
-- Créer des serveurs de `topics`/`services`/`actions` nommés de la forme `/namespace/package/server_name` s'ils peuvent être accédés par des paquets 
-extérieurs (ATTENTION : avec un `/` au début pour créer un nom absolu), `server_name` s'ils sont internes.
+- Create `topics`/`services`/`actions` in the format `/namespace/package/server_name` if they can be accessed by extern packages (WARNING : with `/` at the beginning to create an absolute name), `server_name` if they are only intern.
 
-- Nommer les fichiers de définition `.msg`/`.srv`/`.action` en PascalCase (e.g. `GetValues.srv`) et les variables dedans en minuscules (format `var_name`).
+- Name definition files `.msg`/`.srv`/`.action` in PascalCase (e.g. `GetValues.srv`) and variables inside in lower case(format `var_name`).
 
 ### Python
 
-- Afin de respecter le PEP8 : 4 espaces d'intentation (et non tabs).
+- PEP8 : 4 indentation spaces (no tabs).
 
-### Données
+### Data
 
-- Unités de distance en mètres, transportées par des `float32`.
+- Distance units in m, stored as `float32`.
 
-- Lors de la description d'une position d'une forme (cercle, ligne, rectangle, point...), donner la position par rapport au centre de la forme (sauf précision explicite et nécessaire). Par exemple, donner la position du centre d'un rectangle et non d'un coin.
+- When describing a shape (circle, line, rectangle, point...), give the position relative to the center of the shape unless it is absolutely necessary.  For example, do not give the corner of a rectangle.
 
 # Webclient
 
-Pour installer les dépendances du webclient :
+To install the webclient dependency :
 ```
 cd webclient
 npm install --only=prod
 ```
 
-Pour lancer le webclient :
+To launch the webclient :
 ```
 npm start
 ```
 
-S'assurer que le noeud ROS `rosbridge_server` est bien lancé.
+Make sure the ROS node `rosbridge_server` starts right.
 
-Le webclient peut être lancé depuis le robot, ou depuis un ordinateur connecté à la Raspberry.
+The webclient can be launched from the robot or a PC connected to the embedded computer (e.g. Raspberry or Lattepanda).
 
-Si le serveur est lancé sur le robot, se rendre sur `http://<ip_de_la_raspi>:8080`.
+If the server is launched on the robot, go to `http://<ip_of_embedded_computer>:8080`.
 
-Sinon, se rendre sur [http://localhost:8080](http://localhost:8080) et vérifier que le client se connecte bien à l'IP du robot dans les paramètres.
+Else, go to [http://localhost:8080](http://localhost:8080) and check if the client connects to the robot IP in the parameters.

@@ -11,7 +11,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /temp/utcoupe_install
 WORKDIR /temp/utcoupe_install
-RUN wget https://github.com/utcoupe/coupe18/raw/master/scripts/install_external_nodes.sh && chmod +x install_external_nodes.sh
+RUN wget https://github.com/utcoupe/coupe20/raw/master/scripts/install_external_nodes.sh && chmod +x install_external_nodes.sh
 RUN bash -c "source /opt/ros/kinetic/setup.sh && ./install_external_nodes.sh"
 RUN rm -rf /tmp/utcoupe*
 

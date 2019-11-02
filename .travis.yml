@@ -3,7 +3,7 @@ sudo: required
 notifications:
   slack:
     rooms:
-      - utcoupe-utc:cW8wDAodXN9NB6fgPt356vFQ#github
+      - utcoupe-utc:6OJ1WA42gFOXaq2nTt5ZpNCk#github
     on_success: always # default: always
     on_failure: always # default: always
 

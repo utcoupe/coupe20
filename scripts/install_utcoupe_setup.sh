@@ -149,8 +149,8 @@ function launch_script() {
 }
 
 # Verify that the script is launched from the right place
-if [ ! "${PWD##*/}" = "coupe19" ]; then
-	red_echo "You have to launch this script from UTCoupe main directory : ./script/${0##*/} or to rename this folder in coupe19."
+if [ ! "${PWD##*/}" = "coupe20" ]; then
+	red_echo "You have to launch this script from UTCoupe main directory : ./script/${0##*/} or to rename this folder in coupe20."
 	exit 1
 fi
 

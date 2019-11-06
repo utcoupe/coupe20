@@ -15,7 +15,7 @@ git clone git@github.com:utcoupe/coupe20.git
 
 An automated installation script is available. Go in the 'coupe20' folder and launch :
 ```
-./scripts/install_utcoupe_setup.sh
+./scripts/install_utcoupe_setup.sh 
 ```
 
 If it is your first installation, answer "y" to all questions.

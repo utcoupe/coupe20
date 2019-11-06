@@ -1,7 +1,7 @@
 FROM arm32v7/ros:kinetic-ros-base
 
-RUN mkdir -p /utcoupe/coupe18/ros_ws/src
-ENV UTCOUPE_WORKSPACE /utcoupe/coupe18
+RUN mkdir -p /utcoupe/coupe20/ros_ws/src
+ENV UTCOUPE_WORKSPACE /utcoupe/coupe20
 ENV ROS_LANG_DISABLE=genlisp:geneus
 
 RUN apt-get update
@@ -11,7 +11,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /temp/utcoupe_install
 WORKDIR /temp/utcoupe_install
-RUN wget https://github.com/utcoupe/coupe18/raw/master/scripts/install_external_nodes.sh && chmod +x install_external_nodes.sh
+RUN wget https://github.com/utcoupe/coupe20/raw/master/scripts/install_external_nodes.sh && chmod +x install_external_nodes.sh
 RUN bash -c "source /opt/ros/kinetic/setup.sh && ./install_external_nodes.sh"
 RUN rm -rf /tmp/utcoupe*
 

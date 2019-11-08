@@ -28,7 +28,7 @@ typedef struct ang_data {
 typedef struct pwm_data {
 	float time;
 	int pwm_l, pwm_r;
-	int autoStop;
+	int auto_stop;
 } pwm_data_t;
 
 typedef struct spd_data {

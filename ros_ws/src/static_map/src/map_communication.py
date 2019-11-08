@@ -85,7 +85,7 @@ class MapServices:
         )
 
     def on_get_context(self, req):
-        terrain, robot_shape = MapManager.get_context()
+        terrain, robot_shape, robot_wheelbase = MapManager.get_context()
 
         msg = static_map.srv.MapGetContextResponse()
         msg.success = True
@@ -93,16 +93,18 @@ class MapServices:
         msg.terrain_layers = []
 
         # Robot shape
-        msg.robot_shape = static_map.msg.MapObject()
+        msg.robot_shape = static_map.msg.Robot()
         msg.robot_shape.shape_type = msg.robot_shape.SHAPE_RECT
         msg.robot_shape.width = robot_shape.Width
         msg.robot_shape.height = robot_shape.Height
+        msg.robot_shape.wheelbase = robot_wheelbase
 
         for l in terrain.Layers:
             msg_layer = static_map.msg.MapLayer()
             msg_layer.name = l.Name
             msg_layer.walls = [self._create_object_msg(w) for w in l.Walls]
             msg.terrain_layers.append(msg_layer)
+
         return msg
 
     def on_set(self, req):

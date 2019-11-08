@@ -18,7 +18,7 @@ void ComputeIsBlocked(void) {
 	
 	current_goal = FifoCurrentGoal();
 
-	if(current_goal->type == TYPE_PWM && current_goal->data.pwm_data.autoStop)
+	if(current_goal->type == TYPE_PWM && current_goal->data.pwm_data.auto_stop)
 			block_time = BLOCK_TIME_AUTO_STOP; 
 
 	now = timeMillis();
@@ -28,7 +28,7 @@ void ComputeIsBlocked(void) {
 	
 	if (current_goal->type == NO_GOAL  || 
 		current_goal->type == TYPE_SPD ||
-	   (current_goal->type == TYPE_PWM && !current_goal->data.pwm_data.autoStop))
+	   (current_goal->type == TYPE_PWM && !current_goal->data.pwm_data.auto_stop))
 		goto end;
 
 	if (fifo.current_goal != last_goal_nr) {

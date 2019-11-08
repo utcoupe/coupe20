@@ -1,0 +1,9 @@
+# CURVE command
+uint8 BACKWARDS = 0
+uint8 FORWARD = 1
+uint8 direction 
+
+bool slow_go
+geometry_msgs/Pose2D[] path
+---
+bool response

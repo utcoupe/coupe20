@@ -38,6 +38,7 @@ add_service_files(
     Pwm.srv
     SetPos.srv
     Speed.srv
+    Curve.srv
 )
 
 ## Generate actions

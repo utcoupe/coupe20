@@ -11,6 +11,8 @@ class Robot(object):
     def __init__(self, xml, obj_classes):
         LoadingHelpers.checkChildExist(xml, "shape", "containers", "color")
         self.Shape = Shape2D(xml.find("shape"))
+        self.Wheelbase = float(xml.find("wheelbase").attrib["L"])
+
         xml.find("containers").attrib["name"] = "robot"
         self.Container = Container(xml.find("containers"), obj_classes)
         self.Color = Color(xml.find("color"))
@@ -24,6 +26,7 @@ class Robot(object):
         scale.attrib["x"] = self.Shape.Height
         scale.attrib["y"] = self.Shape.Width
         scale.attrib["z"] = 0.35
+
         orientation = ET.SubElement(m, "orientation")
         orientation.attrib["x"] = 0.0
         orientation.attrib["y"] = 0.0

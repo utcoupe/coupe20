@@ -37,7 +37,7 @@ class Localizer(object):
 
                 t.header.stamp = rospy.Time.now()
                 t.header.frame_id = "map"
-                t.child_frame_id = "asserv"
+                t.child_frame_id = "robot"
                 t.transform.translation.x = data.x
                 t.transform.translation.y = data.y
                 t.transform.translation.z = 0.0

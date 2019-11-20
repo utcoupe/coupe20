@@ -205,7 +205,7 @@ class BeltInterpreter(object):
             tr = TransformStamped()
 
             tr.header.stamp = rospy.Time.now()
-            tr.header.frame_id = "robot"
+            tr.header.frame_id = "robot_front"
             tr.child_frame_id = self.SENSOR_FRAME_ID.format(id)
 
             tr.transform.translation.x = s["x"]

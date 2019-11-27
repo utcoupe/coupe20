@@ -59,6 +59,7 @@ class Asserv:
         self._srv_goto = rospy.Service(
             "drivers/" + NODE_NAME + "/goto", Goto, self._callback_goto
         )
+
         self._srv_pwm = rospy.Service(
             "drivers/" + NODE_NAME + "/pwm", Pwm, self._callback_pwm
         )
@@ -170,14 +171,14 @@ class Asserv:
         @rtype:         GotoResponse
         """
         rospy.logdebug("[ASSERV] Received a request (goto service).")
-        # TODO manage the direction
+
         response = self._process_goto_order(
             self._goal_id_counter,
             request.mode,
             request.position.x,
             request.position.y,
             request.position.theta,
-            1,
+            request.direction,
             int(request.slow_go),
         )
         if response:
@@ -234,10 +235,18 @@ class Asserv:
         rospy.loginfo("[ASSERV] Received a request (pwm service).")
         if self._asserv_instance:
             ret_value = self._asserv_instance.pwm(
-                request.left, request.right, request.duration, request.autoStop
+                self._goal_id_counter,
+                request.left,
+                request.right,
+                request.duration,
+                request.auto_stop
             )
         else:
             ret_value = False
+
+        if ret_value:
+            self._goto_srv_dictionary[self._goal_id_counter] = ""
+            self._goal_id_counter += 1
         return PwmResponse(ret_value)
 
     def _callback_speed(self, request):
@@ -251,7 +260,7 @@ class Asserv:
         rospy.logdebug("[ASSERV] Received a request (speed service).")
         if self._asserv_instance:
             ret_value = self._asserv_instance.speed(
-                request.linear, request.angular, request.duration
+                request.linear, request.angular, request.duration, request.auto_stop
             )
         else:
             ret_value = False

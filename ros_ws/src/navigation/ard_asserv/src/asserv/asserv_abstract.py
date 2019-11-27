@@ -10,11 +10,11 @@ class AsservAbstract:
     def __init__(self, asserv_node):
         self._node = asserv_node
 
-    def goto(self, goal_id, x, y, direction):
+    def goto(self, goal_id, x, y, direction, slow_go):
         rospy.logerr("AsservAbstract is abstract !")
         return False
 
-    def gotoa(self, goal_id, x, y, a, direction):
+    def gotoa(self, goal_id, x, y, a, direction, slow_go):
         rospy.logerr("AsservAbstract is abstract !")
         return False
 

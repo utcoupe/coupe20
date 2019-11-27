@@ -2,5 +2,6 @@
 int16 linear
 int16 angular
 uint16 duration
+bool auto_stop
 ---
 bool response

@@ -1,7 +1,7 @@
 # Send a PWM command, left and right are the PWM applied on the wheels (limited to 255) and duration is in ms
-int16 left
-int16 right
-uint16 duration
-bool auto_stop #Stops when blocked
+int16 left # 0 - 255
+int16 right # 0-255
+uint16 duration # s
+bool auto_stop # Stops when blocked
 ---
 bool response

@@ -6,6 +6,10 @@ uint8 ROTNOMODULO = 3
 uint8 mode
 bool slow_go
 
+uint8 DIRECTION_BACKWARD = 0
+uint8 DIRECTION_FORWARD  = 1
+uint8 direction
+
 geometry_msgs/Pose2D position
 ---
 bool response

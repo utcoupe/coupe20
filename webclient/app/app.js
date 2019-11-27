@@ -20,7 +20,6 @@ function run($rootScope) {
                'ard_asserv/speed'],
       services: ['ard_asserv/emergency_stop',
                  'ard_asserv/goto',
-                 'ard_asserv/curve',
                  'ard_asserv/set_pos',
                  'ard_asserv/speed',
                  'ard_asserv/pwm',

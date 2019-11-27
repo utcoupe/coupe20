@@ -7,17 +7,6 @@
     </marker>
     <color name="light_gray"/>
 
-    <layer name="chaos">
-        <wall name="chaos_left">
-            <position x="1" y="0.995"/> 
-            <shape type="circle" r="0.15"/>
-        </wall> 
-        <wall name="chaos_right">
-            <position x="2" y="0.995"/> 
-            <shape type="circle" r="0.15"/>
-        </wall> 
-    </layer>
-
     <layer name="ground">
         <!-- Main walls -->
         <wall name="wall_top">
@@ -40,15 +29,7 @@
             <shape type="rect" w="0.022" h="2"/>
         </wall>
 
-        <!-- 2019 Walls-->
-        <wall name="weight_and_sliders">
-            <position x="1.5" y="0.211"/> 
-            <shape type="rect" w="2.1" h="0.422"/>
-        </wall> 
-        <wall name="weight_divider">
-            <position x="1.5" y="0.3"/> 
-            <shape type="rect" w="0.04" h="0.6"/>
-        </wall> 
+
     </layer>
 
     <layer name="belt">

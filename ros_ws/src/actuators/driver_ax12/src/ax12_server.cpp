@@ -397,7 +397,7 @@ void Ax12Server::cmd_topic_cb(const driver_ax12::Ax12CommandConstPtr &command) {
 Ax12Server::Ax12Server(const std::string &action_name, const std::string &service_name) :
         as_(nh_, action_name, boost::bind(&Ax12Server::execute_goal_cb, this, _1),
             boost::bind(&Ax12Server::cancel_goal_cb, this, _1), false),
-        std_mset_param_service(nh_.advertiseService(service_name, &Ax12Server::execute_set_service_cb, this)),
+        set_param_service(nh_.advertiseService(service_name, &Ax12Server::execute_set_service_cb, this)),
         game_status_sub_(nh_.subscribe(GAME_STATUS_TOPIC, 30, &Ax12Server::game_status_cb, this)),
         joint_goals_(),
         feedback_(),

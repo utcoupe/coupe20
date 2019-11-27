@@ -18,7 +18,7 @@ SEND_SPEED_RATE = 0.1  # in s
 ASSERV_RATE = 0.05  # in s
 
 # Metric constants
-ASSERV_ERROR_POSITION = 0.005  # in meters
+ASSERV_ERROR_POSITION = 0.03  # in meters
 ASSERV_ERROR_ANGLE = 0.05  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
 ASSERV_MAX_SPEED = 0.4 # m/s

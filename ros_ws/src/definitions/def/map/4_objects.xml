@@ -1,31 +1,31 @@
 <objects>
     <classes>
-        <!-- <class name="buoy">
+        <class name="bouée">
             <color name="red"/>
-            <marker type="cylinder" ns="buoy" z="0.0125">
-                <scale x="0.07" y="0.07" z="0.025"/>
+            <marker type="cylinder" ns="bouée" z="0.0125">
+                <scale x="0.07" y="0.07" z="0.25"/>
                 <orientation x="0" y="0" z="0"/>
             </marker>
             <tags>
-                <tag>buoy</tag>
+                <tag>bouée</tag>
             </tags>
         </class>
 
-        <class name="buoy" class="buoy">
+        <class name="bouée-horizontale" class="bouée">
             <shape type="circle" r="0.038"/>
             <tags inherit="true">
-                <tag>buoy-horizontal</tag>
+                <tag>bouée-horizontale</tag>
             </tags>
         </class> -->
     </classes>
 
 
-    <!-- Spawn zone -->
-    <!-- <container name="spawm_buoys">
+    <!-- Spawm zone -->
+    <container name="Spawm_bouées">
         
-        <object name="buoy1" class="buoy-horizontal">
-            <position x="0.5" y="1.55"/>
-            <tags><tag>buoy-spawn</tag></tags>
+        <object name="bouée1" class="bouée-horizontale">
+            <position x="1.5" y="1"/>
+            <tags><tag>bouée-1</tag></tags>
         </object>
         
     </container> -->

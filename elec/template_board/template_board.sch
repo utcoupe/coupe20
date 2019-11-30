@@ -1,0 +1,154 @@
+EESchema Schematic File Version 4
+LIBS:template_board-cache
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L power:+12V #PWR0103
+U 1 1 5DC32A57
+P 1350 1200
+F 0 "#PWR0103" H 1350 1050 50  0001 C CNN
+F 1 "+12V" H 1365 1373 50  0000 C CNN
+F 2 "" H 1350 1200 50  0001 C CNN
+F 3 "" H 1350 1200 50  0001 C CNN
+	1    1350 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0105
+U 1 1 5DC3361B
+P 1350 1500
+F 0 "#PWR0105" H 1350 1250 50  0001 C CNN
+F 1 "GND" H 1355 1327 50  0000 C CNN
+F 2 "" H 1350 1500 50  0001 C CNN
+F 3 "" H 1350 1500 50  0001 C CNN
+	1    1350 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1350 1500 1350 1400
+Wire Wire Line
+	1350 1300 1350 1200
+$Comp
+L Device:LED D1
+U 1 1 5DC7C5CB
+P 2000 1200
+F 0 "D1" V 2039 1083 50  0000 R CNN
+F 1 "LED" V 1948 1083 50  0000 R CNN
+F 2 "LED_SMD:LED_0805_2012Metric" H 2000 1200 50  0001 C CNN
+F 3 "~" H 2000 1200 50  0001 C CNN
+	1    2000 1200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 5DC7D526
+P 2000 1650
+F 0 "R1" H 2070 1696 50  0000 L CNN
+F 1 "R" H 2070 1605 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 1930 1650 50  0001 C CNN
+F 3 "~" H 2000 1650 50  0001 C CNN
+	1    2000 1650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0109
+U 1 1 5DC7DC09
+P 2000 1950
+F 0 "#PWR0109" H 2000 1700 50  0001 C CNN
+F 1 "GND" H 2005 1777 50  0000 C CNN
+F 2 "" H 2000 1950 50  0001 C CNN
+F 3 "" H 2000 1950 50  0001 C CNN
+	1    2000 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+12V #PWR0111
+U 1 1 5DC7E0DF
+P 2000 900
+F 0 "#PWR0111" H 2000 750 50  0001 C CNN
+F 1 "+12V" H 2015 1073 50  0000 C CNN
+F 2 "" H 2000 900 50  0001 C CNN
+F 3 "" H 2000 900 50  0001 C CNN
+	1    2000 900 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2000 1950 2000 1800
+Wire Wire Line
+	2000 1500 2000 1350
+Wire Wire Line
+	2000 1050 2000 900 
+Wire Wire Line
+	1300 1400 1350 1400
+Wire Wire Line
+	1350 1300 1300 1300
+$Comp
+L villanut_lib:Nucleo-F303K8 U1
+U 1 1 5DC751CB
+P 2550 4450
+F 0 "U1" H 2300 5500 50  0000 C CNN
+F 1 "Nucleo-F303K8" H 2050 5400 50  0000 C CNN
+F 2 "villanut_lib:NUCLEO-F303K8" H 2700 3500 50  0001 L CNN
+F 3 "https://os.mbed.com/platforms/ST-Nucleo-F303K8/" H 2550 3450 50  0001 C CNN
+	1    2550 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5VL #PWR0101
+U 1 1 5DC7AF4F
+P 2750 3300
+F 0 "#PWR0101" H 2750 3150 50  0001 C CNN
+F 1 "+5VL" H 2765 3473 50  0000 C CNN
+F 2 "" H 2750 3300 50  0001 C CNN
+F 3 "" H 2750 3300 50  0001 C CNN
+	1    2750 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2750 3300 2750 3450
+$Comp
+L Connector_Generic:Conn_01x02 J1
+U 1 1 5DC7B428
+P 1100 1400
+F 0 "J1" H 1200 1100 50  0000 C CNN
+F 1 "Conn_01x02" H 1250 1200 50  0000 C CNN
+F 2 "Connector_Phoenix_MSTB:PhoenixContact_MSTBA_2,5_2-G-5,08_1x02_P5.08mm_Horizontal" H 1100 1400 50  0001 C CNN
+F 3 "~" H 1100 1400 50  0001 C CNN
+	1    1100 1400
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0102
+U 1 1 5DC7E63C
+P 2600 5550
+F 0 "#PWR0102" H 2600 5300 50  0001 C CNN
+F 1 "GND" H 2605 5377 50  0000 C CNN
+F 2 "" H 2600 5550 50  0001 C CNN
+F 3 "" H 2600 5550 50  0001 C CNN
+	1    2600 5550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2550 5450 2550 5500
+Wire Wire Line
+	2550 5500 2600 5500
+Wire Wire Line
+	2650 5500 2650 5450
+Wire Wire Line
+	2600 5550 2600 5500
+Connection ~ 2600 5500
+Wire Wire Line
+	2600 5500 2650 5500
+$EndSCHEMATC

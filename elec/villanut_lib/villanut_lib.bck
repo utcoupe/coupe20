@@ -1,0 +1,39 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP Conn_MicroMatch_THT_4x2_Female
+D TE CONNECTIVITY 215079-8 / Tyco215079-8 / AMP 215079-8 / micro-match female on board connector
+F https://www.digikey.fr/product-detail/en/te-connectivity-amp-connectors/215079-8/A105450CT-ND/3465694?utm_source=snapeda&utm_medium=aggregator&utm_campaign=symbol
+$ENDCMP
+#
+$CMP L6235D
+D L6235D, Motor Driver, 3-Phase Brushless DC Motor, 12 to 52V, 24-Pin SOIC
+F http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/CD00002347.pdf
+$ENDCMP
+#
+$CMP LD39050PU33R
+D STMICROELECTRONICS - LD39050PU33R - LDO, FIXED, 3.3V, 0.5A, DFN-6
+F https://componentsearchengine.com/Datasheets/2/LD39050PU33R.pdf
+$ENDCMP
+#
+$CMP MCP2515-I_P
+D Stand-Alone CAN Controller
+F http://componentsearchengine.com/Datasheets/3/MCP2515-I_P.pdf
+$ENDCMP
+#
+$CMP Molex_01x11_1mm_pitch_FFC-FPC
+D Molex FFC/FPC SMT Series 1mm Pitch 11 Way 1 Row Right Angle SMT Female FPC Connector, Tin Bismuth Alloy Plated Contacts
+F http://www.molex.com/pdm_docs/sd/522711179_sd.pdf
+$ENDCMP
+#
+$CMP Nucleo-F303K8
+D Arduino Nano v3.x
+K Arduino nano microcontroller module USB
+F http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf
+$ENDCMP
+#
+$CMP Tact_Switch_4.2x3.2x2.5mm
+D Tactile Switches 500mOhm 1.57N 16VDC 4.2X3.2X2.5MM 50mA
+F https://www.alps.com/prod/info/E/HTML/Tact/SurfaceMount/SKRP/SKRPANE010.html
+$ENDCMP
+#
+#End Doc Library

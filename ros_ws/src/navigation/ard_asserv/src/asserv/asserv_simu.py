@@ -77,7 +77,7 @@ class AsservSimu(AsservAbstract):
         AsservAbstract.__init__(self, asserv_node)
         # Asserv management stuff
         # The pose is in meters and rad
-        self._current_pose = Pose2D(0.18, 0.8, math.pi/2)
+        self._current_pose = Pose2D(0.18, 1.2, math.pi/2)
         self._left_wheel_speed = 0 # m/s
         self._right_wheel_speed = 0 # m/s
 

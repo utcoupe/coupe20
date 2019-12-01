@@ -3,6 +3,7 @@
 #include "pathfinder/dynamic_barriers_manager.h"
 #include "pathfinder/occupancy_grid.h"
 
+#include "pathfinder/curvetrajectory.h"
 #include <ros/console.h>
 
 #include <chrono>
@@ -75,11 +76,24 @@ Pathfinder::FindPathStatus Pathfinder::findPath(
 
     Path rawPath = retrievePath(mapDist, startPos, endPos);
     path = smoothPath(rawPath);
-
     auto endTime = chrono::high_resolution_clock::now();
     chrono::duration<double, std::milli> elapsedSeconds = endTime - startTime;
 
-    ROS_INFO_STREAM("Found a path with " << path.size() << " points (took " << elapsedSeconds.count() << " ms)");
+    ROS_INFO_STREAM("Found a straight path with " << path.size() << " points (took " << elapsedSeconds.count() << " ms)");
+    if (path.size() == 3) {
+         // Duplicate first point to get 4 points for Bezier
+        path.push_back(path[2]);
+    }
+    if (path.size() > 3) {
+        CurveTrajectory curvedPath(path);
+        path = curvedPath.compute(20);
+        endTime = chrono::high_resolution_clock::now();
+        elapsedSeconds = endTime - startTime;
+
+        ROS_INFO_STREAM("Found a curved path with " << path.size() << " points (took " << elapsedSeconds.count() << " ms)");
+    }
+    
+
 
     if (_renderAfterComputing)
         _mapStorage.saveMapToFile(_renderFile, _occupancyGrid, _dynBarriersMng, rawPath, path);

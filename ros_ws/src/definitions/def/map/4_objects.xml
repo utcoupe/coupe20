@@ -1,33 +1,250 @@
 <objects>
     <classes>
-        <class name="bouée">
+        <class name="bouée-rouge">
             <color name="red"/>
-            <marker type="cylinder" ns="bouée" z="0.0125">
-                <scale x="0.07" y="0.07" z="0.25"/>
+            <marker type="cylinder" ns="bouée" z="0.0625">
+                <scale x="0.072" y="0.072" z="0.125"/>
                 <orientation x="0" y="0" z="0"/>
             </marker>
+            <shape type="circle" r="0.072"/>
             <tags>
                 <tag>bouée</tag>
             </tags>
         </class>
 
-        <class name="bouée-horizontale" class="bouée">
-            <shape type="circle" r="0.038"/>
-            <tags inherit="true">
-                <tag>bouée-horizontale</tag>
+        <class name="bouée-verte">
+            <color name="green"/>
+            <marker type="cylinder" ns="bouée" z="0.0625">
+                <scale x="0.072" y="0.072" z="0.125"/>
+                <orientation x="0" y="0" z="0"/>
+            </marker>
+            <shape type="circle" r="0.072"/>
+            <tags>
+                <tag>bouée</tag>
             </tags>
-        </class> -->
+        </class>
+
+        <class name="bouée-random">
+            <color name="black"/>
+            <marker type="cylinder" ns="bouée" z="0.0625">
+                <scale x="0.072" y="0.072" z="0.125"/>
+                <orientation x="0" y="0" z="0"/>
+            </marker>
+            <shape type="circle" r="0.072"/>
+            <tags>
+                <tag>bouée</tag>
+            </tags>
+        </class>
     </classes>
 
 
-    <!-- Spawm zone -->
-    <container name="Spawm_bouées">
-        
-        <object name="bouée1" class="bouée-horizontale">
-            <position x="1.5" y="1"/>
-            <tags><tag>bouée-1</tag></tags>
+    <container name="Bouées_port1_blue">
+        <object name="b1" class="bouée-rouge">
+            <position x="0.3" y="1.6"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b2" class="bouée-verte">
+            <position x="0.3" y="0.8"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b3" class="bouée-verte">
+            <position x="0.45" y="1.49"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b4" class="bouée-rouge">
+            <position x="0.45" y="0.92"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+    <container name ="Bouées_dérive_blue">
+        <object name="b5" class="bouée-rouge">
+            <position x="0.67" y="1.9"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b6" class="bouée-verte">
+            <position x="0.95" y="1.6"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+       
+        <object name="b9" class="bouée-rouge">
+            <position x="1.1" y="1.2"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b10" class="bouée-verte">
+            <position x="1.2" y="0.8"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+
+    <container name="Bouées_port2_yellow">
+        <object name="bouée7" class="bouée-rouge">
+            <position x="1.005" y="0.045"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b8" class="bouée-verte">
+            <position x="1.065" y="0.35"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b11" class="bouée-rouge">
+            <position x="1.335" y="0.35"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b12" class="bouée-verte">
+            <position x="1.395" y="0.045"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+
+    <container name="Bouées_port2_blue">
+        <object name="b13" class="bouée-rouge">
+            <position x="1.605" y="0.045"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b14" class="bouée-verte">
+            <position x="1.665" y="0.35"/>
+            <tags><tag>bouée</tag></tags>
         </object>
         
-    </container> -->
- 
+        <object name="b17" class="bouée-rouge">
+            <position x="1.935" y="0.35"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b18" class="bouée-verte">
+            <position x="1.995" y="0.045"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+    <container name="Bouées_dérive_yellow">
+    <object name="b15" class="bouée-rouge">
+            <position x="1.73" y="0.8"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b16" class="bouée-verte">
+            <position x="1.9" y="1.2"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b19" class="bouée-rouge">
+            <position x="2.05" y="1.6"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b20" class="bouée-verte">
+            <position x="2.33" y="1.9"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+    <container name="Bouées_port1_yellow">
+        <object name="b21" class="bouée-verte">
+            <position x="2.55" y="0.920"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b22" class="bouée-rouge">
+            <position x="2.55" y="1.49"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b23" class="bouée-rouge">
+            <position x="2.7" y="0.8"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b24" class="bouée-verte">
+            <position x="2.7" y="1.6"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+    
+    <container name="Bouées-écueil-blue">
+        <object name="b25" class="bouée-rouge">
+            <position x="-0.067" y="0.25"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b26" class="bouée-verte">
+            <position x="-0.067" y="0.325"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b27" class="bouée-rouge">
+            <position x="-0.067" y="0.4"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b28" class="bouée-verte">
+            <position x="-0.067" y="0.475"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b29" class="bouée-rouge">
+            <position x="-0.067" y="0.550"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+    <container name="Bouées-écueil-yellow">
+        <object name="b25" class="bouée-verte">
+            <position x="3.067" y="0.25"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b26" class="bouée-rouge">
+            <position x="3.067" y="0.325"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b27" class="bouée-verte">
+            <position x="3.067" y="0.4"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b28" class="bouée-rouge">
+            <position x="3.067" y="0.475"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b29" class="bouée-verte">
+            <position x="3.067" y="0.550"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+    <container name="Bouées-écueil-random-blue">
+        <object name="b30" class="bouée-random">
+            <position x="0.7" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b31" class="bouée-random">
+            <position x="0.775" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b32" class="bouée-random">
+            <position x="0.850" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b33" class="bouée-random">
+            <position x="0.925" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b34" class="bouée-random">
+            <position x="1.0" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
+
+    <container name="Bouées-écueil-random-yellow">
+        <object name="b35" class="bouée-random">
+            <position x="2.0" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b36" class="bouée-random">
+            <position x="2.075" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b37" class="bouée-random">
+            <position x="2.15" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b38" class="bouée-random">
+            <position x="2.225" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+        <object name="b39" class="bouée-random">
+            <position x="2.3" y="2.067"/>
+            <tags><tag>bouée</tag></tags>
+        </object>
+    </container>
 </objects>

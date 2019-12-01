@@ -1,5 +1,7 @@
 #include "pathfinder/cubicbezier.h"
 
+// Author : Théo Villanueva
+
 CubicBezier::CubicBezier()
 {
     _P0 = {0, 0};

@@ -2,6 +2,8 @@
 #include <cmath>
 #include "Eigen/Dense"
 
+// Author : Théo Villanueva
+
 CurveTrajectory::CurveTrajectory(std::vector<Point> points)
 {
     _points = points;

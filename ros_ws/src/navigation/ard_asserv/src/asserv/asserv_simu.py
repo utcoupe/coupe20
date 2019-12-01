@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#-*- coding:utf-8 *-*
 
 import math
 import numpy as np
@@ -12,35 +13,36 @@ from static_map.srv import MapGetContext, MapGetContextRequest
 __author__ = "Thomas Fuhrmann & milesial & Mindstan & PaulMConstant"
 __date__ = 19/04/2018
 
-# Rates
+# Rates 
 SEND_POSE_RATE = 0.1  # in s
 SEND_SPEED_RATE = 0.1  # in s
 ASSERV_RATE = 0.05  # in s
 
 # Metric constants
-ASSERV_ERROR_POSITION = 0.03  # in meters
-ASSERV_ERROR_ANGLE = 0.05  # in radians
+ASSERV_ERROR_POSITION = 0.005 # in meters
+ASSERV_ERROR_INTERMEDIATE_POSITION = 0.15 # m
+ASSERV_ERROR_ANGLE = 0.02  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
 ASSERV_MAX_SPEED = 0.4 # m/s
-SLOW_GO_MAX_SPEED = 0.25 # m/s
+SLOW_GO_MAX_SPEED = 0.18 # m/s
 
 # Control classes
 
 class AngularPID():
-    P = 0.5
-    D = 1
-    I = 0.005
-    MAX_I = 5
+    P = 0.6
+    D = 0.6
+    I = 0.00001
+    MAX_I = 0.05
     last_error = 0
     error_sum = 0
 
 class LinearPD():
     # No integral here because we don't want to overshoot
-    P = 0.8
-    D = 10
+    P = 1
+    D = 8
     last_error = 0
 
-    ANGLE_SPEED_DIVIDER = 40 # Coefficient to reduce linear speed proportionally to angle error
+    ANGLE_SPEED_DIVIDER = 150 # Coefficient to reduce linear speed proportionally to angle error
 
 
 # Goals
@@ -75,14 +77,15 @@ class AsservSimu(AsservAbstract):
         AsservAbstract.__init__(self, asserv_node)
         # Asserv management stuff
         # The pose is in meters and rad
-        self._current_pose = Pose2D(0.18, 1, math.pi/2)
+        self._current_pose = Pose2D(0.18, 0.8, math.pi/2)
         self._left_wheel_speed = 0 # m/s
         self._right_wheel_speed = 0 # m/s
 
         self._current_linear_speed = 0 # m/s
         self._current_angular_speed = 0 # m/s
         self._emergency_stop = False
-
+        self._position_error = ASSERV_ERROR_POSITION
+        
         self._current_goal = None
 
         # List of Pose2d corresponding to the goals
@@ -180,7 +183,7 @@ class AsservSimu(AsservAbstract):
         self._start_pwm(goal_id, right_wheel_speed, left_wheel_speed, duration, auto_stop)
         return True
 
-    def speed(self, linear, angular, duration, auto_stop):
+    def speed(self, goal_id, linear, angular, duration, auto_stop):
         """
         Keeps a linear and angular speed for the desired duration.
 
@@ -310,7 +313,6 @@ class AsservSimu(AsservAbstract):
 
             self._update_current_pose_pos()
 
-            self._update_current_pose_pos()
             if self._wallhit_stop(direction):
                 return
             
@@ -324,46 +326,56 @@ class AsservSimu(AsservAbstract):
             return
 
         if isinstance(self._current_goal, AsservGoal):  
+            # If the goal is not the last, give leeway to the robot
+            if len(self._goals_list):
+                self._position_error = ASSERV_ERROR_INTERMEDIATE_POSITION
+            else:
+                self._position_error = ASSERV_ERROR_POSITION
+
             self._apply_slow_go(self._current_goal.slow_go)
-            lin_error = self._get_linear_error()
+            dist_to_next_goal = self._get_distance_to_next_goal()
+            dist_to_final_goal = self._get_distance_from_next_to_final_goal() + dist_to_next_goal
+
             angle_error = self._get_angle_error()
 
             if self._current_goal.has_angle: # gotoa
-                if lin_error < ASSERV_ERROR_POSITION:
+                if dist_to_next_goal < self._position_error:
                     # Position OK. Just needs to rotate.
                     self._current_goal.pose.x = self._current_pose.x
                     self._current_goal.pose.y = self._current_pose.y
-                    lin_error = 0
+                    dist_to_next_goal = 0
                     LinearPD.last_error = 0
                     angle_error = self._current_pose.theta - self._current_goal.pose.theta
                     angle_error = self._clean_angle_error(angle_error)
 
                     if abs(angle_error) < ASSERV_ERROR_ANGLE:
                         # Position and angle OK.
-                        rospy.loginfo('[ASSERV] Goal position has been reached !')
+                        # rospy.loginfo('[ASSERV] Goal position has been reached !')
                         self._node.goal_reached(self._current_goal.goal_id, True)
-                        self._stop()
+                        if not len(self._goals_list):
+                            self._stop()
                         self._current_goal = None
                         return
 
-            elif  lin_error < ASSERV_ERROR_POSITION: # goto
+            elif  dist_to_next_goal < self._position_error:# and angle_error < ASSERV_ERROR_INTERMEDIATE_ANGLE: # goto
                 # Position OK, no need to rotate.
-                rospy.loginfo('[ASSERV] Goal position has been reached !')
+                # rospy.loginfo('[ASSERV] Goal position has been reached !')
                 self._node.goal_reached(self._current_goal.goal_id, True)
-                self._stop()
+                if not len(self._goals_list):
+                    self._stop()
                 self._current_goal = None
                 return
 
-            if abs(angle_error) > math.pi :
+            if abs(angle_error) > math.pi/(8 * np.max([dist_to_next_goal, 0.5])):
                 # It is counter-productive to have a linear speed 
                 # if we are facing away from our goal. For now, only rotate.
                 wanted_lin_speed = 0
             else:
-                wanted_lin_speed = (lin_error * LinearPD.P
-                    + (lin_error - LinearPD.last_error) * LinearPD.D)
+                wanted_lin_speed = (dist_to_final_goal * LinearPD.P
+                                 + (dist_to_final_goal - LinearPD.last_error) * LinearPD.D)
 
                 # Reduce linear speed proportionnaly to angle error
-                wanted_lin_speed /= (1 + LinearPD.ANGLE_SPEED_DIVIDER * abs(angle_error) * abs(lin_error))
+                wanted_lin_speed /= (1 + LinearPD.ANGLE_SPEED_DIVIDER * abs(angle_error) * abs(wanted_lin_speed))
 
                 if not self._current_goal.direction:
                     # Go backwards
@@ -384,7 +396,7 @@ class AsservSimu(AsservAbstract):
             self._current_linear_speed, self._current_angular_speed = self._get_speeds_from_wheels()
             
             self._update_current_pose_pos()
-            self._update_PID_errors(lin_error, angle_error)
+            self._update_PID_errors(dist_to_final_goal, angle_error)
 
             return
 
@@ -393,22 +405,39 @@ class AsservSimu(AsservAbstract):
         Checks if a new goal has to be got. 
         Initializes PID parameters if necessary.
         """
-        if self._current_goal is not None or not len(self._goals_list):
+        if not len(self._goals_list):
             return
 
-        self._current_goal = self._goals_list.pop(0)
-        if isinstance(self._current_goal, PwmGoal):
-            rospy.loginfo("[ASSERV] Starting new Spd/PWM goal with duration = %.2fs"
+        if self._current_goal is None:
+            self._current_goal = self._goals_list.pop(0)
+            if isinstance(self._current_goal, PwmGoal):
+                rospy.loginfo("[ASSERV] Starting new Spd/PWM goal with duration = %.2fs"
                             % self._current_goal.duration )
             
-        elif isinstance(self._current_goal, AsservGoal):
-            rospy.loginfo('[ASSERV] Starting a new goal : x = %.2f y = %.2f a = %.2f' %
-                (self._current_goal.pose.x, self._current_goal.pose.y, self._current_goal.pose.theta))
+            elif isinstance(self._current_goal, AsservGoal):
+                rospy.loginfo('[ASSERV] Starting a new goal : x = %.2f y = %.2f a = %.2f' %
+                    (self._current_goal.pose.x, self._current_goal.pose.y, self._current_goal.pose.theta))
             
             AngularPID.last_error = self._get_angle_error()
             AngularPID.error_sum = 0
 
-            LinearPD.last_error = self._get_linear_error()
+            LinearPD.last_error = self._get_distance_from_next_to_final_goal()
+
+        best_goal_index = -1
+        best_goal_dist = self._get_distance_between_poses(self._current_pose, self._current_goal.pose)
+        
+        # Check for the nearest point and set it to be the new goal
+        for i in range(len(self._goals_list)):
+            dist = self._get_distance_between_poses(self._current_pose, self._goals_list[i].pose)
+            if dist < best_goal_dist:
+                best_goal_index = i
+                best_goal_dist = self._get_distance_between_poses(self._current_pose, self._goals_list[i].pose)
+        
+        if best_goal_index != -1:
+            for j in range(best_goal_index+1):
+                self._node.goal_reached(self._current_goal.goal_id, True)
+                self._current_goal = self._goals_list.pop(0)
+
 
     def _apply_slow_go(self, slow_go):
         """
@@ -539,15 +568,29 @@ class AsservSimu(AsservAbstract):
             angle_error = 0
         return angle_error
 
-    def _get_linear_error(self):
+    def _get_distance_to_next_goal(self):
+        return self._get_distance_between_poses(self._current_pose, self._current_goal.pose)
+
+    def _get_distance_from_next_to_final_goal(self):
         """
         Returns the linear error between our current goal 
-        and our current position.
+        and our final goal.
 
         @return: linear error in m
         """
-        return math.sqrt((self._current_goal.pose.x - self._current_pose.x) ** 2 
-                + (self._current_goal.pose.y - self._current_pose.y) ** 2)
+        distance_sum = 0
+        previous_pose = self._current_goal.pose
+        
+        for goal in self._goals_list:
+            next_pose = goal.pose
+            distance_sum += self._get_distance_between_poses(previous_pose, next_pose)
+            previous_pose = goal.pose
+
+        return distance_sum
+
+    def _get_distance_between_poses(self, start_pose, end_pose):
+        return math.sqrt((end_pose.x - start_pose.x) ** 2 
+                + (end_pose.y - start_pose.y) ** 2)
 
     def _get_wheel_speeds(self, lin_spd, ang_spd):
         """

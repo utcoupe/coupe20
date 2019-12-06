@@ -3,7 +3,7 @@
     <marker type="mesh" ns="table" z="-0.022">
         <scale x="0.001" y="0.001" z="0.001"/>
         <orientation x="1.57079632679" y="0" z="0"/>
-        <mesh_path>package://definitions/def/map/table2019.stl</mesh_path>
+        <mesh_path>package://definitions/def/map/table2020.stl</mesh_path>
     </marker>
     <color name="light_gray"/>
 

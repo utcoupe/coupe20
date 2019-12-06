@@ -24,25 +24,18 @@ ASSERV_ERROR_INTERMEDIATE_POSITION = 0.15 # m
 ASSERV_ERROR_ANGLE = 0.02  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
 ASSERV_MAX_SPEED = 0.4 # m/s
+ASSERV_MAX_ANGULAR_SPEED = 0.6 # m/s
 SLOW_GO_MAX_SPEED = 0.18 # m/s
 
 # Control classes
 
-class AngularPID():
-    P = 0.6
-    D = 0.6
-    I = 0.00001
-    MAX_I = 0.05
-    last_error = 0
-    error_sum = 0
+class AngularControl():
+    P = 0.85
 
-class LinearPD():
+class LinearControl():
     # No integral here because we don't want to overshoot
-    P = 1
-    D = 8
-    last_error = 0
-
-    ANGLE_SPEED_DIVIDER = 150 # Coefficient to reduce linear speed proportionally to angle error
+    P = 1.4
+    ANGLE_SPEED_DIVIDER = 20 # Coefficient to reduce linear speed proportionally to angle error
 
 
 # Goals
@@ -94,7 +87,7 @@ class AsservSimu(AsservAbstract):
         # Parameters
         self._max_acceleration = 0.5 # m/s^2
         self._max_linear_speed = ASSERV_MAX_SPEED # m/s
-        self._max_angular_speed = ASSERV_MAX_SPEED
+        self._max_angular_speed = ASSERV_MAX_ANGULAR_SPEED # m/s
 
         # ROS stuff
         self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), self._callback_timer_pose_send)
@@ -344,7 +337,6 @@ class AsservSimu(AsservAbstract):
                     self._current_goal.pose.x = self._current_pose.x
                     self._current_goal.pose.y = self._current_pose.y
                     dist_to_next_goal = 0
-                    LinearPD.last_error = 0
                     angle_error = self._current_pose.theta - self._current_goal.pose.theta
                     angle_error = self._clean_angle_error(angle_error)
 
@@ -371,19 +363,16 @@ class AsservSimu(AsservAbstract):
                 # if we are facing away from our goal. For now, only rotate.
                 wanted_lin_speed = 0
             else:
-                wanted_lin_speed = (dist_to_final_goal * LinearPD.P
-                                 + (dist_to_final_goal - LinearPD.last_error) * LinearPD.D)
+                wanted_lin_speed = np.min([dist_to_final_goal * LinearControl.P, self._max_linear_speed])
 
                 # Reduce linear speed proportionnaly to angle error
-                wanted_lin_speed /= (1 + LinearPD.ANGLE_SPEED_DIVIDER * abs(angle_error) * abs(wanted_lin_speed))
+                wanted_lin_speed /= (1 + LinearControl.ANGLE_SPEED_DIVIDER * abs(angle_error))
 
                 if not self._current_goal.direction:
                     # Go backwards
                     wanted_lin_speed = -wanted_lin_speed
 
-            wanted_ang_speed = (angle_error * AngularPID.P 
-                + (angle_error - AngularPID.last_error) * AngularPID.D
-                + AngularPID.error_sum * AngularPID.I)
+            wanted_ang_speed = angle_error * AngularControl.P
 
             wanted_right_speed, wanted_left_speed = \
                 self._get_wheel_speeds(wanted_lin_speed, 
@@ -396,7 +385,6 @@ class AsservSimu(AsservAbstract):
             self._current_linear_speed, self._current_angular_speed = self._get_speeds_from_wheels()
             
             self._update_current_pose_pos()
-            self._update_PID_errors(dist_to_final_goal, angle_error)
 
             return
 
@@ -417,26 +405,6 @@ class AsservSimu(AsservAbstract):
             elif isinstance(self._current_goal, AsservGoal):
                 rospy.loginfo('[ASSERV] Starting a new goal : x = %.2f y = %.2f a = %.2f' %
                     (self._current_goal.pose.x, self._current_goal.pose.y, self._current_goal.pose.theta))
-            
-            AngularPID.last_error = self._get_angle_error()
-            AngularPID.error_sum = 0
-
-            LinearPD.last_error = self._get_distance_from_next_to_final_goal()
-
-        best_goal_index = -1
-        best_goal_dist = self._get_distance_between_poses(self._current_pose, self._current_goal.pose)
-        
-        # Check for the nearest point and set it to be the new goal
-        for i in range(len(self._goals_list)):
-            dist = self._get_distance_between_poses(self._current_pose, self._goals_list[i].pose)
-            if dist < best_goal_dist:
-                best_goal_index = i
-                best_goal_dist = self._get_distance_between_poses(self._current_pose, self._goals_list[i].pose)
-        
-        if best_goal_index != -1:
-            for j in range(best_goal_index+1):
-                self._node.goal_reached(self._current_goal.goal_id, True)
-                self._current_goal = self._goals_list.pop(0)
 
 
     def _apply_slow_go(self, slow_go):
@@ -695,21 +663,6 @@ class AsservSimu(AsservAbstract):
             new_theta)
         
         self._current_pose = Pose2D(new_x, new_y, new_theta)
-
-    def _update_PID_errors(self, lin_error, angle_error):
-        """
-        Updates AngularPID and LinearPD error memory.
-
-        @param lin_error: last linear error
-        @param angle_error: last angle error
-        """
-        AngularPID.last_error = angle_error
-
-        AngularPID.error_sum += angle_error
-        if AngularPID.error_sum >= AngularPID.MAX_I:
-            AngularPID.error_sum = AngularPID.MAX_I
-
-        LinearPD.last_error = lin_error
 
     def _rotate(self, speed_mult):
         self._current_angular_speed = speed_mult * self._max_angular_speed

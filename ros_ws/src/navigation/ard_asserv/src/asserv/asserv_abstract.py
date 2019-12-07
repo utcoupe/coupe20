@@ -22,7 +22,7 @@ class AsservAbstract:
         rospy.logerr("AsservAbstract is abstract !")
         return False
 
-    def pwm(self, left, right, duration):
+    def pwm(self, left, right, duration, auto_stop):
         rospy.logerr("AsservAbstract is abstract !")
         return False
 

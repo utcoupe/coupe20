@@ -103,11 +103,11 @@ class AsservReal(AsservAbstract):
         self._orders_id_dictionary[self._order_id - 1] = [goal_id, a]
         return True
 
-    def pwm(self, left, right, duration, auto_stop):
+    def pwm(self, goal_id, left, right, duration, auto_stop):
         self._send_serial_data(self._orders_dictionary['PWM'], [str(left), str(right), str(int(round(duration * 1000))), str(int(auto_stop))])
         return True
 
-    def speed(self, linear, angular, duration):
+    def speed(self, goal_id, linear, angular, duration):
         self._send_serial_data(self._orders_dictionary['SPD'], [str(linear), str(angular), str(int(round(duration * 1000)))])
         return True
 

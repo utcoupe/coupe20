@@ -20,22 +20,21 @@ ASSERV_RATE = 0.05  # in s
 
 # Metric constants
 ASSERV_ERROR_POSITION = 0.005 # in meters
-ASSERV_ERROR_INTERMEDIATE_POSITION = 0.15 # m
+ASSERV_ERROR_INTERMEDIATE_POSITION = 0.18 # m
 ASSERV_ERROR_ANGLE = 0.02  # in radians
 ASSERV_MINIMAL_SPEED = 0.05  # in m/s
 ASSERV_MAX_SPEED = 0.4 # m/s
 ASSERV_MAX_ANGULAR_SPEED = 0.6 # m/s
 SLOW_GO_MAX_SPEED = 0.18 # m/s
 
-# Control classes
-
+# Control 
 class AngularControl():
     P = 0.85
 
 class LinearControl():
     # No integral here because we don't want to overshoot
     P = 1.4
-    ANGLE_SPEED_DIVIDER = 20 # Coefficient to reduce linear speed proportionally to angle error
+    ANGLE_SPEED_DIVIDER = 18 # Coefficient to reduce linear speed proportionally to angle error
 
 
 # Goals
@@ -136,19 +135,16 @@ class AsservSimu(AsservAbstract):
         rospy.spin()
 
     def goto(self, goal_id, x, y, direction=1, slow_go=False):
-        rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ").")
         has_angle = False
         self._start_trajectory(goal_id, x, y, 0, direction, has_angle, slow_go)
         return True
 
     def gotoa(self, goal_id, x, y, a, direction=1, slow_go=False):
-        rospy.loginfo("[ASSERV] Accepting goal (x = " + str(x) + ", y = " + str(y) + ", a = " + str(a) + ").")
         has_angle = True
         self._start_trajectory(goal_id, x, y, a, direction, has_angle, slow_go)
         return True
 
     def rot(self, goal_id, a, no_modulo, slow_go):
-        rospy.loginfo("[ASSERV] Accepting goal (a = " + str(a) + ").")
         has_angle = True
         direction = 1
         self._start_trajectory(goal_id, self._current_pose.x, self._current_pose.y, a,
@@ -297,59 +293,70 @@ class AsservSimu(AsservAbstract):
 
         # Check the goal type and take adapted actions
         if isinstance(self._current_goal, PwmGoal):
-            direction = 1 if self._current_goal.left_speed > 0 \
-                and self._current_goal.right_speed > 0 else 0
-
-            self._apply_wheel_acceleration(self._current_goal.left_speed, self._current_goal.right_speed)
-            # Translate wheel speeds to linear and angular speed
-            self._current_linear_speed, self._current_angular_speed = self._get_speeds_from_wheels()
-
-            self._update_current_pose_pos()
-
-            if self._wallhit_stop(direction):
-                return
+            self._process_PWM_goal()
             
-            self._current_goal.duration -= ASSERV_RATE
-            if self._current_goal.duration <= 0:
-                rospy.loginfo("[ASSERV] Spd/PWM Goal reached end of its duration !")
-                self._node.goal_reached(self._current_goal.goal_id, True)
-                self._stop()
-                self._current_goal = None
-
-            return
-
-        if isinstance(self._current_goal, AsservGoal):  
-            # If the goal is not the last, give leeway to the robot
+        elif isinstance(self._current_goal, AsservGoal):
+            # If the goal is intermediate, give the robot a higher error tolerance
             if len(self._goals_list):
                 self._position_error = ASSERV_ERROR_INTERMEDIATE_POSITION
             else:
                 self._position_error = ASSERV_ERROR_POSITION
 
-            self._apply_slow_go(self._current_goal.slow_go)
-            dist_to_next_goal = self._get_distance_to_next_goal()
-            dist_to_final_goal = self._get_distance_from_next_to_final_goal() + dist_to_next_goal
+            self._process_asserv_goal()
 
+
+    def _process_PWM_goal(self):
+        """
+        Updates wheel speeds to reach the current PWM goal.
+        """
+        direction = 1 if self._current_goal.left_speed > 0 \
+            and self._current_goal.right_speed > 0 else 0
+
+        self._apply_wheel_acceleration(self._current_goal.left_speed, self._current_goal.right_speed)
+        # Translate wheel speeds to linear and angular speed
+        self._current_linear_speed, self._current_angular_speed = self._get_speeds_from_wheels()
+
+        self._update_current_pose_pos()
+
+        if self._wallhit_stop(direction):
+            return
+        
+        self._current_goal.duration -= ASSERV_RATE
+        if self._current_goal.duration <= 0:
+            rospy.loginfo("[ASSERV] Spd/PWM Goal reached end of its duration !")
+            self._node.goal_reached(self._current_goal.goal_id, True)
+            self._stop()
+            self._current_goal = None
+
+    def _process_asserv_goal(self):
+        """
+        Updates wheel speeds to reach the current asserv goal.
+        """
+        self._apply_slow_go(self._current_goal.slow_go)
+        dist_to_next_goal = self._get_distance_to_next_goal()
+        dist_to_final_goal = self._get_distance_from_next_to_final_goal() + dist_to_next_goal
+
+
+        if self._current_goal.has_angle and dist_to_next_goal < self._position_error:
+            # Position OK. Just needs to rotate.
+            self._current_goal.pose.x = self._current_pose.x
+            self._current_goal.pose.y = self._current_pose.y
+            dist_to_next_goal = 0
+            angle_error = self._clean_angle_error(self._current_pose.theta
+                                                  - self._current_goal.pose.theta)
+
+            if abs(angle_error) < ASSERV_ERROR_ANGLE:
+                # Position and angle OK.
+                # rospy.loginfo('[ASSERV] Goal position has been reached !')
+                self._node.goal_reached(self._current_goal.goal_id, True)
+                if not len(self._goals_list):
+                    self._stop()
+                self._current_goal = None
+                return
+        else:
             angle_error = self._get_angle_error()
 
-            if self._current_goal.has_angle: # gotoa
-                if dist_to_next_goal < self._position_error:
-                    # Position OK. Just needs to rotate.
-                    self._current_goal.pose.x = self._current_pose.x
-                    self._current_goal.pose.y = self._current_pose.y
-                    dist_to_next_goal = 0
-                    angle_error = self._current_pose.theta - self._current_goal.pose.theta
-                    angle_error = self._clean_angle_error(angle_error)
-
-                    if abs(angle_error) < ASSERV_ERROR_ANGLE:
-                        # Position and angle OK.
-                        # rospy.loginfo('[ASSERV] Goal position has been reached !')
-                        self._node.goal_reached(self._current_goal.goal_id, True)
-                        if not len(self._goals_list):
-                            self._stop()
-                        self._current_goal = None
-                        return
-
-            elif  dist_to_next_goal < self._position_error:# and angle_error < ASSERV_ERROR_INTERMEDIATE_ANGLE: # goto
+            if dist_to_next_goal < self._position_error: # goto
                 # Position OK, no need to rotate.
                 # rospy.loginfo('[ASSERV] Goal position has been reached !')
                 self._node.goal_reached(self._current_goal.goal_id, True)
@@ -358,40 +365,39 @@ class AsservSimu(AsservAbstract):
                 self._current_goal = None
                 return
 
-            if abs(angle_error) > math.pi/(8 * np.max([dist_to_next_goal, 0.5])):
-                # It is counter-productive to have a linear speed 
-                # if we are facing away from our goal. For now, only rotate.
-                wanted_lin_speed = 0
-            else:
-                wanted_lin_speed = np.min([dist_to_final_goal * LinearControl.P, self._max_linear_speed])
+        if abs(angle_error) > math.pi/(1 + 5 * dist_to_next_goal):
+            # It is counter-productive to have a linear speed 
+            # if we are facing away from our goal. For now, only rotate.
+            wanted_lin_speed = 0
+        else:
+            wanted_lin_speed = np.min([dist_to_final_goal * LinearControl.P, self._max_linear_speed])
 
-                # Reduce linear speed proportionnaly to angle error
-                wanted_lin_speed /= (1 + LinearControl.ANGLE_SPEED_DIVIDER * abs(angle_error))
+            # Reduce linear speed proportionnaly to angle error
+            wanted_lin_speed /= (1 + LinearControl.ANGLE_SPEED_DIVIDER * abs(angle_error))
 
-                if not self._current_goal.direction:
-                    # Go backwards
-                    wanted_lin_speed = -wanted_lin_speed
+            if not self._current_goal.direction:
+                # Go backwards
+                wanted_lin_speed = -wanted_lin_speed
 
-            wanted_ang_speed = angle_error * AngularControl.P
+        wanted_ang_speed = angle_error * AngularControl.P
 
-            wanted_right_speed, wanted_left_speed = \
-                self._get_wheel_speeds(wanted_lin_speed, 
-                                       wanted_ang_speed)
+        wanted_right_speed, wanted_left_speed = \
+            self._get_wheel_speeds(wanted_lin_speed, 
+                                    wanted_ang_speed)
 
-            # Only allow for a realistic change in wheel speed
-            self._apply_wheel_acceleration(wanted_right_speed, wanted_left_speed)
+        # Only allow for a realistic change in wheel speed
+        self._apply_wheel_acceleration(wanted_right_speed, wanted_left_speed)
 
-            # Translate wheel speeds to linear and angular speed
-            self._current_linear_speed, self._current_angular_speed = self._get_speeds_from_wheels()
-            
-            self._update_current_pose_pos()
+        # Translate wheel speeds to linear and angular speed
+        self._current_linear_speed, self._current_angular_speed = self._get_speeds_from_wheels()
+        
+        self._update_current_pose_pos()
 
-            return
 
     def _check_new_current_goal(self):
         """
         Checks if a new goal has to be got. 
-        Initializes PID parameters if necessary.
+        If true, sets it as the current goal.
         """
         if not len(self._goals_list):
             return
@@ -484,9 +490,7 @@ class AsservSimu(AsservAbstract):
     def _stop(self):
         """
         Sets wheel speeds and linear / angular speeds to 0.
-        Sets the state of the robot to IDLE.
         """
-        #TODO Make the robot spd go down as fast as possible => more realistic
         self._current_linear_speed = 0
         self._current_angular_speed = 0
         self._left_wheel_speed = 0
@@ -526,14 +530,9 @@ class AsservSimu(AsservAbstract):
         @param angle_error: old angle error
         @return: filtered angle error
         """
-        if angle_error > math.pi:
-            angle_error -= 2 * math.pi
-        elif angle_error < -math.pi:
-            angle_error += 2* math.pi
+        while abs(angle_error) > math.pi:
+            angle_error -= np.sign(angle_error) * math.pi * 2
 
-        # Avoid error turn if angle ~= 6.28 #TODO find a better way
-        if abs(abs(angle_error) - 2 * math.pi) < 0.1:
-            angle_error = 0
         return angle_error
 
     def _get_distance_to_next_goal(self):
@@ -663,10 +662,6 @@ class AsservSimu(AsservAbstract):
             new_theta)
         
         self._current_pose = Pose2D(new_x, new_y, new_theta)
-
-    def _rotate(self, speed_mult):
-        self._current_angular_speed = speed_mult * self._max_angular_speed
-        self._current_pose.theta += self._current_angular_speed * ASSERV_RATE
 
     def _callback_timer_pose_send(self, event):
         self._node.send_robot_position(self._current_pose)

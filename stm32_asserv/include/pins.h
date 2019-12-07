@@ -27,20 +27,20 @@
 
 // ******************* MOTORS *****************
 
-// Left motor, PWM control: PA_7 (A7)
-#define MOT_L_EN_Pin GPIO_PIN_7
+// Left motor, PWM control: PA_12 (D2)
+#define MOT_L_EN_Pin GPIO_PIN_12
 #define MOT_L_EN_GPIO_Port GPIOA
 
-// Left motor, direction of rotation: PB_7 (D4)
-#define MOT_L_DIR_Pin GPIO_PIN_7
+// Left motor, direction of rotation: PB_1 (D6)
+#define MOT_L_DIR_Pin GPIO_PIN_1
 #define MOT_L_DIR_GPIO_Port GPIOB
 
-// Right motor, PWM control: PA_12 (D2)
-#define MOT_R_EN_Pin GPIO_PIN_12
+// Right motor, PWM control: PA_7 (A7)
+#define MOT_R_EN_Pin GPIO_PIN_7
 #define MOT_R_EN_GPIO_Port GPIOA
 
-// Right motor, direction of rotation: PB_1 (D6)
-#define MOT_R_DIR_Pin GPIO_PIN_1
+// Right motor, direction of rotation: PB_7 (D4)
+#define MOT_R_DIR_Pin GPIO_PIN_7
 #define MOT_R_DIR_GPIO_Port GPIOB
 
 // ******************* OTHERS *******************
@@ -52,7 +52,7 @@
 #define HIGH 	GPIO_PIN_SET
 #define LOW 	GPIO_PIN_RESET
 
-#define L_ENC_TIM TIM3
-#define R_ENC_TIM TIM2
+#define L_ENC_TIM TIM2
+#define R_ENC_TIM TIM3
 
 #endif

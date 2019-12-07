@@ -14,7 +14,7 @@ from static_map.srv import MapGetWaypoint
 from static_map.msg import Waypoint
 import tf
 import tf2_ros
-import tf2_geometry_msgs  # DO NOT REMOVE, declares geometry_msgs conversions (yes that's uggly)
+import tf2_geometry_msgs  # DO NOT REMOVE, declares geometry_msgs conversions (yes that's ugly)
 
 __author__ = "Thomas Fuhrmann"
 __date__ = 21 / 10 / 2017

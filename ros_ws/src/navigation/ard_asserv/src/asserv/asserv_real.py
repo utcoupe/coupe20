@@ -26,7 +26,7 @@ class AsservReal(AsservAbstract):
         AsservAbstract.__init__(self, asserv_node)
         rospy.loginfo("AsservReal")
         # Dictionary containing the list of orders which are interpreted by the Arduino (do not modify this dictionary !)
-        self._orders_dictionary = protocol_parser.protocol_parse(os.environ['UTCOUPE_WORKSPACE'] + "/arduino/common/asserv/protocol.h")
+        self._orders_dictionary = protocol_parser.protocol_parse(os.environ['UTCOUPE_WORKSPACE'] + "/stm32_asserv/include/protocol.h")
         # Queue to store the received information from the Arduino
         self._reception_queue = Queue.Queue()
         # A queue is used to send data to prevent to send data too fast, which will result to concatenate two sending and making the Arduino crash

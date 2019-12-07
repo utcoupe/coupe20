@@ -70,7 +70,7 @@ void ControlInit(void) {
 	control.max_spd = SPD_MAX; 
 	control.rot_spd_ratio = RATIO_ROT_SPD_MAX;
 
-	motors_init();
+	motorsInit();
 	RobotStateInit();
 	FifoInit();
 	PIDInit(&PID_left);
@@ -326,8 +326,8 @@ void allStop(void) {
 }
 
 void applyPwm(void) {
-	set_pwm_left(control.speeds.pwm_left);
-	set_pwm_right(control.speeds.pwm_right);
+	setPWMLeft(control.speeds.pwm_left);
+	setPWMRight(control.speeds.pwm_right);
 }
 
 float speedToPwm(float speed) {

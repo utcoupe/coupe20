@@ -24,11 +24,11 @@
 extern "C" {
 #endif
 
-void set_pwm(int side, int pwm);
+void setPWM(int side, int pwm);
 
-void motors_init(void);
-void set_pwm_left(int pwm);
-void set_pwm_right(int pwm);
+void motorsInit(void);
+void setPWMLeft(int pwm);
+void setPWMRight(int pwm);
 
 #ifdef __cplusplus
 }

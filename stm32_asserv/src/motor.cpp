@@ -21,7 +21,7 @@ extern Pwm g_left_pwm;
 //-255:0   : Marche arriere
 //0:255 : Marche avant
 
-void set_pwm(int motor_side, int pwm) {
+void setPWM(int motor_side, int pwm) {
 	if(pwm > 255)
 		pwm = 255;
 	else if(pwm < -255)
@@ -46,7 +46,7 @@ void set_pwm(int motor_side, int pwm) {
     }
 }
 
-void motors_init(void) {
+void motorsInit(void) {
 	//TODO: gérer les pins de brake
 	//HAL_GPIO_WritePin()
 
@@ -59,15 +59,15 @@ void motors_init(void) {
 	HAL_GPIO_WritePin(MOT_R_DIR_GPIO_Port,MOT_R_DIR_Pin,LOW);
 }
 
-void set_pwm_left(int pwm){
+void setPWMLeft(int pwm){
 	//les moteurs sont faces à face, pour avancer 
 	//il faut qu'il tournent dans un sens différent
 	pwm = -pwm;
-	set_pwm(MOTOR_LEFT, pwm);
+	setPWM(MOTOR_LEFT, pwm);
 }
 
-void set_pwm_right(int pwm){
-	set_pwm(MOTOR_RIGHT, pwm);
+void setPWMRight(int pwm){
+	setPWM(MOTOR_RIGHT, pwm);
 }
 
 

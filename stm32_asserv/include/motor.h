@@ -26,7 +26,7 @@ extern "C" {
 
 void set_pwm(int side, int pwm);
 
-void MotorsInit(void);
+void motors_init(void);
 void set_pwm_left(int pwm);
 void set_pwm_right(int pwm);
 

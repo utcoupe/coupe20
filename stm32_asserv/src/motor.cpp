@@ -46,7 +46,7 @@ void set_pwm(int motor_side, int pwm) {
     }
 }
 
-void MotorsInit(void) {
+void motors_init(void) {
 	//TODO: gérer les pins de brake
 	//HAL_GPIO_WritePin()
 

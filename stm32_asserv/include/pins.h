@@ -9,25 +9,25 @@
 // ***************************************************
 
 // **************** ENCODERS *****************
-// Right encoder, signal A: PA_0 (A0)
-#define ENC_R_A_Pin GPIO_PIN_0
+// Right encoder, signal A: PA_6 (A6)
+#define ENC_R_A_Pin GPIO_PIN_6
 #define ENC_R_A_GPIO_Port GPIOA
 
-// Right encoder, signal B: PA_1 (A1)
-#define ENC_R_B_Pin GPIO_PIN_1
+// Right encoder, signal B: PA_4 (A4)
+#define ENC_R_B_Pin GPIO_PIN_4
 #define ENC_R_B_GPIO_Port GPIOA
 
-// Left encoder, signal A: PA_6 (A5)
-#define ENC_L_A_Pin GPIO_PIN_6
+// Left encoder, signal A: PA_0 (A0)
+#define ENC_L_A_Pin GPIO_PIN_0
 #define ENC_L_A_GPIO_Port GPIOA
 
-// Left encoder, signal B: PA_4 (A3)
-#define ENC_L_B_Pin GPIO_PIN_4
+// Left encoder, signal B: PA_1 (A1)
+#define ENC_L_B_Pin GPIO_PIN_1
 #define ENC_L_B_GPIO_Port GPIOA
 
 // ******************* MOTORS *****************
 
-// Left motor, PWM control: PA_7 (A6)
+// Left motor, PWM control: PA_7 (A7)
 #define MOT_L_EN_Pin GPIO_PIN_7
 #define MOT_L_EN_GPIO_Port GPIOA
 

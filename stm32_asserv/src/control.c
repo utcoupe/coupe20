@@ -70,7 +70,7 @@ void ControlInit(void) {
 	control.max_spd = SPD_MAX; 
 	control.rot_spd_ratio = RATIO_ROT_SPD_MAX;
 
-	MotorsInit();
+	motors_init();
 	RobotStateInit();
 	FifoInit();
 	PIDInit(&PID_left);

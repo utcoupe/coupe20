@@ -3,9 +3,11 @@
  * Mail : mindstan@hotmail.fr           *
  * Date : 24/05/19			            *
  ****************************************/
+
 #include "encoder.h"
 #include "compat.h"
 #include "pins.h"
+
 
 void init_encoders(void)
 {
@@ -22,10 +24,12 @@ void right_encoder_reset(void) {
 }
 
 int16_t uint32_to_int16(uint32_t val) {
-    return (
+    return (int16_t) val;
+    // @Gaëtan Bug ici
+    /*(
             (val & 0x00007FFFu) |      // last 15 bits
             ((val & 0x80000000u) >> 16u) // sign bit
-    );
+    );*/
     // Equivalent to :
     //  ldr r3, .L2
     //  and r3, r3, r0, lsr #16

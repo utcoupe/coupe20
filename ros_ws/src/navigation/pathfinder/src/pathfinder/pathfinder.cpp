@@ -76,26 +76,14 @@ Pathfinder::FindPathStatus Pathfinder::findPath(
 
     Path rawPath = retrievePath(mapDist, startPos, endPos);
     path = smoothPath(rawPath);
+    
+    // Get Bezier curve from the straight path
+    CurveTrajectory curvedPath(path);
+    path = curvedPath.compute((int)path.size() * 6);
+
     auto endTime = chrono::high_resolution_clock::now();
     chrono::duration<double, std::milli> elapsedSeconds = endTime - startTime;
-
-    ROS_INFO_STREAM("Found a straight path with " << path.size() << " points (took " << elapsedSeconds.count() << " ms)");
-    
-    // TODO find a clean way to do this.
-    if (path.size() == 3) {
-         // Dirty : duplicate first point to get 4 points for Bezier
-        path.push_back(path[2]);
-    }
-    if (path.size() > 3) {
-        // Path is more than a straight line. Turn it into a Bezier curve
-        CurveTrajectory curvedPath(path);
-        path = curvedPath.compute((int)path.size() * 10);
-        endTime = chrono::high_resolution_clock::now();
-        elapsedSeconds = endTime - startTime;
-
-        ROS_INFO_STREAM("Found a curved path with " << path.size() << " points (took " << elapsedSeconds.count() << " ms)");
-    }
-    
+    ROS_INFO_STREAM("Found a path with " << path.size() << " points (took " << elapsedSeconds.count() << " ms)");
 
 
     if (_renderAfterComputing)

@@ -2,7 +2,7 @@ set(TOOLCHAIN_PREFIX "$ENV{UTCOUPE_WORKSPACE}/libs/gcc-arm-none-eabi-6-2017-q2-u
 
 set(STM32_CHIP STM32F303K8)
 # TODO copy or symlink in $UTCOUPE_WORKSPACE OR regex
-set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.10.0/")
+set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.11.0/")
 SET(CMAKE_TOOLCHAIN_FILE "$ENV{UTCOUPE_WORKSPACE}/libs/stm32-cmake/cmake/gcc_stm32.cmake")
 
 SET(STM32_LINKER_SCRIPT "STM32F303K8Tx_FLASH.ld")

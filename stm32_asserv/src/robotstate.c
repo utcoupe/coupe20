@@ -83,8 +83,8 @@ void RobotStateUpdate() {
 	// low pass filter on speed
 	lowPass(&old_wheels_spd, &wheels_spd, ALPHA);
 
-	//d_angle = atan2((dr - dl), ENTRAXE_ENC); //sans approximation tan
-	d_angle = (dr - dl) / (float)ENTRAXE_ENC; // approximation tan
+	d_angle = atan2((dr - dl), ENTRAXE_ENC); //sans approximation tan
+	//d_angle = (dr - dl) / (float)ENTRAXE_ENC; // approximation tan
 	current_pos.angle += d_angle;
 #if MODULO_TWOPI
 	PosUpdateAngle();

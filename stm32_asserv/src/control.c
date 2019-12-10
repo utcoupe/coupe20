@@ -12,6 +12,7 @@
 #include "motor.h"
 #include "local_math.h"
 #include "compat.h"
+#include "sender_wrapper.h"
 
 #include <math.h>
 
@@ -133,7 +134,7 @@ void ControlCompute(void) {
 	if (current_goal->is_reached) {
 		control.last_finished_id = current_goal->ID;
         // Instead of calling SerialSend directly (does not work), we use a global variable to send the id from main
-//        SerialSendWrapVar(SERIAL_INFO, "%d;", (int)control.last_finished_id);
+        SerialSendGoalReached((int)control.last_finished_id);
         lastReachedID = control.last_finished_id;
 		FifoNextGoal();
 		ControlPrepareNewGoal();

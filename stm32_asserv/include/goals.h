@@ -68,6 +68,9 @@ void FifoInit();
 int FifoPushGoal(int ID, int type, goal_data_t data);
 goal_t* FifoCurrentGoal();
 goal_t* FifoNextGoal();
+goal_t* FifoGetGoal(int index);
+
+uint8_t FifoCurrentIndex();
 uint8_t FifoRemainingGoals();
 inline void FifoClearGoals() { FifoInit(); }
 

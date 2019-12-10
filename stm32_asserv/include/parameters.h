@@ -24,7 +24,7 @@
 #define SPD_MAX 1000 //mm/s 1000
 #define ACC_MAX 1500 //mm/s2
 #define RATIO_ROT_SPD_MAX 0.6
-#define K_DISTANCE_REDUCTION 20 // réduction de la vitesse linéaire quand on tourne
+#define K_DISTANCE_REDUCTION 1 // réduction de la vitesse linéaire quand on tourne
 #define EMERGENCY_WAIT_TIME 30 // seconds
 #define EMERGENCY_SLOW_GO_RATIO 0.3 // spd = 0.3*max_spd in slow_go mode
 
@@ -37,10 +37,11 @@
 
 #define ENC_LEFT_RADIUS 31.40 //REGLE PAR TEST - rayon de la roue codeuse (31.38 origin 31.15 good)
 #define ENC_RIGHT_RADIUS 31.58 //REGLE PAR TEST - rayon de la roue codeuse
-#define ENTRAXE_ENC 310 // REGLE PAR TEST - Distance entre chaque roue codeuse en mm, base 200,8
+#define ENTRAXE_ENC 303 // REGLE PAR TEST - Distance entre chaque roue codeuse en mm, base 200,8
 
 #define ERROR_ANGLE 0.030 //erreur en angle(radians) maximale pour considérer l'objectif comme atteint
 #define ERROR_POS 5 // erreur en position (mm)  maximale pour considérer l'objectif comme atteint
+#define ERROR_INTERMEDIATE_POS 180 // mm Position error to consider an intermediate pose to be reached
 #define SPD_TO_STOP 10
 
 #define CONE_ALIGNEMENT (M_PI/2.0) 

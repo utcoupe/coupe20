@@ -79,7 +79,7 @@ Pathfinder::FindPathStatus Pathfinder::findPath(
     
     // Get Bezier curve from the straight path
     CurveTrajectory curvedPath(path);
-    path = curvedPath.compute((int)path.size() * 4);
+    path = curvedPath.compute((int)path.size() * 10);
 
     auto endTime = chrono::high_resolution_clock::now();
     chrono::duration<double, std::milli> elapsedSeconds = endTime - startTime;

@@ -13,29 +13,26 @@ void ComputeIsBlocked(void) {
 	static long last_time = 0;
 	static pos_t last_pos = {0, 0, 0, 0};
 	float dist;
+	long now;
+	int block_time = BLOCK_TIME;
+
 	goal_t *current_goal;
-
-	long now = timeMillis();
-	if (now - last_time < BLOCK_TIME)
-	{
-		return;
-	}
-	
-
-	last_time = now;
-
-	if ( (control.status_bits & EMERGENCY_BIT) || 
-		(control.status_bits & PAUSE_BIT) ||
-		(control.status_bits & TIME_ORDER_BIT) )
-	{
-		return;
-	}
-
 	current_goal = FifoCurrentGoal();
-	if (current_goal->type == NO_GOAL || 
-		current_goal->type == TYPE_PWM ||
-		current_goal->type == TYPE_SPD)
+
+	if(current_goal->type == TYPE_PWM && current_goal->data.pwm_data.auto_stop)
+		block_time = BLOCK_TIME_AUTO_STOP; 
+
+	now = timeMillis();
+	if (now - last_time < block_time)
+		return;
+	last_time = now;
+	
+	
+	if (current_goal->type == NO_GOAL  || 
+		current_goal->type == TYPE_SPD ||
+	   (current_goal->type == TYPE_PWM && !current_goal->data.pwm_data.auto_stop))
 		goto end;
+
 	if (fifo.current_goal != last_goal_nr) {
 		last_goal_nr = fifo.current_goal;
 		goto end;

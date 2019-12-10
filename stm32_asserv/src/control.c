@@ -249,6 +249,55 @@ int controlPos(float dd, float da) {
 	float dda, ddd, max_speed;
 	float ang_spd, lin_spd;
 
+	int pos_error;
+	float ddd_final, dda_next;
+
+	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
+		float da_next, dd_final;
+		int dx, dy, x, y, goal_count;
+
+		// Calculate angle between current and next goal
+		goal_t *current_goal = FifoCurrentGoal();
+		goal_t *next_goal = FifoGetGoal(FifoCurrentIndex()+1);
+
+		x = current_goal->data.pos_data.x;
+		y = current_goal->data.pos_data.y;
+		dx = next_goal->data.pos_data.x - x;
+		dy = next_goal->data.pos_data.y - y;
+		da_next = atan2f(dy, dx) - current_pos.angle;
+		
+		// Calculate distance to final goal
+		dd_final = 0;
+		goal_count = 1;
+		while (FifoGetGoal(FifoCurrentIndex()+goal_count)->type == TYPE_POS) {
+			next_goal = FifoGetGoal(FifoCurrentIndex()+goal_count++);
+
+			dx = next_goal->data.pos_data.x - x;
+			dy = next_goal->data.pos_data.y - y;
+
+			dd_final += sqrtf(powf(dx, 2.0) + powf(dy, 2.0));
+
+			x = next_goal->data.pos_data.x;
+			y = next_goal->data.pos_data.y;
+		}
+
+		// Adjust direction
+		if (sign(dd) == -1) {
+			da_next = da_next + (float)(M_PI);
+			dd_final = -dd_final;
+		}
+		da_next = moduloTwoPI(da_next);
+
+		pos_error = ERROR_INTERMEDIATE_POS;
+		dda_next = da_next * (float)(ENTRAXE_ENC / 2.0);
+		ddd_final = dd_final * expf(-fabsf(K_DISTANCE_REDUCTION * da_next));
+	}
+	else {
+		pos_error = ERROR_POS;
+		dda_next = 0;
+		ddd_final = 0;
+	}
+
 	dda = da * (float)(ENTRAXE_ENC / 2.0);
 	ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
 
@@ -261,12 +310,12 @@ int controlPos(float dd, float da) {
 	lin_spd = control.speeds.linear_speed;
 
 	control.speeds.angular_speed = calcSpeed(ang_spd, dda, 
-			max_speed * control.rot_spd_ratio, 0);
+			max_speed * control.rot_spd_ratio, dda_next);
 	control.speeds.linear_speed = calcSpeed(lin_spd, ddd,
-			max_speed, 0);
+			max_speed, ddd_final);
 
 	ret = 0;
-	if (fabsf(dd) < ERROR_POS) {
+	if (fabsf(dd) < pos_error) {
 		ret |= POS_REACHED;
 	}
 	if (fabsf(da) < (float)ERROR_ANGLE) {

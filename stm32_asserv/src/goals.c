@@ -20,12 +20,9 @@ void FifoInit() {
 
 int FifoPushGoal(int ID, int type, goal_data_t data) {
 	goal_t *new_goal;
-	if (fifo.nb_goals >= MAX_GOALS) {
-		return -1;
-	}
 
 	fifo.last_goal = (fifo.last_goal + 1) % MAX_GOALS;
-	new_goal = &fifo.fifo[fifo.last_goal];
+	new_goal = &fifo.fifo[fifo.last_goal % MAX_GOALS];
 
 	new_goal->type = type;
 	new_goal->data = data;
@@ -38,7 +35,7 @@ int FifoPushGoal(int ID, int type, goal_data_t data) {
 }
 
 goal_t* FifoCurrentGoal() {
-	return &fifo.fifo[fifo.current_goal];
+	return &fifo.fifo[fifo.current_goal % MAX_GOALS];
 }
 
 goal_t* FifoNextGoal() {
@@ -51,14 +48,22 @@ goal_t* FifoNextGoal() {
 #endif
 		current_goal->type = NO_GOAL;
 		current_goal->is_reached = 0;
-		fifo.current_goal = (fifo.current_goal + 1) % MAX_GOALS;
+		fifo.current_goal = (fifo.current_goal + 1);
 		fifo.nb_goals--;
 		
 	}
 	return FifoCurrentGoal();
 }
 
+goal_t* FifoGetGoal(int i) {
+	return &fifo.fifo[i % MAX_GOALS];
+}
+
 uint8_t FifoRemainingGoals()
 {
 	return fifo.nb_goals;
+}
+
+uint8_t FifoCurrentIndex() {
+	return fifo.current_goal;
 }

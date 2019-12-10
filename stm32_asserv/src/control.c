@@ -289,7 +289,7 @@ float calcSpeed(float init_spd, float dd, float max_spd, float final_speed) {
 }
 
 void stopRobot(void) {
-	char sign;
+	int sign;
 	float speed;
 
     speed = fabsf(control.speeds.angular_speed);

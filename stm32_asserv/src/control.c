@@ -290,7 +290,11 @@ int controlPos(float dd, float da) {
 
 		pos_error = ERROR_INTERMEDIATE_POS;
 		dda_next = da_next * (float)(ENTRAXE_ENC / 2.0);
-		ddd_final = dd_final * expf(-fabsf(K_DISTANCE_REDUCTION * da_next));
+
+		if (da_next > (float)MAX_ANGLE_DIFF)
+			ddd_final = 0;
+		else
+			ddd_final = dd_final * expf(-fabsf(K_DISTANCE_REDUCTION * da_next));
 	}
 	else {
 		pos_error = ERROR_POS;
@@ -299,7 +303,10 @@ int controlPos(float dd, float da) {
 	}
 
 	dda = da * (float)(ENTRAXE_ENC / 2.0);
-	ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
+	if (da > (float)MAX_ANGLE_DIFF) 
+		ddd = 0;
+	else
+		ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
 
 	max_speed = control.max_spd;
 	if (control.status_bits & SLOWGO_BIT) {

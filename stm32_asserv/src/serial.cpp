@@ -4,7 +4,7 @@
 #include <cstring>
 
 
-const size_t BUFFER_READ = 100;
+const size_t BUFFER_READ = 320; // Size of 14 GOTO messages + 1 GOTOA
 
 Serial::Serial(UART_HandleTypeDef* serial):
     _serialInterfacePtr(serial) {

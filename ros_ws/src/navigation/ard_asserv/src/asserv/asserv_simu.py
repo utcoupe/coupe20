@@ -69,7 +69,7 @@ class AsservSimu(AsservAbstract):
     def __init__(self, asserv_node):
         
         AsservAbstract.__init__(self, asserv_node)
-        self._commandLib = ctypes.cdll.LoadLibrary(
+        self._controlLib = ctypes.cdll.LoadLibrary(
             os.environ['UTCOUPE_WORKSPACE']
              + '/libs/lib_asserv_control_shared.so')
 
@@ -286,8 +286,6 @@ class AsservSimu(AsservAbstract):
         Main function of the asserv simu.
         Checks for new goals and updates behavior every ASSERV_RATE ms.
         """
-        self._commandLib.test()
-
         # Check for emergency stop
         if self._emergency_stop:
             self._stop()

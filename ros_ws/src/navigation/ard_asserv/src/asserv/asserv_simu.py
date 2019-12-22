@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 *-*
 
+import ctypes
+import os
 import math
 import numpy as np
 import rospy
@@ -67,6 +69,10 @@ class AsservSimu(AsservAbstract):
     def __init__(self, asserv_node):
         
         AsservAbstract.__init__(self, asserv_node)
+        self._commandLib = ctypes.cdll.LoadLibrary(
+            os.environ['UTCOUPE_WORKSPACE']
+             + '/libs/lib_asserv_command_law.so')
+
         # Asserv management stuff
         # The pose is in meters and rad
         self._current_pose = Pose2D(0.18, 1.2, math.pi/2)
@@ -280,6 +286,8 @@ class AsservSimu(AsservAbstract):
         Main function of the asserv simu.
         Checks for new goals and updates behavior every ASSERV_RATE ms.
         """
+        self._commandLib.test()
+
         # Check for emergency stop
         if self._emergency_stop:
             self._stop()

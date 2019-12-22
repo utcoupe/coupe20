@@ -6,6 +6,7 @@
 #include "compat.h"
 #include "control.h"
 #include "protocol.h"
+#include "sender_wrapper.h"
 
 void ComputeIsBlocked(void) {
 #if BLOCK_TIME

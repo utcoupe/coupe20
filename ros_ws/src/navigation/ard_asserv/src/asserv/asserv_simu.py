@@ -71,7 +71,7 @@ class AsservSimu(AsservAbstract):
         AsservAbstract.__init__(self, asserv_node)
         self._commandLib = ctypes.cdll.LoadLibrary(
             os.environ['UTCOUPE_WORKSPACE']
-             + '/libs/lib_asserv_command_law.so')
+             + '/libs/lib_asserv_control_shared.so')
 
         # Asserv management stuff
         # The pose is in meters and rad

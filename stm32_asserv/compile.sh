@@ -16,11 +16,11 @@ function compile_program() {
 	make && make "${PROJECT_NAME}.hex"
 }
 
-function generate_shared_library_for_simu() {
+function generate_control_lib_for_simu() {
     cd src
-    gcc -c -Wall -Werror -fpic "${PWD}/command_law.c"
-    gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_command_law.so" "${PWD}/command_law.o"
-    rm "${PWD}/command_law.o"
+    gcc -c -Wall -Werror -fpic "${PWD}/control_shared.c"
+    gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" "${PWD}/control_shared.o"
+    rm "${PWD}/control_shared.o"
     cd ..
 }
 
@@ -28,7 +28,7 @@ function upload_program() {
     st-flash --format ihex write "${PROJECT_NAME}.hex"
 }
 
-generate_shared_library_for_simu
+generate_control_lib_for_simu
 generate_cmake
 compile_program
 upload_program

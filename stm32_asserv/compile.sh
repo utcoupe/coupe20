@@ -21,18 +21,21 @@ function generate_control_lib_for_simu() {
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/local_math.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/goals.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/PID.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/getters_for_simulation/getters.c"
 
     gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" \
-     "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" "${PWD}/PID.o"
-    rm "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" "${PWD}/PID.o"
+     "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \
+     "${PWD}/PID.o" "${PWD}/getters.o"
+    rm "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \
+     "${PWD}/PID.o" "${PWD}/getters.o"
 }
 
 function upload_program() {
     st-flash --format ihex write "${PROJECT_NAME}.hex"
 }
 
-generate_control_lib_for_simu
 generate_cmake
 compile_program
 upload_program
 cd ..
+generate_control_lib_for_simu

@@ -16,17 +16,6 @@
 pos_t current_pos;
 wheels_spd_t wheels_spd;
 
-void PosUpdateAngle() {
-	if (current_pos.angle > (float)M_PI) {
-		current_pos.angle -= (float)(2.0 * M_PI);
-		current_pos.modulo_angle++;
-	}
-	else if (current_pos.angle <= (float) -M_PI) {
-		current_pos.angle += (float)(2.0 * M_PI);
-		current_pos.modulo_angle--;
-	}
-}
-
 void RobotStateInit() {
 	current_pos.x = 0;
 	current_pos.y = 0;
@@ -37,20 +26,6 @@ void RobotStateInit() {
 	encoders_reset();
 }
 
-void RobotStateSetPos(float x, float y, float angle) {
-	// if ( x == 0.0 && y == 0.0 && angle == 0.0)
-	// {
-	// 	RobotStateInit();
-	// }
-	// else
-	// {
-	current_pos.x = x;
-	current_pos.y = y;
-	current_pos.angle = angle;
-	
-	//}
-	PosUpdateAngle();
-}
 
 void lowPass(wheels_spd_t *old_spd, wheels_spd_t *new_spd, float a) {
 	new_spd->left = old_spd->left + a * (new_spd->left - old_spd->left);

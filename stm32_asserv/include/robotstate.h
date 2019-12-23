@@ -8,6 +8,7 @@
 
 #include "parameters.h"
 #include "encoder.h"
+#include "robotstate_shared.h"
 #include <math.h>
 
 #if ENCODER_EVAL == 4
@@ -22,27 +23,12 @@
 #define TICKS_TO_MM_RIGHT ((float)((2.0*M_PI*ENC_RIGHT_RADIUS)/(TICKS_PER_TURN)))// = mm/ticks
 #define MM_TO_TICKS_RIGHT ((float)(1/ENC_TICKS_TO_MM_RIGHT))
 
-typedef struct pos {
-	float x;
-	float y;
-	float angle;
-	int modulo_angle;
-} pos_t;
-
-typedef struct wheels_spd {
-	float left, right;
-} wheels_spd_t;
-
-extern pos_t current_pos;
-extern wheels_spd_t wheels_spd;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void RobotStateInit();
 void RobotStateUpdate();
-void RobotStateSetPos(float x, float y, float angle);
 inline void RobotStateReset(void) { RobotStateInit(); }
 
 #ifdef __cplusplus

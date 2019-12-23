@@ -17,11 +17,9 @@ function compile_program() {
 }
 
 function generate_control_lib_for_simu() {
-    cd src
-    gcc -c -Wall -Werror -fpic "${PWD}/control_shared.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/control_shared.c"
     gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" "${PWD}/control_shared.o"
     rm "${PWD}/control_shared.o"
-    cd ..
 }
 
 function upload_program() {

@@ -5,6 +5,7 @@
 #include "goals.h"
 #include "compat.h"
 #include "control.h"
+#include "control_shared.h"
 #include "protocol.h"
 #include "sender_wrapper.h"
 

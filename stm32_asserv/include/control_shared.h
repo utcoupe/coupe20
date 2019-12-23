@@ -20,7 +20,6 @@
 #define TIME_ORDER_BIT (1<<3)
 
 #define sign(x) ( x >= 0 ? 1 : -1)
-#define fabsf(x) (x >= 0 ? x : -x)
 
 typedef struct control {
 	struct speeds {

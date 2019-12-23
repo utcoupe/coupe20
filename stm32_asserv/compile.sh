@@ -25,9 +25,9 @@ function generate_control_lib_for_simu() {
 
     gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" \
      "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \
-     "${PWD}/PID.o" "${PWD}/getters.o"
+     "${PWD}/PID.o" "${PWD}/simu_functions.o"
     rm "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \
-     "${PWD}/PID.o" "${PWD}/getters.o"
+     "${PWD}/PID.o" "${PWD}/simu_functions.o"
 }
 
 function upload_program() {

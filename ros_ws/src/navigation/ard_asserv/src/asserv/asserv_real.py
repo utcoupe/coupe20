@@ -24,7 +24,7 @@ SPD_MAX = 1.0 # m/s, no difference betwenn pr and gr
 class AsservReal(AsservAbstract):
     def __init__(self, asserv_node, port):
         AsservAbstract.__init__(self, asserv_node)
-        rospy.loginfo("AsservReal")
+
         # Dictionary containing the list of orders which are interpreted by the Arduino (do not modify this dictionary !)
         self._orders_dictionary = protocol_parser.protocol_parse(os.environ['UTCOUPE_WORKSPACE'] + "/stm32_asserv/include/protocol.h")
         # Queue to store the received information from the Arduino
@@ -42,7 +42,7 @@ class AsservReal(AsservAbstract):
         # Store the current position of robot, this one is the raw value returned by the asserv
         self._robot_raw_position = Pose2D(0, 0, 0)
         # Timer for the send of serial data to avoid that sending are buffered in the internal OS buffer (make the arduino crash)
-        self._tmr_serial_send = rospy.Timer(rospy.Duration(0.1), self._callback_timer_serial_send)
+        self._tmr_serial_send = rospy.Timer(rospy.Duration(0.15), self._callback_timer_serial_send)
         # Init the serial communication
         # Flag to tell that the connected Arduino is started : we can send it orders
         self._arduino_started_flag = False
@@ -73,7 +73,7 @@ class AsservReal(AsservAbstract):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)
             return True
         if direction == 0: # bugfix: -1 = BACKWARD, 0 = ANY
-            direction = -1
+            direction = -1 #TODO put 0 in stm32_asserv for BACKWARDS
         self._send_serial_data(self._orders_dictionary['GOTO'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(direction),str(int(slow_go))])
         # TODO make it proper
         self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y]

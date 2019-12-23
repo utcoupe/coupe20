@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <math.h>
 
+control_t control;
+
 void parseGOTO(char *receivedOrderPtr, int order_id) {
     int x, y, direction, slow_go;
     direction = 0;
@@ -164,3 +166,7 @@ void emergencyStop(int enable) {
         ControlSetStop(EMERGENCY_BIT);
     }
 }
+
+void resetID() {
+    control.last_finished_id = 0;
+}       

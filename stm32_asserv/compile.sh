@@ -21,7 +21,7 @@ function generate_control_lib_for_simu() {
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/local_math.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/goals.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/PID.c"
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/getters_for_simulation/getters.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/simu_only_functions/simu_functions.c"
 
     gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" \
      "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \

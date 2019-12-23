@@ -1,5 +1,5 @@
-#ifndef GETTERS_FOR_LIB_H
-#define GETTERS_FOR_LIB_H
+#ifndef SIMU_FUNCTIONS_H
+#define SIMU_FUNCTIONS_H
 
 #include "../include/control_shared.h"
 

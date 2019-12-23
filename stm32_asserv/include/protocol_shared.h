@@ -97,6 +97,7 @@ void parseACCMAX(char *receivedOrderPtr);
 void parseSETEMERGENCYSTOP(char *receivedOrderPtr);
 
 void emergencyStop(int enable);
+void resetID();
 
 #ifdef __cplusplus
 }

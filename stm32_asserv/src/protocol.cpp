@@ -183,7 +183,7 @@ void parseAndExecuteOrder(const String& order) {
             break;
 
         case RESET_ID:
-            control.last_finished_id = 0;
+            resetID();
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
 

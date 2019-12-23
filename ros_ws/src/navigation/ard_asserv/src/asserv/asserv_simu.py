@@ -32,23 +32,34 @@ class AsservSetPosModes():
     XY = 6
 
 class AsservSimu(AsservReal):
+    #Overloaded functions : 
+
     # Adapt serial port to send data to 
     # the asserv library instead of arduino
     def _start_serial_com_line(self, port):
+        # no serial line in simu
         pass
 
     def _data_receiver(self):
+        # no data to receive from non-existent arduino
         pass
 
     def _process_received_data(self, data):
+        # no data will be received from non-existent arduino
         pass
 
     def _send_serial_data(self, order_type, args_list):
-        pass
+        args_list.insert(0, str(self._order_id))
+        self._order_id += 1
+        self._sending_queue.put(order_type + ";" + ";".join(args_list) + ";\n")
 
     def _callback_timer_serial_send(self, event):
-        pass
-        
+        if not self._sending_queue.empty():
+            data_to_send = self._sending_queue.get()
+            rospy.logdebug("Sending data : " + data_to_send)
+            self._simu_protocol_parse(data_to_send)
+            self._sending_queue.task_done()
+    
     def __init__(self, asserv_node):
         AsservReal.__init__(self, asserv_node, 0)
 
@@ -56,6 +67,9 @@ class AsservSimu(AsservReal):
             os.environ['UTCOUPE_WORKSPACE']
              + '/libs/lib_asserv_control_shared.so')
   
+        self._orders_dictionary_reverse = {
+            v: k for k, v in self._orders_dictionary.iteritems()}
+
         # ROS stuff
         self._tmr_asserv_loop = rospy.Timer(rospy.Duration(ASSERV_RATE), self._asserv_loop)
 
@@ -76,6 +90,116 @@ class AsservSimu(AsservReal):
         
         self._robot_up_size = 0.23
         self._robot_down_size = 0.058
+
+
+    def _simu_protocol_parse(self, data):
+        order_char = data[0]
+        order_id = data[2]
+        
+        # Move to first parameter of the order
+        semicolon_count = 0
+        index = 0
+        while semicolon_count != 2:
+            if data[index] == ";":
+                semicolon_count += 1
+            index += 1
+        data = data[index:]
+
+        # C type conversion
+        c_order_id = ctypes.c_int(int(order_id))
+        c_data = ctypes.c_char_p(data)
+
+        # Switch case like in parseAndExecuteOrder
+        order_type = self._orders_dictionary_reverse[order_char]
+
+        if order_type == "START":
+            rospy.logerr("START order is not implemented in simu...")
+
+        elif order_type == "HALT":
+            self._stm32lib.emergencyStop(ctypes.c_int(1))
+
+        elif order_type == "PINGPING":
+            rospy.logerr("PINGPING order is not implemented in simu...")
+
+        elif order_type == "GET_CODER":
+            rospy.logerr("GET_CODER order is not implemented in simu...")
+
+        elif order_type == "GOTO":
+            self._stm32lib.parseGOTO(c_data, c_order_id)
+        
+        elif order_type == "GOTOA":
+            self._stm32lib.parseGOTOA(c_data, c_order_id)
+
+        elif order_type == "ROT":
+            self._stm32lib.parseROT(c_data, c_order_id)
+
+        elif order_type == "ROTNMODULO":
+            self._stm32lib.parseROTNMODULO(c_data, c_order_id)
+
+        elif order_type == "PWM":
+            self._stm32lib.parsePWM(c_data, c_order_id)
+
+        elif order_type == "SPD":
+            self._stm32lib.parseSPD(c_data, c_order_id)
+
+        elif order_type == "PIDALL":
+            self._stm32lib.parsePIDALL(c_data)
+
+        elif order_type == "PIDRIGHT":
+            self._stm32lib.parsePIDRIGHT(c_data)
+
+        elif order_type == "PIDLEFT":
+            self._stm32lib.parsePIDLEFT(c_data)
+
+        elif order_type == "KILLG":
+            self._stm32lib.FifoNextGoal()
+            self._stm32lib.ControlPrepareNewGoal()
+
+        elif order_type == "CLEANG":
+            self._stm32lib.FifoClearGoals()
+            self._stm32lib.ControlPrepareNewGoal()
+
+        elif order_type == "RESET_ID":
+            self._stm32lib.resetID()
+
+        elif order_type == "SET_POS":
+            self._stim32lib.parseSETPOS(c_data)
+
+        elif order_type == "GET_POS":
+            rospy.logerr("GET_POS order is not implemented in simu...")
+
+        elif order_type == "GET_SPD":
+            rospy.logerr("GET_SPD order is not implemented in simu...")
+
+        elif order_type == "GET_TARGET_SPD":
+            rospy.logerr("GET_TARGET_SOD order is not implemented in simu...")
+
+        elif order_type == "GET_POS_ID":
+            rospy.logerr("GET_POS_ID order is not implemented in simu...")
+
+        elif order_type == "SPDMAX":
+            self._stm32lib.parseSPDMAX(c_data)
+
+        elif order_type == "ACCMAX":
+            self._stm32lib.parseACCMAX(c_data)
+
+        elif order_type == "GET_LAST_ID":
+            rospy.logerr("GET_LAST_ID order is not implemented in simu...")
+
+        elif order_type == "PAUSE": #TODO getPauseBit();
+            self._stm32lib.ControlSetStop(self._stm32lib.getPauseBit())
+
+        elif order_type == "RESUME":
+            self._stm32lib.ControlUnsetStop(self._stm32lib.getPauseBit())
+
+        elif order_type == "WHOAMI":
+            rospy.logerr("WHOAMI order is not implemented in simu...")
+
+        elif order_type == "SETEMERGENCYSTOP":
+            self._stm32lib.parseSETEMERGENCYSTOP(c_data)
+        
+        else:
+            rospy.logerr("Order " + order_char + " is wrong !")
 
     def getMapContext(self):
         dest = "/static_map/get_context"
@@ -151,8 +275,9 @@ class AsservSimu(AsservReal):
         """
         now = int(time.time() * 1000000)
         self._stm32lib.processCurrentGoal(ctypes.c_long(now))
-        print(self._stm32lib.getPWMLeft())
-        print(self._stm32lib.getPWMRight())
+        # print(self._stm32lib.getPWMLeft())
+        # print(self._stm32lib.getPWMRight())
+
         return
 
     def _wallhit_stop(self, direction):

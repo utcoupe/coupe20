@@ -163,6 +163,51 @@ void goalPos(goal_t *goal) {
 	applyPID();
 }
 
+void goalPwm(goal_t *goal, long now) {
+	static long start_time;
+	if (!control.order_started){
+		start_time = now;
+		control.order_started = 1;
+	}
+	if ((float)((now - start_time)/1000.0) <= goal->data.pwm_data.time){
+		control.speeds.pwm_left = goal->data.pwm_data.pwm_l;
+		control.speeds.pwm_right = goal->data.pwm_data.pwm_r;
+	}
+	else {
+		control.speeds.pwm_left = 0;
+		control.speeds.pwm_right = 0;
+		goal->is_reached = 1;
+	}
+}
+
+void goalSpd(goal_t *goal, long now) {
+	static long start_time;
+	if (!control.order_started){
+		start_time = now;
+		control.order_started = 1;
+	}
+	if ((float)((now - start_time)/1000.0) <= goal->data.spd_data.time){
+		float time_left, v_dec;
+		time_left = (goal->data.spd_data.time - (float)(((now - start_time)/1000.0))) / (float)1000.0;
+		v_dec = time_left * control.max_acc;
+
+		control.speeds.linear_speed = fminf(fminf(
+			control.speeds.linear_speed + (float)DT * control.max_acc,
+			goal->data.spd_data.lin),
+			v_dec);
+		control.speeds.angular_speed = fminf(fminf(
+			control.speeds.angular_speed + (float)(DT) * control.max_acc,
+			goal->data.spd_data.ang),
+			v_dec);
+	}
+	else {
+		control.speeds.linear_speed = 0;
+		control.speeds.angular_speed = 0;
+		goal->is_reached = 1;
+	}
+	applyPID();
+}
+
 float calcSpeed(float init_spd, float dd, float max_spd, float final_speed) {
 	float dd_abs, acc_spd, dec_spd, target_spd;
 	int d_sign;
@@ -204,6 +249,7 @@ void stopRobot(void) {
 	}
 }
 
+
 void allStop(void) {
 	control.speeds.pwm_left = 0;
 	control.speeds.pwm_right = 0;
@@ -223,4 +269,44 @@ void applyPID(void) {
     //control.speeds.pwm_right = speedToPwm(right_spd) + PIDCompute(&PID_right, right_ds);
 	control.speeds.pwm_left = (int)ceilf(PIDCompute(&PID_left, left_ds));
     control.speeds.pwm_right = (int)ceilf(PIDCompute(&PID_right, right_ds));
+}
+
+void ControlPrepareNewGoal(void) {
+	control.order_started = 0;
+	PIDReset(&PID_left);
+	PIDReset(&PID_right);
+}
+
+void processCurrentGoal(long now) {
+	goal_t* current_goal = FifoCurrentGoal();
+	if (
+        control.status_bits & EMERGENCY_BIT
+        || control.status_bits & PAUSE_BIT
+        || control.status_bits & TIME_ORDER_BIT
+    ) {
+		stopRobot();
+	} else {
+		switch (current_goal->type) {
+			case TYPE_ANG:
+				goalAngle(current_goal);
+				break;
+			case TYPE_POS:
+				goalPos(current_goal);
+				break;
+			case TYPE_PWM:
+				goalPwm(current_goal, now);
+				break;
+			case TYPE_SPD:
+				goalSpd(current_goal, now);
+				break;
+			default:
+				stopRobot();
+				break;
+		}
+	}
+	if (current_goal->is_reached) {
+		control.last_finished_id = current_goal->ID;        
+		FifoNextGoal();
+		ControlPrepareNewGoal();
+	}
 }

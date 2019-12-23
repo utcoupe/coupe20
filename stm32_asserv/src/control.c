@@ -17,24 +17,8 @@
 
 #include <math.h>
 
-//inline float fminf(float x, float y) {
-//    return (x < y ? x: y);
-//}
-//
-//inline float fmaxf(float x, float y) {
-//    return (x > y ? x : y);
-//}
-
-//char sign(float x) {
-//    return (x >= 0 ? 1 : -1);
-//}
-
-uint16_t lastReachedID = 0;
-
 control_t control;
 
-void goalPwm(goal_t *goal);
-void goalSpd(goal_t *goal);
 
 void applyPwm(void);
 
@@ -74,56 +58,24 @@ void ControlReset(void) {
 	ControlPrepareNewGoal();
 }
 
-void ControlPrepareNewGoal(void) {
-	control.order_started = 0;
-	PIDReset(&PID_left);
-	PIDReset(&PID_right);
-}
-
 void ControlCompute(void) {
 #if TIME_BETWEEN_ORDERS
 	static long time_reached = -1;
+#endif
+
 	long now;
 	now = timeMicros();
-#endif
-	goal_t* current_goal = FifoCurrentGoal();
+
 	RobotStateUpdate();
-
-	if (
-        control.status_bits & EMERGENCY_BIT
-        || control.status_bits & PAUSE_BIT
-        || control.status_bits & TIME_ORDER_BIT
-    ) {
-		stopRobot();
-	} else {
-		switch (current_goal->type) {
-			case TYPE_ANG:
-				goalAngle(current_goal);
-				break;
-			case TYPE_POS:
-				goalPos(current_goal);
-				break;
-			case TYPE_PWM:
-				goalPwm(current_goal);
-				break;
-			case TYPE_SPD:
-				goalSpd(current_goal);
-				break;
-			default:
-				stopRobot();
-				break;
-		}
-	}
-
+	// Pass current time in argument to call function
+	// from simulation without stm32 timer
+	processCurrentGoal(now);
 	applyPwm();
 
-	if (current_goal->is_reached) {
-		control.last_finished_id = current_goal->ID;
-        // Instead of calling SerialSend directly (does not work), we use a global variable to send the id from main
-        SerialSendGoalReached((int)control.last_finished_id);
-        lastReachedID = control.last_finished_id;
-		FifoNextGoal();
-		ControlPrepareNewGoal();
+	if (FifoCurrentGoal()->is_reached) {
+		// Instead of calling SerialSend directly (does not work),
+		// we use a global variable to send the id from main
+		SerialSendGoalReached((int)control.last_finished_id);
 
 #if TIME_BETWEEN_ORDERS
 		time_reached = now;
@@ -135,55 +87,6 @@ void ControlCompute(void) {
 		time_reached = -1;
 #endif
 	}
-}
-
-/* INTERNAL FUNCTIONS */
-
-void goalPwm(goal_t *goal) {
-	static long start_time;
-	long now = timeMicros();
-	if (!control.order_started){
-		start_time = now;
-		control.order_started = 1;
-	}
-	if ((float)((now - start_time)/1000.0) <= goal->data.pwm_data.time){
-		control.speeds.pwm_left = goal->data.pwm_data.pwm_l;
-		control.speeds.pwm_right = goal->data.pwm_data.pwm_r;
-	}
-	else {
-		control.speeds.pwm_left = 0;
-		control.speeds.pwm_right = 0;
-		goal->is_reached = 1;
-	}
-}
-
-void goalSpd(goal_t *goal) {
-	static long start_time;
-	long now = timeMicros();
-	if (!control.order_started){
-		start_time = now;
-		control.order_started = 1;
-	}
-	if ((float)((now - start_time)/1000.0) <= goal->data.spd_data.time){
-		float time_left, v_dec;
-		time_left = (goal->data.spd_data.time - (float)(((now - start_time)/1000.0))) / (float)1000.0;
-		v_dec = time_left * control.max_acc;
-
-		control.speeds.linear_speed = fminf(fminf(
-			control.speeds.linear_speed + (float)DT * control.max_acc,
-			goal->data.spd_data.lin),
-			v_dec);
-		control.speeds.angular_speed = fminf(fminf(
-			control.speeds.angular_speed + (float)(DT) * control.max_acc,
-			goal->data.spd_data.ang),
-			v_dec);
-	}
-	else {
-		control.speeds.linear_speed = 0;
-		control.speeds.angular_speed = 0;
-		goal->is_reached = 1;
-	}
-	applyPID();
 }
 
 void applyPwm(void) {

@@ -52,7 +52,6 @@ void ComputeIsBlocked(void) {
 			control.last_finished_id = current_goal->ID;
 			// Instead of calling SerialSend directly (does not work), we use a global variable to send the id from main
 			SerialSendGoalReached((int)control.last_finished_id);
-			lastReachedID = control.last_finished_id;
 			current_goal = FifoNextGoal();
 			ControlPrepareNewGoal();
 		}

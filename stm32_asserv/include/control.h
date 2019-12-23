@@ -17,7 +17,7 @@ void ControlUnsetStop(int mask);
 
 void ControlInit(void);
 void ControlCompute(void);
-extern uint16_t lastReachedID;
+
 #ifdef __cplusplus
 }
 #endif

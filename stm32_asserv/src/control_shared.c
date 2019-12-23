@@ -24,6 +24,11 @@
 #include "local_math.h"
 #include <math.h>
 
+control_t control;
+PID_t PID_left, PID_right;
+pos_t current_pos;
+wheels_spd_t wheels_spd;
+
 int controlPos(float dd, float da) {
 	int ret;
 	float dda, ddd, max_speed;

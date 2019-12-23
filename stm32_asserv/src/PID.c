@@ -6,7 +6,6 @@
 
 #include "parameters.h"
 #include "PID.h"
-#include "compat.h"
 
 PID_t PID_left, PID_right;
 

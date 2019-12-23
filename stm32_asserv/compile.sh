@@ -18,8 +18,13 @@ function compile_program() {
 
 function generate_control_lib_for_simu() {
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/control_shared.c"
-    gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" "${PWD}/control_shared.o"
-    rm "${PWD}/control_shared.o"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/local_math.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/goals.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/PID.c"
+
+    gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_asserv_control_shared.so" \
+     "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" "${PWD}/PID.o"
+    rm "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" "${PWD}/PID.o"
 }
 
 function upload_program() {

@@ -69,10 +69,10 @@ class AsservSimu(AsservAbstract):
     def __init__(self, asserv_node):
         
         AsservAbstract.__init__(self, asserv_node)
-        self._controlLib = ctypes.cdll.LoadLibrary(
+        self._control_lib = ctypes.cdll.LoadLibrary(
             os.environ['UTCOUPE_WORKSPACE']
              + '/libs/lib_asserv_control_shared.so')
-
+        
         # Asserv management stuff
         # The pose is in meters and rad
         self._current_pose = Pose2D(0.18, 1.2, math.pi/2)

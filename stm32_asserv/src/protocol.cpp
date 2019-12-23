@@ -2,6 +2,7 @@
 // Created by tfuhrman on 09/05/17.
 //
 #include "protocol.hpp"
+#include "protocol_shared.h"
 #include "serial_sender.h"
 
 //get from old protocol file
@@ -75,19 +76,6 @@ uint8_t getLog10(const uint16_t number) {
     return 1;
 }
 
-void emergencyStop(const uint8_t enable) {
-    // Reset the PID to remove the error sum
-    PIDReset(&PID_left);
-    PIDReset(&PID_right);
-    if (enable == 0) {
-        //digitalWrite(LED_DEBUG, LOW);
-        ControlUnsetStop(EMERGENCY_BIT);
-    } else {
-        //digitalWrite(LED_DEBUG, HIGH);
-        ControlSetStop(EMERGENCY_BIT);
-    }
-}
-
 void parseAndExecuteOrder(const String& order) {
     static char receivedOrder[25];
     char* receivedOrderPtr = receivedOrder;
@@ -142,131 +130,68 @@ void parseAndExecuteOrder(const String& order) {
                 static_cast<long>(get_right_encoder())
             );
             break;
+
         case GOTO:
-        {
-            int x, y, direction, slow_go;
-            direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &direction, &slow_go);
-            if(slow_go) 
-                ControlSetStop(SLOWGO_BIT);    
-            else
-                ControlUnsetStop(SLOWGO_BIT);    
-
-            goal_data_t goal;
-            goal.pos_data = {x, y, direction};
-            FifoPushGoal(order_id, TYPE_POS, goal);
+            parseGOTO(receivedOrderPtr, order_id);
             break;
-        }
+
         case GOTOA:
-        {
-            int x, y, a_int, direction, slow_go;
-            float a;
-            direction = 0;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i;%i", &x, &y, &a_int, &direction, &slow_go);
-            if(slow_go) 
-                ControlSetStop(SLOWGO_BIT);    
-            else
-                ControlUnsetStop(SLOWGO_BIT);   
+            parseGOTOA(receivedOrderPtr, order_id);
+            break;
 
-            a = static_cast<float>(a_int) / static_cast<float>(FLOAT_PRECISION);
-            goal_data_t goal;
-            goal.pos_data = {x, y, direction};
-            FifoPushGoal(order_id, TYPE_POS, goal);
-            goal.ang_data = {a, 1};
-            FifoPushGoal(order_id, TYPE_ANG, goal);
-            break;
-        }
         case ROT:
-        {
-            int a_int;
-            float a;
-            sscanf(receivedOrderPtr, "%i", &a_int);
-            a = static_cast<float>(a_int) / static_cast<float>(FLOAT_PRECISION);
-            goal_data_t goal;
-            goal.ang_data = {a, 1};
-            FifoPushGoal(order_id, TYPE_ANG, goal);
+            parseROT(receivedOrderPtr, order_id);
             break;
-        }
+
         case ROTNOMODULO:
-        {
-            long a_int;
-            float a;
-            sscanf(receivedOrderPtr, "%li", &a_int);
-            a = static_cast<float>(a_int) / static_cast<float>(FLOAT_PRECISION);
-            goal_data_t goal;
-            goal.ang_data = {a, 0};
-            FifoPushGoal(order_id, TYPE_ANG, goal);
+            parseROTNMODULO(receivedOrderPtr, order_id);
             break;
-        }
+            
         case PWM:
-        {
-            int l, r, t, s; //s = auto_stop
-            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &l, &r, &t, &s);
-            goal_data_t goal;
-            goal.pwm_data = {static_cast<float>(t), l, r, s};
-            FifoPushGoal(order_id, TYPE_PWM, goal);
+            parsePWM(receivedOrderPtr, order_id);
             break;
-        }
+
         case SPD:
-        {
-            int l, a, t;
-            sscanf(receivedOrderPtr, "%i;%i;%i", &l, &a, &t);
-            goal_data_t goal;
-            goal.spd_data = {static_cast<float>(t), l, a};
-            FifoPushGoal(order_id, TYPE_SPD, goal);
+            parseSPD(receivedOrderPtr, order_id);
             break;
-        }
+        
         case PIDALL:
-        case PIDRIGHT:
-        case PIDLEFT:
-        {
-            long p_int, i_int, d_int;
-            float p, i, d;
-            sscanf(receivedOrderPtr, "%li;%li;%li", &p_int, &i_int, &d_int);
-            p = p_int / static_cast<float>(FLOAT_PRECISION);
-            i = i_int / static_cast<float>(FLOAT_PRECISION);
-            d = d_int / static_cast<float>(FLOAT_PRECISION);
-            if (orderChar == PIDLEFT)
-                PIDSet(&PID_left, p, i, d, LEFT_BIAS);
-            else if (orderChar == PIDRIGHT)
-                PIDSet(&PID_right, p, i, d, RIGHT_BIAS);
-            else {
-                PIDSet(&PID_left, p, i, d, LEFT_BIAS);
-                PIDSet(&PID_right, p, i, d, RIGHT_BIAS);
-            }
+            parsePIDALL(receivedOrderPtr);
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
-        }
+        
+        case PIDRIGHT:
+            parsePIDRIGHT(receivedOrderPtr);
+            g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
+            break;
+
+        case PIDLEFT:
+            parsePIDLEFT(receivedOrderPtr);
+            g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
+            break;
+        
         case KILLG:
             FifoNextGoal();
             ControlPrepareNewGoal();
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
+
         case CLEANG:
             FifoClearGoals();
             ControlPrepareNewGoal();
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
+
         case RESET_ID:
             control.last_finished_id = 0;
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
+
         case SET_POS:
         {
-            int x, y, a_int;
-            unsigned mode;
-            float a;
-            sscanf(receivedOrderPtr, "%i;%i;%i;%u;", &x, &y, &a_int, &mode);
-            a = a_int / static_cast<float>(FLOAT_PRECISION);
-            if(mode){
-                if(!(mode & BIT_MODE_A))
-                    a = current_pos.angle;
-                if(!(mode & BIT_MODE_X))
-                    x = static_cast<int>(round(current_pos.x));
-                if(!(mode & BIT_MODE_Y))
-                    y = static_cast<int>(round(current_pos.y));
-            }
-            RobotStateSetPos(x, y, a);
+            parseSETPOS(receivedOrderPtr);
+            int x, y, a_int, mode;
+            sscanf(receivedOrderPtr, "%i;%i;%i;%i", &x, &y, &a_int, &mode);
             g_serialSender.serialSend(SERIAL_INFO, "%d;%i;", order_id, a_int);
             break;
         }
@@ -306,20 +231,13 @@ void parseAndExecuteOrder(const String& order) {
         }
         case SPDMAX:
         {
-            int r_int, s;
-            float r;
-            sscanf(receivedOrderPtr, "%i;%i", &s, &r_int);
-            r = r_int / static_cast<float>(FLOAT_PRECISION);
-            control.max_spd = s;
-            control.rot_spd_ratio = r;
+            parseSPDMAX(receivedOrderPtr);
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
         }
         case ACCMAX:
         {
-            int a;
-            sscanf(receivedOrderPtr, "%i", &a);
-            control.max_acc = a;
+            parseACCMAX(receivedOrderPtr);
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
         }
@@ -339,13 +257,7 @@ void parseAndExecuteOrder(const String& order) {
             break;
         case SETEMERGENCYSTOP:
         {
-            int enable;
-            sscanf(receivedOrderPtr, "%i", &enable);
-            if (enable == 0) {
-                emergencyStop(0);
-            } else {
-                emergencyStop(1);
-            }
+            parseSETEMERGENCYSTOP(receivedOrderPtr);
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             break;
         }

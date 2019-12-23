@@ -29,6 +29,14 @@ PID_t PID_left, PID_right;
 pos_t current_pos;
 wheels_spd_t wheels_spd;
 
+void ControlSetStop(int mask) {
+	control.status_bits |= mask;
+}
+
+void ControlUnsetStop(int mask) {
+	control.status_bits &= ~mask;
+}
+
 int controlPos(float dd, float da) {
 	int ret;
 	float dda, ddd, max_speed;

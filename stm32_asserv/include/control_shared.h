@@ -36,6 +36,9 @@ typedef struct control {
 extern control_t control;
 extern PID_t PID_left, PID_right;
 
+void ControlSetStop(int mask);
+void ControlUnsetStop(int mask);
+
 void goalPos(goal_t *goal);
 void goalAngle(goal_t *goal);
 void goalPwm(goal_t *goal, long now);

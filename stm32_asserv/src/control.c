@@ -22,14 +22,6 @@ control_t control;
 
 void applyPwm(void);
 
-void ControlSetStop(int mask) {
-	control.status_bits |= mask;
-}
-
-void ControlUnsetStop(int mask) {
-	control.status_bits &= ~mask;
-}
-
 void ControlInit(void) {
 	control.reset = 1;
 	control.status_bits = 0;

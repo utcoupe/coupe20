@@ -2,7 +2,6 @@
 // Created by tfuhrman on 09/05/17.
 //
 #include "protocol.hpp"
-#include "protocol_shared.h"
 #include "serial_sender.h"
 
 //get from old protocol file
@@ -13,7 +12,7 @@
 #include "control_shared.h"
 #include "goals.h"
 #include "parameters.h"
-//}
+// }
 
 #include <stdio.h>
 #include <stdint.h>

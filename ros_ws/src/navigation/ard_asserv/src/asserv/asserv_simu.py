@@ -66,12 +66,16 @@ class AsservSimu(AsservReal):
         self._stm32lib = ctypes.cdll.LoadLibrary(
             os.environ['UTCOUPE_WORKSPACE']
              + '/libs/lib_asserv_control_shared.so')
-  
+
+        self._current_linear_speed = 0
+        self._current_angular_speed = 0
         self._orders_dictionary_reverse = {
             v: k for k, v in self._orders_dictionary.iteritems()}
 
         # ROS stuff
         self._tmr_asserv_loop = rospy.Timer(rospy.Duration(ASSERV_RATE), self._asserv_loop)
+        self._tmr_speed_send = rospy.Timer(rospy.Duration(SEND_SPEED_RATE), self._callback_timer_speed_send)
+        self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), self._callback_timer_pose_send)
 
         # Get map & robot size 
         self._map_x = 3.0
@@ -275,8 +279,8 @@ class AsservSimu(AsservReal):
         """
         now = int(time.time() * 1000000)
         self._stm32lib.processCurrentGoal(ctypes.c_long(now))
-        # print(self._stm32lib.getPWMLeft())
-        # print(self._stm32lib.getPWMRight())
+        print(self._stm32lib.getPWMLeft())
+        print(self._stm32lib.getPWMRight())
 
         return
 
@@ -354,3 +358,9 @@ class AsservSimu(AsservReal):
             new_theta)
         
         self._robot_raw_position = Pose2D(new_x, new_y, new_theta)
+
+    def _callback_timer_pose_send(self, event):
+        self._node.send_robot_position(self._robot_raw_position)
+
+    def _callback_timer_speed_send(self, event):
+        self._node.send_robot_speed(RobotSpeed(0, 0, self._current_linear_speed, 0, 0))

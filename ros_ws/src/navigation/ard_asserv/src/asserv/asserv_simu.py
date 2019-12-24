@@ -31,6 +31,22 @@ class AsservSetPosModes():
     AX = 5
     XY = 6
 
+class stm32Speeds(ctypes.Structure):
+    _fields_= [("pwm_left", ctypes.c_int),
+               ("pwm_right", ctypes.c_int),
+               ("angular_speed", ctypes.c_float),
+               ("linear_speed", ctypes.c_float)]
+
+class stm32Control(ctypes.Structure):
+    _fields_=[("speeds", stm32Speeds),
+              ("max_acc", ctypes.c_float),
+              ("max_spd", ctypes.c_float),
+              ("rot_spd_ratio", ctypes.c_float),
+              ("reset", ctypes.c_uint8),
+              ("last_finished_id", ctypes.c_uint16),
+              ("order_started", ctypes.c_uint16),
+              ("status_bits", ctypes.c_int)]
+
 class AsservSimu(AsservReal):
     #Overloaded functions : 
 
@@ -65,10 +81,8 @@ class AsservSimu(AsservReal):
 
         self._stm32lib = ctypes.cdll.LoadLibrary(
             os.environ['UTCOUPE_WORKSPACE']
-             + '/libs/lib_asserv_control_shared.so')
+             + '/libs/lib_stm32_asserv.so')
 
-        self._current_linear_speed = 0
-        self._current_angular_speed = 0
         self._orders_dictionary_reverse = {
             v: k for k, v in self._orders_dictionary.iteritems()}
 
@@ -94,7 +108,10 @@ class AsservSimu(AsservReal):
         
         self._robot_up_size = 0.23
         self._robot_down_size = 0.058
-
+        self._sending_queue.put(self._orders_dictionary['START'] + ";0;\n")
+        self._stm32lib.ControlLogicInit()
+        self._stm32lib.RobotStateLogicInit()
+        self._control = stm32Control.in_dll(self._stm32lib, "control")
 
     def _simu_protocol_parse(self, data):
         order_char = data[0]
@@ -117,10 +134,10 @@ class AsservSimu(AsservReal):
         order_type = self._orders_dictionary_reverse[order_char]
 
         if order_type == "START":
-            rospy.logerr("START order is not implemented in simu...")
+            self._stm32lib.start()
 
         elif order_type == "HALT":
-            self._stm32lib.emergencyStop(ctypes.c_int(1))
+            self._stm32lib.halt()
 
         elif order_type == "PINGPING":
             rospy.logerr("PINGPING order is not implemented in simu...")
@@ -160,7 +177,7 @@ class AsservSimu(AsservReal):
             self._stm32lib.ControlPrepareNewGoal()
 
         elif order_type == "CLEANG":
-            self._stm32lib.FifoClearGoals()
+            self._stm32lib.FifoInit()
             self._stm32lib.ControlPrepareNewGoal()
 
         elif order_type == "RESET_ID":
@@ -269,6 +286,9 @@ class AsservSimu(AsservReal):
             new_pose.theta = a
 
         self._robot_raw_position = new_pose
+        self._stm32lib.RobotStateSetPos(ctypes.c_float(new_pose.x * 1000), 
+                                        ctypes.c_float(new_pose.y * 1000), 
+                                        ctypes.c_float(new_pose.theta * 1000))
         
         return True
 
@@ -278,10 +298,8 @@ class AsservSimu(AsservReal):
         Checks for new goals and updates behavior every ASSERV_RATE ms.
         """
         now = int(time.time() * 1000000)
-        self._stm32lib.processCurrentGoal(ctypes.c_long(now))
-        print(self._stm32lib.getPWMLeft())
-        print(self._stm32lib.getPWMRight())
-
+        self._stm32lib.processCurrentGoal(ctypes.c_long(now))       
+        self._update_robot_pose()
         return
 
     def _wallhit_stop(self, direction):
@@ -349,18 +367,21 @@ class AsservSimu(AsservReal):
         """
         Uses the angular and linear speeds to update the robot Pose(x, y, theta).
         """
-        new_theta = self._robot_raw_position.theta + self._current_angular_speed * ASSERV_RATE
+        new_theta = self._robot_raw_position.theta + self._control.speeds.angular_speed / 1000 * ASSERV_RATE
         new_theta %= 2 * math.pi
 
-        new_x = self._robot_raw_position.x + self._current_linear_speed * ASSERV_RATE * math.cos(
+        new_x = self._robot_raw_position.x + self._control.speeds.linear_speed / 1000 * ASSERV_RATE * math.cos(
             new_theta)
-        new_y = self._robot_raw_position.y + self._current_linear_speed * ASSERV_RATE * math.sin(
-            new_theta)
-        
+        new_y = self._robot_raw_position.y + self._control.speeds.linear_speed / 1000 * ASSERV_RATE * math.sin(
+            new_theta) 
+            
         self._robot_raw_position = Pose2D(new_x, new_y, new_theta)
+        self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x * 1000), 
+                                        ctypes.c_float(new_y * 1000), 
+                                        ctypes.c_float(new_theta * 1000))
 
     def _callback_timer_pose_send(self, event):
         self._node.send_robot_position(self._robot_raw_position)
 
     def _callback_timer_speed_send(self, event):
-        self._node.send_robot_speed(RobotSpeed(0, 0, self._current_linear_speed, 0, 0))
+        self._node.send_robot_speed(RobotSpeed(0, 0, self._control.speeds.linear_speed, 0, 0))

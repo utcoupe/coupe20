@@ -28,6 +28,25 @@ control_t control;
 PID_t PID_left, PID_right;
 pos_t current_pos;
 wheels_spd_t wheels_spd;
+uint8_t flagSTM32Connected;
+
+void ControlLogicInit() {
+	control.reset = 1;
+	control.status_bits = 0;
+	control.speeds.angular_speed = 0,
+	control.speeds.linear_speed = 0;
+	control.last_finished_id = 0;
+
+	control.max_acc = ACC_MAX;
+	control.max_spd = SPD_MAX; 
+	control.rot_spd_ratio = RATIO_ROT_SPD_MAX;
+
+	FifoInit();
+	PIDInit(&PID_left);
+	PIDInit(&PID_right);
+	PIDSet(&PID_left, LEFT_P, LEFT_I, LEFT_D, LEFT_BIAS);
+	PIDSet(&PID_right, RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_BIAS);
+}
 
 void ControlSetStop(int mask) {
 	control.status_bits |= mask;
@@ -48,7 +67,7 @@ int controlPos(float dd, float da) {
 	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
 		float da_next, dd_final;
 		int dx, dy, x, y, goal_count;
-
+		
 		// Calculate angle between current and next goal
 		goal_t *current_goal = FifoCurrentGoal();
 		goal_t *next_goal = FifoGetGoal(FifoCurrentIndex()+1);
@@ -287,6 +306,7 @@ void ControlPrepareNewGoal(void) {
 
 void processCurrentGoal(long now) {
 	goal_t* current_goal = FifoCurrentGoal();
+
 	if (
         control.status_bits & EMERGENCY_BIT
         || control.status_bits & PAUSE_BIT

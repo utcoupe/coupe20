@@ -6,6 +6,17 @@
 #include <math.h>
 
 control_t control;
+uint8_t flagSTM32Connected = 0;
+
+void start() {
+    emergencyStop(0);
+    flagSTM32Connected = 1;
+}
+
+void halt() {
+    emergencyStop(1);
+    flagSTM32Connected = 0;
+}
 
 void parseGOTO(char *receivedOrderPtr, int order_id) {
     int x, y, direction, slow_go;

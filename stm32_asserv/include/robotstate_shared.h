@@ -19,6 +19,7 @@ extern "C" {
 #endif
 
 void RobotStateSetPos(float x, float y, float angle);
+void RobotStateLogicInit();
 
 #ifdef __cplusplus
 }

@@ -17,6 +17,15 @@ void RobotStateSetPos(float x, float y, float angle) {
 	current_pos.x = x;
 	current_pos.y = y;
 	current_pos.angle = angle;
-	
+
 	PosUpdateAngle();
+}
+
+void RobotStateLogicInit() {
+	current_pos.x = 0;
+	current_pos.y = 0;
+	current_pos.angle = 0;
+	current_pos.modulo_angle = 0;
+	wheels_spd.left = 0;
+	wheels_spd.right = 0;
 }

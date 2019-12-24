@@ -33,9 +33,10 @@ typedef struct control {
 	int status_bits;
 } control_t;
 
-extern control_t control;
+extern control_t control; 
 extern PID_t PID_left, PID_right;
 
+void ControlLogicInit();
 void ControlSetStop(int mask);
 void ControlUnsetStop(int mask);
 

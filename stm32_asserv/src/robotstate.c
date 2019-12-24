@@ -17,12 +17,7 @@ pos_t current_pos;
 wheels_spd_t wheels_spd;
 
 void RobotStateInit() {
-	current_pos.x = 0;
-	current_pos.y = 0;
-	current_pos.angle = 0;
-	current_pos.modulo_angle = 0;
-	wheels_spd.left = 0;
-	wheels_spd.right = 0;
+	RobotStateLogicInit();
 	encoders_reset();
 }
 

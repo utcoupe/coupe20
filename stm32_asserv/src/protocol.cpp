@@ -20,9 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-uint8_t flagSTM32Connected = 0;
-
 void autoSendStatus() {
     g_serialSender.serialSend(
         SERIAL_INFO,
@@ -87,7 +84,7 @@ void parseAndExecuteOrder(const String& order) {
     switch (orderChar) {
         case START:
         {
-            emergencyStop(0);
+            start();
             // Ack that STM32 has started
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             g_serialSender.serialSend(
@@ -96,12 +93,11 @@ void parseAndExecuteOrder(const String& order) {
                 STM32_ID,
                 order_id
             );
-            flagSTM32Connected = true;
             break;
         }
         case HALT:
         {
-            emergencyStop(1);
+            halt();
             // Ack that STM32 has stopped
             g_serialSender.serialSend(SERIAL_INFO, "%d;", order_id);
             g_serialSender.serialSend(
@@ -110,7 +106,6 @@ void parseAndExecuteOrder(const String& order) {
                 STM32_ID,
                 order_id
             );
-            flagSTM32Connected = 0;
             break;
         }
         case PINGPING:

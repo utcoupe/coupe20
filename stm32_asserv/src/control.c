@@ -23,23 +23,10 @@ control_t control;
 void applyPwm(void);
 
 void ControlInit(void) {
-	control.reset = 1;
-	control.status_bits = 0;
-	control.speeds.angular_speed = 0,
-	control.speeds.linear_speed = 0;
-	control.last_finished_id = 0;
-
-	control.max_acc = ACC_MAX;
-	control.max_spd = SPD_MAX; 
-	control.rot_spd_ratio = RATIO_ROT_SPD_MAX;
-
+	ControlLogicInit();
 	motorsInit();
 	RobotStateInit();
-	FifoInit();
-	PIDInit(&PID_left);
-	PIDInit(&PID_right);
-	PIDSet(&PID_left, LEFT_P, LEFT_I, LEFT_D, LEFT_BIAS);
-	PIDSet(&PID_right, RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_BIAS);
+
 }
 
 void ControlReset(void) {

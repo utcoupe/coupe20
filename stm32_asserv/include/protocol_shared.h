@@ -78,9 +78,14 @@
 #define BIT_MODE_Y   (1<<1)
 #define BIT_MODE_X   (1<<2)
 
+extern uint8_t flagSTM32Connected;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void start();
+void halt();
 
 void parseGOTO(char *receivedOrderPtr, int order_id);
 void parseGOTOA(char *receivedOrderPtr, int order_id);

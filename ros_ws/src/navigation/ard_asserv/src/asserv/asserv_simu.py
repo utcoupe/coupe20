@@ -22,6 +22,10 @@ SEND_POSE_RATE = 0.1  # in s
 SEND_SPEED_RATE = 0.1  # in s
 ASSERV_RATE = 0.05  # in s
 
+# From stm32 protocol :
+PAUSE_BIT = ctypes.c_uint8(1)
+#define PAUSE_BIT (1<<0)
+
 class AsservSetPosModes():
     AXY = 0
     A = 1
@@ -207,11 +211,11 @@ class AsservSimu(AsservReal):
         elif order_type == "GET_LAST_ID":
             rospy.logerr("GET_LAST_ID order is not implemented in simu...")
 
-        elif order_type == "PAUSE": #TODO getPauseBit();
-            self._stm32lib.ControlSetStop(self._stm32lib.getPauseBit())
+        elif order_type == "PAUSE":
+            self._stm32lib.ControlSetStop(PAUSE_BIT)
 
         elif order_type == "RESUME":
-            self._stm32lib.ControlUnsetStop(self._stm32lib.getPauseBit())
+            self._stm32lib.ControlUnsetStop(PAUSE_BIT)
 
         elif order_type == "WHOAMI":
             rospy.logerr("WHOAMI order is not implemented in simu...")
@@ -374,7 +378,7 @@ class AsservSimu(AsservReal):
             new_theta)
         new_y = self._robot_raw_position.y + self._control.speeds.linear_speed / 1000 * ASSERV_RATE * math.sin(
             new_theta) 
-            
+
         self._robot_raw_position = Pose2D(new_x, new_y, new_theta)
         self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x * 1000), 
                                         ctypes.c_float(new_y * 1000), 

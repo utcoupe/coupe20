@@ -83,10 +83,6 @@ class AsservSimu(AsservReal):
     def __init__(self, asserv_node):
         AsservReal.__init__(self, asserv_node, 0)
 
-        self._stm32lib = ctypes.cdll.LoadLibrary(
-            os.environ['UTCOUPE_WORKSPACE']
-             + '/libs/lib_stm32_asserv.so')
-
         self._orders_dictionary_reverse = {
             v: k for k, v in self._orders_dictionary.iteritems()}
 
@@ -112,9 +108,17 @@ class AsservSimu(AsservReal):
         
         self._robot_up_size = 0.23
         self._robot_down_size = 0.058
+
+        self._stm32lib = ctypes.cdll.LoadLibrary(
+            os.environ['UTCOUPE_WORKSPACE']
+             + '/libs/lib_stm32_asserv.so')
+
+        # Init stm32
         self._sending_queue.put(self._orders_dictionary['START'] + ";0;\n")
         self._stm32lib.ControlLogicInit()
         self._stm32lib.RobotStateLogicInit()
+
+        # Get control struct from stm32lib
         self._control = stm32Control.in_dll(self._stm32lib, "control")
 
     def _simu_protocol_parse(self, data):
@@ -292,7 +296,7 @@ class AsservSimu(AsservReal):
         self._robot_raw_position = new_pose
         self._stm32lib.RobotStateSetPos(ctypes.c_float(new_pose.x * 1000), 
                                         ctypes.c_float(new_pose.y * 1000), 
-                                        ctypes.c_float(new_pose.theta * 1000))
+                                        ctypes.c_float(new_pose.theta))
         
         return True
 
@@ -382,7 +386,7 @@ class AsservSimu(AsservReal):
         self._robot_raw_position = Pose2D(new_x, new_y, new_theta)
         self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x * 1000), 
                                         ctypes.c_float(new_y * 1000), 
-                                        ctypes.c_float(new_theta * 1000))
+                                        ctypes.c_float(new_theta))
 
     def _callback_timer_pose_send(self, event):
         self._node.send_robot_position(self._robot_raw_position)

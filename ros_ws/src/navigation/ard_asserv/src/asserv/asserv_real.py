@@ -149,7 +149,7 @@ class AsservReal(AsservAbstract):
         return True
 
     def set_pos(self, x, y, a, mode):
-        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000.0))), str(mode)])
+        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a))), str(mode)])
         return True
 
     def _start_serial_com_line(self, port):
@@ -201,14 +201,14 @@ class AsservReal(AsservAbstract):
         # Received status
         elif data.find("~") != -1:
             rospy.logdebug("[ASSERV] Received status data.")
-            receied_data_list = data.split(";")
+            received_data_list = data.split(";")
             try:
-                angle = float(receied_data_list[4]) / 1000.0
+                angle = float(received_data_list[4])
                 angle %= 2.0 * pi
-                robot_position = Pose2D(float(receied_data_list[2]) / 1000.0, float(receied_data_list[3]) / 1000.0, angle)
+                robot_position = Pose2D(float(received_data_list[2]) / 1000.0, float(received_data_list[3]) / 1000.0, angle)
                 self._robot_raw_position = robot_position
                 self._node.send_robot_position(robot_position)
-                self._node.send_robot_speed(RobotSpeed(float(receied_data_list[5]), float(receied_data_list[6]), float(receied_data_list[7]) / 1000.0, float(receied_data_list[8]), float(receied_data_list[9])))
+                self._node.send_robot_speed(RobotSpeed(float(received_data_list[5]), float(received_data_list[6]), float(received_data_list[7]) / 1000.0, float(received_data_list[8]), float(received_data_list[9])))
             except ValueError:
                 rospy.logwarn("[ASSERV] Received bad position from the robot, drop it...")
         # Received order ack

@@ -17,26 +17,18 @@ from static_map.srv import MapGetContext, MapGetContextRequest
 __author__ = "Thomas Fuhrmann & milesial & Mindstan & PaulMConstant"
 __date__ = 19/04/2018
 
+# TODO maybe fetch parameters from parameters.h ?
+
 # Rates 
 SEND_POSE_RATE = 0.1  # in s
 SEND_SPEED_RATE = 0.1  # in s
-ASSERV_RATE = 0.005  # in s
+ASSERV_RATE = 0.005  # in s # can be fetched from parameters.h
 
-# From stm32 protocol :
-PAUSE_BIT = ctypes.c_uint8(1) #TODO automate fetch
-#define PAUSE_BIT (1<<0)
+# From stm32 protocol (must be changed if change in C code):
+STM32FifoMaxGoals = 100 # can be fetched from parameters.h
+PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from parameters.h
 
-class AsservSetPosModes():
-    AXY = 0
-    A = 1
-    Y = 2
-    AY = 3
-    X = 4
-    AX = 5
-    XY = 6
-
-# STM32 C code data structures - Must be changed if change in C code
-# For STM32 control:
+# stm32_asserv data structures - Must be changed if change in C code
 class STM32Speeds(ctypes.Structure):
     _fields_ = [("pwm_left", ctypes.c_int),
                 ("pwm_right", ctypes.c_int),
@@ -53,7 +45,12 @@ class STM32Control(ctypes.Structure):
                 ("order_started", ctypes.c_uint16),
                 ("status_bits", ctypes.c_int)]
 
-# For STM32 fifo:
+class STM32Pos(ctypes.Structure):
+    _fields_ = [("x", ctypes.c_float),
+                ("y", ctypes.c_float),
+                ("angle", ctypes.c_float),
+                ("modulo_angle", ctypes.c_int)]
+
 class STM32PosData(ctypes.Structure):
     _fields_ = [("x", ctypes.c_int),
                 ("y", ctypes.c_int),
@@ -86,7 +83,6 @@ class STM32Goal(ctypes.Structure):
                 ("ID", ctypes.c_uint16),
                 ("is_reached", ctypes.c_int)]
 
-STM32FifoMaxGoals = 100 # Must be changed if change in C code #TODO automate it
 class STM32Fifo(ctypes.Structure):
     _fields_ = [("fifo", STM32Goal*STM32FifoMaxGoals),
                 ("nb_goals", ctypes.c_int),
@@ -99,15 +95,15 @@ class AsservSimu(AsservReal):
     # Adapt serial port to send data to 
     # the asserv library instead of arduino
     def _start_serial_com_line(self, port):
-        # no serial line in simu
+        """pass : no serial line in simu"""
         pass
 
     def _data_receiver(self):
-        # no data to receive from non-existent arduino
+        """pass : no data to receive from non-existent arduino"""
         pass
 
     def _process_received_data(self, data):
-        # no data will be received from non-existent arduino
+        """pass : no data will be received from non-existent arduino"""
         pass
 
     def _send_serial_data(self, order_type, args_list):
@@ -130,13 +126,12 @@ class AsservSimu(AsservReal):
             os.environ['UTCOUPE_WORKSPACE']
              + '/libs/lib_stm32_asserv.so')
 
-        # Init stm32
         self._stm32lib.ControlLogicInit()
         self._stm32lib.RobotStateLogicInit()
 
-        # Get structs from stm32lib
         self._stm32control = STM32Control.in_dll(self._stm32lib, "control")
         self._stm32fifo = STM32Fifo.in_dll(self._stm32lib, "fifo")
+        self._stm32pos = STM32Pos.in_dll(self._stm32lib, "current_pos")
 
         self._orders_dictionary_reverse = {
             v: k for k, v in self._orders_dictionary.iteritems()}
@@ -181,7 +176,6 @@ class AsservSimu(AsservReal):
             index += 1
         data = data[index:]
 
-        # C type conversion
         c_order_id = ctypes.c_int(int(order_id))
         c_data = ctypes.c_char_p(data)
 
@@ -240,7 +234,7 @@ class AsservSimu(AsservReal):
             self._stm32lib.resetID()
 
         elif order_type == "SET_POS":
-            self._stim32lib.parseSETPOS(c_data)
+            self._stm32lib.parseSETPOS(c_data)
 
         elif order_type == "GET_POS":
             rospy.logerr("GET_POS order is not implemented in simu...")
@@ -301,52 +295,6 @@ class AsservSimu(AsservReal):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
         rospy.spin()
 
-    def set_pos(self, x, y, a, mode=AsservSetPosModes.AXY):
-        """
-        Sets a new position. Can update x, y or a only.
-
-        @param x: new x coord
-        @param y: new y coord
-        @param a: new angle
-        @param mode: choose if you want to change any x, y, a combination.
-        See AsservSetPosModes class for modes info.
-        """
-        if (x < 0 or x > self._map_x or
-            y < 0 or y > self._map_y or
-            a < -math.pi or a > math.pi ):
-            rospy.logerr("Invalid position !")
-            return False
-
-        new_pose = Pose2D(self._robot_raw_position.x, 
-                          self._robot_raw_position.y,
-                          self._robot_raw_position.theta)
-
-        if mode == AsservSetPosModes.A:
-            new_pose.theta = a
-        elif mode == AsservSetPosModes.Y:
-            new_pose.y = y
-        elif mode == AsservSetPosModes.AY:
-            new_pose.theta = a
-            new_pose.y = y
-        elif mode == AsservSetPosModes.X:
-            new_pose.x = x
-        elif mode == AsservSetPosModes.AX:
-            new_pose.theta = a
-            new_pose.x = x
-        elif mode == AsservSetPosModes.XY:
-            new_pose.x = x
-            new_pose.y = y
-        elif mode == AsservSetPosModes.AXY:
-            new_pose.x = x
-            new_pose.y = y
-            new_pose.theta = a
-
-        self._robot_raw_position = new_pose
-        self._stm32lib.RobotStateSetPos(ctypes.c_float(new_pose.x * 1000), 
-                                        ctypes.c_float(new_pose.y * 1000), 
-                                        ctypes.c_float(new_pose.theta))
-        
-        return True
 
     def _asserv_loop(self, event):
         """
@@ -364,86 +312,85 @@ class AsservSimu(AsservReal):
             self._stm32lib.FifoNextGoal()
             self._stm32lib.ControlPrepareNewGoal()
 
-    def _wallhit_stop(self, direction):
-        """
-        Checks if the robot is near a wall.
-        If it is, stops it and returns True.
+    # def _wallhit_stop(self, direction):
+    #     """
+    #     Checks if the robot is near a wall.
+    #     If it is, stops it and returns True.
 
-        @param direction: (current direction of the robot) 1 forward, 0 backwards
-        @return: True if the robot is hitting a wall, else False
-        """
-        # TODO avoid robot teleporting when he comes from an angle
-        # TODO fix it, sometimes it doesnt work as intended
-        traj_angle = self._robot_raw_position.theta
+    #     @param direction: (current direction of the robot) 1 forward, 0 backwards
+    #     @return: True if the robot is hitting a wall, else False
+    #     """
+    #     # TODO avoid robot teleporting when he comes from an angle
+    #     # TODO fix it, sometimes it doesnt work as intended
+    #     traj_angle = self._robot_raw_position.theta
 
-        # Depending on the orientation of the robot, 
-        # adjust the position of the map borders
-        if abs(traj_angle) > math.pi:
-            traj_angle -= np.sign(traj_angle) * 2 * math.pi
+    #     # Depending on the orientation of the robot, 
+    #     # adjust the position of the map borders
+    #     if abs(traj_angle) > math.pi:
+    #         traj_angle -= np.sign(traj_angle) * 2 * math.pi
 
-        # Set y border
-        if traj_angle < 0 : # Facing down
-            high_y_edge = self._map_y - self._robot_down_size
-            low_y_wall = self._robot_up_size
-        else: # Facing up
-            high_y_edge = self._map_y - self._robot_up_size
-            low_y_wall = self._robot_down_size
+    #     # Set y border
+    #     if traj_angle < 0 : # Facing down
+    #         high_y_edge = self._map_y - self._robot_down_size
+    #         low_y_wall = self._robot_up_size
+    #     else: # Facing up
+    #         high_y_edge = self._map_y - self._robot_up_size
+    #         low_y_wall = self._robot_down_size
 
-        # Set x border
-        if abs(traj_angle) < math.pi/2: # Facing right
-            high_x_edge = self._map_x - self._robot_up_size
-            low_x_wall = self._robot_down_size
-        else: # Facing left
-            high_x_edge = self._map_x - self._robot_down_size
-            low_x_wall = self._robot_up_size
+    #     # Set x border
+    #     if abs(traj_angle) < math.pi/2: # Facing right
+    #         high_x_edge = self._map_x - self._robot_up_size
+    #         low_x_wall = self._robot_down_size
+    #     else: # Facing left
+    #         high_x_edge = self._map_x - self._robot_down_size
+    #         low_x_wall = self._robot_up_size
 
-        new_theta = None
+    #     new_theta = None
 
-        if self._robot_raw_position.x >= high_x_edge :
-            new_theta = 0
-        elif self._robot_raw_position.x <= low_x_wall :
-            new_theta = -math.pi
+    #     if self._robot_raw_position.x >= high_x_edge :
+    #         new_theta = 0
+    #     elif self._robot_raw_position.x <= low_x_wall :
+    #         new_theta = -math.pi
 
-        elif self._robot_raw_position.y >= high_y_edge :
-            new_theta = math.pi/2
-        elif self._robot_raw_position.y <= low_y_wall :
-            new_theta = -math.pi/2
+    #     elif self._robot_raw_position.y >= high_y_edge :
+    #         new_theta = math.pi/2
+    #     elif self._robot_raw_position.y <= low_y_wall :
+    #         new_theta = -math.pi/2
         
-        if new_theta is None:
-            return False
+    #     if new_theta is None:
+    #         return False
 
-        if direction == 0 : # Semiturn if we were going backwards
-            new_theta += math.pi
-        new_theta %= 2 * math.pi
+    #     if direction == 0 : # Semiturn if we were going backwards
+    #         new_theta += math.pi
+    #     new_theta %= 2 * math.pi
 
-        self._robot_raw_position = Pose2D(self._robot_raw_position.x, 
-                                    self._robot_raw_position.y, 
-                                    new_theta)
-        rospy.loginfo('[ASSERV] A wall has been hit !')
-        self._node.goal_reached(self._current_goal.goal_id, True)
-        # self._stop()
+    #     self._robot_raw_position = Pose2D(self._robot_raw_position.x, 
+    #                                 self._robot_raw_position.y, 
+    #                                 new_theta)
+    #     rospy.loginfo('[ASSERV] A wall has been hit !')
+    #     #self._node.goal_reached(self._current_goal.goal_id, True)
+    #     # self._stop()
 
-        return True
+    #     return True
 
     def _update_robot_pose(self):
         """
         Uses the angular and linear speeds to update the robot Pose(x, y, theta).
-        """
-        new_theta = self._robot_raw_position.theta + self._stm32control.speeds.angular_speed / 1000 * ASSERV_RATE
+        """    
+        new_theta = self._stm32pos.angle + self._stm32control.speeds.angular_speed / 1000 * ASSERV_RATE
         new_theta %= 2 * math.pi
 
-        new_x = self._robot_raw_position.x + self._stm32control.speeds.linear_speed / 1000 * ASSERV_RATE * math.cos(
+        new_x = self._stm32pos.x + self._stm32control.speeds.linear_speed * ASSERV_RATE * math.cos(
             new_theta)
-        new_y = self._robot_raw_position.y + self._stm32control.speeds.linear_speed / 1000 * ASSERV_RATE * math.sin(
+        new_y = self._stm32pos.y + self._stm32control.speeds.linear_speed * ASSERV_RATE * math.sin(
             new_theta) 
 
-        self._robot_raw_position = Pose2D(new_x, new_y, new_theta)
-        self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x * 1000), 
-                                        ctypes.c_float(new_y * 1000), 
+        self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x), 
+                                        ctypes.c_float(new_y), 
                                         ctypes.c_float(new_theta))
 
     def _callback_timer_pose_send(self, event):
-        self._node.send_robot_position(self._robot_raw_position)
+        self._node.send_robot_position(Pose2D(self._stm32pos.x / 1000, self._stm32pos.y / 1000, self._stm32pos.angle))
 
     def _callback_timer_speed_send(self, event):
         self._node.send_robot_speed(RobotSpeed(0, 0, self._stm32control.speeds.linear_speed, 0, 0))

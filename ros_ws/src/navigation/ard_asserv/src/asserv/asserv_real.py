@@ -144,7 +144,7 @@ class AsservReal(AsservAbstract):
         return True
 
     def set_pos(self, x, y, a, mode):
-        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a))), str(mode)])
+        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000))), str(mode)])
         return True
 
     def _start_serial_com_line(self, port):

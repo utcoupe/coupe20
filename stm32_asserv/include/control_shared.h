@@ -5,10 +5,9 @@
 #include "PID.h"
 #include "goals.h"
 
-#define ANY 0
-// TODO never Used ????
+#define BACKWARD 0
 #define FORWARD 1
-#define BACKWARD -1
+#define ANY 2
 
 #define ANG_REACHED (0x1)
 #define POS_REACHED (0x2)

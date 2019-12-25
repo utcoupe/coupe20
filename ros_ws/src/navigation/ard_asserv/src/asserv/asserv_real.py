@@ -42,7 +42,7 @@ class AsservReal(AsservAbstract):
         # Store the current position of robot, this one is the raw value returned by the asserv
         self._robot_raw_position = Pose2D(0, 0, 0)
         # Timer for the send of serial data to avoid that sending are buffered in the internal OS buffer (make the arduino crash)
-        self._tmr_serial_send = rospy.Timer(rospy.Duration(0.15), self._callback_timer_serial_send)
+        self._tmr_serial_send = rospy.Timer(rospy.Duration(0.1), self._callback_timer_serial_send)
         # Init the serial communication
         # Flag to tell that the connected Arduino is started : we can send it orders
         self._arduino_started_flag = False

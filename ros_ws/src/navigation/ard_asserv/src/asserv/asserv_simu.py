@@ -164,17 +164,15 @@ class AsservSimu(AsservReal):
 
 
     def _simu_protocol_parse(self, data):
-        order_char = data[0]
-        order_id = data[2]
-        
-        # Move to first parameter of the order
-        semicolon_count = 0
-        index = 0
-        while semicolon_count != 2:
-            if data[index] == ";":
-                semicolon_count += 1
+        order_char = data[0]        
+        index = 2
+        order_id = ""
+        while data[index] != ";":
+            order_id += data[index]
             index += 1
-        data = data[index:]
+
+        # Move to first parameter of the order
+        data = data[index+1:]
 
         c_order_id = ctypes.c_int(int(order_id))
         c_data = ctypes.c_char_p(data)
@@ -306,6 +304,7 @@ class AsservSimu(AsservReal):
         self._update_robot_pose()
 
         if self._stm32fifo.fifo[self._stm32fifo.current_goal].is_reached:
+            print(self._stm32fifo.fifo[self._stm32fifo.current_goal].ID)
             self._stm32control.last_finished_id = \
                 self._stm32fifo.fifo[self._stm32fifo.current_goal].ID
             self._node.goal_reached(self._stm32control.last_finished_id, True)

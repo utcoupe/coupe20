@@ -20,10 +20,10 @@ __date__ = 19/04/2018
 # Rates 
 SEND_POSE_RATE = 0.1  # in s
 SEND_SPEED_RATE = 0.1  # in s
-ASSERV_RATE = 0.05  # in s
+ASSERV_RATE = 0.005  # in s
 
 # From stm32 protocol :
-PAUSE_BIT = ctypes.c_uint8(1)
+PAUSE_BIT = ctypes.c_uint8(1) #TODO automate fetch
 #define PAUSE_BIT (1<<0)
 
 class AsservSetPosModes():
@@ -35,21 +35,63 @@ class AsservSetPosModes():
     AX = 5
     XY = 6
 
-class stm32Speeds(ctypes.Structure):
-    _fields_= [("pwm_left", ctypes.c_int),
-               ("pwm_right", ctypes.c_int),
-               ("angular_speed", ctypes.c_float),
-               ("linear_speed", ctypes.c_float)]
+# STM32 C code data structures - Must be changed if change in C code
+# For STM32 control:
+class STM32Speeds(ctypes.Structure):
+    _fields_ = [("pwm_left", ctypes.c_int),
+                ("pwm_right", ctypes.c_int),
+                ("angular_speed", ctypes.c_float),
+                ("linear_speed", ctypes.c_float)]
 
-class stm32Control(ctypes.Structure):
-    _fields_=[("speeds", stm32Speeds),
-              ("max_acc", ctypes.c_float),
-              ("max_spd", ctypes.c_float),
-              ("rot_spd_ratio", ctypes.c_float),
-              ("reset", ctypes.c_uint8),
-              ("last_finished_id", ctypes.c_uint16),
-              ("order_started", ctypes.c_uint16),
-              ("status_bits", ctypes.c_int)]
+class STM32Control(ctypes.Structure):
+    _fields_ = [("speeds", STM32Speeds),
+                ("max_acc", ctypes.c_float),
+                ("max_spd", ctypes.c_float),
+                ("rot_spd_ratio", ctypes.c_float),
+                ("reset", ctypes.c_uint8),
+                ("last_finished_id", ctypes.c_uint16),
+                ("order_started", ctypes.c_uint16),
+                ("status_bits", ctypes.c_int)]
+
+# For STM32 fifo:
+class STM32PosData(ctypes.Structure):
+    _fields_ = [("x", ctypes.c_int),
+                ("y", ctypes.c_int),
+                ("d", ctypes.c_int)]
+
+class STM32AngData(ctypes.Structure):
+    _fields_ = [("angle", ctypes.c_float),
+                ("modulo", ctypes.c_int)]
+
+class STM32PwmData(ctypes.Structure):
+    _fields_ = [("time", ctypes.c_float),
+                ("pwm_l", ctypes.c_int),
+                ("pwm_r", ctypes.c_int),
+                ("auto_stop", ctypes.c_int)]
+
+class STM32SpdData(ctypes.Structure): #TODO add auto_stop
+    _fields_ = [("time", ctypes.c_float),
+                ("lin", ctypes.c_int),
+                ("ang", ctypes.c_int)]
+
+class STM32GoalData(ctypes.Union):
+    _fields_= [("pos_data", STM32PosData),
+               ("ang_data", STM32AngData),
+               ("pwm_data", STM32PwmData),
+               ("spd_data", STM32SpdData)]
+
+class STM32Goal(ctypes.Structure):
+    _fields_ = [("data", STM32GoalData),
+                ("type", ctypes.c_int),
+                ("ID", ctypes.c_uint16),
+                ("is_reached", ctypes.c_int)]
+
+STM32FifoMaxGoals = 100 # Must be changed if change in C code #TODO automate it
+class STM32Fifo(ctypes.Structure):
+    _fields_ = [("fifo", STM32Goal*STM32FifoMaxGoals),
+                ("nb_goals", ctypes.c_int),
+                ("current_goal", ctypes.c_int),
+                ("last_goal", ctypes.c_int)]
 
 class AsservSimu(AsservReal):
     #Overloaded functions : 
@@ -83,8 +125,22 @@ class AsservSimu(AsservReal):
     def __init__(self, asserv_node):
         AsservReal.__init__(self, asserv_node, 0)
 
+        # STM32 lib stuff
+        self._stm32lib = ctypes.cdll.LoadLibrary(
+            os.environ['UTCOUPE_WORKSPACE']
+             + '/libs/lib_stm32_asserv.so')
+
+        # Init stm32
+        self._stm32lib.ControlLogicInit()
+        self._stm32lib.RobotStateLogicInit()
+
+        # Get structs from stm32lib
+        self._stm32control = STM32Control.in_dll(self._stm32lib, "control")
+        self._stm32fifo = STM32Fifo.in_dll(self._stm32lib, "fifo")
+
         self._orders_dictionary_reverse = {
             v: k for k, v in self._orders_dictionary.iteritems()}
+        self._last_stm32fifo_current_goal = 0
 
         # ROS stuff
         self._tmr_asserv_loop = rospy.Timer(rospy.Duration(ASSERV_RATE), self._asserv_loop)
@@ -109,17 +165,8 @@ class AsservSimu(AsservReal):
         self._robot_up_size = 0.23
         self._robot_down_size = 0.058
 
-        self._stm32lib = ctypes.cdll.LoadLibrary(
-            os.environ['UTCOUPE_WORKSPACE']
-             + '/libs/lib_stm32_asserv.so')
-
-        # Init stm32
         self._sending_queue.put(self._orders_dictionary['START'] + ";0;\n")
-        self._stm32lib.ControlLogicInit()
-        self._stm32lib.RobotStateLogicInit()
 
-        # Get control struct from stm32lib
-        self._control = stm32Control.in_dll(self._stm32lib, "control")
 
     def _simu_protocol_parse(self, data):
         order_char = data[0]
@@ -166,7 +213,8 @@ class AsservSimu(AsservReal):
             self._stm32lib.parseROTNMODULO(c_data, c_order_id)
 
         elif order_type == "PWM":
-            self._stm32lib.parsePWM(c_data, c_order_id)
+            rospy.logerr("PWM should not be used in simu. Please use SPD instead.")
+            #self._stm32lib.parsePWM(c_data, c_order_id)
 
         elif order_type == "SPD":
             self._stm32lib.parseSPD(c_data, c_order_id)
@@ -305,9 +353,14 @@ class AsservSimu(AsservReal):
         Main function of the asserv simu.
         Checks for new goals and updates behavior every ASSERV_RATE ms.
         """
-        now = int(time.time() * 1000000)
-        self._stm32lib.processCurrentGoal(ctypes.c_long(now))       
+        now_micros = int(time.time() * 1000000)
+        self._stm32lib.processCurrentGoal(ctypes.c_long(now_micros))       
         self._update_robot_pose()
+
+        if self._last_stm32fifo_current_goal != self._stm32fifo.current_goal:
+            # Current goal increased in stm32 lib => we reached it
+            self._node.goal_reached(self._stm32control.last_finished_id, True)
+            self._last_stm32fifo_current_goal = self._stm32fifo.current_goal
         return
 
     def _wallhit_stop(self, direction):
@@ -375,12 +428,12 @@ class AsservSimu(AsservReal):
         """
         Uses the angular and linear speeds to update the robot Pose(x, y, theta).
         """
-        new_theta = self._robot_raw_position.theta + self._control.speeds.angular_speed / 1000 * ASSERV_RATE
+        new_theta = self._robot_raw_position.theta + self._stm32control.speeds.angular_speed / 1000 * ASSERV_RATE
         new_theta %= 2 * math.pi
 
-        new_x = self._robot_raw_position.x + self._control.speeds.linear_speed / 1000 * ASSERV_RATE * math.cos(
+        new_x = self._robot_raw_position.x + self._stm32control.speeds.linear_speed / 1000 * ASSERV_RATE * math.cos(
             new_theta)
-        new_y = self._robot_raw_position.y + self._control.speeds.linear_speed / 1000 * ASSERV_RATE * math.sin(
+        new_y = self._robot_raw_position.y + self._stm32control.speeds.linear_speed / 1000 * ASSERV_RATE * math.sin(
             new_theta) 
 
         self._robot_raw_position = Pose2D(new_x, new_y, new_theta)
@@ -392,4 +445,4 @@ class AsservSimu(AsservReal):
         self._node.send_robot_position(self._robot_raw_position)
 
     def _callback_timer_speed_send(self, event):
-        self._node.send_robot_speed(RobotSpeed(0, 0, self._control.speeds.linear_speed, 0, 0))
+        self._node.send_robot_speed(RobotSpeed(0, 0, self._stm32control.speeds.linear_speed, 0, 0))

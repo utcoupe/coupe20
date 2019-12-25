@@ -51,10 +51,14 @@ void ControlCompute(void) {
 	processCurrentGoal(now);
 	applyPwm();
 
-	if (FifoCurrentGoal()->is_reached) {
+	goal_t *current_goal = FifoCurrentGoal();
+	if (current_goal->is_reached) {
 		// Instead of calling SerialSend directly (does not work),
 		// we use a global variable to send the id from main
+		control.last_finished_id = current_goal->ID;        
 		SerialSendGoalReached((int)control.last_finished_id);
+		FifoNextGoal();
+		ControlPrepareNewGoal();
 
 #if TIME_BETWEEN_ORDERS
 		time_reached = now;

@@ -357,11 +357,12 @@ class AsservSimu(AsservReal):
         self._stm32lib.processCurrentGoal(ctypes.c_long(now_micros))       
         self._update_robot_pose()
 
-        if self._last_stm32fifo_current_goal != self._stm32fifo.current_goal:
-            # Current goal increased in stm32 lib => we reached it
+        if self._stm32fifo.fifo[self._stm32fifo.current_goal].is_reached:
+            self._stm32control.last_finished_id = \
+                self._stm32fifo.fifo[self._stm32fifo.current_goal].ID
             self._node.goal_reached(self._stm32control.last_finished_id, True)
-            self._last_stm32fifo_current_goal = self._stm32fifo.current_goal
-        return
+            self._stm32lib.FifoNextGoal()
+            self._stm32lib.ControlPrepareNewGoal()
 
     def _wallhit_stop(self, direction):
         """

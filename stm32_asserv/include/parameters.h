@@ -23,9 +23,9 @@
 
 #define SPD_MAX 1000 //mm/s 1000
 #define ACC_MAX 1500 //mm/s2
-#define RATIO_ROT_SPD_MAX 0.6
-#define K_DISTANCE_REDUCTION 2 // réduction de la vitesse linéaire quand on tourne
-#define MAX_ANGLE_DIFF (M_PI/6.0) // rad - linear speed = 0 if angle > MAX_ANGLE_DIFF
+#define RATIO_ROT_SPD_MAX 1
+#define K_DISTANCE_REDUCTION 15 // réduction de la vitesse linéaire quand on tourne
+#define MAX_ANGLE_DIFF (M_PI/10.0) // rad - linear speed = 0 if angle > MAX_ANGLE_DIFF
 
 #define EMERGENCY_WAIT_TIME 30 // seconds
 #define EMERGENCY_SLOW_GO_RATIO 0.3 // spd = 0.3*max_spd in slow_go mode
@@ -43,7 +43,7 @@
 
 #define ERROR_ANGLE 0.030 //erreur en angle(radians) maximale pour considérer l'objectif comme atteint
 #define ERROR_POS 5 // erreur en position (mm)  maximale pour considérer l'objectif comme atteint
-#define ERROR_INTERMEDIATE_POS 180 // mm Position error to consider an intermediate pose to be reached
+#define ERROR_INTERMEDIATE_POS 100 // mm Position error to consider an intermediate pose to be reached
 #define SPD_TO_STOP 10
 
 #define CONE_ALIGNEMENT (M_PI/2.0) 

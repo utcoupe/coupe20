@@ -24,7 +24,7 @@ GET_PORT_SERVICE_NAME = "drivers/port_finder/get_port"
 GET_MAP_SERVICE_NAME = "static_map/get_waypoint"
 GET_PORT_SERVICE_TIMEOUT = 25  # in seconds
 GET_MAP_SERVICE_TIMEOUT = 15  # in seconds
-TF_ASSERV = "asserv"
+TF_ASSERV = "robot"
 
 
 class Asserv:

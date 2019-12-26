@@ -22,7 +22,7 @@ GOTOA_POS_ERROR_MULTIPLIER = 5
 SPD_MAX = 1.0 # m/s, no difference betwenn pr and gr
 
 class AsservReal(AsservAbstract):
-    def __init__(self, asserv_node, port):
+    def __init__(self, asserv_node, goal_counter, port):
         AsservAbstract.__init__(self, asserv_node)
 
         # Dictionary containing the list of orders which are interpreted by the Arduino (do not modify this dictionary !)
@@ -32,7 +32,7 @@ class AsservReal(AsservAbstract):
         # A queue is used to send data to prevent to send data too fast, which will result to concatenate two sending and making the Arduino crash
         self._sending_queue = Queue.Queue()
         # The order_id is sent to the asserv to identify the orders, it must be unique
-        self._order_id = 0
+        self._goal_counter = goal_counter
         # This dictionary stores the order_id with th goal_id to retrieve which goal has been completed
         self._orders_id_dictionary = {}
         # This list stores the last received ack ID from Arduino (a list to avoid zapping an ack). This list is used by the timer callback which check that position has been reached
@@ -73,7 +73,7 @@ class AsservReal(AsservAbstract):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)
             return True
         self._send_serial_data(self._orders_dictionary['GOTO'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(direction),str(int(slow_go))])
-        self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y]
+        self._orders_id_dictionary[self._goal_counter.id - 1] = [goal_id, x, y]
         return True
 
     def gotoa(self, goal_id, x, y, a, direction, slow_go):
@@ -82,7 +82,7 @@ class AsservReal(AsservAbstract):
             return True
 
         self._send_serial_data(self._orders_dictionary['GOTOA'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000))), str(direction), str(int(slow_go))])
-        self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y, a]
+        self._orders_id_dictionary[self._goal_counter.id - 1] = [goal_id, x, y, a]
         return True
     
     def rot(self, goal_id, a, no_modulo):
@@ -95,7 +95,7 @@ class AsservReal(AsservAbstract):
         else:
             self._send_serial_data(self._orders_dictionary['ROT'], [str(int(round(a * 1000)))])
         # TODO make it proper
-        self._orders_id_dictionary[self._order_id - 1] = [goal_id, a]
+        self._orders_id_dictionary[self._goal_counter.id - 1] = [goal_id, a]
         return True
 
     def pwm(self, goal_id, left, right, duration, auto_stop):
@@ -212,7 +212,7 @@ class AsservReal(AsservAbstract):
             if data.find("0;") == 0:
                 rospy.loginfo("[ASSERV] Arduino started")
                 self._arduino_started_flag = True
-                self._order_id += 1
+                self._goal_counter.id += 1
             else:
                 rospy.logdebug("[ASSERV] Received order ack : %s", data)
                 ack_data = data.split(";")
@@ -251,8 +251,8 @@ class AsservReal(AsservAbstract):
         @type args_list:    List
         """
         if self._serial_com is not None:
-            args_list.insert(0, str(self._order_id))
-            self._order_id += 1
+            args_list.insert(0, str(self._goal_counter.id))
+            self._goal_counter.id += 1
             # TODO check if \n is necessary  + '\n'
             self._sending_queue.put(order_type + ";" + ";".join(args_list) + ";\n")
         else:

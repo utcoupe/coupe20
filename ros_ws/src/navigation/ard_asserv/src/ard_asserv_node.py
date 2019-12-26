@@ -26,6 +26,14 @@ GET_PORT_SERVICE_TIMEOUT = 25  # in seconds
 GET_MAP_SERVICE_TIMEOUT = 15  # in seconds
 TF_ASSERV = "robot"
 
+class goalCounter:
+    """
+    Class used to store the goal id counter.
+    This makes the id be passed by reference.
+    This way, the asserv_real class can increase the counter.
+    """
+    def __init__(self):
+        self.id = 0
 
 class Asserv:
     """
@@ -43,7 +51,7 @@ class Asserv:
         # This dictionary stores the goals received by the Goto service and which are currently in processing
         self._goto_srv_dictionary = {}
         # Unique ID given to the received goal to manage it
-        self._goal_id_counter = 0
+        self._goal_counter = goalCounter()
         # Instance of the asserv object (simu or real)
         self._asserv_instance = None
         # Flag to know if the system has been halted (end of game)
@@ -107,11 +115,11 @@ class Asserv:
         is_simu = False
         if arduino_port == "":
             rospy.logwarn("[ASSERV] Creation of the simu asserv.")
-            self._asserv_instance = asserv.AsservSimu(self)
+            self._asserv_instance = asserv.AsservSimu(self, self._goal_counter)
             is_simu = True
         else:
             rospy.loginfo("[ASSERV] Creation of the real asserv.")
-            self._asserv_instance = asserv.AsservReal(self, arduino_port)
+            self._asserv_instance = asserv.AsservReal(self, self._goal_counter, arduino_port)
         try:
             rospy.wait_for_service(GET_MAP_SERVICE_NAME, GET_MAP_SERVICE_TIMEOUT)
             self._srv_client_map_fill_waypoints = rospy.ServiceProxy(
@@ -134,6 +142,7 @@ class Asserv:
         else:
             rospy.logwarn("[ASSERV] Goal id {}, has NOT been reached.".format(goal_id))
         result = DoGotoResult(reached)
+
         if goal_id in self._goals_dictionary:
             self._goals_dictionary[goal_id].set_succeeded(result)
             del self._goals_dictionary[goal_id]
@@ -173,7 +182,7 @@ class Asserv:
         rospy.logdebug("[ASSERV] Received a request (goto service).")
 
         response = self._process_goto_order(
-            self._goal_id_counter,
+            self._goal_counter.id,
             request.mode,
             request.position.x,
             request.position.y,
@@ -182,8 +191,7 @@ class Asserv:
             int(request.slow_go),
         )
         if response:
-            self._goto_srv_dictionary[self._goal_id_counter] = ""
-            self._goal_id_counter += 1
+            self._goto_srv_dictionary[self._goal_counter.id] = ""
         else:
             rospy.logerr(
                 "[ASSERV] Service GOTO has failed... Mode probably does not exist."
@@ -235,7 +243,7 @@ class Asserv:
         rospy.loginfo("[ASSERV] Received a request (pwm service).")
         if self._asserv_instance:
             ret_value = self._asserv_instance.pwm(
-                self._goal_id_counter,
+                self._goal_counter.id,
                 request.left,
                 request.right,
                 request.duration,
@@ -245,8 +253,7 @@ class Asserv:
             ret_value = False
 
         if ret_value:
-            self._goto_srv_dictionary[self._goal_id_counter] = ""
-            self._goal_id_counter += 1
+            self._goto_srv_dictionary[self._goal_counter.id] = ""
         return PwmResponse(ret_value)
 
     def _callback_speed(self, request):
@@ -394,7 +401,7 @@ class Asserv:
                     return
 
             if self._process_goto_order(
-                    self._goal_id_counter,
+                    self._goal_counter.id,
                     goal_handled.get_goal().mode,
                     pos.x,
                     pos.y,
@@ -403,8 +410,7 @@ class Asserv:
                     goal_handled.get_goal().slow_go,
             ):
                 goal_handled.set_accepted()
-                self._goals_dictionary[self._goal_id_counter] = goal_handled
-                self._goal_id_counter += 1
+                self._goals_dictionary[self._goal_counter.id - 1] = goal_handled
             else:
                 rospy.logerr(
                     "[ASSERV] Action GOTO has failed... Mode probably does not exist."

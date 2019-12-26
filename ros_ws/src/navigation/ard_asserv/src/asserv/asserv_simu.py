@@ -107,8 +107,8 @@ class AsservSimu(AsservReal):
         pass
 
     def _send_serial_data(self, order_type, args_list):
-        args_list.insert(0, str(self._order_id))
-        self._order_id += 1
+        args_list.insert(0, str(self._goal_counter.id))
+        self._goal_counter.id += 1
         self._sending_queue.put(order_type + ";" + ";".join(args_list) + ";\n")
 
     def _callback_timer_serial_send(self, event):
@@ -118,8 +118,8 @@ class AsservSimu(AsservReal):
             self._simu_protocol_parse(data_to_send)
             self._sending_queue.task_done()
     
-    def __init__(self, asserv_node):
-        AsservReal.__init__(self, asserv_node, 0)
+    def __init__(self, asserv_node, goal_counter):
+        AsservReal.__init__(self, asserv_node, goal_counter, 0)
 
         # STM32 lib stuff
         self._stm32lib = ctypes.cdll.LoadLibrary(

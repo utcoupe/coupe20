@@ -144,8 +144,6 @@ class Plan(object):
 
     def cancelAsservGoals(self):
         self._status = PlanStatuses.CANCELLING
-        # for idGoal in self._currentPath.keys():
-        #    self._asservClient.cancelGoal(idGoal)
         self._asservClient.cancelAllGoals()
 
     def getCurrentPath(self):

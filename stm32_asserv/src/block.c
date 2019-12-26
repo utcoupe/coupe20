@@ -50,11 +50,9 @@ void ComputeIsBlocked(void) {
 		// we did not move enough, we are probably blocked, 
 		// consider goals reached
 		while (current_goal->type != NO_GOAL) {
-			control.last_finished_id = current_goal->ID;
+			setCurrentGoalReached();
 			// Instead of calling SerialSend directly (does not work), we use a global variable to send the id from main
 			SerialSendGoalReached((int)control.last_finished_id);
-			current_goal = FifoNextGoal();
-			ControlPrepareNewGoal();
 		}
 		// CanSender::canSend(ROBOT_BLOCKED);
 	}

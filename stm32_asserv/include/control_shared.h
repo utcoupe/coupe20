@@ -53,5 +53,5 @@ void stopRobot(void);
 
 void ControlPrepareNewGoal(void);
 void processCurrentGoal(long);
-
+void setCurrentGoalReached(void);
 #endif

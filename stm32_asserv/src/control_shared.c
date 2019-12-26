@@ -304,7 +304,7 @@ void ControlPrepareNewGoal(void) {
 	PIDReset(&PID_right);
 }
 
-void processCurrentGoal(long now) {
+void processCurrentGoal(long now_micros) {
 	goal_t* current_goal = FifoCurrentGoal();
 
 	if (
@@ -322,14 +322,21 @@ void processCurrentGoal(long now) {
 				goalPos(current_goal);
 				break;
 			case TYPE_PWM:
-				goalPwm(current_goal, now);
+				goalPwm(current_goal, now_micros);
 				break;
 			case TYPE_SPD:
-				goalSpd(current_goal, now);
+				goalSpd(current_goal, now_micros);
 				break;
 			default:
 				stopRobot();
 				break;
 		}
 	}
+}
+
+void setCurrentGoalReached(void) {
+	goal_t *current_goal = FifoCurrentGoal();
+	control.last_finished_id = current_goal->ID;
+	current_goal = FifoNextGoal();
+	ControlPrepareNewGoal();
 }

@@ -55,10 +55,9 @@ void ControlCompute(void) {
 	if (current_goal->is_reached) {
 		// Instead of calling SerialSend directly (does not work),
 		// we use a global variable to send the id from main
-		control.last_finished_id = current_goal->ID;        
+		setCurrentGoalReached();
 		SerialSendGoalReached((int)control.last_finished_id);
-		FifoNextGoal();
-		ControlPrepareNewGoal();
+
 
 #if TIME_BETWEEN_ORDERS
 		time_reached = now;

@@ -142,17 +142,14 @@ class AsservSimu(AsservReal):
         self._tmr_speed_send = rospy.Timer(rospy.Duration(SEND_SPEED_RATE), self._callback_timer_speed_send)
         self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), self._callback_timer_pose_send)
 
-        # Get map & robot size 
+        # Get map 
         self._map_x = 3.0
         self._map_y = 2.0
-        self._robot_wheelbase = 0.2
 
         context = self.getMapContext()
         if context:
             self._map_x = context.terrain_shape.width
             self._map_y = context.terrain_shape.height
-            self._robot_wheelbase = context.robot_shape.wheelbase
-
         else:
             rospy.logwarn("Can't get map context, taking default values.")
 
@@ -187,10 +184,10 @@ class AsservSimu(AsservReal):
             self._stm32lib.halt()
 
         elif order_type == "PINGPING":
-            rospy.logerr("PINGPING order is not implemented in simu...")
+            rospy.loginfo("PING")
 
         elif order_type == "GET_CODER":
-            rospy.logerr("GET_CODER order is not implemented in simu...")
+            rospy.logerr("GET_CODER cannot be implemented in simu...")
 
         elif order_type == "GOTO":
             self._stm32lib.parseGOTO(c_data, c_order_id)
@@ -205,7 +202,8 @@ class AsservSimu(AsservReal):
             self._stm32lib.parseROTNMODULO(c_data, c_order_id)
 
         elif order_type == "PWM":
-            rospy.logerr("PWM should not be used in simu. Please use SPD instead.")
+            rospy.logerr("PWM should not be used in simu. "
+                "Please use SPD instead.")
             #self._stm32lib.parsePWM(c_data, c_order_id)
 
         elif order_type == "SPD":
@@ -235,16 +233,30 @@ class AsservSimu(AsservReal):
             self._stm32lib.parseSETPOS(c_data)
 
         elif order_type == "GET_POS":
-            rospy.logerr("GET_POS order is not implemented in simu...")
+            rospy.loginfo("x = " + str(self._stm32pos.x))
+            rospy.loginfo("y = " + str(self._stm32pos.y))
+            rospy.loginfo("a = " + str(self._stm32pos.angle))
 
         elif order_type == "GET_SPD":
-            rospy.logerr("GET_SPD order is not implemented in simu...")
+            rospy.logerr("GET_SPD is not implemented in simu : "
+                "SPD == TARGET_SPD")
 
         elif order_type == "GET_TARGET_SPD":
-            rospy.logerr("GET_TARGET_SOD order is not implemented in simu...")
+            rospy.loginfo("linear speed : " + str(self._stm32control.speeds.linear_speed))
+            rospy.loginfo("angular speed : " + str(self._stm32control.speeds.angular_speed))
+
+            rospy.loginfo("left wheel speed : " 
+                + str(self._stm32control.speeds.linear_speed
+                 - self._stm32control.speeds.angular_speed))
+            rospy.loginfo("right wheel speed : "
+                + str(self._stm32control.speeds.linear_speed
+                 + self._stm32control.speeds.angular_speed))
 
         elif order_type == "GET_POS_ID":
-            rospy.logerr("GET_POS_ID order is not implemented in simu...")
+            rospy.loginfo("x = " + str(self._stm32pos.x))
+            rospy.loginfo("y = " + str(self._stm32pos.y))
+            rospy.loginfo("a = " + str(self._stm32pos.angle))
+            rospy.loginfo("last ID : " + str(self._stm32control.last_finished_id))
 
         elif order_type == "SPDMAX":
             self._stm32lib.parseSPDMAX(c_data)
@@ -253,7 +265,7 @@ class AsservSimu(AsservReal):
             self._stm32lib.parseACCMAX(c_data)
 
         elif order_type == "GET_LAST_ID":
-            rospy.logerr("GET_LAST_ID order is not implemented in simu...")
+            rospy.loginfo("last ID : " + str(self._stm32control.last_finished_id))
 
         elif order_type == "PAUSE":
             self._stm32lib.ControlSetStop(PAUSE_BIT)
@@ -262,7 +274,7 @@ class AsservSimu(AsservReal):
             self._stm32lib.ControlUnsetStop(PAUSE_BIT)
 
         elif order_type == "WHOAMI":
-            rospy.logerr("WHOAMI order is not implemented in simu...")
+            rospy.logerr("WHOAMI cannot be implemented in simu...")
 
         elif order_type == "SETEMERGENCYSTOP":
             self._stm32lib.parseSETEMERGENCYSTOP(c_data)
@@ -304,7 +316,7 @@ class AsservSimu(AsservReal):
         self._update_robot_pose()
 
         if self._stm32fifo.fifo[self._stm32fifo.current_goal].is_reached:
-            print(self._stm32fifo.fifo[self._stm32fifo.current_goal].ID)
+
             self._stm32control.last_finished_id = \
                 self._stm32fifo.fifo[self._stm32fifo.current_goal].ID
             self._node.goal_reached(self._stm32control.last_finished_id, True)

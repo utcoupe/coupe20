@@ -134,7 +134,7 @@ class AsservSimu(AsservReal):
         self._stm32pos = STM32Pos.in_dll(self._stm32lib, "current_pos")
 
         self._orders_dictionary_reverse = {
-            v: k for k, v in self._orders_dictionary.iteritems()}
+            v : k for k, v in self._orders_dictionary.iteritems()}
         self._last_stm32fifo_current_goal = 0
 
         # ROS stuff
@@ -401,7 +401,8 @@ class AsservSimu(AsservReal):
                                         ctypes.c_float(new_theta))
 
     def _callback_timer_pose_send(self, event):
-        self._node.send_robot_position(Pose2D(self._stm32pos.x / 1000, self._stm32pos.y / 1000, self._stm32pos.angle))
+        self._robot_raw_position = Pose2D(self._stm32pos.x / 1000, self._stm32pos.y / 1000, self._stm32pos.angle)
+        self._node.send_robot_position(self._robot_raw_position)
 
     def _callback_timer_speed_send(self, event):
         self._node.send_robot_speed(RobotSpeed(0, 0, self._stm32control.speeds.linear_speed, 0, 0))

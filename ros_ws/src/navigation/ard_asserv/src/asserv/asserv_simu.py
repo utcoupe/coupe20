@@ -22,11 +22,12 @@ __date__ = 19/04/2018
 # Rates 
 SEND_POSE_RATE = 0.1  # in s
 SEND_SPEED_RATE = 0.1  # in s
-ASSERV_RATE = 0.005  # in s # can be fetched from parameters.h
+STM32ASSERV_RATE = 0.005  # in s # can be fetched from parameters.h
 
 # From stm32 protocol (must be changed if change in C code):
 STM32FifoMaxGoals = 20 # can be fetched from parameters.h
-PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from parameters.h
+STM32PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from parameters.h
+STM32NO_GOAL = -1
 
 # stm32_asserv data structures - Must be changed if change in C code
 class STM32Speeds(ctypes.Structure):
@@ -91,10 +92,11 @@ class STM32Fifo(ctypes.Structure):
                 ("last_goal", ctypes.c_int)]
 
 class AsservSimu(AsservReal):
-    #Overloaded functions : 
+    """
+    todo
+    """
+    # Begin overloaded functions
 
-    # Adapt serial port to send data to 
-    # the asserv library instead of arduino
     def _start_serial_com_line(self, port):
         """pass : no serial line in simu"""
         pass
@@ -119,6 +121,8 @@ class AsservSimu(AsservReal):
             self._simu_protocol_parse(data_to_send)
             self._sending_queue.task_done()
     
+    # End overloaded functions
+
     def __init__(self, asserv_node, goal_counter):
         AsservReal.__init__(self, asserv_node, goal_counter, 0)
 
@@ -139,9 +143,12 @@ class AsservSimu(AsservReal):
         self._last_stm32fifo_current_goal = 0
 
         # ROS stuff
-        self._tmr_asserv_loop = rospy.Timer(rospy.Duration(ASSERV_RATE), self._asserv_loop)
-        self._tmr_speed_send = rospy.Timer(rospy.Duration(SEND_SPEED_RATE), self._callback_timer_speed_send)
-        self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), self._callback_timer_pose_send)
+        self._tmr_asserv_loop = rospy.Timer(rospy.Duration(STM32ASSERV_RATE), 
+            self._asserv_loop)
+        self._tmr_speed_send = rospy.Timer(rospy.Duration(SEND_SPEED_RATE), 
+            self._callback_timer_speed_send)
+        self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), 
+            self._callback_timer_pose_send)
 
         # Get map 
         self._map_x = 3.0
@@ -159,7 +166,6 @@ class AsservSimu(AsservReal):
         self._robot_down_size = 0.058
 
         self._sending_queue.put(self._orders_dictionary['START'] + ";0;\n")
-
 
     def _simu_protocol_parse(self, data):
         order_char = data[0]        
@@ -244,8 +250,10 @@ class AsservSimu(AsservReal):
                 "SPD == TARGET_SPD")
 
         elif order_type == "GET_TARGET_SPD":
-            rospy.loginfo("linear speed : " + str(self._stm32control.speeds.linear_speed))
-            rospy.loginfo("angular speed : " + str(self._stm32control.speeds.angular_speed))
+            rospy.loginfo("linear speed : " + 
+                str(self._stm32control.speeds.linear_speed))
+            rospy.loginfo("angular speed : " + 
+                str(self._stm32control.speeds.angular_speed))
 
             rospy.loginfo("left wheel speed : " 
                 + str(self._stm32control.speeds.linear_speed
@@ -270,10 +278,10 @@ class AsservSimu(AsservReal):
             rospy.loginfo("last ID : " + str(self._stm32control.last_finished_id))
 
         elif order_type == "PAUSE":
-            self._stm32lib.ControlSetStop(PAUSE_BIT)
+            self._stm32lib.ControlSetStop(STM32PAUSE_BIT)
 
         elif order_type == "RESUME":
-            self._stm32lib.ControlUnsetStop(PAUSE_BIT)
+            self._stm32lib.ControlUnsetStop(STM32PAUSE_BIT)
 
         elif order_type == "WHOAMI":
             rospy.logerr("WHOAMI cannot be implemented in simu...")
@@ -288,7 +296,8 @@ class AsservSimu(AsservReal):
         dest = "/static_map/get_context"
         try: # Handle a timeout in case one node doesn't respond
             server_wait_timeout = 2
-            rospy.logdebug("Waiting for service %s for %d seconds" % (dest, server_wait_timeout))
+            rospy.logdebug("Waiting for service %s for %d seconds"
+                                 % (dest, server_wait_timeout))
             rospy.wait_for_service(dest, timeout=server_wait_timeout)
         except rospy.ROSException:
             return False
@@ -307,24 +316,25 @@ class AsservSimu(AsservReal):
         rospy.logdebug("[ASSERV] Node has correctly started in simulation mode.")
         rospy.spin()
 
+    def _STM32FifoCurrentGoal(self):
+        return self._stm32fifo.fifo[self._stm32fifo.current_goal 
+                    % STM32FifoMaxGoals]
 
     def _asserv_loop(self, event):
         """
         Main function of the asserv simu.
-        Checks for new goals and updates behavior every ASSERV_RATE ms.
+        Checks for new goals and updates behavior every STM32ASSERV_RATE ms.
         """
-        now_micros = int(time.time() * 1000000)
+        now_millis = int(time.time() * 1000)
+        now_micros = now_millis * 1000
+
         self._stm32lib.processCurrentGoal(ctypes.c_long(now_micros))       
         self._update_robot_pose()
 
-        if self._stm32fifo.fifo[self._stm32fifo.current_goal 
-            % STM32FifoMaxGoals].is_reached:
-
-            self._stm32control.last_finished_id = \
-                self._stm32fifo.fifo[self._stm32fifo.current_goal].ID
-            self._node.goal_reached(self._stm32control.last_finished_id, True)
-            self._stm32lib.FifoNextGoal()
-            self._stm32lib.ControlPrepareNewGoal()
+        if self._STM32FifoCurrentGoal().is_reached:
+            self._stm32lib.setCurrentGoalReached()
+            self._node.goal_reached(
+                self._stm32control.last_finished_id, True)
 
     # def _wallhit_stop(self, direction):
     #     """
@@ -391,21 +401,27 @@ class AsservSimu(AsservReal):
         """
         Uses the angular and linear speeds to update the robot Pose(x, y, theta).
         """    
-        new_theta = self._stm32pos.angle + self._stm32control.speeds.angular_speed / 1000 * ASSERV_RATE
+        new_theta = self._stm32pos.angle + 
+            self._stm32control.speeds.angular_speed / 1000
+            * STM32ASSERV_RATE
         new_theta %= 2 * math.pi
 
-        new_x = self._stm32pos.x + self._stm32control.speeds.linear_speed * ASSERV_RATE * math.cos(
-            new_theta)
-        new_y = self._stm32pos.y + self._stm32control.speeds.linear_speed * ASSERV_RATE * math.sin(
-            new_theta) 
+        new_x = self._stm32pos.x + self._stm32control.speeds.linear_speed *
+                STM32ASSERV_RATE * math.cos(new_theta)
+        new_y = self._stm32pos.y + self._stm32control.speeds.linear_speed * 
+                STM32ASSERV_RATE * math.sin(new_theta) 
 
         self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x), 
                                         ctypes.c_float(new_y), 
                                         ctypes.c_float(new_theta))
 
     def _callback_timer_pose_send(self, event):
-        self._robot_raw_position = Pose2D(self._stm32pos.x / 1000, self._stm32pos.y / 1000, self._stm32pos.angle)
+        self._robot_raw_position = Pose2D(self._stm32pos.x / 1000, 
+                                          self._stm32pos.y / 1000, 
+                                          self._stm32pos.angle)
         self._node.send_robot_position(self._robot_raw_position)
 
     def _callback_timer_speed_send(self, event):
-        self._node.send_robot_speed(RobotSpeed(0, 0, self._stm32control.speeds.linear_speed, 0, 0))
+        self._node.send_robot_speed(
+            RobotSpeed(0, 0, self._stm32control.speeds.linear_speed,
+                       0, 0))

@@ -25,7 +25,7 @@ SEND_SPEED_RATE = 0.1  # in s
 ASSERV_RATE = 0.005  # in s # can be fetched from parameters.h
 
 # From stm32 protocol (must be changed if change in C code):
-STM32FifoMaxGoals = 100 # can be fetched from parameters.h
+STM32FifoMaxGoals = 20 # can be fetched from parameters.h
 PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from parameters.h
 
 # stm32_asserv data structures - Must be changed if change in C code
@@ -66,10 +66,11 @@ class STM32PwmData(ctypes.Structure):
                 ("pwm_r", ctypes.c_int),
                 ("auto_stop", ctypes.c_int)]
 
-class STM32SpdData(ctypes.Structure): #TODO add auto_stop
+class STM32SpdData(ctypes.Structure):
     _fields_ = [("time", ctypes.c_float),
                 ("lin", ctypes.c_int),
-                ("ang", ctypes.c_int)]
+                ("ang", ctypes.c_int),
+                ("auto_stop", ctypes.c_int)]
 
 class STM32GoalData(ctypes.Union):
     _fields_= [("pos_data", STM32PosData),
@@ -187,7 +188,8 @@ class AsservSimu(AsservReal):
             rospy.loginfo("PING")
 
         elif order_type == "GET_CODER":
-            rospy.logerr("GET_CODER cannot be implemented in simu...")
+            rospy.logerr("GET_CODER cannot be "
+                            "implemented in simu...")
 
         elif order_type == "GOTO":
             self._stm32lib.parseGOTO(c_data, c_order_id)
@@ -203,7 +205,7 @@ class AsservSimu(AsservReal):
 
         elif order_type == "PWM":
             rospy.logerr("PWM should not be used in simu. "
-                "Please use SPD instead.")
+                "Please use speed instead.")
             #self._stm32lib.parsePWM(c_data, c_order_id)
 
         elif order_type == "SPD":
@@ -315,7 +317,8 @@ class AsservSimu(AsservReal):
         self._stm32lib.processCurrentGoal(ctypes.c_long(now_micros))       
         self._update_robot_pose()
 
-        if self._stm32fifo.fifo[self._stm32fifo.current_goal].is_reached:
+        if self._stm32fifo.fifo[self._stm32fifo.current_goal 
+            % STM32FifoMaxGoals].is_reached:
 
             self._stm32control.last_finished_id = \
                 self._stm32fifo.fifo[self._stm32fifo.current_goal].ID

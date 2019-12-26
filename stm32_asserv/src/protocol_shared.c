@@ -90,12 +90,15 @@ void parsePWM(char *receivedOrderPtr, int order_id) {
 }
 
 void parseSPD(char *receivedOrderPtr, int order_id) {
-    int l, a, t;
-    sscanf(receivedOrderPtr, "%i;%i;%i", &l, &a, &t);
+    int l, a, t, s;
+    sscanf(receivedOrderPtr, "%i;%i;%i%i;", &l, &a, &t, &s);
     goal_data_t goal;
+
     goal.spd_data.time = (float)t;
     goal.spd_data.lin = l;
     goal.spd_data.ang = a;
+    goal.spd_data.auto_stop = s;
+    
     FifoPushGoal(order_id, TYPE_SPD, goal);
 }
 

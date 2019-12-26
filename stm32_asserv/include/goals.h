@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 #include "parameters.h"
-#define MAX_GOALS 100 //nombre max de goals dans la file, évite surcharge mémoire
+#define MAX_GOALS 20 //nombre max de goals dans la file, évite surcharge mémoire
 
 #define TYPE_POS 1
 #define TYPE_ANG 2
@@ -34,6 +34,7 @@ typedef struct pwm_data {
 typedef struct spd_data {
 	float time;
 	int lin, ang;
+	int auto_stop;
 } spd_data_t;
 
 typedef union goal_data {

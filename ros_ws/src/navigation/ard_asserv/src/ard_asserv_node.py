@@ -265,9 +265,14 @@ class Asserv:
         @rtype:         SpeedResponse
         """
         rospy.logdebug("[ASSERV] Received a request (speed service).")
+
         if self._asserv_instance:
             ret_value = self._asserv_instance.speed(
-                request.linear, request.angular, request.duration, request.auto_stop
+                self._goal_counter.id,
+                request.linear, 
+                request.angular, 
+                request.duration, 
+                request.auto_stop
             )
         else:
             ret_value = False

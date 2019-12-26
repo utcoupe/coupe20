@@ -26,7 +26,7 @@ class AsservAbstract:
         rospy.logerr("AsservAbstract is abstract !")
         return False
 
-    def speed(self, linear, angular, duration):
+    def speed(self, linear, angular, duration, auto_stop):
         rospy.logerr("AsservAbstract is abstract !")
         return False
 

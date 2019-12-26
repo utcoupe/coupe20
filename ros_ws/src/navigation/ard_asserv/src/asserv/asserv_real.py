@@ -102,8 +102,8 @@ class AsservReal(AsservAbstract):
         self._send_serial_data(self._orders_dictionary['PWM'], [str(left), str(right), str(int(round(duration * 1000))), str(int(auto_stop))])
         return True
 
-    def speed(self, goal_id, linear, angular, duration):
-        self._send_serial_data(self._orders_dictionary['SPD'], [str(linear), str(angular), str(int(round(duration * 1000)))])
+    def speed(self, goal_id, linear, angular, duration, auto_stop):
+        self._send_serial_data(self._orders_dictionary['SPD'], [str(linear), str(angular), str(int(round(duration * 1000))), str(int(auto_stop))])
         return True
 
     def set_emergency_stop(self, stop):

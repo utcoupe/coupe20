@@ -56,7 +56,8 @@ def test(test_values):
     print("\n" + description + " :")
     raw_input("lin = " + str(lin) + ", ang = " + str(ang) +
               ", duration = " + str(duration) +
-              ", auto_stop = " + str(auto_stop))
+              ", auto_stop = " + str(auto_stop) + 
+              ".\nPress enter to test.")
     set_pos(0, start_pos, "")
     speed(lin, ang, duration, auto_stop)
 

@@ -3,8 +3,8 @@
  * Mail : quentin.chateau@gmail.com	*
  * Date : 29/11/13			*
  ****************************************/
-#ifndef PARAMETERS_H
-#define PARAMETERS_H
+#ifndef _SHARED_PARAMETERS_H
+#define _SHARED_PARAMETERS_H
 
 #define STM32_ID "ard_asserv"
 #define DEBUG_TARGET_SPEED 0

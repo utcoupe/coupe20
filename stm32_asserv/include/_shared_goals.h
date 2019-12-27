@@ -3,11 +3,11 @@
  * Mail : quentin.chateau@gmail.com	*
  * Date : 13/10/13			*
  ****************************************/
-#ifndef GOALS_H
-#define GOALS_H
+#ifndef _SHARED_GOALS_H
+#define _SHARED_GOALS_H
 
 #include <stdint.h>
-#include "parameters.h"
+#include "_shared_parameters.h"
 #define MAX_GOALS 20 //nombre max de goals dans la file, évite surcharge mémoire
 
 #define TYPE_POS 1

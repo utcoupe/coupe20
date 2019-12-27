@@ -1,5 +1,5 @@
-#include "robotstate_shared.h"
-#include "local_math.h"
+#include "_shared_robotstate.h"
+#include "_shared_local_math.h"
 
 void PosUpdateAngle() {
 	if (current_pos.angle > (float)M_PI) {

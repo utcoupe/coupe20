@@ -6,9 +6,9 @@
 #ifndef ROBOTSTATE_H
 #define ROBOTSTATE_H
 
-#include "parameters.h"
+#include "_shared_parameters.h"
 #include "encoder.h"
-#include "robotstate_shared.h"
+#include "_shared_robotstate.h"
 #include <math.h>
 
 #if ENCODER_EVAL == 4

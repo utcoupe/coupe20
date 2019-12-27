@@ -8,7 +8,7 @@
 
 #include "stm32f3xx_hal.h"
 #include "stm32f3xx_hal_tim.h"
-#include "parameters.h"
+#include "_shared_parameters.h"
 
 
 // extern volatile long left_ticks;

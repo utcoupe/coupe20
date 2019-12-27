@@ -10,7 +10,7 @@ linear adjustment of the speed
 might be configured to smth else in order use speed control
 see datasheet of DEC-MODULE-24/2
 */
-#include "parameters.h"
+#include "_shared_parameters.h"
 #include "motor.h"
 #include "pwm.h"
 

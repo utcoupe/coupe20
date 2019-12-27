@@ -50,7 +50,7 @@
 #include "protocol.hpp"
 #include "control.h"
 #include "block.h"
-#include "parameters.h"
+#include "_shared_parameters.h"
 #include "Timer.h"
 #include "compat.h"
 #include "encoder.h"

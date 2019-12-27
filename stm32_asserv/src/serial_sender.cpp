@@ -8,7 +8,7 @@
 
 #include "serial_sender.h"
 
-#include "parameters.h"
+#include "_shared_parameters.h"
 
 #include <stdint.h>
 #include <string.h>

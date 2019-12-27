@@ -1,7 +1,7 @@
-#include "protocol_shared.h"
-#include "goals.h"
-#include "control_shared.h"
-#include "robotstate_shared.h"
+#include "_shared_protocol.h"
+#include "_shared_goals.h"
+#include "_shared_control.h"
+#include "_shared_robotstate.h"
 #include <stdio.h>
 #include <math.h>
 

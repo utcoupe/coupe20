@@ -4,8 +4,8 @@
  * Date : 25/10/13			*
  ****************************************/
 
-#ifndef LOCAL_MATH_H
-#define LOCAL_MATH_H
+#ifndef _SHARED_LOCAL_MATH
+#define _SHARED_LOCAL_MATH
 
 #ifndef M_PI
 #   define M_PI (3.14159265358979323846)

@@ -17,19 +17,19 @@ function compile_program() {
 }
 
 function generate_control_lib_for_simu() {
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/control_shared.c"
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/local_math.c"
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/goals.c"
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/PID.c"
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/protocol_shared.c"
-    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/robotstate_shared.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_control.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_local_math.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_goals.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_PID.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_protocol.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_robotstate.c"
 
     gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_stm32_asserv.so" \
-     "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \
-     "${PWD}/PID.o" "${PWD}/protocol_shared.o" "${PWD}/robotstate_shared.o"
+     "${PWD}/_shared_control.o" "${PWD}/_shared_local_math.o" "${PWD}/_shared_goals.o" \
+     "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"
 
-    rm "${PWD}/control_shared.o" "${PWD}/local_math.o" "${PWD}/goals.o" \
-     "${PWD}/PID.o" "${PWD}/protocol_shared.o" "${PWD}/robotstate_shared.o"
+    rm "${PWD}/_shared_control.o" "${PWD}/_shared_local_math.o" "${PWD}/_shared_goals.o" \
+     "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"
 }
 
 function upload_program() {

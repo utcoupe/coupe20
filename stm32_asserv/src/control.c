@@ -6,12 +6,12 @@
 
 #include "encoder.h"
 #include "robotstate.h"
-#include "goals.h"
+#include "_shared_goals.h"
 #include "control.h" 
-#include "control_shared.h"
+#include "_shared_control.h"
 #include "compat.h"
 #include "motor.h"
-#include "local_math.h"
+#include "_shared_local_math.h"
 #include "compat.h"
 #include "sender_wrapper.h"
 

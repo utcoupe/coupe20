@@ -9,9 +9,9 @@
 #include "compat.h"
 #include "robotstate.h"
 #include "control.h"
-#include "control_shared.h"
-#include "goals.h"
-#include "parameters.h"
+#include "_shared_control.h"
+#include "_shared_goals.h"
+#include "_shared_parameters.h"
 // }
 
 #include <stdio.h>

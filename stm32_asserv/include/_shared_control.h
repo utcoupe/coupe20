@@ -1,9 +1,9 @@
-#ifndef CONTROL_SHARED_H
-#define CONTROL_SHARED_H
+#ifndef _SHARED_CONTROL_H
+#define _SHARED_CONTROL_H
 
 #include <stdint.h>
-#include "PID.h"
-#include "goals.h"
+#include "_shared_PID.h"
+#include "_shared_goals.h"
 
 #define BACKWARD 0
 #define FORWARD 1

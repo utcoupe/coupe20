@@ -3,8 +3,8 @@
  * Mail : quentin.chateau@gmail.com	*
  * Date : 15/04/15			*
  ****************************************/
-#ifndef PID_H
-#define PID_H
+#ifndef _SHARED_PID_H
+#define _SHARED_PID_H
 
 
 

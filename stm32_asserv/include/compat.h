@@ -8,7 +8,7 @@
 
 #include "stm32f3xx_hal.h"
 #include "encoder.h"
-#include "parameters.h"
+#include "_shared_parameters.h"
 
 #define timeMillis() (HAL_GetTick())
 

@@ -6,10 +6,10 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-#include "parameters.h"
+#include "_shared_parameters.h"
 #include "pins.h"
 #include "stm32f3xx_hal.h"
-#include "local_math.h"
+#include "_shared_local_math.h"
 
 #define MOTOR_LEFT 1
 #define MOTOR_RIGHT 2

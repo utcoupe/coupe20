@@ -17,16 +17,16 @@ from static_map.srv import MapGetContext, MapGetContextRequest
 __author__ = "Thomas Fuhrmann & milesial & Mindstan & PaulMConstant"
 __date__ = 19/04/2018
 
-# TODO maybe fetch parameters from parameters.h ?
+# TODO maybe fetch parameters from _shared_parameters.h ?
 
 # Rates 
 SEND_POSE_RATE = 0.1  # in s
 SEND_SPEED_RATE = 0.1  # in s
-STM32ASSERV_RATE = 0.005  # in s # can be fetched from parameters.h
+STM32ASSERV_RATE = 0.005  # in s # can be fetched from _shared_parameters.h
 
 # From stm32 protocol (must be changed if change in C code):
-STM32FifoMaxGoals = 20 # can be fetched from parameters.h
-STM32PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from parameters.h
+STM32FifoMaxGoals = 20 # can be fetched from _shared_parameters.h
+STM32PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from _shared_parameters.h
 STM32NO_GOAL = -1
 STM32TYPE_PWM = 3
 STM32TYPE_SPD = 4

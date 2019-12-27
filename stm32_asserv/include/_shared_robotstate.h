@@ -1,5 +1,5 @@
-#ifndef ROBOTSTATE_SHARED_H
-#define ROBOTSTATE_SHARED_H
+#ifndef _SHARED_ROBOTSTATE_H
+#define _SHARED_ROBOTSTATE_H
 
 typedef struct pos {
 	float x;

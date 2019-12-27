@@ -1,5 +1,5 @@
-#ifndef PROTOCOL_SHARED_H
-#define PROTOCOL_SHARED_H
+#ifndef _SHARED_PROTOCOL_H
+#define _SHARED_PROTOCOL_H
 
 #include <stdint.h>
 

@@ -6,7 +6,7 @@
 #define ASSERV_PROTOCOL_H
 
 // #include <stdint.h>
-#include "protocol_shared.h"
+#include "_shared_protocol.h"
 
 uint8_t getLog10(const uint16_t number);
 void ProtocolAutoSendStatus();

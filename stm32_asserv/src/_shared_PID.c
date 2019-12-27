@@ -4,8 +4,8 @@
  * Date : 15/04/15			*
  ****************************************/
 
-#include "parameters.h"
-#include "PID.h"
+#include "_shared_parameters.h"
+#include "_shared_PID.h"
 
 PID_t PID_left, PID_right;
 

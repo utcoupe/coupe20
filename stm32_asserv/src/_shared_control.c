@@ -18,10 +18,10 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#include "control_shared.h"
-#include "parameters.h"
-#include "robotstate_shared.h"
-#include "local_math.h"
+#include "_shared_control.h"
+#include "_shared_parameters.h"
+#include "_shared_robotstate.h"
+#include "_shared_local_math.h"
 #include <math.h>
 
 control_t control;

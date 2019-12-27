@@ -3,7 +3,7 @@
  * Mail : quentin.chateau@gmail.com	*
  * Date : 13/10/13      		*
  ****************************************/
-#include "goals.h"
+#include "_shared_goals.h"
 
 
 fifo_t fifo;

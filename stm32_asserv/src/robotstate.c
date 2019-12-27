@@ -5,7 +5,7 @@
  ****************************************/
 #include "robotstate.h"
 #include "compat.h"
-#include "local_math.h"
+#include "_shared_local_math.h"
 #include "encoder.h"
 #include <math.h>
 

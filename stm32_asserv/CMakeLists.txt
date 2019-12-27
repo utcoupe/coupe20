@@ -2,10 +2,10 @@ set(TOOLCHAIN_PREFIX "$ENV{UTCOUPE_WORKSPACE}/libs/gcc-arm-none-eabi-6-2017-q2-u
 
 set(STM32_CHIP STM32F303K8)
 # TODO copy or symlink in $UTCOUPE_WORKSPACE OR regex
-set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.10.0/")
+set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.11.0/")
 SET(CMAKE_TOOLCHAIN_FILE "$ENV{UTCOUPE_WORKSPACE}/libs/stm32-cmake/cmake/gcc_stm32.cmake")
 
-SET(STM32_LINKER_SCRIPT "STM32F303K8Tx_FLASH.ld")
+# SET(STM32_LINKER_SCRIPT "STM32F303K8Tx_FLASH.ld")
 
 project(stm32_asserv)
 cmake_minimum_required(VERSION 2.8)
@@ -26,6 +26,7 @@ add_compile_options(
 #        -Wcast-align
 #        -Wuseless-cast
         -Wdouble-promotion
+        -Os
 )
 
 include_directories(
@@ -33,7 +34,7 @@ include_directories(
     ${CMSIS_INCLUDE_DIRS}
     ${STM32HAL_INCLUDE_DIR}
     include
-    asm
+#    asm
 )
 
 file(
@@ -43,6 +44,8 @@ file(
 )
 
 #set_source_files_properties(startup_stm32f303x8.s PROPERTIES COMPILE_FLAGS ${CMAKE_ASM_FLAGS})
+
+SET(STM32_LINKER_SCRIPT ${CMSIS_LINKER_SCRIPT})
 
 add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp

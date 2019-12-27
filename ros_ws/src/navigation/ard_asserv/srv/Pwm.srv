@@ -1,4 +1,4 @@
-# Send a PWM command, left and right are the PWM applied on the wheels (limited to 255) and duration is in ms
+# Send a PWM command, left and right are the PWM applied on the wheels (limited to 255) and duration is in s
 int16 left # 0 - 255
 int16 right # 0-255
 uint16 duration # s

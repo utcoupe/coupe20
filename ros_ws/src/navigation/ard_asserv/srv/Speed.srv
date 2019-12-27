@@ -1,7 +1,7 @@
-# Send a SPD (speed) command, linear and angular, the duration is in ms
-int16 linear
-int16 angular
-uint16 duration
+# Send a SPD (speed) command, linear and angular (m/s), the duration is in s
+float32 linear
+float32 angular
+float32 duration
 bool auto_stop
 ---
 bool response

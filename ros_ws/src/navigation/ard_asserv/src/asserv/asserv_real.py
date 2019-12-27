@@ -103,7 +103,7 @@ class AsservReal(AsservAbstract):
         return True
 
     def speed(self, goal_id, linear, angular, duration, auto_stop):
-        self._send_serial_data(self._orders_dictionary['SPD'], [str(linear), str(angular), str(int(round(duration * 1000))), str(int(auto_stop))])
+        self._send_serial_data(self._orders_dictionary['SPD'], [str(int(round(linear*1000))), str(int(round(angular*1000))), str(int(round(duration * 1000))), str(int(auto_stop))])
         return True
 
     def set_emergency_stop(self, stop):

@@ -28,6 +28,9 @@ STM32ASSERV_RATE = 0.005  # in s # can be fetched from parameters.h
 STM32FifoMaxGoals = 20 # can be fetched from parameters.h
 STM32PAUSE_BIT = ctypes.c_uint8(1) # can be fetched from parameters.h
 STM32NO_GOAL = -1
+STM32TYPE_PWM = 3
+STM32TYPE_SPD = 4
+STM32ERROR_ANGLE = 0.030 # rad
 
 # stm32_asserv data structures - Must be changed if change in C code
 class STM32Speeds(ctypes.Structure):
@@ -141,15 +144,9 @@ class AsservSimu(AsservReal):
         self._orders_dictionary_reverse = {
             v : k for k, v in self._orders_dictionary.iteritems()}
         self._last_stm32fifo_current_goal = 0
+        self._auto_stop_triggered = False
 
-        # ROS stuff
-        self._tmr_asserv_loop = rospy.Timer(rospy.Duration(STM32ASSERV_RATE), 
-            self._asserv_loop)
-        self._tmr_speed_send = rospy.Timer(rospy.Duration(SEND_SPEED_RATE), 
-            self._callback_timer_speed_send)
-        self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), 
-            self._callback_timer_pose_send)
-
+        self._robot_size = 0.25 #m
         # Get map 
         self._map_x = 3.0
         self._map_y = 2.0
@@ -161,11 +158,15 @@ class AsservSimu(AsservReal):
         else:
             rospy.logwarn("Can't get map context, taking default values.")
 
-        
-        self._robot_up_size = 0.23
-        self._robot_down_size = 0.058
-
         self._sending_queue.put(self._orders_dictionary['START'] + ";0;\n")
+
+        # ROS stuff
+        self._tmr_asserv_loop = rospy.Timer(rospy.Duration(STM32ASSERV_RATE), 
+            self._asserv_loop)
+        self._tmr_speed_send = rospy.Timer(rospy.Duration(SEND_SPEED_RATE), 
+            self._callback_timer_speed_send)
+        self._tmr_pose_send = rospy.Timer(rospy.Duration(SEND_POSE_RATE), 
+            self._callback_timer_pose_send)
 
     def _simu_protocol_parse(self, data):
         order_char = data[0]        
@@ -325,8 +326,15 @@ class AsservSimu(AsservReal):
         Main function of the asserv simu.
         Checks for new goals and updates behavior every STM32ASSERV_RATE ms.
         """
-        now_millis = int(time.time() * 1000)
-        now_micros = now_millis * 1000
+        now_micros = int(time.time() * 1000000)
+        
+        if self._auto_stop_triggered:
+            # consider all goals reached
+            while self._STM32FifoCurrentGoal().type != STM32NO_GOAL:
+                self._stm32lib.setCurrentGoalReached()
+                self._node.goal_reached(
+                    self._stm32control.last_finished_id, True)
+            self._auto_stop_triggered = False
 
         self._stm32lib.processCurrentGoal(ctypes.c_long(now_micros))       
         self._update_robot_pose()
@@ -336,81 +344,91 @@ class AsservSimu(AsservReal):
             self._node.goal_reached(
                 self._stm32control.last_finished_id, True)
 
-    # def _wallhit_stop(self, direction):
-    #     """
-    #     Checks if the robot is near a wall.
-    #     If it is, stops it and returns True.
-
-    #     @param direction: (current direction of the robot) 1 forward, 0 backwards
-    #     @return: True if the robot is hitting a wall, else False
-    #     """
-    #     # TODO avoid robot teleporting when he comes from an angle
-    #     # TODO fix it, sometimes it doesnt work as intended
-    #     traj_angle = self._robot_raw_position.theta
-
-    #     # Depending on the orientation of the robot, 
-    #     # adjust the position of the map borders
-    #     if abs(traj_angle) > math.pi:
-    #         traj_angle -= np.sign(traj_angle) * 2 * math.pi
-
-    #     # Set y border
-    #     if traj_angle < 0 : # Facing down
-    #         high_y_edge = self._map_y - self._robot_down_size
-    #         low_y_wall = self._robot_up_size
-    #     else: # Facing up
-    #         high_y_edge = self._map_y - self._robot_up_size
-    #         low_y_wall = self._robot_down_size
-
-    #     # Set x border
-    #     if abs(traj_angle) < math.pi/2: # Facing right
-    #         high_x_edge = self._map_x - self._robot_up_size
-    #         low_x_wall = self._robot_down_size
-    #     else: # Facing left
-    #         high_x_edge = self._map_x - self._robot_down_size
-    #         low_x_wall = self._robot_up_size
-
-    #     new_theta = None
-
-    #     if self._robot_raw_position.x >= high_x_edge :
-    #         new_theta = 0
-    #     elif self._robot_raw_position.x <= low_x_wall :
-    #         new_theta = -math.pi
-
-    #     elif self._robot_raw_position.y >= high_y_edge :
-    #         new_theta = math.pi/2
-    #     elif self._robot_raw_position.y <= low_y_wall :
-    #         new_theta = -math.pi/2
-        
-    #     if new_theta is None:
-    #         return False
-
-    #     if direction == 0 : # Semiturn if we were going backwards
-    #         new_theta += math.pi
-    #     new_theta %= 2 * math.pi
-
-    #     self._robot_raw_position = Pose2D(self._robot_raw_position.x, 
-    #                                 self._robot_raw_position.y, 
-    #                                 new_theta)
-    #     rospy.loginfo('[ASSERV] A wall has been hit !')
-    #     #self._node.goal_reached(self._current_goal.goal_id, True)
-    #     # self._stop()
-
-    #     return True
-
     def _update_robot_pose(self):
         """
         Uses the angular and linear speeds to update the robot Pose(x, y, theta).
         """    
-        new_theta = self._stm32pos.angle + 
+        new_theta = (self._stm32pos.angle +
             self._stm32control.speeds.angular_speed / 1000
-            * STM32ASSERV_RATE
+            * STM32ASSERV_RATE)
         new_theta %= 2 * math.pi
 
-        new_x = self._stm32pos.x + self._stm32control.speeds.linear_speed *
-                STM32ASSERV_RATE * math.cos(new_theta)
-        new_y = self._stm32pos.y + self._stm32control.speeds.linear_speed * 
-                STM32ASSERV_RATE * math.sin(new_theta) 
+        new_x = (self._stm32pos.x +
+                 self._stm32control.speeds.linear_speed *
+                 STM32ASSERV_RATE * math.cos(new_theta))
+        new_y = (self._stm32pos.y + self._stm32control.speeds.linear_speed *
+                STM32ASSERV_RATE * math.sin(new_theta))
 
+        # Table border logic
+        max_x = (self._map_x - self._robot_size/2) * 1000
+        max_y = (self._map_y - self._robot_size/2) * 1000
+        min_xy = self._robot_size/2 * 1000 #mm
+        
+        goal = self._STM32FifoCurrentGoal()
+        pos = self._stm32pos
+        linear_speed = self._stm32control.speeds.linear_speed
+
+        push_against_wall = 0
+
+        if new_x > max_x:
+            push_against_wall = new_x - max_x
+            new_x = max_x
+            new_y = pos.y
+            if linear_speed > 0 :
+                wall_angle = 0
+            else:
+                wall_angle = math.pi
+
+        elif new_x < min_xy:
+            push_against_wall = min_xy - new_x
+            new_x = min_xy
+            new_y = pos.y
+            if linear_speed > 0 :
+                wall_angle = math.pi
+            else:
+                wall_angle = 0
+
+        if new_y > max_y:
+            push_against_wall = new_y - max_y
+            new_y = max_y
+            new_x = pos.x
+            if linear_speed > 0 :
+                wall_angle = math.pi/2
+            else:
+                wall_angle = -math.pi/2
+
+        elif new_y < min_xy:
+            push_against_wall = min_xy - new_y
+            new_y = min_xy
+            new_x = pos.x
+            if linear_speed > 0 :
+                wall_angle = -math.pi/2
+            else:
+                wall_angle = math.pi/2
+        
+        if push_against_wall:
+            if (abs(new_theta - np.sign(new_theta)*wall_angle)
+                    < STM32ERROR_ANGLE or 
+                abs(new_theta - np.sign(new_theta)*wall_angle - 
+                    np.sign(new_theta)*2*math.pi) < STM32ERROR_ANGLE):
+
+                new_theta = wall_angle
+            else:
+                if abs(new_theta) > math.pi:
+                    new_theta -= np.sign(new_theta)*2*math.pi
+                if new_theta > wall_angle:
+                    new_theta -= push_against_wall / 300
+                else:
+                    new_theta += push_against_wall / 300
+                
+        # Auto stop check
+        check_auto_stop = (goal.type == STM32TYPE_SPD and 
+                            goal.data.spd_data.auto_stop)
+        if (check_auto_stop and
+              new_x == pos.x and new_y == pos.y and
+              new_theta == pos.angle % 2*math.pi):
+            self._auto_stop_triggered = True
+        
         self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x), 
                                         ctypes.c_float(new_y), 
                                         ctypes.c_float(new_theta))

@@ -78,7 +78,7 @@ void parseROTNMODULO(char *receivedOrderPtr, int order_id) {
 }
 
 void parsePWM(char *receivedOrderPtr, int order_id) {
-    int l, r, t, s; //s = auto_stop
+    int l, r, t, s;
     sscanf(receivedOrderPtr, "%i;%i;%i;%i", &l, &r, &t, &s);
     goal_data_t goal;
     goal.pwm_data.time = (float)t;
@@ -91,7 +91,7 @@ void parsePWM(char *receivedOrderPtr, int order_id) {
 
 void parseSPD(char *receivedOrderPtr, int order_id) {
     int l, a, t, s;
-    sscanf(receivedOrderPtr, "%i;%i;%i%i;", &l, &a, &t, &s);
+    sscanf(receivedOrderPtr, "%i;%i;%i;%i;", &l, &a, &t, &s);
     goal_data_t goal;
 
     goal.spd_data.time = (float)t;

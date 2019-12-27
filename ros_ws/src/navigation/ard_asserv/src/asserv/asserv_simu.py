@@ -327,7 +327,7 @@ class AsservSimu(AsservReal):
         Checks for new goals and updates behavior every STM32ASSERV_RATE ms.
         """
         now_micros = int(time.time() * 1000000)
-        
+
         if self._auto_stop_triggered:
             # consider all goals reached
             while self._STM32FifoCurrentGoal().type != STM32NO_GOAL:
@@ -426,9 +426,9 @@ class AsservSimu(AsservReal):
                             goal.data.spd_data.auto_stop)
         if (check_auto_stop and
               new_x == pos.x and new_y == pos.y and
-              new_theta == pos.angle % 2*math.pi):
+              abs(new_theta - pos.angle) < STM32ERROR_ANGLE/100):
             self._auto_stop_triggered = True
-        
+
         self._stm32lib.RobotStateSetPos(ctypes.c_float(new_x), 
                                         ctypes.c_float(new_y), 
                                         ctypes.c_float(new_theta))

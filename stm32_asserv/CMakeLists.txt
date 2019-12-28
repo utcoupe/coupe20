@@ -63,12 +63,6 @@ PUBLIC
     --specs=nano.specs
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
-    # Theses files are located in arm-none-eabi folder lib/hard/
-    "libstdc++_nano.a"
-    "libc_nano.a"
-)
-
 STM32_SET_TARGET_PROPERTIES(${CMAKE_PROJECT_NAME})
 STM32_ADD_HEX_BIN_TARGETS(${CMAKE_PROJECT_NAME})
 STM32_PRINT_SIZE_OF_TARGETS(${CMAKE_PROJECT_NAME})

@@ -1,4 +1,6 @@
 # DC motors PCB
 
+[Interactive BOM](http://htmlpreview.github.io/?https://github.com/utcoupe/coupe20/blob/elec/elec/asserv_dc/bom/ibom.html)
+
 <img src="img/top_view.PNG">
 <img src="img/pcb.PNG">

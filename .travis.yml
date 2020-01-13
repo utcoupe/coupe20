@@ -1,5 +1,9 @@
 sudo: required
 
+branches:
+  except:
+  - elec
+  
 notifications:
   slack:
     rooms:

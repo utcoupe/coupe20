@@ -1,4 +1,4 @@
-16324663163744048
+16326242214657332
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -72897,6 +72897,13 @@ Conn_MicroMatch_THT_4x2_Female
 0
 8
 8
+villanut_lib
+ESD9B3.3ST5G
+ESD9B3.3ST5G
+Diode
+0
+2
+2
 villanut_lib
 Headers-Wire_Housings_HEADER_2POS_HE14
 Headers-Wire_Housings_HEADER_2POS_HE14

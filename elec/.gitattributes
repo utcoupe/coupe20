@@ -1,0 +1,3 @@
+*.html linguist-detectable=false
+*.sch linguist-detectable=true
+*.kicad_pcb linguist-detectable=true

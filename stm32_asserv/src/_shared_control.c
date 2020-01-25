@@ -12,8 +12,16 @@
  *
  * Be careful when editing : 
  * 
- * - If you change a function definition (name, parameters, return value),
+ * - If you change a function which is imported in the simulation asserv (name, parameters, return value),
  *   update the simulation asserv so that it does not break.
+ * 
+ * Functions imported in the simulation asserv (the ones which could make it break): 
+ * - ControlLogicInit()
+ * - ControlSetStop()
+ * - ControlPrepareNewGoal()
+ * - processCurrentGoal()
+ * - setCurrentGoalReached()
+ * 
  * 
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/

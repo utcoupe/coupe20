@@ -96,7 +96,8 @@ class STM32Fifo(ctypes.Structure):
 
 class AsservSimu(AsservReal):
     """
-    todo
+    Simulation class which calls the functions exported from the stm32_asserv folder.
+    Updates the (x, y, theta) position values based on the calculated ideal speed.
     """
     # Begin overloaded functions
 
@@ -169,6 +170,11 @@ class AsservSimu(AsservReal):
             self._callback_timer_pose_send)
 
     def _simu_protocol_parse(self, data):
+        """
+        Python implementation of the stm32 protocol.
+        Calls c functions exported from the stm32_asserv folder.
+        """
+
         order_char = data[0]        
         index = 2
         order_id = ""

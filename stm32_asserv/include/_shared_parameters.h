@@ -3,6 +3,7 @@
  * Mail : quentin.chateau@gmail.com	*
  * Date : 29/11/13			*
  ****************************************/
+
 #ifndef _SHARED_PARAMETERS_H
 #define _SHARED_PARAMETERS_H
 

@@ -198,7 +198,7 @@ class AsservReal(AsservAbstract):
             rospy.logdebug("[ASSERV] Received status data.")
             received_data_list = data.split(";")
             try:
-                angle = float(received_data_list[4])
+                angle = float(received_data_list[4]) / 1000.0
                 angle %= 2.0 * pi
                 robot_position = Pose2D(float(received_data_list[2]) / 1000.0, float(received_data_list[3]) / 1000.0, angle)
                 self._robot_raw_position = robot_position

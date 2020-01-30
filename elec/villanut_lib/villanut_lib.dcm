@@ -31,9 +31,20 @@ K STM32F303K8T6 compatible with Arduino Nano footprint
 F https://os.mbed.com/platforms/ST-Nucleo-F303K8/
 $ENDCMP
 #
+$CMP TS2596CM550_RNG
+D Switching Voltage Regulators 5.0V 3.0A
+F https://www.taiwansemi.com/products/datasheet/TS2596_G1608.pdf
+$ENDCMP
+#
 $CMP Tact_Switch_4.2x3.2x2.5mm
 D Tactile Switches 500mOhm 1.57N 16VDC 4.2X3.2X2.5MM 50mA
 F https://www.alps.com/prod/info/E/HTML/Tact/SurfaceMount/SKRP/SKRPANE010.html
+$ENDCMP
+#
+$CMP USB_A_Stacked_Double
+D USB Type A Double Stacked connector
+K connector USB
+F  ~
 $ENDCMP
 #
 #End Doc Library

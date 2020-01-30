@@ -295,8 +295,8 @@ void allStop(void) {
 void applyPID(void) {
 	float left_spd, right_spd;
 	float left_ds, right_ds;
-	left_spd = control.speeds.linear_speed - control.speeds.angular_speed;
-	right_spd = control.speeds.linear_speed + control.speeds.angular_speed;
+	left_spd = control.speeds.linear_speed - control.speeds.angular_speed*0.5*ENTRAXE_ENC;
+	right_spd = control.speeds.linear_speed + control.speeds.angular_speed*0.5*ENTRAXE_ENC;
 	left_ds = left_spd - wheels_spd.left;
 	right_ds = right_spd - wheels_spd.right;
 	// Control feed forward

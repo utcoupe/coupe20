@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Grid1/Offset1
         - /Navigation Markers1/Namespaces1
+        - /LaserScan1
         - /Marker2
       Splitter Ratio: 0.517756999
     Tree Height: 892
@@ -27,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
   - Class: Obstacle Publisher
     Name: Obstacle Publisher
   - Class: Obstacle Extractor
@@ -49,8 +50,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        asserv:
-          Value: true
         belt_sensor1:
           Value: true
         belt_sensor2:
@@ -65,6 +64,8 @@ Visualization Manager:
           Value: true
         robot:
           Value: true
+        robot_front:
+          Value: true
       Marker Scale: 0.5
       Name: TF
       Show Arrows: false
@@ -72,8 +73,10 @@ Visualization Manager:
       Show Names: false
       Tree:
         map:
-          asserv:
-            robot:
+          odom:
+            {}
+          robot:
+            robot_front:
               belt_sensor1:
                 {}
               belt_sensor2:
@@ -82,8 +85,6 @@ Visualization Manager:
                 {}
               laser:
                 {}
-          odom:
-            {}
       Update Interval: 0
       Value: true
     - Alpha: 0.5
@@ -109,10 +110,8 @@ Visualization Manager:
       Marker Topic: /visualization_markers/world
       Name: World Markers
       Namespaces:
-        atoms: true
         robot: true
         table: true
-        waypoints: true
       Queue Size: 100
       Value: true
     - Class: rviz/Marker
@@ -120,7 +119,7 @@ Visualization Manager:
       Marker Topic: /visualization_markers/navigation
       Name: Navigation Markers
       Namespaces:
-        {}
+        collisions_obstacles: true
       Queue Size: 100
       Value: true
     - Alpha: 0.600000024
@@ -148,7 +147,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.0299999993
       Style: Boxes
-      Topic: /sensors/scan
+      Topic: /processing/lidar_objects/scan_transformed
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -169,7 +168,8 @@ Visualization Manager:
       Marker Topic: /visualization_markers/objects
       Name: Marker
       Namespaces:
-        {}
+        circles: true
+        segments: true
       Queue Size: 100
       Value: true
     - Class: rviz/InteractiveMarkers
@@ -195,7 +195,8 @@ Visualization Manager:
       Marker Topic: /visualization_markers/objects
       Name: Marker
       Namespaces:
-        {}
+        circles: true
+        segments: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -223,7 +224,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.9838841
+      Distance: 3.83559418
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -238,10 +239,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.56979632
+      Pitch: 0.894796968
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.13818097
+      Yaw: 4.80636406
     Saved: ~
 Window Geometry:
   Displays:

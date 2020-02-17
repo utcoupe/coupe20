@@ -2,7 +2,7 @@
     <param name="use_sim_time" value="false"/>  
 
     <node name="nodelet_manager" pkg="nodelet" type="nodelet" args="manager" output="screen">
-        <param name="num_worker_threads" value="20"/>
+        <param name="num_worker_threads" value="1"/>
     </node>
 
     
@@ -21,8 +21,8 @@
         <param name="min_y_range"       value="-10.0"/>
         <param name="max_y_range"       value="10.0"/>
         
-        <param name="min_angle"       value="-90"/>
-        <param name="max_angle"       value="88"/>
+        <param name="min_angle"       value="-135"/>
+        <param name="max_angle"       value="135"/>
 
         <param name="fixed_frame_id"   value="laser"/>
         <param name="target_frame_id"   value="laser"/>
@@ -38,7 +38,7 @@
         <param name="discard_converted_segments" value="false"/>
         <param name="transform_coordinates"  value="true"/>
 
-        <param name="min_group_points"     value="10"/>
+        <param name="min_group_points"     value="5"/>
 
         <param name="max_group_distance"   value="0.05"/>
         <param name="distance_proportion"  value="0.00628"/>
@@ -46,8 +46,8 @@
         <param name="max_merge_separation" value="0.05"/>
         <param name="max_merge_spread"     value="0.05"/>
 
-        <param name="max_circle_radius"    value="0.0"/>  <!-- Max circles size for recognition -->
-        <param name="radius_enlargement"   value="0.00"/> <!-- Optional margin -->
+        <param name="max_circle_radius"    value="0.20"/>  <!-- Max circles size for recognition -->
+        <param name="radius_enlargement"   value="0.15"/> <!-- Optional margin -->
 
         <param name="frame_id"             value="map"/>
     </node>

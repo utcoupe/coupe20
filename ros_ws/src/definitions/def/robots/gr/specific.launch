@@ -1,9 +1,9 @@
 <launch>
     <group ns="processing">
-        <include file="$(find processing_lidar_objects)/lidar_objects.launch" ns="lidar_objects"/>
+        <include file="$(find definitions)/def/robots/gr/processing/lidar_objects.launch" ns="lidar_objects"/>
     </group>
 
-    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf_publisher" args="-0.15 0.0 0.0 0.0 0.0 0.0 robot_front laser" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf_publisher" args="-0.05 0.0 0.0 0.0 0.0 0.0 robot_front laser" />
     
     <!-- TODO change 'x' (robot front) value -->
     <node pkg="tf2_ros" type="static_transform_publisher" name="asserv_tf_publisher" args="0.10 0.0 0.0 0.0 0.0 0.0 robot robot_front" />

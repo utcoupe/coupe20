@@ -38,8 +38,6 @@ public:
     /**
      * Returns the static shape of the obstacle
      * 
-     * TODO As const reference
-     * 
      * @return The shape
      */
     const CollisionsShapes::AbstractShape &getShape() const noexcept { return *m_shape; }

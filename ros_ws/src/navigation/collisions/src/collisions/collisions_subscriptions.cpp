@@ -220,10 +220,10 @@ void CollisionsSubscriptions::m_onObjects(const objects_classifier::ClassifiedOb
                 circ.circle.radius
         );
         auto velocity = std::make_unique<ObstacleVelocity>(
-                0.0,
-                0.0,
-                velAngle,
-                velDist
+                circ.circle.radius * 2,
+                circ.circle.radius * 2,
+                velDist,
+                velAngle
         );
         newLidar.emplace_back(
                 std::move(circShape), std::move(velocity)

@@ -248,9 +248,9 @@ void MainThread::classify_and_publish_lidar_objects(processing_lidar_objects::Ob
         // remove segments that are inside circles
         for (auto it = obstacles.segments.begin(); it != obstacles.segments.end();) {
             if (pow(it->first_point.x - circle.center.x, 2) + pow(it->first_point.y - circle.center.y, 2)
-                <= pow(circle.true_radius, 2) &&
+                <= pow(circle.radius, 2) &&
                 pow(it->last_point.x - circle.center.x, 2) + pow(it->last_point.y - circle.center.y, 2)
-                <= pow(circle.true_radius, 2)) {
+                <= pow(circle.radius, 2)) {
 
                 it = obstacles.segments.erase(it);
             } else {

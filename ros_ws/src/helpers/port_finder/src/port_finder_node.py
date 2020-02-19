@@ -105,7 +105,6 @@ class PortFinder:
 
     def _parse_dmesg(self):
         dmesg_output = self._get_dmesg().split('\n')
-        rospy.logdebug(dmesg_output)
         id_dict = {}
         tty_dict = {}
         id_dict_filtered = {}

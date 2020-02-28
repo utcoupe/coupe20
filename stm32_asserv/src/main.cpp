@@ -50,7 +50,7 @@
 #include "protocol.hpp"
 #include "control.h"
 #include "block.h"
-#include "parameters.h"
+#include "_shared_parameters.h"
 #include "Timer.h"
 #include "compat.h"
 #include "encoder.h"
@@ -74,8 +74,8 @@ UART_HandleTypeDef huart2;
 /* Private variables ---------------------------------------------------------*/
 Serial g_serial(&huart2);
 SerialSender g_serialSender(&g_serial);
-Pwm g_right_pwm(&htim16);
-Pwm g_left_pwm(&htim17);
+Pwm g_right_pwm(&htim17);
+Pwm g_left_pwm(&htim16);
 
 /* USER CODE END PV */
 

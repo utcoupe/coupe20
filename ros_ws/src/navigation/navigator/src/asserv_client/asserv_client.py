@@ -97,7 +97,7 @@ class AsservClient(object):
         position.header.frame_id = TF_SOURCE
         goal = DoGotoGoal(
             mode=mode, position=position, direction=direction, slow_go=slowGo
-        )
+        )   
         goalHandle = self._asservGotoActionClient.send_goal(
             goal, transition_cb=self._handleDoGotoResult
         )

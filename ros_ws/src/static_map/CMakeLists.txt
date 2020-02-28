@@ -18,6 +18,7 @@ add_message_files(
     MapContainer.msg
     MapLayer.msg
     MapObject.msg
+    Robot.msg
     Waypoint.msg
 )
 

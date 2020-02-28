@@ -105,7 +105,7 @@ class MapManager():
 
     @staticmethod
     def get_context():
-        return MapDict.Terrain, MapDict.Robot.Shape
+        return MapDict.Terrain, MapDict.Robot.Shape, MapDict.Robot.Wheelbase
 
     @staticmethod
     def add_object(path, obj):

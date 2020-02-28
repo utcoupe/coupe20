@@ -17,9 +17,14 @@ void SerialSendWrap(SerialSendEnum level, const String& data) {
     g_serialSender.serialSend(level, data);
 }
 
+// For some reason this does not work
 void SerialSendWrapVar(SerialSendEnum level, const char* data, ...) {
     va_list args;
     va_start(args, data);
     SerialSendWrapVariadic(level, data, args);
     va_end(args);
+}
+
+void SerialSendGoalReached(int goal_id) {
+    g_serialSender.serialSend(SERIAL_INFO, "%d;", goal_id);
 }

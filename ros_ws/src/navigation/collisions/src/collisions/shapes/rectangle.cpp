@@ -23,7 +23,7 @@ std::vector<Segment> Rectangle::toSegments() const {
     std::vector<Segment> segments;
     const auto corners = m_getCorners();
     for (unsigned idCorner = 0; idCorner < corners.size(); idCorner++) {
-        segments.emplace_back(corners[idCorner], corners[idCorner + 1]);
+            segments.emplace_back(corners[idCorner], corners[(idCorner + 1) % corners.size()]);
     }
     return segments;
 }

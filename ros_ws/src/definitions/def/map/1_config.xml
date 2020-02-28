@@ -12,7 +12,7 @@
         <color name="green"      r="0.1"  g="1.0" b="0.1" a="1"    />
         <color name="blue"       r="0.1"  g="0.1" b="1.0" a="1"    />
         <color name="yellow"     r="1"    g="1"   b="2"   a="1"    />
-        <color name="black"      r="0.1"  g="1"   b="2"   a="1"    />
+        <color name="black"      r="0.4"  g="0.4" b="0.4" a="1"    />
         <color name="red"        r="1"    g="0"   b="0"   a="1"    />
         <color name="purple"     r="0.3"  g="0.3" b="0.5" a="0.95" />
 

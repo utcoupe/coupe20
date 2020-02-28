@@ -31,6 +31,7 @@ class PortFinder:
         self._connected_component_list = []
         # List containing the final processing information, matching the serial port and the serial component
         self._associated_port_list = []
+
         # List of file descriptor for calls to rosserial
         self._rosserial_call_list = []
         # Init ROS stuff
@@ -108,6 +109,7 @@ class PortFinder:
         tty_dict = {}
         id_dict_filtered = {}
         merged_filtered_id_tty_list = []
+
         vendor_id_regex = re.compile('usb (.*):.*idVendor=([a-z0-9]+).*idProduct=([a-z0-9]+)')
         tty_regexp = re.compile(' ([0-9\-.]+):.*(ttyACM.|ttyUSB.)')
         # Parse the whole file to extract a list of lines containing idVendor and an other list containing ttyX
@@ -135,6 +137,9 @@ class PortFinder:
     def _get_dmesg(self):
         """
         From https://gist.github.com/saghul/542780
+        dmesg displays the logs of all devices which were connected since boot.
+        If you remove a device, the port finder will still look for it.
+        Use sudo dmesg -c to clear the logs.
         """
         try:
             sub = subprocess.Popen("dmesg", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -247,6 +252,6 @@ class PortFinder:
                         returned_value = True
         return returned_value
 
-
 if __name__ == "__main__":
     PortFinder()
+

@@ -12,6 +12,8 @@
 
 #include <vector>
 
+constexpr int nbBezierPoints = 20;
+
 class DynamicBarriersManager;
 
 namespace pathfinder {

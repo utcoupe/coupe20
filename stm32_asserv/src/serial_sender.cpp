@@ -8,11 +8,12 @@
 
 #include "serial_sender.h"
 
-#include "parameters.h"
+#include "_shared_parameters.h"
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 extern Serial g_serial;
 

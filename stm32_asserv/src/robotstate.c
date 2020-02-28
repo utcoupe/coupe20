@@ -5,7 +5,7 @@
  ****************************************/
 #include "robotstate.h"
 #include "compat.h"
-#include "local_math.h"
+#include "_shared_local_math.h"
 #include "encoder.h"
 #include <math.h>
 
@@ -16,41 +16,11 @@
 pos_t current_pos;
 wheels_spd_t wheels_spd;
 
-void PosUpdateAngle() {
-	if (current_pos.angle > (float)M_PI) {
-		current_pos.angle -= (float)(2.0 * M_PI);
-		current_pos.modulo_angle++;
-	}
-	else if (current_pos.angle <= (float) -M_PI) {
-		current_pos.angle += (float)(2.0 * M_PI);
-		current_pos.modulo_angle--;
-	}
-}
-
 void RobotStateInit() {
-	current_pos.x = 0;
-	current_pos.y = 0;
-	current_pos.angle = 0;
-	current_pos.modulo_angle = 0;
-	wheels_spd.left = 0;
-	wheels_spd.right = 0;
+	RobotStateLogicInit();
 	encoders_reset();
 }
 
-void RobotStateSetPos(float x, float y, float angle) {
-	// if ( x == 0.0 && y == 0.0 && angle == 0.0)
-	// {
-	// 	RobotStateInit();
-	// }
-	// else
-	// {
-	current_pos.x = x;
-	current_pos.y = y;
-	current_pos.angle = angle;
-	
-	//}
-	PosUpdateAngle();
-}
 
 void lowPass(wheels_spd_t *old_spd, wheels_spd_t *new_spd, float a) {
 	new_spd->left = old_spd->left + a * (new_spd->left - old_spd->left);
@@ -83,8 +53,8 @@ void RobotStateUpdate() {
 	// low pass filter on speed
 	lowPass(&old_wheels_spd, &wheels_spd, ALPHA);
 
-	//d_angle = atan2((dr - dl), ENTRAXE_ENC); //sans approximation tan
-	d_angle = (dr - dl) / (float)ENTRAXE_ENC; // approximation tan
+	d_angle = atan2((dr - dl), ENTRAXE_ENC); //sans approximation tan
+	//d_angle = (dr - dl) / (float)ENTRAXE_ENC; // approximation tan
 	current_pos.angle += d_angle;
 #if MODULO_TWOPI
 	PosUpdateAngle();

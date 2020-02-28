@@ -22,17 +22,17 @@ GOTOA_POS_ERROR_MULTIPLIER = 5
 SPD_MAX = 1.0 # m/s, no difference betwenn pr and gr
 
 class AsservReal(AsservAbstract):
-    def __init__(self, asserv_node, port):
+    def __init__(self, asserv_node, goal_counter, port):
         AsservAbstract.__init__(self, asserv_node)
-        rospy.loginfo("AsservReal")
+
         # Dictionary containing the list of orders which are interpreted by the Arduino (do not modify this dictionary !)
-        self._orders_dictionary = protocol_parser.protocol_parse(os.environ['UTCOUPE_WORKSPACE'] + "/arduino/common/asserv/protocol.h")
+        self._orders_dictionary = protocol_parser.protocol_parse(os.environ['UTCOUPE_WORKSPACE'] + "/stm32_asserv/include/_shared_protocol.h")
         # Queue to store the received information from the Arduino
         self._reception_queue = Queue.Queue()
         # A queue is used to send data to prevent to send data too fast, which will result to concatenate two sending and making the Arduino crash
         self._sending_queue = Queue.Queue()
         # The order_id is sent to the asserv to identify the orders, it must be unique
-        self._order_id = 0
+        self._goal_counter = goal_counter
         # This dictionary stores the order_id with th goal_id to retrieve which goal has been completed
         self._orders_id_dictionary = {}
         # This list stores the last received ack ID from Arduino (a list to avoid zapping an ack). This list is used by the timer callback which check that position has been reached
@@ -51,7 +51,7 @@ class AsservReal(AsservAbstract):
         # Thread dedicated to the reception from the serial line
         self._serial_receiver_thread = None
         self._start_serial_com_line(port)
-
+        
     def start(self):
         """
         Starts the processing : feeding the reception queue.
@@ -72,22 +72,17 @@ class AsservReal(AsservAbstract):
         if self._check_reached_position(x, y, False):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)
             return True
-        if direction == 0: # bugfix: -1 = BACKWARD, 0 = ANY
-            direction = -1
         self._send_serial_data(self._orders_dictionary['GOTO'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(direction),str(int(slow_go))])
-        # TODO make it proper
-        self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y]
+        self._orders_id_dictionary[self._goal_counter.id - 1] = [goal_id, x, y]
         return True
 
     def gotoa(self, goal_id, x, y, a, direction, slow_go):
         if self._check_reached_angle(a, False) and self._check_reached_position(x, y, GOTOA_POS_ERROR_MULTIPLIER, False):
             self._oneshot_timer = rospy.Timer(rospy.Duration(0.25), lambda e: self._node.goal_reached(goal_id, True), oneshot=True)
             return True
-        if direction == 0: # bugfix: -1 = BACKWARD, 0 = ANY
-            direction = -1
+
         self._send_serial_data(self._orders_dictionary['GOTOA'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000))), str(direction), str(int(slow_go))])
-        # TODO make it proper
-        self._orders_id_dictionary[self._order_id - 1] = [goal_id, x, y, a]
+        self._orders_id_dictionary[self._goal_counter.id - 1] = [goal_id, x, y, a]
         return True
     
     def rot(self, goal_id, a, no_modulo):
@@ -100,15 +95,15 @@ class AsservReal(AsservAbstract):
         else:
             self._send_serial_data(self._orders_dictionary['ROT'], [str(int(round(a * 1000)))])
         # TODO make it proper
-        self._orders_id_dictionary[self._order_id - 1] = [goal_id, a]
+        self._orders_id_dictionary[self._goal_counter.id - 1] = [goal_id, a]
         return True
 
-    def pwm(self, left, right, duration, auto_stop):
+    def pwm(self, goal_id, left, right, duration, auto_stop):
         self._send_serial_data(self._orders_dictionary['PWM'], [str(left), str(right), str(int(round(duration * 1000))), str(int(auto_stop))])
         return True
 
-    def speed(self, linear, angular, duration):
-        self._send_serial_data(self._orders_dictionary['SPD'], [str(linear), str(angular), str(int(round(duration * 1000)))])
+    def speed(self, goal_id, linear, angular, duration, auto_stop):
+        self._send_serial_data(self._orders_dictionary['SPD'], [str(int(round(linear*1000))), str(int(round(angular*1000))), str(int(round(duration * 1000))), str(int(auto_stop))])
         return True
 
     def set_emergency_stop(self, stop):
@@ -149,7 +144,7 @@ class AsservReal(AsservAbstract):
         return True
 
     def set_pos(self, x, y, a, mode):
-        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000.0))), str(mode)])
+        self._send_serial_data(self._orders_dictionary['SET_POS'], [str(int(round(x * 1000))), str(int(round(y * 1000))), str(int(round(a * 1000))), str(mode)])
         return True
 
     def _start_serial_com_line(self, port):
@@ -201,14 +196,14 @@ class AsservReal(AsservAbstract):
         # Received status
         elif data.find("~") != -1:
             rospy.logdebug("[ASSERV] Received status data.")
-            receied_data_list = data.split(";")
+            received_data_list = data.split(";")
             try:
-                angle = float(receied_data_list[4]) / 1000.0
+                angle = float(received_data_list[4]) / 1000.0
                 angle %= 2.0 * pi
-                robot_position = Pose2D(float(receied_data_list[2]) / 1000.0, float(receied_data_list[3]) / 1000.0, angle)
+                robot_position = Pose2D(float(received_data_list[2]) / 1000.0, float(received_data_list[3]) / 1000.0, angle)
                 self._robot_raw_position = robot_position
                 self._node.send_robot_position(robot_position)
-                self._node.send_robot_speed(RobotSpeed(float(receied_data_list[5]), float(receied_data_list[6]), float(receied_data_list[7]) / 1000.0, float(receied_data_list[8]), float(receied_data_list[9])))
+                self._node.send_robot_speed(RobotSpeed(float(received_data_list[5]), float(received_data_list[6]), float(received_data_list[7]) / 1000.0, float(received_data_list[8]), float(received_data_list[9])))
             except ValueError:
                 rospy.logwarn("[ASSERV] Received bad position from the robot, drop it...")
         # Received order ack
@@ -217,7 +212,7 @@ class AsservReal(AsservAbstract):
             if data.find("0;") == 0:
                 rospy.loginfo("[ASSERV] Arduino started")
                 self._arduino_started_flag = True
-                self._order_id += 1
+                self._goal_counter.id += 1
             else:
                 rospy.logdebug("[ASSERV] Received order ack : %s", data)
                 ack_data = data.split(";")
@@ -256,8 +251,8 @@ class AsservReal(AsservAbstract):
         @type args_list:    List
         """
         if self._serial_com is not None:
-            args_list.insert(0, str(self._order_id))
-            self._order_id += 1
+            args_list.insert(0, str(self._goal_counter.id))
+            self._goal_counter.id += 1
             # TODO check if \n is necessary  + '\n'
             self._sending_queue.put(order_type + ";" + ";".join(args_list) + ";\n")
         else:

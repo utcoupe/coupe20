@@ -16,6 +16,22 @@ function compile_program() {
 	make && make "${PROJECT_NAME}.hex"
 }
 
+function generate_control_lib_for_simu() {
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_control.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_local_math.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_goals.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_PID.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_protocol.c"
+    gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_robotstate.c"
+
+    gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_stm32_asserv.so" \
+     "${PWD}/_shared_control.o" "${PWD}/_shared_local_math.o" "${PWD}/_shared_goals.o" \
+     "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"
+
+    rm "${PWD}/_shared_control.o" "${PWD}/_shared_local_math.o" "${PWD}/_shared_goals.o" \
+     "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"
+}
+
 function upload_program() {
     st-flash --format ihex write "${PROJECT_NAME}.hex"
 }
@@ -24,3 +40,4 @@ generate_cmake
 compile_program
 upload_program
 cd ..
+generate_control_lib_for_simu

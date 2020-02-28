@@ -7,7 +7,7 @@
  */
 
 #include "sender.h"
-#include "parameters.h"
+#include "_shared_parameters.h"
 
 #include <QueueList.h>
 #include <Arduino.h>

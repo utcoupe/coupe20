@@ -47,10 +47,8 @@
 #ifndef _QUEUELIST_H
 #define _QUEUELIST_H
 
-#include <stddef.h>
-#include <stdlib.h>
-
-#include <new> // required for placement new
+#include <cstddef>
+#include <cstdlib>
 
 // the definition of the queue class.
 template<typename T>
@@ -101,20 +99,20 @@ class QueueList {
 template<typename T>
 QueueList<T>::QueueList () {
   size = 0;       // set the size of queue to zero.
-  head = NULL;    // set the head of the list to point nowhere.
-  tail = NULL;    // set the tail of the list to point nowhere.
+  head = nullptr;    // set the head of the list to point nowhere.
+  tail = nullptr;    // set the tail of the list to point nowhere.
 }
 
 // clear the queue (destructor).
 template<typename T>
 QueueList<T>::~QueueList () {
   // deallocate memory space of each node in the list.
-  for (link t = head; t != NULL; head = t) {
+  for (link t = head; t != nullptr; head = t) {
     t = head->next; delete head;
   }
 
   size = 0;       // set the size of queue to zero.
-  tail = NULL;    // set the tail of the list to point nowhere.
+  tail = nullptr;    // set the tail of the list to point nowhere.
 }
 
 // push an item to the queue.
@@ -124,20 +122,18 @@ void QueueList<T>::push (const T i) {
   link t = tail;
 
   // create a new node for the tail.
-  tail = (link) malloc(sizeof(node));
+  tail = new node;
 
   // if there is a memory allocation error.
-  if (tail == NULL)
+  if (tail == nullptr)
   {
 
   // "QUEUE: insufficient memory to create a new node."
     exit ();
   }
-  
-  new (tail) node;
 
   // set the next of the new node.
-  tail->next = NULL;
+  tail->next = nullptr;
 
   // store the item to the new node.
   tail->item = i;
@@ -169,8 +165,7 @@ T QueueList<T>::pop () {
   // remove only the head node.
   
   link t = head->next;
-  head->~node();
-  free(head);
+  delete head;
   head = t;
 
   // decrease the items.
@@ -197,7 +192,7 @@ T QueueList<T>::peek () const {
 // check if the queue is empty.
 template<typename T>
 bool QueueList<T>::isEmpty () const {
-  return head == NULL;
+  return head == nullptr;
 }
 
 // get the number of items in the queue.

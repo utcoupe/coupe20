@@ -28,7 +28,7 @@ add_compile_options(
     "$<$<CONFIG:RELEASE>:-O3>"
 )
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 3 REQUIRED NO_MODULE)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp

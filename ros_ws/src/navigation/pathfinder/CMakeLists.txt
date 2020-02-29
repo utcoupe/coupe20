@@ -4,11 +4,11 @@ project(pathfinder)
 add_compile_options(
     -std=c++14
     
-#     -Wall
-#     -Wextra
-#     -Wpedantic
-#     -Wshadow
-#     -Wnon-virtual-dtor
+#    -Wall
+#    -Wextra
+#    -Wpedantic
+#    -Wshadow
+#    -Wnon-virtual-dtor
     
 #     -Wold-style-cast
 #     -Wcast-align
@@ -27,6 +27,8 @@ add_compile_options(
     "$<$<CONFIG:DEBUG>:-Og>"
     "$<$<CONFIG:RELEASE>:-O3>"
 )
+
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
@@ -96,7 +98,7 @@ add_executable(pathfinder_node ${source_files_pathfinder} src/pathfinder_node.cp
 
 target_link_libraries(pathfinder_node
     ${catkin_LIBRARIES}
-    ${SFML_LIBRARIES} ${SFML_DEPENDENCIES}
+    ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} Eigen3::Eigen
 )
 
 add_dependencies(pathfinder_node

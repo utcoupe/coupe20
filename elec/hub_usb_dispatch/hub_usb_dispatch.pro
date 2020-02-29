@@ -1,4 +1,4 @@
-update=15/01/2020 02:20:08
+update=28/02/2020 22:46:47
 version=1
 last_client=kicad
 [general]
@@ -256,7 +256,7 @@ dPairViaGap=0,25
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
-PlotDirectoryName=
+PlotDirectoryName=T:/Utilisateur/Document/coupe20/elec/hub_usb_dispatch/usb2517/
 SubpartIdSeparator=0
 SubpartFirstId=65
 NetFmtName=

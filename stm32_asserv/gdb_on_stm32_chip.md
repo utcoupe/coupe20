@@ -23,10 +23,10 @@
     A GDB server is openned on the localhost port `4242`.
 3) In another terminal, open `arm-none-eabi-gdb` with your binary:
     ```
-    $ $UTCOUPE_WORKSPACE/libs/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb my_binary.elf
+    $ ./gdb.sh build/stm32_asserv
     GNU gdb (GNU Tools for ARM Embedded Processors 6-2017-q2-update) 7.12.1.20170417-git
     [...]
-    Reading symbols from my_binary.elf...done.
+    Reading symbols from build/stm32_asserv...done.
     ```
 4) Type `target extended-remote :4242` to connect to the gdb server :
     ```

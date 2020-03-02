@@ -34,6 +34,7 @@ npm-debug.log
 cmake-build-debug/
 .kdev4/
 *.kdev4
+*.kate-swp
 
 # UTCoupe folders
 bin/

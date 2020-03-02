@@ -10,6 +10,7 @@
 
 #include "_shared_parameters.h"
 
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>

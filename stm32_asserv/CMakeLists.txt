@@ -1,6 +1,8 @@
 set(TOOLCHAIN_PREFIX "$ENV{UTCOUPE_WORKSPACE}/libs/gcc-arm-none-eabi-6-2017-q2-update/")
 
 set(STM32_CHIP STM32F303K8)
+set(STM32_LINKER_SCRIPT "STM32F303K8Tx_FLASH.ld")
+
 # TODO copy or symlink in $UTCOUPE_WORKSPACE OR regex
 set(STM32Cube_DIR "$ENV{HOME}/STM32Cube/Repository/STM32Cube_FW_F3_V1.11.0/")
 SET(CMAKE_TOOLCHAIN_FILE "$ENV{UTCOUPE_WORKSPACE}/libs/stm32-cmake/cmake/gcc_stm32.cmake")
@@ -23,7 +25,12 @@ add_compile_options(
 #        -Wcast-align
 #        -Wuseless-cast
         -Wdouble-promotion
-        -Os
+#        -Os
+)
+
+add_link_options(
+    --specs=nano.specs # fixes huge overflow
+    --specs=nosys.specs # fixes newlib missing system calls
 )
 
 # Color output in Ninja
@@ -49,8 +56,6 @@ file(
     src/*
 )
 
-SET(STM32_LINKER_SCRIPT ${CMSIS_LINKER_SCRIPT})
-
 add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp
     ${source_files}
@@ -58,9 +63,8 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${CMSIS_SOURCES}
 )
 
-target_link_options(${CMAKE_PROJECT_NAME}
-PUBLIC
-    --specs=nano.specs
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    nosys
 )
 
 STM32_SET_TARGET_PROPERTIES(${CMAKE_PROJECT_NAME})

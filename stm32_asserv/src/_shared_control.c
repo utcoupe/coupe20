@@ -1,5 +1,5 @@
 /**
- * Author : Paul Constant
+ * Author : Paul Constant & Sébastien Darche
  * Date : 22/12/29
  * 
  * This file is used in both stm32_asserv and asserv_simu.py.
@@ -64,6 +64,39 @@ void ControlUnsetStop(int mask) {
 	control.status_bits &= ~mask;
 }
 
+ctlSpeed_t splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
+	splinePoly_t x, y;
+	ctlSpeed_t computedSpd;
+	
+	// Computing the 2d spline interpolation
+	// It's supposed to be a linear system solution but was considerably simplified
+	// in order to fit it inside the stm32! (only works for this particular problem)
+	
+	// Current position (~t=0)
+	x.d = pos.x;
+	y.d = pos.y;
+	
+	// Current tan (derivative at t = 0)
+	x.c = cosf(pos.angle);
+	y.c = sinf(pos.angle);
+
+	// Goal and next goal : we have to solve a simple linear system, the direct solution is
+	// explicited here
+	x.a = ( (float) 4.0* (x.c + x.d - currGoal.data.pos_data.x) + nextGoal.data.pos_data.x - 2.0 * x.c - x.d) / 4.0;
+	y.a = ( (float) 4.0* (y.c + y.d - currGoal.data.pos_data.y) + nextGoal.data.pos_data.y - 2.0 * y.c - x.d) / 4.0;
+
+	x.b = currGoal.data.pos_data.x - x.c - x.d - x.a;
+	y.b = currGoal.data.pos_data.y - y.c - y.d - y.a;
+	
+	if(x.c*y.b - x.b*y.c < 0.001){ //If we try dividing by something too small : keep moving
+		computedSpd.angSpeed = control.speeds.angular_speed;
+	} else {
+		// Now calculating angular speed using a wonderful formula
+		computedSpd.angSpeed = powf(x.c * x.c + y.c * y.c, 1.5) / (2.0 * x.c * y.b - 2.0 * x.b * y.c);
+	}
+	return computedSpd;
+}
+
 int controlPos(float dd, float da) {
 	int ret;
 	float dda, ddd, max_speed;
@@ -79,13 +112,18 @@ int controlPos(float dd, float da) {
 		// Calculate angle between current and next goal
 		goal_t *current_goal = FifoCurrentGoal();
 		goal_t *next_goal = FifoGetGoal(FifoCurrentIndex()+1);
-
+		
+		ctlSpeed_t calcSpeed = splineInterpolation(current_pos, *current_goal, *next_goal);
+		calcSpeed.linSpeed = 10.0;
+		
 		x = current_goal->data.pos_data.x;
 		y = current_goal->data.pos_data.y;
 		dx = next_goal->data.pos_data.x - x;
 		dy = next_goal->data.pos_data.y - y;
 		da_next = atan2f(dy, dx) - current_pos.angle;
 		
+
+
 		// Calculate distance to final goal
 		dd_final = 0;
 		goal_count = 1;
@@ -115,6 +153,8 @@ int controlPos(float dd, float da) {
 			ddd_final = 0;
 		else
 			ddd_final = dd_final * expf(-fabsf(K_DISTANCE_REDUCTION * da_next));
+		
+		da = calcSpeed.angSpeed;
 	}
 	else {
 		pos_error = ERROR_POS;
@@ -126,7 +166,7 @@ int controlPos(float dd, float da) {
 	if (da > (float)MAX_ANGLE_DIFF) 
 		ddd = 0;
 	else
-		ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
+		ddd = 0.5*dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
 
 	max_speed = control.max_spd;
 	if (control.status_bits & SLOWGO_BIT) {
@@ -138,6 +178,7 @@ int controlPos(float dd, float da) {
 
 	control.speeds.angular_speed = calcSpeed(ang_spd, dda, 
 			max_speed * control.rot_spd_ratio, dda_next);
+	//control.speeds.angular_speed = dda;
 	control.speeds.linear_speed = calcSpeed(lin_spd, ddd,
 			max_speed, ddd_final);
 

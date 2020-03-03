@@ -24,9 +24,13 @@ function generate_control_lib_for_simu() {
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_protocol.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_robotstate.c"
 
-    gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_stm32_asserv.so" \
+    if gcc -shared -o "${UTCOUPE_WORKSPACE}/libs/lib_stm32_asserv.so" \
      "${PWD}/_shared_control.o" "${PWD}/_shared_local_math.o" "${PWD}/_shared_goals.o" \
-     "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"
+     "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"; then 
+        echo -e "\nSimu build passed without errors"
+    else
+        echo -e "\nSimu build failed, see above errors"
+    fi
 
     rm "${PWD}/_shared_control.o" "${PWD}/_shared_local_math.o" "${PWD}/_shared_goals.o" \
      "${PWD}/_shared_PID.o" "${PWD}/_shared_protocol.o" "${PWD}/_shared_robotstate.o"

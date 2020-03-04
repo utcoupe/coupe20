@@ -72,6 +72,9 @@ float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 	// Computing the 2d spline interpolation
 	// It's supposed to be a linear system solution but was considerably simplified
 	// in order to fit it inside the stm32! (only works for this particular problem)
+
+	//TODO : Pass dd and dd_next as an argument for the interpolation 
+	//This way, the robot won't get stuck if the goal is too close
 	
 	// Current position (~t=0)
 	x.d = pos.x;
@@ -90,6 +93,7 @@ float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 	y.b = currGoal.data.pos_data.y - y.c - y.d - y.a;
 	
 	if(x.c*y.b - x.b*y.c < 0.01){ //If we try dividing by something too small : keep moving
+		//The curvature is too small
 		return control.speeds.angular_speed;
 	} else {
 		// Now calculating angular speed using a wonderful formula
@@ -104,7 +108,6 @@ int controlPos(float dd, float da) {
 
 	int pos_error;
 	float ddd_final, dda_next;
-	ctlSpeed_t splineSpeed;
 	dda = da * (float)(ENTRAXE_ENC / 2.0);
 
 	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
@@ -162,7 +165,7 @@ int controlPos(float dd, float da) {
 	}
 
 	//If we really have to turn, don't go forward!
-	if (da > (float)MAX_ANGLE_DIFF) {
+	if (fabs(da) > (float)MAX_ANGLE_DIFF) {
 		ddd = 0;
 	} else {
 		ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
@@ -176,7 +179,7 @@ int controlPos(float dd, float da) {
 	ang_spd = control.speeds.angular_speed;
 	lin_spd = control.speeds.linear_speed;
 
-	control.speeds.angular_speed = calcSpeed(ang_spd, dda, 
+	control.speeds.angular_speed = sign(da) * calcSpeed(ang_spd, dda, 
 			max_speed * control.rot_spd_ratio, dda_next);
 	control.speeds.linear_speed = calcSpeed(lin_spd, ddd,
 			max_speed, ddd_final);

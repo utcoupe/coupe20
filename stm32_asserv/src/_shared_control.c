@@ -64,9 +64,10 @@ void ControlUnsetStop(int mask) {
 	control.status_bits &= ~mask;
 }
 
-ctlSpeed_t splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
+float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
+	//Returns the curvature of the spline interpolation in order to generate the 
+	//angular speed
 	splinePoly_t x, y;
-	ctlSpeed_t computedSpd;
 	
 	// Computing the 2d spline interpolation
 	// It's supposed to be a linear system solution but was considerably simplified
@@ -88,13 +89,12 @@ ctlSpeed_t splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 	x.b = currGoal.data.pos_data.x - x.c - x.d - x.a;
 	y.b = currGoal.data.pos_data.y - y.c - y.d - y.a;
 	
-	if(x.c*y.b - x.b*y.c < 0.001){ //If we try dividing by something too small : keep moving
-		computedSpd.angSpeed = control.speeds.angular_speed;
+	if(x.c*y.b - x.b*y.c < 0.01){ //If we try dividing by something too small : keep moving
+		return control.speeds.angular_speed;
 	} else {
 		// Now calculating angular speed using a wonderful formula
-		computedSpd.angSpeed = powf(x.c * x.c + y.c * y.c, 1.5) / (2.0 * x.c * y.b - 2.0 * x.b * y.c);
+		return powf(x.c * x.c + y.c * y.c, 1.5) / (2.0 * x.c * y.b - 2.0 * x.b * y.c);
 	}
-	return computedSpd;
 }
 
 int controlPos(float dd, float da) {
@@ -104,18 +104,19 @@ int controlPos(float dd, float da) {
 
 	int pos_error;
 	float ddd_final, dda_next;
+	ctlSpeed_t splineSpeed;
+	dda = da * (float)(ENTRAXE_ENC / 2.0);
 
 	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
 		float da_next, dd_final;
 		int dx, dy, x, y, goal_count;
 		
-		// Calculate angle between current and next goal
 		goal_t *current_goal = FifoCurrentGoal();
 		goal_t *next_goal = FifoGetGoal(FifoCurrentIndex()+1);
 		
-		ctlSpeed_t calcSpeed = splineInterpolation(current_pos, *current_goal, *next_goal);
-		calcSpeed.linSpeed = 10.0;
+		dda = splineInterpolation(current_pos, *current_goal, *next_goal);
 		
+		// Calculate angle between current and next goal
 		x = current_goal->data.pos_data.x;
 		y = current_goal->data.pos_data.y;
 		dx = next_goal->data.pos_data.x - x;
@@ -153,8 +154,6 @@ int controlPos(float dd, float da) {
 			ddd_final = 0;
 		else
 			ddd_final = dd_final * expf(-fabsf(K_DISTANCE_REDUCTION * da_next));
-		
-		da = calcSpeed.angSpeed;
 	}
 	else {
 		pos_error = ERROR_POS;
@@ -162,11 +161,12 @@ int controlPos(float dd, float da) {
 		ddd_final = 0;
 	}
 
-	dda = da * (float)(ENTRAXE_ENC / 2.0);
-	if (da > (float)MAX_ANGLE_DIFF) 
+	//If we really have to turn, don't go forward!
+	if (da > (float)MAX_ANGLE_DIFF) {
 		ddd = 0;
-	else
-		ddd = 0.5*dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
+	} else {
+		ddd = dd * expf(-fabsf(K_DISTANCE_REDUCTION * da));
+	}
 
 	max_speed = control.max_spd;
 	if (control.status_bits & SLOWGO_BIT) {
@@ -178,7 +178,6 @@ int controlPos(float dd, float da) {
 
 	control.speeds.angular_speed = calcSpeed(ang_spd, dda, 
 			max_speed * control.rot_spd_ratio, dda_next);
-	//control.speeds.angular_speed = dda;
 	control.speeds.linear_speed = calcSpeed(lin_spd, ddd,
 			max_speed, ddd_final);
 

@@ -64,10 +64,6 @@ typedef struct splinePoly {
 	float a,b,c,d;
 } splinePoly_t;
 
-typedef struct ctlSpeed {
-	float linSpeed, angSpeed;
-} ctlSpeed_t;
-
 extern control_t control; 
 extern PID_t PID_left, PID_right;
 

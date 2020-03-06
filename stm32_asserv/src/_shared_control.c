@@ -73,9 +73,10 @@ float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 	// It's supposed to be a linear system solution but was considerably simplified
 	// in order to fit it inside the stm32! (only works for this particular problem)
 
-	//TODO : Pass dd and dd_next as an argument for the interpolation 
-	//This way, the robot won't get stuck if the goal is too close
 	
+	float distToGoal = powf(powf(pos.x - currGoal.data.pos_data.x, 2) + powf(pos.y - currGoal.data.pos_data.y, 2), 0.5);
+	float goalToNext = powf(powf(nextGoal.data.pos_data.x - currGoal.data.pos_data.x, 2) + powf(nextGoal.data.pos_data.y - currGoal.data.pos_data.y, 2), 0.5);
+
 	// Current position (~t=0)
 	x.d = pos.x;
 	y.d = pos.y;
@@ -85,19 +86,21 @@ float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 	y.c = sinf(pos.angle);
 
 	// Goal and next goal : we have to solve a simple linear system, the direct solution is
-	// explicited here
-	x.a = ( (float) 4.0* (x.c + x.d - currGoal.data.pos_data.x) + nextGoal.data.pos_data.x - 2.0 * x.c - x.d) / 4.0;
-	y.a = ( (float) 4.0* (y.c + y.d - currGoal.data.pos_data.y) + nextGoal.data.pos_data.y - 2.0 * y.c - x.d) / 4.0;
+	// explicited here using the reduced echelon form
 
-	x.b = currGoal.data.pos_data.x - x.c - x.d - x.a;
-	y.b = currGoal.data.pos_data.y - y.c - y.d - y.a;
-	
-	if(x.c*y.b - x.b*y.c < 0.01){ //If we try dividing by something too small : keep moving
+	float pivot = distToGoal / goalToNext;
+	x.b = (currGoal.data.pos_data.x - pivot * nextGoal.data.pos_data.x - x.d - x.c*distToGoal) / powf(distToGoal, 2);
+	y.b = (currGoal.data.pos_data.y - pivot * nextGoal.data.pos_data.y - y.d - y.c*distToGoal) / powf(distToGoal, 2);
+
+	x.a = currGoal.data.pos_data.x - x.b * powf(goalToNext, 2) - x.c * goalToNext - x.d;
+	y.a = currGoal.data.pos_data.y - y.b * powf(goalToNext, 2) - y.c * goalToNext - y.d;
+
+	if(x.c*y.b - x.b*y.c < 0.001){ //If we try dividing by something too small : keep moving
 		//The curvature is too small
-		return control.speeds.angular_speed;
+		return 0;
 	} else {
 		// Now calculating angular speed using a wonderful formula
-		return powf(x.c * x.c + y.c * y.c, 1.5) / (2.0 * x.c * y.b - 2.0 * x.b * y.c);
+		return 10*powf(x.c * x.c + y.c * y.c, 1.5) / (2.0 * x.c * y.b - 2.0 * x.b * y.c);
 	}
 }
 
@@ -108,7 +111,6 @@ int controlPos(float dd, float da) {
 
 	int pos_error;
 	float ddd_final, dda_next;
-	dda = da * (float)(ENTRAXE_ENC / 2.0);
 
 	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
 		float da_next, dd_final;
@@ -117,14 +119,19 @@ int controlPos(float dd, float da) {
 		goal_t *current_goal = FifoCurrentGoal();
 		goal_t *next_goal = FifoGetGoal(FifoCurrentIndex()+1);
 		
-		dda = splineInterpolation(current_pos, *current_goal, *next_goal);
-		
 		// Calculate angle between current and next goal
 		x = current_goal->data.pos_data.x;
 		y = current_goal->data.pos_data.y;
 		dx = next_goal->data.pos_data.x - x;
 		dy = next_goal->data.pos_data.y - y;
 		da_next = atan2f(dy, dx) - current_pos.angle;
+
+		//da = moduloTwoPI(da_next);
+		
+		dda = da_next * (float)(ENTRAXE_ENC / 2.0);
+		
+		if(fabs(moduloTwoPI(da_next)) < MAX_ANGLE_DIFF)
+			dda = splineInterpolation(current_pos, *current_goal, *next_goal);
 		
 
 
@@ -159,6 +166,7 @@ int controlPos(float dd, float da) {
 			ddd_final = dd_final * expf(-fabsf(K_DISTANCE_REDUCTION * da_next));
 	}
 	else {
+		dda = da * (float)(ENTRAXE_ENC / 2.0);
 		pos_error = ERROR_POS;
 		dda_next = 0;
 		ddd_final = 0;

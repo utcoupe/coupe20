@@ -1244,4 +1244,12 @@ Wire Wire Line
 	3100 1300 3100 1400
 Wire Wire Line
 	3100 1700 3100 1800
+Text Label 3450 4150 0    50   ~ 0
+CS
+Wire Wire Line
+	3450 4150 3350 4150
+Text Label 3450 4350 0    50   ~ 0
+CS1
+Wire Wire Line
+	3450 4350 3350 4350
 $EndSCHEMATC

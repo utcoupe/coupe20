@@ -12,7 +12,7 @@
 
 #include <vector>
 
-constexpr int nbBezierPoints = 20;
+constexpr int nbBezierPoints = 10;
 
 class DynamicBarriersManager;
 

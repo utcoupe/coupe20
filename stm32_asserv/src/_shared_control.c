@@ -106,15 +106,13 @@ float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 
 int controlPos(float dd, float da) {
 	int ret;
-	//char interP = 0;
+	char interP = 0;
 	float da_next = da, dda, ddd, max_speed;
 	float ang_spd, lin_spd;
 
 	int pos_error;
 	float ddd_final, dda_next;
-
-	dda = da * (float)(ENTRAXE_ENC / 2.0);
-
+	
 	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
 		float dd_final;
 		int dx, dy, x, y, goal_count;
@@ -130,12 +128,12 @@ int controlPos(float dd, float da) {
 		da_next = atan2f(dy, dx) - current_pos.angle;
 
 		
-		/*
+		
 		if(wrapToPI(da_next) < MAX_ANGLE_DIFF) {
 			//if the angle to the next objective is not to high, we can use the interpolation
 			interP = 1;
 			dda = splineInterpolation(current_pos, *current_goal, *next_goal);
-		}*/
+		}
 
 
 		// Calculate distance to final goal
@@ -174,6 +172,8 @@ int controlPos(float dd, float da) {
 		ddd_final = 0;
 	}
 
+	if(!interP)
+		dda = da * (float)(ENTRAXE_ENC / 2.0);
 
 	//If we really have to turn, don't go forward!
 	if (fabs(da) > (float)MAX_ANGLE_DIFF) {

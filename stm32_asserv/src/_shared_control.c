@@ -106,12 +106,14 @@ float splineInterpolation(pos_t pos, goal_t currGoal, goal_t nextGoal) {
 
 int controlPos(float dd, float da) {
 	int ret;
-	char interP = 0;
+	//char interP = 0;
 	float da_next = da, dda, ddd, max_speed;
 	float ang_spd, lin_spd;
 
 	int pos_error;
 	float ddd_final, dda_next;
+
+	dda = da * (float)(ENTRAXE_ENC / 2.0);
 
 	if (FifoGetGoal(FifoCurrentIndex()+1)->type == TYPE_POS) {
 		float dd_final;
@@ -172,9 +174,6 @@ int controlPos(float dd, float da) {
 		ddd_final = 0;
 	}
 
-	if(!interP) {
-		dda = da_next * (float)(ENTRAXE_ENC / 2.0);
-	}
 
 	//If we really have to turn, don't go forward!
 	if (fabs(da) > (float)MAX_ANGLE_DIFF) {
@@ -191,7 +190,7 @@ int controlPos(float dd, float da) {
 	ang_spd = control.speeds.angular_speed;
 	lin_spd = control.speeds.linear_speed;
 
-	control.speeds.angular_speed = sign(da) * calcSpeed(ang_spd, dda, 
+	control.speeds.angular_speed = calcSpeed(ang_spd, dda, 
 			max_speed * control.rot_spd_ratio, dda_next);
 	control.speeds.linear_speed = calcSpeed(lin_spd, ddd,
 			max_speed, ddd_final);

@@ -202,11 +202,11 @@
             <tags><tag>bouees</tag></tags>
         </object>
     </container>
-
+-->
     <container name="Test obstacles">
         <object name="t1" class="enemy-robot-test">
             <position x="1.0" y="1.0"/>
             <tags><tag>test</tag></tags>
         </object>
-    </container> -->
+    </container>
 </objects>

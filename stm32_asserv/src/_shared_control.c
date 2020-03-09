@@ -129,7 +129,7 @@ int controlPos(float dd, float da) {
 
 		
 		
-		if(wrapToPI(da_next) < MAX_ANGLE_DIFF) {
+		if(wrapToPI(da_next) < MAX_ANGLE_DIFF_INTERPOL) {
 			//if the angle to the next objective is not to high, we can use the interpolation
 			interP = 1;
 			dda = splineInterpolation(current_pos, *current_goal, *next_goal);

@@ -25,5 +25,6 @@
 
 float moduloTwoPI(float angle);
 float moduloPI(float angle);
+float wrapToPI(float angle);
 
 #endif

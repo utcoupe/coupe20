@@ -38,10 +38,10 @@ float moduloPI(float angle){
 float wrapToPI(float angle) {
     //Returns an angle between 0 and M_PI
     while(angle > (float) M_PI) {
-        angle -= (float) M_PI;
+        angle -= (float) 2.0 * M_PI;
     }
-    while(angle < 0) {
-        angle += (float) M_PI;
+    while(angle < (float) M_PI) {
+        angle += (float) 2.0 * M_PI;
     }
     return angle;
 }

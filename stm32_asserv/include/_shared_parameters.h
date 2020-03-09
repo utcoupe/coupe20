@@ -27,7 +27,7 @@
 #define RATIO_ROT_SPD_MAX 1
 #define K_DISTANCE_REDUCTION 15 // réduction de la vitesse linéaire quand on tourne
 #define MAX_ANGLE_DIFF (M_PI/5.0) // rad - linear speed = 0 if angle > MAX_ANGLE_DIFF
-#define MAX_ANGLE_DIFF_INTERPOL (M_PI/4.0)
+#define MAX_ANGLE_DIFF_INTERPOL (M_PI/6.0)
 
 #define EMERGENCY_WAIT_TIME 30 // seconds
 #define EMERGENCY_SLOW_GO_RATIO 0.3 // spd = 0.3*max_spd in slow_go mode

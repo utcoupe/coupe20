@@ -131,9 +131,14 @@ class AsservSimu(AsservReal):
         AsservReal.__init__(self, asserv_node, goal_counter, 0)
 
         # STM32 lib stuff
-        self._stm32lib = ctypes.cdll.LoadLibrary(
-            os.environ['UTCOUPE_WORKSPACE']
-             + '/libs/lib_stm32_asserv.so')
+        try:
+            self._stm32lib = ctypes.cdll.LoadLibrary(
+                os.environ['UTCOUPE_WORKSPACE']
+                + '/libs/lib_stm32_asserv.so')
+        except OSError:
+            rospy.logerr("Cannot open shared asserv library. Please generate it using the compile.sh script in stm32_asserv.")
+            rospy.logerr("Exiting simu asserv.")
+            exit()
 
         self._stm32lib.ControlLogicInit()
         self._stm32lib.RobotStateLogicInit()

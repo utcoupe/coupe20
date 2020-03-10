@@ -2,6 +2,10 @@
 
 PROJECT_NAME="${PWD##*/}" # assuming directory name == cmake project name
 
+function red_echo() {
+	echo -e "\033[31m$1\033[0m"
+}
+
 function generate_cmake() {
     rm -rf build
     mkdir -p build
@@ -17,6 +21,10 @@ function compile_program() {
 }
 
 function generate_control_lib_for_simu() {
+    if [ ! "${PWD##*/}" = "stm32_asserv" ]; then
+		red_echo "Please run this script from the stm32_asserv folder. Asserv library cannot be generated."
+        return
+    fi
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_control.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_local_math.c"
     gcc -c -Wall -Werror -fPIC -I"${PWD}/include" "${PWD}/src/_shared_goals.c"

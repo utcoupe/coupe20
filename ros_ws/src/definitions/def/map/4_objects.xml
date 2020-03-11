@@ -27,18 +27,17 @@
 
         <class name="enemy-robot-test">
             <color name="black"/>
-            <marker type="cube" ns="robot" z="0.1625">
-                <scale x="0.4" y="0.3" z="0.35"/>
-                    <orientation x="0" y="0" z="0"/>
+            <marker type="cylinder" ns="bouée" z="0.0625">
+                <scale x="0.4" y="0.4" z="0.45"/>
+                <orientation x="0" y="0" z="0"/>
             </marker>
-            <shape type="rect" w="0.4" h="0.3"/>
+            <shape type="circle" r="0.4"/>
             <tags>
                 <tag>test</tag>
             </tags>
         </class>
     </classes>
-
-<!-- 
+<!--
     <container name="Bouées_port1_blue">
         <object name="b1" class="bouée-rouge">
             <position x="0.3" y="1.6"/>
@@ -202,11 +201,11 @@
             <tags><tag>bouees</tag></tags>
         </object>
     </container>
-
+-->
     <container name="Test obstacles">
         <object name="t1" class="enemy-robot-test">
             <position x="1.0" y="1.0"/>
             <tags><tag>test</tag></tags>
         </object>
-    </container> -->
+    </container>
 </objects>

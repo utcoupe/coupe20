@@ -7,6 +7,7 @@
 #include "collisions/shapes/abstract_shape.h"
 #include "collisions/obstacle.h"
 
+#include <functional>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -94,7 +95,7 @@ public:
      *
      * Obstacles are updated.
      */
-    void checkCollisions(const std::vector<Obstacle *> &obstacles) const;
+    void checkCollisions(const ObstacleRefList &obstacles) const;
 
 private:
     /** Robot status **/

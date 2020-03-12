@@ -71,7 +71,7 @@ private:
      * Publishes a collision on the topic warner
      * @param obstacle The most dangerous obstacle to publish.
      */
-    void m_publishCollision(const Obstacle *obstacle);
+    void m_publishCollision(const Obstacle &obstacle);
 
     /**
      * Callback for the set_status service.

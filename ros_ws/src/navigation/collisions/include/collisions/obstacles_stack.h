@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <forward_list>
+#include <functional>
 #include <mutex>
 #include <vector>
 
@@ -23,7 +24,7 @@ public:
      * 
      * @return A list of obstacle
      */
-    std::vector<Obstacle *> toList() const;
+    ObstacleRefList toList();
 
     /**
      * Updates obstacles detected by the belt.

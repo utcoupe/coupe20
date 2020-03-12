@@ -53,15 +53,16 @@ void MarkersPublisher::publishCheckZones(const Robot &robot) {
     ROS_DEBUG_STREAM_THROTTLE(1, "Published " << index << " path shapes.");
 }
 
-void MarkersPublisher::publishObstacles(const std::vector<Obstacle *> &obstacles) {
+void MarkersPublisher::publishObstacles(const ObstacleRefList& obstacles)
+{
     if (!m_isConnected())
         return;
     int index = 0;
     for (auto obstacle: obstacles) {
-        m_publishMarker(NS_MARKERS_OBSTACLES, index, obstacle->getShape(), 0.35, 0.35 / 2.0, COLOR_OBSTACLES_SHAPES);
+        m_publishMarker(NS_MARKERS_OBSTACLES, index, obstacle.get().getShape(), 0.35, 0.35 / 2.0, COLOR_OBSTACLES_SHAPES);
         index++;
 
-        for (const auto &velShape: obstacle->getVelocityShapes()) {
+        for (const auto &velShape: obstacle.get().getVelocityShapes()) {
             m_publishMarker(NS_MARKERS_OBSTACLES, index, *velShape, 0.02, 0.01, COLOR_OBSTACLE_VELOCITY_SHAPES);
             index++;
         }

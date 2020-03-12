@@ -43,7 +43,7 @@ public:
      *
      * @param obstacles An obstacle list to check.
      */
-    void checkCollisions(const std::vector<Obstacle *> &obstacles) const override;
+    void checkCollisions(const ObstacleRefList &obstacles) const override;
 
 private:
     /** Stores the updated robot's velocity shapes. **/

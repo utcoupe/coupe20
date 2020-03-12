@@ -38,7 +38,7 @@ public:
      * @param obstacles An obstacle list to check collision.
      * @return The collision list.
      */
-    void checkCollisions(const std::vector<Obstacle *> &obstacles) const override;
+    void checkCollisions(const ObstacleRefList &obstacles) const override;
 
     /**
      * Updates internal list of waypoints constituting the current path.

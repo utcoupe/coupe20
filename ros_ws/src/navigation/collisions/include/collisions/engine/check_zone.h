@@ -3,13 +3,12 @@
 
 #include "collisions/engine/constants.h"
 #include "collisions/shapes/abstract_shape.h"
+#include "collisions/obstacle.h"
 
 #include <memory>
 #include <vector>
 
 class Position;
-
-class Obstacle;
 
 /**
  * Abstract collision checker.
@@ -45,7 +44,7 @@ public:
      * 
      * @param obstacles An obstacle list to check.
      */
-    virtual void checkCollisions(const std::vector<Obstacle *> &obstacles) const = 0;
+    virtual void checkCollisions(const ObstacleRefList &obstacles) const = 0;
 
     /**
      * Returns the default collision level applied on found collisions.

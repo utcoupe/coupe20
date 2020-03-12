@@ -20,9 +20,9 @@ const std::string WARNER_TOPIC = "navigation/collisions/warner";
 
 const double RATE_RUN_HZ = 20.0;
 
-bool compareObstacleDangerosity(const Obstacle *obstacle1, const Obstacle *obstacle2) {
-    auto collision1 = obstacle1->getCollisionData();
-    auto collision2 = obstacle2->getCollisionData();
+bool compareObstacleDangerosity(const Obstacle &obstacle1, const Obstacle &obstacle2) {
+    auto collision1 = obstacle1.getCollisionData();
+    auto collision2 = obstacle2.getCollisionData();
     if (collision1.getLevel() == collision2.getLevel()) {
         return collision1.getDistance() > collision2.getDistance();
     } else {
@@ -77,9 +77,10 @@ void CollisionsNode::m_run(const ros::TimerEvent &) {
     ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
 }
 
-void CollisionsNode::m_publishCollision(const Obstacle *obstacle) {
+void CollisionsNode::m_publishCollision(const Obstacle& obstacle)
+{
     collisions::PredictedCollision msg;
-    const auto &collision = obstacle->getCollisionData();
+    const auto &collision = obstacle.getCollisionData();
     msg.danger_level = static_cast<unsigned char>(collision.getLevel());
 
     switch (collision.getLevel()) {
@@ -96,10 +97,10 @@ void CollisionsNode::m_publishCollision(const Obstacle *obstacle) {
             ROS_INFO_THROTTLE(1, "Found no collisions intersecting with the path.");
             break;
     }
-    msg.obstacle_pos = obstacle->getPos().toPose2D();
+    msg.obstacle_pos = obstacle.getPos().toPose2D();
 
     using ShapeType = CollisionsShapes::ShapeType;
-    const auto &shape = obstacle->getShape();
+    const auto &shape = obstacle.getShape();
     switch (shape.getShapeType()) {
         case ShapeType::RECTANGLE:
             m_addRectInfosToPredictedCollision(msg, shape);

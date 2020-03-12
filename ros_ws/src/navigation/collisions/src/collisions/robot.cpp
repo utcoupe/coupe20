@@ -23,7 +23,8 @@ const std::vector<Robot::ShapePtr> &Robot::getMainShapes() const {
     return m_velocity->getShapes(getMaxMainDist());
 }
 
-void Robot::checkCollisions(const std::vector<Obstacle *> &obstacles) const {
+void Robot::checkCollisions(const ObstacleRefList& obstacles) const
+{
     m_velocityCheckZone.checkCollisions(obstacles);
     m_pathCheckZone.checkCollisions(obstacles);
 }

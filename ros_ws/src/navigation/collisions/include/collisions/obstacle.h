@@ -91,4 +91,6 @@ private:
     Collision m_collisionData;
 };
 
+using ObstacleRefList = std::vector<std::reference_wrapper<Obstacle>>;
+
 #endif // COLLISIONS_OBSTACLE_H

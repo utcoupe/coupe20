@@ -1,13 +1,12 @@
 #include "collisions/obstacles_stack.h"
 
-std::vector<Obstacle *> ObstaclesStack::toList() const {
+ObstacleRefList ObstaclesStack::toList() {
     std::lock_guard<std::mutex> lock(m_mutex);
-    std::vector<Obstacle *> obstacles;
+    ObstacleRefList obstacles;
     // TODO C++17 transform_copy
-    auto copyObstPtrs = [&obstacles](const auto &obstList) {
+    auto copyObstPtrs = [&obstacles](auto &obstList) {
         for (auto &obst: obstList) {
-            // Ugly as hell =(
-            obstacles.push_back(const_cast<Obstacle *>(&obst));
+            obstacles.emplace_back(obst);
         }
     };
     copyObstPtrs(m_beltPoints);

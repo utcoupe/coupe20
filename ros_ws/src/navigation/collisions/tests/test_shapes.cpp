@@ -6,6 +6,8 @@
 #include "collisions/shapes/rectangle.h"
 
 #include <cmath>
+#include <vector>
+#include <utility>
 
 SCENARIO( "First shape is a rectangle", "[shape][rectangle]" ) {
     GIVEN( "Rectangle is a square" ) {
@@ -17,43 +19,23 @@ SCENARIO( "First shape is a rectangle", "[shape][rectangle]" ) {
         REQUIRE( rect.isCollidingWith(rect) );
         
         WHEN( "There is a circle inside" ) {
-            // TODO generator
+            std::vector<CollisionsShapes::Circle> collidingCircles {
+                CollisionsShapes::Circle(posRect, 1.0),
+                CollisionsShapes::Circle(posRect, std::sqrt(2) / 2.0),
+                CollisionsShapes::Circle(posRect, 2.0),
+                CollisionsShapes::Circle(posRect, 0.5),
+                CollisionsShapes::Circle(posRect + Point(0.5, 0.5), 1.0),
+                CollisionsShapes::Circle(posRect + Point(0.5, 0.5), 0.5),
+                CollisionsShapes::Circle(posRect + Point(-0.5, -0.5), 0.25),
+                CollisionsShapes::Circle(posRect + Point(0.0, 1.0), 1.0),
+                CollisionsShapes::Circle(posRect + Point(1.0, 1.0), std::sqrt(2) / 2.0)
+            };
+            
             THEN( "They are colliding" ) {
-                CollisionsShapes::Circle circ(posRect, 1.0);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect, std::sqrt(2) / 2.0);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect, 2.0);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect, 0.5);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect + Point(0.5, 0.5), 1.0);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect + Point(0.5, 0.5), 0.5);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect + Point(-0.5, -0.5), 0.25);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect + Point(0.0, 1.0), 1.0);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
-                
-                circ = CollisionsShapes::Circle(posRect + Point(1.0, 1.0), std::sqrt(2) / 2.0);
-                REQUIRE( rect.isCollidingWith(circ) );
-                REQUIRE( circ.isCollidingWith(rect) );
+                for (auto& circ: collidingCircles) {
+                    REQUIRE( rect.isCollidingWith(circ) );
+                    REQUIRE( circ.isCollidingWith(rect) );
+                }
             }
         }
         

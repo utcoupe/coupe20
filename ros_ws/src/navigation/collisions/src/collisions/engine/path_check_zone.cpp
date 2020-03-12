@@ -45,16 +45,17 @@ const std::vector<PathCheckZone::ShapePtr> &PathCheckZone::getShapes() const {
     return m_shapes;
 }
 
-void PathCheckZone::checkCollisions(const std::vector<Obstacle *> &obstacles) const {
+void PathCheckZone::checkCollisions(const ObstacleRefList& obstacles) const
+{
     for (const auto &obstacle: CollisionResolver::findCollisions(getShapes(), obstacles)) {
-        const double approxDist = m_robotPos.norm2Dist(obstacle->getPos().toPoint());
+        const double approxDist = m_robotPos.norm2Dist(obstacle.get().getPos().toPoint());
         auto level = (
                 approxDist < CollisionThresholds::DANGER_RADIUS ?
                 CollisionLevel::DANGER :
                 m_level
         );
-        if (level > obstacle->getCollisionData().getLevel()) {
-            obstacle->setCollisionData(Collision(level, approxDist));
+        if (level > obstacle.get().getCollisionData().getLevel()) {
+            obstacle.get().setCollisionData(Collision(level, approxDist));
         }
     }
 }

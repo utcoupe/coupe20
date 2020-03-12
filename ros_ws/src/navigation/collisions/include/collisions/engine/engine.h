@@ -2,10 +2,9 @@
 #define COLLISIONS_ENGINE_ENGINE_H
 
 #include "collisions/shapes/abstract_shape.h"
+#include "collisions/obstacle.h"
 
 #include <memory>
-
-class Obstacle;
 
 namespace CollisionResolver {
     using PtrShape = std::unique_ptr<CollisionsShapes::AbstractShape>;
@@ -17,9 +16,9 @@ namespace CollisionResolver {
      * @param obstacleShapes A list of obstacles.
      * @return A list of colliding obstacles.
      */
-    std::vector<Obstacle *> findCollisions(
+    ObstacleRefList findCollisions(
             const std::vector<PtrShape> &robotShapes,
-            const std::vector<Obstacle *> &obstacleShapes);
+            const ObstacleRefList &obstacleShapes);
 } // namespace CollisionResolver
 
 #endif // COLLISIONS_ENGINE_ENGINE_H

@@ -10,13 +10,13 @@
 extern "C" {
 #endif
 
-void ControlPrepareNewGoal(void);
-void ControlReset(void); // TODO unused ?
-void ControlSetStop(int mask);
-void ControlUnsetStop(int mask);
+    void ControlPrepareNewGoal(void);
+    void ControlReset(void); // TODO unused ?
+    void ControlSetStop(int mask);
+    void ControlUnsetStop(int mask);
 
-void ControlInit(void);
-void ControlCompute(void);
+    void ControlInit(void);
+    void ControlCompute(void);
 
 #ifdef __cplusplus
 }

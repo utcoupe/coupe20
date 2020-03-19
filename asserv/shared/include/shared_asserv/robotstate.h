@@ -22,8 +22,8 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#ifndef ROBOTSTATE_H
-#define ROBOTSTATE_H
+#ifndef SHARED_ASSERV_ROBOTSTATE_H
+#define SHARED_ASSERV_ROBOTSTATE_H
 
 typedef struct pos {
 	float x;
@@ -50,4 +50,4 @@ extern "C" {
 }
 #endif // __cplusplus
 
-#endif // ROBOTSTATE_H
+#endif // SHARED_ASSERV_ROBOTSTATE_H

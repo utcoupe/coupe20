@@ -8,8 +8,16 @@
 // #include <stdint.h>
 #include "shared_asserv/protocol.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 uint8_t getLog10(const uint16_t number);
 void ProtocolAutoSendStatus();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //ASSERV_PROTOCOL_H
 

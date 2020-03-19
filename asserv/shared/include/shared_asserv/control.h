@@ -26,8 +26,8 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#ifndef CONTROL_H
-#define CONTROL_H
+#ifndef SHARED_ASSERV_CONTROL_H
+#define SHARED_ASSERV_CONTROL_H
 
 #include <stdint.h>
 #include "shared_asserv/PID.h"
@@ -63,23 +63,32 @@ typedef struct control {
 extern control_t control; 
 extern PID_t PID_left, PID_right;
 
-void ControlLogicInit();
-void ControlSetStop(int mask);
-void ControlUnsetStop(int mask);
-
-void goalPos(goal_t *goal);
-void goalAngle(goal_t *goal);
-void goalPwm(goal_t *goal, long now);
-void goalSpd(goal_t *goal, long now);
-
-int controlPos(float dd, float da);
-float calcSpeed(float init_spd, float dd, float max_spd, float final_speed);
-void applyPID(void);
-
-void allStop(void);
-void stopRobot(void);
-
-void ControlPrepareNewGoal(void);
-void processCurrentGoal(long);
-void setCurrentGoalReached(void);
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+	void ControlLogicInit();
+	void ControlSetStop(int mask);
+	void ControlUnsetStop(int mask);
+
+	void goalPos(goal_t *goal);
+	void goalAngle(goal_t *goal);
+	void goalPwm(goal_t *goal, long now);
+	void goalSpd(goal_t *goal, long now);
+
+	int controlPos(float dd, float da);
+	float calcSpeed(float init_spd, float dd, float max_spd, float final_speed);
+	void applyPID(void);
+
+	void allStop(void);
+	void stopRobot(void);
+
+	void ControlPrepareNewGoal(void);
+	void processCurrentGoal(long);
+	void setCurrentGoalReached(void);
+	
+#ifdef __cplusplus
+}
+#endif
+
+#endif // SHARED_ASSERV_CONTROL_H

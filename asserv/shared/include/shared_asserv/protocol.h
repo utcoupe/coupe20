@@ -22,8 +22,8 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#ifndef SHARED_ASSERV_PROTOCOL_H
+#define SHARED_ASSERV_PROTOCOL_H
 
 #include <stdint.h>
 
@@ -132,4 +132,4 @@ extern "C" {
 }
 #endif // __cplusplus
 
-#endif // PROTOCOL_H
+#endif // SHARED_ASSERV_PROTOCOL_H

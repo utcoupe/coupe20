@@ -1,10 +1,10 @@
 #include "block.h"
 
-#include "parameters.h"
+#include "shared_asserv/parameters.h"
 #include "robotstate.h"
-#include "goals.h"
+#include "shared_asserv/goals.h"
 #include "compat.h"
-#include "control.h"
+#include "shared_asserv/control.h"
 #include "control.h"
 #include "protocol.h"
 #include "sender_wrapper.h"

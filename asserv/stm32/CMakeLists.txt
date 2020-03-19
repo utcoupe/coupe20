@@ -12,11 +12,22 @@ cmake_minimum_required(VERSION 2.8)
 
 enable_language(C CXX ASM)
 
+# Enables colored output in Ninja
+option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
+if (${FORCE_COLORED_OUTPUT})
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+       add_compile_options (-fdiagnostics-color=always)
+    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+       add_compile_options (-fcolor-diagnostics)
+    endif ()
+endif ()
+
 FIND_PACKAGE(CMSIS REQUIRED)
 # STM32 COMPONENTS = header names
 FIND_PACKAGE(STM32HAL COMPONENTS gpio tim uart dma rcc pwr cortex flash REQUIRED)
 
-include($ENV{UTCOUPE_WORKSPACE}/asserv/shared/shared_asserv.cmake)
+add_subdirectory($ENV{UTCOUPE_WORKSPACE}/asserv/shared/ asserv_shared)
+message(STATUS "UTCOUPE_ASSERV_SHARED_INCLUDE_DIR=${UTCOUPE_ASSERV_SHARED_INCLUDE_DIR}")
 
 add_compile_options(
         -fno-exceptions # prevents huge overflow TODO find source

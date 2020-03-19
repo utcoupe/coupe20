@@ -21,15 +21,15 @@ extern TIM_HandleTypeDef htim3;
 extern "C" {
 #endif
 
-void init_encoders(void);
+    void init_encoders(void);
 
-void left_encoder_reset(void);
-void right_encoder_reset(void);
+    void left_encoder_reset(void);
+    void right_encoder_reset(void);
 
-int16_t get_left_encoder(void);
-int16_t get_right_encoder(void);
+    int16_t get_left_encoder(void);
+    int16_t get_right_encoder(void);
 
-void encoders_reset(void);
+    void encoders_reset(void);
 
 
 #ifdef __cplusplus

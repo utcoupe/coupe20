@@ -12,8 +12,8 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#ifndef LOCAL_MATH
-#define LOCAL_MATH
+#ifndef SHARED_ASSERV_LOCAL_MATH
+#define SHARED_ASSERV_LOCAL_MATH
 
 #ifndef M_PI
 #   define M_PI (3.14159265358979323846)
@@ -23,7 +23,15 @@
 // #define ABS(x)   ((x) > 0 ? (x) : -(x))
 // #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 float moduloTwoPI(float angle);
 float moduloPI(float angle);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif // SHARED_ASSERV_LOCAL_MATH

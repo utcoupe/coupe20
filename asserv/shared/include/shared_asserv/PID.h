@@ -12,8 +12,8 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#ifndef PID_H
-#define PID_H
+#ifndef SHARED_ASSERV_PID_H
+#define SHARED_ASSERV_PID_H
 
 typedef struct PID {
 	float P, I, D, bias;
@@ -38,4 +38,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-#endif // PID_H
+#endif // SHARED_ASSERV_PID_H

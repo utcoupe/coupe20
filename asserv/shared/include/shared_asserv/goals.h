@@ -24,8 +24,8 @@
  * - If you change the name of this file, make the change in the compile.sh script as well.
 **/
 
-#ifndef GOALS_H
-#define GOALS_H
+#ifndef SHARED_ASSERV_GOALS_H
+#define SHARED_ASSERV_GOALS_H
 
 #include <stdint.h>
 #include "shared_asserv/parameters.h"
@@ -100,4 +100,4 @@ inline void FifoClearGoals() { FifoInit(); }
 }
 #endif
 
-#endif
+#endif // SHARED_ASSERV_GOALS_H

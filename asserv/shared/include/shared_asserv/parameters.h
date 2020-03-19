@@ -4,8 +4,8 @@
  * Date : 29/11/13			*
  ****************************************/
 
-#ifndef PARAMETERS_H
-#define PARAMETERS_H
+#ifndef SHARED_ASSERV_PARAMETERS_H
+#define SHARED_ASSERV_PARAMETERS_H
 
 #define STM32_ID "ard_asserv"
 #define DEBUG_TARGET_SPEED 0
@@ -81,4 +81,4 @@
 
 //#define SERIAL_DEBUG
 
-#endif // PARAMETERS_H
+#endif // SHARED_ASSERV_PARAMETERS_H

@@ -1,10 +1,10 @@
 EESchema Schematic File Version 4
-LIBS:STM32F446RE6-cache
+LIBS:stm32f446_actuators-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 1
+Sheet 3 4
 Title ""
 Date ""
 Rev ""
@@ -390,7 +390,7 @@ F 3 "~" H 1750 3100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text HLabel 1050 1050 0    50   Input ~ 0
-+5V
++5V_STM
 Wire Wire Line
 	1350 1750 1350 1650
 Wire Wire Line
@@ -546,8 +546,6 @@ F 3 "" H 2550 900 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1350 1050 1550 1050
-Wire Wire Line
-	1350 900  1350 1050
 $Comp
 L Regulator_Linear:MIC5504-3.3YM5 U?
 U 1 1 5E85F2C9
@@ -560,17 +558,6 @@ F 1 "MIC5504-3.3YM5" H 1950 1426 50  0000 C CNN
 F 2 "Package_TO_SOT_SMD:SOT-23-5" H 1950 750 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/MIC550X.pdf" H 1700 1400 50  0001 C CNN
 	1    1950 1150
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+5V #PWR027
-U 1 1 5E860708
-P 1350 900
-F 0 "#PWR027" H 1350 750 50  0001 C CNN
-F 1 "+5V" H 1365 1073 50  0000 C CNN
-F 2 "" H 1350 900 50  0001 C CNN
-F 3 "" H 1350 900 50  0001 C CNN
-	1    1350 900 
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -945,4 +932,8 @@ Text HLabel 3400 6150 0    50   Output ~ 0
 TX3
 Text HLabel 3400 5950 0    50   Output ~ 0
 TX5
+Text Label 1350 800  0    50   ~ 0
++5V_STM
+Wire Wire Line
+	1350 800  1350 1050
 $EndSCHEMATC

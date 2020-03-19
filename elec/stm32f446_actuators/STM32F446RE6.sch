@@ -1,10 +1,10 @@
 EESchema Schematic File Version 4
-LIBS:stm32f446_actuators-cache
+LIBS:STM32F446RE6-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 4
+Sheet 1 1
 Title ""
 Date ""
 Rev ""
@@ -45,10 +45,10 @@ F 3 "~" H 8800 2350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR?
+L power:GND #PWR0101
 U 1 1 5E88322F
 P 8400 2250
-AR Path="/5E88322F" Ref="#PWR?"  Part="1" 
+AR Path="/5E88322F" Ref="#PWR0101"  Part="1" 
 AR Path="/5E88152D/5E88322F" Ref="#PWR040"  Part="1" 
 F 0 "#PWR040" H 8400 2000 50  0001 C CNN
 F 1 "GND" V 8405 2122 50  0000 R CNN
@@ -405,6 +405,7 @@ U 1 1 5E85F280
 P 3100 1750
 AR Path="/5E649856/5E85F280" Ref="#PWR?"  Part="1" 
 AR Path="/5E88152D/5E85F280" Ref="#PWR035"  Part="1" 
+AR Path="/5E85F280" Ref="#PWR035"  Part="1" 
 F 0 "#PWR035" H 3100 1500 50  0001 C CNN
 F 1 "GND" H 3105 1577 50  0000 C CNN
 F 2 "" H 3100 1750 50  0001 C CNN
@@ -431,6 +432,7 @@ U 1 1 5E85F28E
 P 3100 1250
 AR Path="/5E649856/5E85F28E" Ref="R?"  Part="1" 
 AR Path="/5E88152D/5E85F28E" Ref="R19"  Part="1" 
+AR Path="/5E85F28E" Ref="R19"  Part="1" 
 F 0 "R19" H 3170 1296 50  0000 L CNN
 F 1 "56" H 3170 1205 50  0000 L CNN
 F 2 "Resistor_SMD:R_0805_2012Metric" V 3030 1250 50  0001 C CNN
@@ -444,6 +446,7 @@ U 1 1 5E85F294
 P 3100 1550
 AR Path="/5E649856/5E85F294" Ref="D?"  Part="1" 
 AR Path="/5E88152D/5E85F294" Ref="D5"  Part="1" 
+AR Path="/5E85F294" Ref="D5"  Part="1" 
 F 0 "D5" V 3139 1433 50  0000 R CNN
 F 1 "LED_R" V 3048 1433 50  0000 R CNN
 F 2 "LED_SMD:LED_0805_2012Metric" H 3100 1550 50  0001 C CNN
@@ -459,6 +462,7 @@ U 1 1 5E85F29B
 P 2550 1500
 AR Path="/5E649856/5E85F29B" Ref="C?"  Part="1" 
 AR Path="/5E88152D/5E85F29B" Ref="C15"  Part="1" 
+AR Path="/5E85F29B" Ref="C15"  Part="1" 
 F 0 "C15" H 2665 1546 50  0000 L CNN
 F 1 "1uF" H 2665 1455 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric" H 2588 1350 50  0001 C CNN
@@ -472,6 +476,7 @@ U 1 1 5E85F2A1
 P 1350 1500
 AR Path="/5E649856/5E85F2A1" Ref="C?"  Part="1" 
 AR Path="/5E88152D/5E85F2A1" Ref="C11"  Part="1" 
+AR Path="/5E85F2A1" Ref="C11"  Part="1" 
 F 0 "C11" H 1465 1546 50  0000 L CNN
 F 1 "1uF" H 1465 1455 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric" H 1388 1350 50  0001 C CNN
@@ -485,6 +490,7 @@ U 1 1 5E85F2A7
 P 2550 1750
 AR Path="/5E649856/5E85F2A7" Ref="#PWR?"  Part="1" 
 AR Path="/5E88152D/5E85F2A7" Ref="#PWR032"  Part="1" 
+AR Path="/5E85F2A7" Ref="#PWR032"  Part="1" 
 F 0 "#PWR032" H 2550 1500 50  0001 C CNN
 F 1 "GND" H 2555 1577 50  0000 C CNN
 F 2 "" H 2550 1750 50  0001 C CNN
@@ -498,6 +504,7 @@ U 1 1 5E85F2AD
 P 1350 1750
 AR Path="/5E649856/5E85F2AD" Ref="#PWR?"  Part="1" 
 AR Path="/5E88152D/5E85F2AD" Ref="#PWR028"  Part="1" 
+AR Path="/5E85F2AD" Ref="#PWR028"  Part="1" 
 F 0 "#PWR028" H 1350 1500 50  0001 C CNN
 F 1 "GND" H 1355 1577 50  0000 C CNN
 F 2 "" H 1350 1750 50  0001 C CNN
@@ -511,6 +518,7 @@ U 1 1 5E85F2B3
 P 1950 1750
 AR Path="/5E649856/5E85F2B3" Ref="#PWR?"  Part="1" 
 AR Path="/5E88152D/5E85F2B3" Ref="#PWR030"  Part="1" 
+AR Path="/5E85F2B3" Ref="#PWR030"  Part="1" 
 F 0 "#PWR030" H 1950 1500 50  0001 C CNN
 F 1 "GND" H 1955 1577 50  0000 C CNN
 F 2 "" H 1950 1750 50  0001 C CNN
@@ -528,6 +536,7 @@ U 1 1 5E85F2BB
 P 2550 900
 AR Path="/5E649856/5E85F2BB" Ref="#PWR?"  Part="1" 
 AR Path="/5E88152D/5E85F2BB" Ref="#PWR031"  Part="1" 
+AR Path="/5E85F2BB" Ref="#PWR031"  Part="1" 
 F 0 "#PWR031" H 2550 750 50  0001 C CNN
 F 1 "+3V3" H 2565 1073 50  0000 C CNN
 F 2 "" H 2550 900 50  0001 C CNN
@@ -545,6 +554,7 @@ U 1 1 5E85F2C9
 P 1950 1150
 AR Path="/5E649856/5E85F2C9" Ref="U?"  Part="1" 
 AR Path="/5E88152D/5E85F2C9" Ref="U3"  Part="1" 
+AR Path="/5E85F2C9" Ref="U3"  Part="1" 
 F 0 "U3" H 1950 1517 50  0000 C CNN
 F 1 "MIC5504-3.3YM5" H 1950 1426 50  0000 C CNN
 F 2 "Package_TO_SOT_SMD:SOT-23-5" H 1950 750 50  0001 C CNN
@@ -764,33 +774,29 @@ Wire Wire Line
 Wire Wire Line
 	5000 3350 4900 3350
 Text Label 3400 5850 2    50   ~ 0
-PWM0
+PWM12
 Text Label 5000 4250 0    50   ~ 0
-PWM1
+PWM0
 Text Label 5000 4450 0    50   ~ 0
-PWM2
+PWM8
 Text Label 5000 5750 0    50   ~ 0
 PWM3
 Text Label 3400 5650 2    50   ~ 0
-PWM4
+PWM10
 Text Label 5000 3950 0    50   ~ 0
 PWM6
 Text Label 5000 3350 0    50   ~ 0
-PWM7
+PWM4
 Text Label 5000 4150 0    50   ~ 0
-PWM8
+PWM13
 Text Label 5000 4350 0    50   ~ 0
 PWM9
 Text Label 5000 4850 0    50   ~ 0
-PWM10
+PWM1
 Text Label 5000 5650 0    50   ~ 0
-PWM11
+PWM2
 Wire Bus Line
 	7400 3550 7550 3550
-Text HLabel 3400 5950 0    50   Output ~ 0
-TX3
-Text HLabel 3400 6050 0    50   Input ~ 0
-RX3
 Wire Wire Line
 	3400 5950 3500 5950
 Wire Wire Line
@@ -800,11 +806,11 @@ Wire Wire Line
 Wire Wire Line
 	3400 6150 3500 6150
 Text Label 3400 5750 2    50   ~ 0
-PWM12
+PWM11
 Wire Wire Line
 	3400 5750 3500 5750
 Text Label 5000 5250 0    50   ~ 0
-PWM13
+PWM7
 Wire Wire Line
 	5000 5250 4900 5250
 Wire Wire Line
@@ -824,9 +830,9 @@ Wire Wire Line
 Wire Wire Line
 	4900 5950 5000 5950
 Text Label 3400 4950 2    50   ~ 0
-AnalogIn0
+AnalogIn4
 Text Label 5000 3750 0    50   ~ 0
-AnalogIn1
+AnalogIn0
 Text Label 5000 5050 0    50   ~ 0
 AnalogIn2
 Text Label 3400 5050 2    50   ~ 0
@@ -852,13 +858,9 @@ DigitalIn[0..5]
 Wire Bus Line
 	7400 3750 7550 3750
 Text Label 5000 3450 0    50   ~ 0
-PWM14
-Text HLabel 3400 4750 0    50   Input ~ 0
-RX5
-Text HLabel 3400 6150 0    50   Output ~ 0
-TX5
-Text Label 5000 6050 0    50   ~ 0
 PWM5
+Text Label 5000 6050 0    50   ~ 0
+PWM14
 Wire Wire Line
 	3400 4950 3500 4950
 Text Label 7400 3550 2    50   ~ 0
@@ -880,23 +882,23 @@ DigitalOut[0..10]
 Wire Bus Line
 	7400 3950 7550 3950
 Text Label 5000 5150 0    50   ~ 0
-DigitalOut3
+DigitalOut10
 Text Label 5000 4550 0    50   ~ 0
-DigitalOut2
+DigitalOut4
 Text Label 5000 4050 0    50   ~ 0
-DigitalOut1
+DigitalOut6
 Text Label 5000 5550 0    50   ~ 0
-DigitalIn1
-Text Label 5000 5450 0    50   ~ 0
-DigitalIn0
-Text Label 3400 6350 2    50   ~ 0
-DigitalIn3
-Text Label 3400 6250 2    50   ~ 0
-DigitalIn2
-Text Label 3400 5250 2    50   ~ 0
-DigitalIn5
-Text Label 3400 5150 2    50   ~ 0
 DigitalIn4
+Text Label 5000 5450 0    50   ~ 0
+DigitalIn5
+Text Label 3400 6350 2    50   ~ 0
+DigitalIn2
+Text Label 3400 6250 2    50   ~ 0
+DigitalIn3
+Text Label 3400 5250 2    50   ~ 0
+DigitalOut7
+Text Label 3400 5150 2    50   ~ 0
+DigitalIn0
 Wire Wire Line
 	5000 4050 4900 4050
 Wire Wire Line
@@ -918,21 +920,29 @@ Wire Wire Line
 Wire Wire Line
 	5000 6150 4900 6150
 Text Label 5000 6150 0    50   ~ 0
-DigitalOut4
-Text Label 5000 6250 0    50   ~ 0
 DigitalOut5
+Text Label 5000 6250 0    50   ~ 0
+DigitalOut2
 Text Label 5000 6350 0    50   ~ 0
-DigitalOut6
+DigitalOut1
 Text Label 5000 6450 0    50   ~ 0
-DigitalOut7
+DigitalOut0
 Text Label 3400 5350 2    50   ~ 0
 DigitalOut8
 Text Label 3400 5450 2    50   ~ 0
 DigitalOut9
 Text Label 3400 5550 2    50   ~ 0
-DigitalOut10
+DigitalOut3
 Text Label 5000 3850 0    50   ~ 0
-AnalogIn4
+AnalogIn1
 Text Label 3400 6450 2    50   ~ 0
-DigitalOut0
+DigitalIn1
+Text HLabel 3400 4750 0    50   Input ~ 0
+RX3
+Text HLabel 3400 6050 0    50   Input ~ 0
+RX5
+Text HLabel 3400 6150 0    50   Output ~ 0
+TX3
+Text HLabel 3400 5950 0    50   Output ~ 0
+TX5
 $EndSCHEMATC

@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ard_asserv)
-
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+enable_language(C CXX)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -20,6 +18,39 @@ find_package(catkin REQUIRED COMPONENTS
     static_map
     tf
     tf2_ros
+)
+
+add_compile_options(
+    -std=c++14
+    -fPIC
+
+    -Wall
+    -Wextra # reasonable and standard
+    -Wshadow # warn the user if a variable declaration shadows one from a
+             # parent context
+    -Wnon-virtual-dtor  # warn the user if a class with virtual functions has a
+                        # non-virtual destructor. This helps catch hard to
+                        # track down memory errors
+    -Wold-style-cast # warn for c-style casts
+    -Wcast-align # warn for potential performance problem casts
+    -Wunused # warn on anything being unused
+    -Woverloaded-virtual # warn if you overload (not override) a virtual
+                         # function
+    -Wpedantic # warn if non-standard C++ is used
+    -Wconversion # warn on type conversions that may lose data
+    -Wsign-conversion # warn on sign conversions
+    -Wnull-dereference # warn if a null dereference is detected
+    -Wdouble-promotion # warn if float is implicit promoted to double
+    -Wformat=2  # warn on security issues around functions that format output
+                # (ie printf)
+    # Uniquement pour GCC :
+    -Wmisleading-indentation   # warn if identation implies blocks where blocks
+                               # do not exist
+    -Wduplicated-cond # warn if if / else chain has duplicated conditions
+    -Wduplicated-branches # warn if if / else branches have duplicated code
+    -Wlogical-op # warn about logical operations being used where bitwise were
+                 # probably wanted
+    -Wuseless-cast # warn if you perform a cast to the same type
 )
 
 ## Generate messages
@@ -55,8 +86,16 @@ catkin_package(
     CATKIN_DEPENDS message_runtime
 )
 
+## Include and compile asserv shared files
+add_subdirectory("$ENV{UTCOUPE_WORKSPACE}/asserv/shared/" utcoupe_asserv_shared)
+
 include_directories(
-    ${catkin_INCLUDE_DIRS}
+#    ${catkin_INCLUDE_DIRS}
+    ${UTCOUPE_ASSERV_SHARED_INCLUDE_DIR}
+)
+
+add_library(utcoupe_shared_asserv SHARED
+    ${UTCOUPE_ASSERV_SHARED_SOURCES}
 )
 
 #############

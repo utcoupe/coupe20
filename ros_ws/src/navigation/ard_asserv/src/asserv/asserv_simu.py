@@ -7,6 +7,7 @@ import protocol_parser
 import math
 import numpy as np
 import rospy
+import rospkg
 import time
 
 from asserv_real import *
@@ -130,13 +131,17 @@ class AsservSimu(AsservReal):
     def __init__(self, asserv_node, goal_counter):
         AsservReal.__init__(self, asserv_node, goal_counter, 0)
 
+        # FIXME hardcoded path
+        lib_dir = os.environ['UTCOUPE_WORKSPACE'] + '/ros_ws/devel/lib/'
+
         # STM32 lib stuff
         try:
+            print('looking in ' + lib_dir)
             self._stm32lib = ctypes.cdll.LoadLibrary(
-                os.environ['UTCOUPE_WORKSPACE']
-                + '/libs/lib_stm32_asserv.so')
+                lib_dir + 'libutcoupe_shared_asserv.so'
+                )
         except OSError:
-            rospy.logerr("Cannot open shared asserv library. Please generate it using the compile.sh script in stm32_asserv.")
+            rospy.logerr("Cannot open shared asserv library. Please generate it using catkin_make.")
             rospy.logerr("Exiting simu asserv.")
             exit()
 

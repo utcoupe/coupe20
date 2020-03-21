@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*-coding:Utf-8 -*
 
 __author__ = "Gaëtan Blond"
 __date__ = "20/03/20"

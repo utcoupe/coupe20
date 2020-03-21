@@ -44,12 +44,12 @@ class MetricExporter(object):
             raise Exception("metric %s already exists" % gauge_name)
         self.m_gauges[gauge_name] = Gauge(self.m_root_metrics_topic_name + gauge_name)
         if self.m_publishMetrics:
-            self.m_counters[gauge_name].publish()
+            self.m_gauges[gauge_name].publish()
     
     def gaugeIncrement(self, gauge_name, inc_val = 1.0):
         self.m_gauges[gauge_name].inc(inc_val)
         if self.m_publishMetrics:
-            self.m_counters[gauge_name].publish()
+            self.m_gauges[gauge_name].publish()
     
     def gaugeDecrement(self, gauge_name, dec_val = 1.0):
         self.gaugeIncrement(gauge_name, -dec_val)
@@ -57,12 +57,12 @@ class MetricExporter(object):
     def gaugeSet(self, gauge_name, val):
         self.m_gauges[gauge_name].set(val)
         if self.m_publishMetrics:
-            self.m_counters[gauge_name].publish()
+            self.m_gauges[gauge_name].publish()
     
     def gaugeSetToCurrentTime(self, gauge_name):
         self.m_gauges[gauge_name].set_to_current_time()
         if self.m_publishMetrics:
-            self.m_counters[gauge_name].publish()
+            self.m_gauges[gauge_name].publish()
         
     def createChronometer(self, chrono_name):
         if self.m_hasMetric(chrono_name):

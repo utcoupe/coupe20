@@ -22,7 +22,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_compile_options(
     -std=c++14
-    -fPIC
 
     -Wall
     -Wextra # reasonable and standard

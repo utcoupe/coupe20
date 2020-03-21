@@ -52,6 +52,7 @@ function run_cross_compilation() {
         --mount type=bind,source="${UTCOUPE_WORKSPACE}"/ros_ws/src,target="${img_ws_root_dir}"/ros_ws/src \
         --mount type=bind,source="${UTCOUPE_WORKSPACE}"/libs,target="${img_ws_root_dir}"/libs,readonly \
         --mount type=bind,source="${cross_compilation_install_dir}",target="${img_ws_root_dir}"/ros_ws/install \
+        --mount type=bind,source="${UTCOUPE_WORKSPACE}/asserv",target$${img_ws_root_dir}/asserv,readonly \
         "utcoupe/coupe20:${img_tag}" \
         /bin/bash -c "catkin_make install -DCMAKE_BUILD_TYPE=Release"
     # Makes cmake crash

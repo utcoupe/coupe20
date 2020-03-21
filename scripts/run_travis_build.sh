@@ -15,5 +15,6 @@ docker run \
     -i \
     --mount type=bind,source="$(pwd)"/ros_ws/src,target=/utcoupe/coupe20/ros_ws/src \
     --mount type=bind,source="$(pwd)"/libs,target=/utcoupe/coupe20/libs,readonly \
+    --mount type=bind,source="$(pwd)/asserv",target=/utcoupe/coupe20/asserv,readonly \
     utcoupe/coupe20:utcoupe-ros-kinetic-amd64 \
     /bin/bash -c "$COMPILE_COMMAND"

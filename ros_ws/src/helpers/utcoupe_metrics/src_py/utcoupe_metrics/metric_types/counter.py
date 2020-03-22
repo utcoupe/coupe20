@@ -19,5 +19,5 @@ class Counter(object):
 
         self.m_value += val_inc
 
-    def publish_value(self):
+    def publish(self):
         self.m_publisher.publish(self.m_value)

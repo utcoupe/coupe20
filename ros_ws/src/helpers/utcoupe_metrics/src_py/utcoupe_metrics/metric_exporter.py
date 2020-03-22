@@ -12,7 +12,7 @@ ROOT_METRICS_TOPIC_NAME="/metrics/"
 
 class MetricExporter(object):
     def __init__(self, node_name, publishMetrics = True):
-        rospy.loginfo("Creating metrics exporter for node " + node_name)
+        rospy.loginfo("Creating metric exporter for node " + node_name)
 
         self.m_root_metrics_topic_name = ROOT_METRICS_TOPIC_NAME + node_name + "/"
         self.m_publishMetrics = publishMetrics
@@ -34,15 +34,15 @@ class MetricExporter(object):
         if self.m_publishMetrics:
             self.m_counters[counter_name].publish()
     
-    def counterIncrement(self, counter_name):
-        self.m_counters[counter_name].inc()
+    def counterIncrement(self, counter_name, val_inc = 1.0):
+        self.m_counters[counter_name].inc(val_inc)
         if self.m_publishMetrics:
             self.m_counters[counter_name].publish()
     
-    def createGauge(self, gauge_name):
+    def createGauge(self, gauge_name, start_val = 0.0):
         if self.m_hasMetric(gauge_name):
             raise Exception("metric %s already exists" % gauge_name)
-        self.m_gauges[gauge_name] = Gauge(self.m_root_metrics_topic_name + gauge_name)
+        self.m_gauges[gauge_name] = Gauge(self.m_root_metrics_topic_name + gauge_name, start_val)
         if self.m_publishMetrics:
             self.m_gauges[gauge_name].publish()
     

@@ -26,3 +26,6 @@ class Chronometer(object):
     
     def reset(self):
         self.m_startTime = None
+    
+    def publish(self):
+        self.m_gauge.publish()

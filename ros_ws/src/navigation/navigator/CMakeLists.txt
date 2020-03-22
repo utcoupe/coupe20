@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
     tf
     interactive_markers
     game_manager
+    utcoupe_metrics
 )
 
 ################################################

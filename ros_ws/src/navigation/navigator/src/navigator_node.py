@@ -20,6 +20,7 @@ from planning import Plan
 #
 
 from game_manager import StatusServices
+from utcoupe_metrics import MetricExporter
 
 
 __author__ = "Gaëtan Blond"
@@ -31,6 +32,8 @@ FULL_NODE_NAME  = NODE_NAMESPACE + "/" + NODE_NAME
 
 NB_MAX_TRY      = 7
 TIME_MAX_STOP   = 1 # sec
+
+GAUGE_NB_TRIES_NAME = "goal_nb_tries"
 
 # Constants used for the status of goto requests
 class GotoStatuses(object):
@@ -72,6 +75,8 @@ class NavigatorNode(object):
         self._isCanceling = False
         self._idCurrentTry = 0
 
+        self._metricExporter = MetricExporter(NODE_NAME)
+
     def _planResultCallback (self, result):
         self._isCanceling = False
         if result == True or self._idCurrentTry == NB_MAX_TRY or self._currentPlan.invalidStartOrEndPos:
@@ -83,6 +88,7 @@ class NavigatorNode(object):
             self._collisionsClient.setEnabled(False, [])
             self._updateStatus()
             self._currentGoal.set_succeeded(DoGotoResult(result))
+            self._metricExporter.gaugeSet(GAUGE_NB_TRIES_NAME, self._idCurrentTry)
         else:
             self._idCurrentTry += 1
             rospy.loginfo("Trying a new time to reach the goal : try number " + str(self._idCurrentTry))
@@ -181,6 +187,8 @@ class NavigatorNode(object):
         Start the node and the clients.
         """
         rospy.init_node (NODE_NAME, anonymous=False, log_level=rospy.INFO)
+        # Create metrics
+        self._metricExporter.createGauge(GAUGE_NB_TRIES_NAME)
         # Create the clients
         self._pathfinderClient = PathfinderClient()
         self._asservClient = AsservClient()

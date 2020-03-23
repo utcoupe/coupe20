@@ -925,13 +925,13 @@ AnalogIn1
 Text Label 3400 6450 2    50   ~ 0
 DigitalIn1
 Text HLabel 3400 4750 0    50   Input ~ 0
-RX3
-Text HLabel 3400 6050 0    50   Input ~ 0
 RX5
+Text HLabel 3400 6050 0    50   Input ~ 0
+RX3
 Text HLabel 3400 6150 0    50   Output ~ 0
-TX3
-Text HLabel 3400 5950 0    50   Output ~ 0
 TX5
+Text HLabel 3400 5950 0    50   Output ~ 0
+TX3
 Text Label 1350 800  0    50   ~ 0
 +5V_STM
 Wire Wire Line

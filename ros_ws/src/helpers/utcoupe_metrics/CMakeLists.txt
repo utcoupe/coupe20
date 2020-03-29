@@ -1,13 +1,64 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2) # kinetic requirement
 project(utcoupe_metrics)
 
-add_compile_options(
+## Find catkin macros and libraries
+find_package(catkin REQUIRED COMPONENTS
+    roscpp
+    rospy
+    std_msgs
+)
+
+catkin_python_setup()
+
+################################################
+## Declare ROS messages, services and actions ##
+################################################
+
+################################################
+## Declare ROS dynamic reconfigure parameters ##
+################################################
+
+###################################
+## catkin specific configuration ##
+###################################
+
+catkin_package(
+    INCLUDE_DIRS include
+    LIBRARIES utcoupe_metrics
+    CATKIN_DEPENDS roscpp rospy std_msgs
+#  DEPENDS system_lib
+)
+
+###########
+## Build ##
+###########
+
+add_library(${PROJECT_NAME}_warnings INTERFACE)
+add_library(${PROJECT_NAME}_options INTERFACE)
+
+# For modern cmake
+# target_compile_features(${PROJECT_NAME}_options INTERFACE cxx_std_14)
+# But is not available for this version (3.0)
+target_compile_options(${PROJECT_NAME}_options INTERFACE
     -std=c++14
-    
+)
+
+target_include_directories(${PROJECT_NAME}_options INTERFACE
+    include
+    ${catkin_INCLUDE_DIRS}
+)
+
+option(ENABLE_ASAN "Enable address sanitizer" FALSE)
+if(ENABLE_ASAN)
+  target_compile_options(${PROJECT_NAME}_options INTERFACE -fsanitize=address)
+  target_link_libraries(${PROJECT_NAME}_options INTERFACE -fsanitize=address)
+endif()
+
+target_compile_options(${PROJECT_NAME}_options INTERFACE
     -Wall
     -Wextra
     -Wpedantic
-#     -Wshadow
+    -Wshadow
     -Wnon-virtual-dtor
     
 #     -Wold-style-cast
@@ -23,79 +74,6 @@ add_compile_options(
 #     -Wnull-dereference
 #     -Wuseless-cast
 #     -Wdouble-promotion
-
-    "$<$<CONFIG:DEBUG>:-Og>"
-    "$<$<CONFIG:RELEASE>:-O3>"
-)
-
-find_package(catkin REQUIRED COMPONENTS
-    roscpp
-    rospy
-    std_msgs
-)
-
-catkin_python_setup()
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
-
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-    INCLUDE_DIRS include
-    LIBRARIES utcoupe_metrics
-    CATKIN_DEPENDS roscpp rospy std_msgs
-#  DEPENDS system_lib
-)
-
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-include_directories(
-    include
-    ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -112,7 +90,10 @@ add_dependencies(${PROJECT_NAME}
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
-    ${catkin_LIBRARIES}
+    PRIVATE
+        ${PROJECT_NAME}_options
+        ${PROJECT_NAME}_warnings
+        ${catkin_LIBRARIES}
 )
 
 #############
@@ -142,11 +123,4 @@ install(
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_utcoupe_metrics.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
 
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)

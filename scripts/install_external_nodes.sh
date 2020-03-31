@@ -26,17 +26,20 @@ function fetch_missing_nodes() {
 	cd $TMP_SRC
 	for node_name in "${!external_nodes[@]}"; do 
 		if [ ! -d $INSTALL_ROOT/share/$node_name ]; then
-			echo "$node_name is not installed, fetch it."
+			echo "$node_name is not installed, fetching it."
 			git clone "${external_nodes[$node_name]}"
 		else
-			echo "$node_name is already installed installed."
+			echo "$node_name is already installed."
 		fi
 	done
 
+	# Patchs for melodic (and newer ROS 1 versions if they exists one day)
 	if [ "$ROS_VER" != "kinetic" ]; then
-		cd "obstacle_detector"
-		git checkout melodic-fix
-		cd ..
+        if [ -d "./obstacle_detector" ]; then
+            cd "obstacle_detector"
+            git checkout melodic-fix
+            cd ..
+		fi
 	fi
 }
 
@@ -46,7 +49,7 @@ function compile_and_install_nodes() {
 		# Kind of ideal command to use, but catkin wont install direclty in ros base workspace because of _setup_util.py file...
 		#sudo -u $USER -H bash -c "source $INSTALL_ROOT/setup.bash; catkin_make install -DCMAKE_INSTALL_PREFIX=$INSTALL_ROOT -DCMAKE_BUILD_TYPE=Release"
 		source $INSTALL_ROOT/setup.bash
-		#TODO improve using jobs directly (get the number of the current computer)
+		#TODO improve using jobs directly (get the number of the current computer) (might use swap on raspberry pi)
 		catkin_make install -DCMAKE_BUILD_TYPE=Release
 		sudo cp -ar $TMP_ROOT/install/include/* $INSTALL_ROOT/include
 		sudo cp -ar $TMP_ROOT/install/share/* $INSTALL_ROOT/share

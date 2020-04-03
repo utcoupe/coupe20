@@ -80,6 +80,7 @@ target_compile_options(${PROJECT_NAME}_options INTERFACE
 add_library(${PROJECT_NAME}
     src/${PROJECT_NAME}/metric_exporter.cpp
     src/${PROJECT_NAME}/metric_types/counter.cpp
+    src/${PROJECT_NAME}/metric_types/gauge.cpp
     src/${PROJECT_NAME}/metric_types/chronometer.cpp
 )
 

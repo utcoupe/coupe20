@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     tf2
     tf2_ros
+    utcoupe_metrics
     visualization_msgs
 )
 

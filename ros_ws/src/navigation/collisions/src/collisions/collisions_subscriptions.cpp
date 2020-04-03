@@ -4,6 +4,7 @@
 #include "collisions/shapes/rectangle.h"
 #include "collisions/shapes/segment.h"
 #include "collisions/obstacle_velocity.h"
+#include "collisions/shared_constants.h"
 
 #include <static_map/MapGetContext.h>
 
@@ -17,18 +18,7 @@
 const double CACHE_TIME_TF2_BUFFER = 5.0;
 const std::size_t SIZE_MAX_QUEUE = 10;
 
-const char *const NAVIGATOR_STATUS_TOPIC = "navigation/navigator/status";
-const char *const OBJECTS_TOPIC = "recognition/objects_classifier/objects";
-const char *const ASSERV_SPEED_TOPIC = "drivers/ard_asserv/speed";
-const char *const MAP_GET_CONTEXT_SERVER = "static_map/get_context";
-
-const char *const NODE_NAME = "collisions";
-const char *const NAMESPACE_NAME = "navigation";
-
-const std::string MAP_TF_FRAME = "map";
-const char *const ROBOT_TF_FRAME = "robot";
-const double DEFAULT_ROBOT_WIDTH = 0.4;
-const double DEFAULT_ROBOT_HEIGHT = 0.25;
+using namespace collisions;
 
 Position quaternionToEuler(geometry_msgs::Quaternion quaternion) noexcept;
 

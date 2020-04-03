@@ -10,6 +10,8 @@
 #include "collisions/ActivateCollisions.h"
 #include "collisions/PredictedCollision.h"
 
+#include <utcoupe_metrics/metric_exporter.h>
+
 #include <ros/publisher.h>
 #include <ros/service_server.h>
 #include <ros/timer.h>
@@ -61,6 +63,8 @@ private:
     ros::Publisher m_warnerPublisher;
     /** Manager that publishes dangerous objects and check zones in rviz */
     MarkersPublisher m_markersPublisher;
+    /** Metric exporter */
+    utcoupe_metrics::MetricExporter m_metricExporter;
 
     /**
      * Main loop

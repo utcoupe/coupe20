@@ -5,6 +5,7 @@
 #include "collisions/shapes/circle.h"
 #include "collisions/engine/constants.h"
 #include "collisions/engine/collision.h"
+#include "collisions/shared_constants.h"
 
 #include <ros/console.h>
 #include <ros/node_handle.h>
@@ -18,7 +19,11 @@
 const std::string SET_ACTIVE_SERVICE = "navigation/collisions/set_active";
 const std::string WARNER_TOPIC = "navigation/collisions/warner";
 
+const std::string CHRONO_CHECK_CYCLE = "chrono_check_cycle";
+
 const double RATE_RUN_HZ = 20.0;
+
+using namespace collisions;
 
 bool compareObstacleDangerosity(const Obstacle *obstacle1, const Obstacle *obstacle2) {
     auto collision1 = obstacle1->getCollisionData();
@@ -32,7 +37,8 @@ bool compareObstacleDangerosity(const Obstacle *obstacle1, const Obstacle *obsta
 
 CollisionsNode::CollisionsNode(ros::NodeHandle &nodeHandle) :
         m_subscriptions(nodeHandle),
-        m_markersPublisher(nodeHandle) {
+        m_markersPublisher(nodeHandle),
+        m_metricExporter(nodeHandle, NODE_NAME) {
     ROS_INFO("Collisions node is starting. Please wait...");
     m_obstacleStack = m_subscriptions.getObstaclesStack();
     m_setActiveService = nodeHandle.advertiseService(
@@ -43,6 +49,8 @@ CollisionsNode::CollisionsNode(ros::NodeHandle &nodeHandle) :
     m_warnerPublisher = nodeHandle.advertise<collisions::PredictedCollision>(WARNER_TOPIC, 1);
 
     m_robot = m_subscriptions.createRobot(nodeHandle);
+    
+    m_metricExporter.createChronometer(CHRONO_CHECK_CYCLE);
 
     m_subscriptions.sendInit(true);
     ROS_INFO("navigation/collisions ready, waiting for activation.");
@@ -56,6 +64,7 @@ CollisionsNode::CollisionsNode(ros::NodeHandle &nodeHandle) :
 
 void CollisionsNode::m_run(const ros::TimerEvent &) {
     std::chrono::system_clock::time_point startTime;
+    m_metricExporter.chronometerStart(CHRONO_CHECK_CYCLE);
     startTime = std::chrono::system_clock::now();
     m_subscriptions.updateRobot();
     m_obstacleStack->resetCollisionData();
@@ -73,6 +82,7 @@ void CollisionsNode::m_run(const ros::TimerEvent &) {
     m_obstacleStack->garbageCollect();
 
     const auto spentTime = std::chrono::duration<double, std::milli>(std::chrono::system_clock::now() - startTime);
+    m_metricExporter.chronometerStop(CHRONO_CHECK_CYCLE);
 
     ROS_DEBUG_STREAM_THROTTLE(1, "Cycle done in " << spentTime.count() << "ms");
 }
